@@ -346,6 +346,72 @@ def agentcensus_summarize_agent(response: Mapping[str, Any]) -> None:
             print(f"  {field}: {agent.get(field)!r}")
 
 
+def agentcensus_summarize_trust(response: Mapping[str, Any]) -> None:
+    """Explain one AgentCensus Trust Vector without treating gaps as zeroes."""
+    data = agentcensus_response_data(response)
+    if data is None:
+        return
+    if "dimensions" not in data:
+        print(
+            "No Trust Vector was disclosed. This may be a minimal record for "
+            "an opted-out subject."
+        )
+        return
+
+    composite = data.get("composite") or {}
+    score = composite.get("score")
+    score_label = "not yet measured" if score is None else str(score)
+    print(
+        f"Composite: {score_label} | "
+        f"coverage: {composite.get('measured', 0)} of {composite.get('of', 5)} "
+        "dimensions measured"
+    )
+    print(
+        "Engine version:",
+        data.get("atdVersion") or composite.get("atdVersion") or "unknown",
+    )
+    print(
+        "Evaluated at:",
+        data.get("evaluatedAt") or composite.get("evaluatedAt") or "unknown",
+    )
+    print(
+        "Recommended profile:",
+        data.get("recommendedProfile")
+        or composite.get("recommendedProfile")
+        or "not provided",
+    )
+    print()
+
+    rows = []
+    for dimension in data.get("dimensions", []):
+        active = bool(dimension.get("active"))
+        rows.append(
+            {
+                "dimension": dimension.get("dimension"),
+                "result": dimension.get("score") if active else "not measured",
+                "active": active,
+                "signals": len(dimension.get("signals") or []),
+            }
+        )
+    agentcensus_print_table(
+        rows,
+        ["dimension", "result", "active", "signals"],
+        limit=5,
+    )
+
+    risk_factors = data.get("riskFactors") or composite.get("riskFactors") or []
+    print("\nRisk factors:", ", ".join(risk_factors) if risk_factors else "none reported")
+    if "overlay" not in data:
+        print("Overlay: absent (not the same as measured with no findings)")
+    else:
+        overlay = data.get("overlay") or {}
+        print(
+            "Overlay:",
+            "behavior=" + ("available" if overlay.get("behavior") else "not measured"),
+            "safety=" + ("available" if overlay.get("safety") else "not measured"),
+        )
+
+
 def agentcensus_summarize_domain_agents(response: Mapping[str, Any]) -> None:
     """Summarize records and publication mechanisms found on one domain."""
     data = agentcensus_response_data(response)
