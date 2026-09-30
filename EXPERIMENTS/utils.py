@@ -14,10 +14,13 @@ from collections import Counter
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
 
 
+# ---------------------------------------------------------------------------
+# AgentCensus
+# ---------------------------------------------------------------------------
 AGENTCENSUS_API_BASE = "https://agentcensus.io/api/v1"
 
 _AGENTCENSUS_SAFE_RESPONSE_HEADERS = (
@@ -463,3 +466,539 @@ def agentcensus_summarize_domain_agents(response: Mapping[str, Any]) -> None:
         ["key", "name", "type", "mechanisms", "protocols", "capabilities"],
         limit=100,
     )
+
+
+# ---------------------------------------------------------------------------
+# A2A Registry
+# ---------------------------------------------------------------------------
+
+A2A_REGISTRY_API_BASE = "https://api.a2a-registry.org"
+A2A_REGISTRY_CARD_URL = (
+    "https://www.a2a-registry.org/.well-known/agent-card.json"
+)
+A2A_REGISTRY_DOCUMENTED_VERIFICATION_RANK = {
+    "unverified": 0,
+    "github_verified": 1,
+    "domain_verified": 2,
+    "ans_verified": 3,
+}
+
+_A2A_REGISTRY_SAFE_RESPONSE_HEADERS = (
+    "content-type",
+    "location",
+    "x-request-id",
+    "x-ratelimit-limit",
+    "x-ratelimit-remaining",
+    "x-ratelimit-reset",
+)
+
+
+def a2a_registry_load_api_key(
+    credentials_path: str | Path | None = None,
+    *,
+    required: bool = False,
+) -> str | None:
+    """Load an A2A Registry token without printing or persisting the secret."""
+    environment_key = os.getenv("A2A_REGISTRY_API_TOKEN")
+    if environment_key:
+        return environment_key
+
+    candidates = (
+        [Path(credentials_path)]
+        if credentials_path is not None
+        else [
+            Path("EXPERIMENTS/credentials.yaml"),
+            Path("credentials.yaml"),
+            Path(__file__).resolve().with_name("credentials.yaml"),
+        ]
+    )
+    checked: list[Path] = []
+    for candidate in candidates:
+        resolved = candidate.expanduser().resolve()
+        if resolved in checked:
+            continue
+        checked.append(resolved)
+        if not resolved.is_file():
+            continue
+
+        for raw_line in resolved.read_text(encoding="utf-8").splitlines():
+            if (
+                not raw_line
+                or raw_line[0].isspace()
+                or raw_line.lstrip().startswith("#")
+            ):
+                continue
+            field, separator, raw_value = raw_line.partition(":")
+            if not separator or field.strip() != "a2a_registry_api_token":
+                continue
+            value = raw_value.strip()
+            if len(value) >= 2 and value[0] == value[-1] == "'":
+                value = value[1:-1].replace("''", "'")
+            elif len(value) >= 2 and value[0] == value[-1] == '"':
+                value = json.loads(value)
+            else:
+                value = value.split(" #", 1)[0].strip()
+            if value:
+                return value
+            break
+
+    if required:
+        locations = ", ".join(str(path) for path in checked)
+        raise RuntimeError(
+            "A2A Registry API token not found. Set A2A_REGISTRY_API_TOKEN or "
+            f"add a2a_registry_api_token to one of: {locations}"
+        )
+    return None
+
+
+def a2a_registry_trusted_tls_context() -> ssl.SSLContext:
+    """Return a verified TLS context using Python or common system CA bundles."""
+    verify_paths = ssl.get_default_verify_paths()
+    candidates = (
+        os.getenv("SSL_CERT_FILE"),
+        verify_paths.cafile,
+        "/etc/ssl/cert.pem",
+        "/etc/ssl/certs/ca-certificates.crt",
+        "/opt/homebrew/etc/openssl@3/cert.pem",
+        "/usr/local/etc/openssl@3/cert.pem",
+    )
+    for candidate in candidates:
+        if candidate and Path(candidate).is_file():
+            return ssl.create_default_context(cafile=candidate)
+    return ssl.create_default_context()
+
+
+def a2a_registry_request_json(
+    method: str,
+    path_or_url: str,
+    *,
+    params: Mapping[str, Any] | None = None,
+    body: Any = None,
+    authenticated: bool = True,
+    token: str | None = None,
+    timeout: int = 30,
+) -> dict[str, Any]:
+    """Call one Registry endpoint and retain status, safe headers, and JSON."""
+    url = (
+        path_or_url
+        if path_or_url.startswith("http")
+        else f"{A2A_REGISTRY_API_BASE}/{path_or_url.lstrip('/')}"
+    )
+    if params:
+        clean_params = {
+            key: value for key, value in params.items() if value is not None
+        }
+        url = f"{url}{'&' if '?' in url else '?'}{urlencode(clean_params, doseq=True)}"
+
+    headers = {
+        "Accept": "application/json, application/a2a+json",
+        "User-Agent": "agentopia-a2a-registry-explorer/0.1",
+    }
+    if authenticated:
+        token = token if token is not None else a2a_registry_load_api_key()
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+
+    request_data = None
+    if body is not None:
+        request_data = json.dumps(body).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+
+    started = time.perf_counter()
+    try:
+        with urlopen(
+            Request(
+                url,
+                data=request_data,
+                headers=headers,
+                method=method.upper(),
+            ),
+            timeout=timeout,
+            context=a2a_registry_trusted_tls_context(),
+        ) as response:
+            raw = response.read().decode("utf-8", errors="replace")
+            status = response.status
+            response_headers = response.headers
+            ok = True
+    except HTTPError as error:
+        raw = error.read().decode("utf-8", errors="replace")
+        status = error.code
+        response_headers = error.headers
+        ok = False
+    except URLError as error:
+        return {
+            "ok": False,
+            "status": None,
+            "url": url,
+            "elapsedMs": round((time.perf_counter() - started) * 1000, 1),
+            "headers": {},
+            "data": {"error": str(error.reason)},
+        }
+
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        data = {"rawText": raw}
+
+    safe_headers = {
+        name: response_headers.get(name)
+        for name in _A2A_REGISTRY_SAFE_RESPONSE_HEADERS
+        if response_headers.get(name) is not None
+    }
+    return {
+        "ok": ok,
+        "status": status,
+        "url": url,
+        "elapsedMs": round((time.perf_counter() - started) * 1000, 1),
+        "headers": safe_headers,
+        "data": data,
+    }
+
+
+def a2a_registry_show_response(
+    response: Mapping[str, Any], max_json_chars: int = 16_000
+) -> None:
+    """Print request evidence followed by formatted, optionally truncated JSON."""
+    print(
+        f"HTTP {response['status']} | {response['elapsedMs']} ms | "
+        f"ok={response['ok']}"
+    )
+    print(response["url"])
+    if response["headers"]:
+        print("Headers:", json.dumps(response["headers"], indent=2))
+    rendered = json.dumps(response["data"], indent=2, ensure_ascii=False)
+    if len(rendered) > max_json_chars:
+        rendered = (
+            rendered[:max_json_chars]
+            + f"\n... truncated {len(rendered) - max_json_chars:,} characters"
+        )
+    print(rendered)
+
+
+def a2a_registry_print_table(
+    rows: Iterable[Mapping[str, Any]],
+    columns: Sequence[str],
+    limit: int = 20,
+) -> None:
+    """Print a dependency-free fixed-width table for Registry experiments."""
+    limited_rows = list(rows)[:limit]
+    if not limited_rows:
+        print("No rows")
+        return
+    text_rows = [
+        [str(row.get(column, "")) for column in columns]
+        for row in limited_rows
+    ]
+    widths = [
+        min(50, max(len(column), *(len(row[index]) for row in text_rows)))
+        for index, column in enumerate(columns)
+    ]
+
+    def clipped(value: str, width: int) -> str:
+        return value if len(value) <= width else value[: width - 1] + "…"
+
+    print(
+        " | ".join(
+            column.ljust(widths[index])
+            for index, column in enumerate(columns)
+        )
+    )
+    print("-+-".join("-" * width for width in widths))
+    for row in text_rows:
+        print(
+            " | ".join(
+                clipped(value, widths[index]).ljust(widths[index])
+                for index, value in enumerate(row)
+            )
+        )
+
+
+def a2a_registry_summarize_agents(payload: Any) -> list[dict[str, Any]]:
+    """Normalize agents returned by browse, REST search, or nested results."""
+    if not isinstance(payload, Mapping):
+        return []
+    agents = payload.get("agents") or payload.get("results") or []
+    rows = []
+    for item in agents:
+        if not isinstance(item, Mapping):
+            continue
+        nested = item.get("agent")
+        agent = nested if isinstance(nested, Mapping) else item
+        rows.append(
+            {
+                "package": agent.get("packageName")
+                or agent.get("package_name"),
+                "name": agent.get("displayName") or agent.get("name"),
+                "verification": agent.get("verification_level")
+                or agent.get("verificationLevel"),
+                "isVerified": agent.get("isVerified"),
+                "manifest": agent.get("manifestUrl")
+                or agent.get("manifest_url"),
+                "payment": agent.get("payment"),
+                "score": item.get("score"),
+            }
+        )
+    return rows
+
+
+def a2a_registry_fetch_all_public_agents(
+    filters: Mapping[str, Any] | None = None,
+    *,
+    max_pages: int | None = 5,
+    delay_seconds: float = 0.25,
+) -> dict[str, Any]:
+    """Page through the UI-backed public catalog with deduplication."""
+    filters = dict(filters or {})
+    page = 1
+    agents: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    responses = []
+    total = None
+    while max_pages is None or page <= max_pages:
+        response = a2a_registry_request_json(
+            "GET",
+            "/public/agents",
+            params={**filters, "page": page},
+            authenticated=False,
+        )
+        responses.append(
+            {
+                key: response[key]
+                for key in ("status", "url", "elapsedMs")
+            }
+        )
+        if not response["ok"]:
+            break
+        payload = response["data"]
+        payload = payload if isinstance(payload, Mapping) else {}
+        batch = payload.get("agents") or []
+        total = payload.get("total", total)
+        added = 0
+        for agent in batch:
+            if not isinstance(agent, Mapping):
+                continue
+            key = str(
+                agent.get("id")
+                or agent.get("packageName")
+                or json.dumps(agent, sort_keys=True)
+            )
+            if key not in seen:
+                seen.add(key)
+                agents.append(dict(agent))
+                added += 1
+        if (
+            not batch
+            or not added
+            or (isinstance(total, int) and len(agents) >= total)
+        ):
+            break
+        page += 1
+        time.sleep(delay_seconds)
+    return {
+        "agents": agents,
+        "collected": len(agents),
+        "reportedTotal": total,
+        "requests": responses,
+    }
+
+
+def a2a_registry_verification_report(
+    rows: Sequence[Mapping[str, Any]],
+) -> None:
+    """Report canonical and unknown identity-verification values."""
+    counts = Counter(
+        (row.get("verification") or "missing") for row in rows
+    )
+    print("Verification values returned:", dict(counts))
+    unknown = sorted(
+        level
+        for level in counts
+        if level not in A2A_REGISTRY_DOCUMENTED_VERIFICATION_RANK
+    )
+    if unknown:
+        print(
+            "Unknown/non-canonical levels (do not promote automatically):",
+            unknown,
+        )
+
+
+def a2a_registry_meets_documented_level(
+    row: Mapping[str, Any], minimum: str
+) -> bool:
+    """Apply a strict documented verification-level threshold."""
+    if minimum not in A2A_REGISTRY_DOCUMENTED_VERIFICATION_RANK:
+        raise ValueError(f"Unknown documented minimum level: {minimum}")
+    level = row.get("verification")
+    return bool(
+        level in A2A_REGISTRY_DOCUMENTED_VERIFICATION_RANK
+        and A2A_REGISTRY_DOCUMENTED_VERIFICATION_RANK[level]
+        >= A2A_REGISTRY_DOCUMENTED_VERIFICATION_RANK[minimum]
+    )
+
+
+def a2a_registry_validation_data(
+    response: Mapping[str, Any],
+) -> Mapping[str, Any] | None:
+    """Unwrap the public validator's outer response envelope."""
+    outer = response.get("data")
+    if isinstance(outer, Mapping) and isinstance(outer.get("data"), Mapping):
+        return outer["data"]
+    return outer if isinstance(outer, Mapping) else None
+
+
+def a2a_registry_summarize_validation(
+    response: Mapping[str, Any],
+) -> Mapping[str, Any] | None:
+    """Print readiness plus every validator finding without implying trust."""
+    result = a2a_registry_validation_data(response)
+    if not response.get("ok") or result is None:
+        print("No validation result")
+        return None
+    a2a_registry_print_table(
+        [
+            {
+                "valid": result.get("isValid"),
+                "readiness": result.get("readinessScore"),
+                "grade": result.get("grade"),
+                "spec": result.get("specVersionDetected"),
+                "offline": result.get("isOffline"),
+            }
+        ],
+        ["valid", "readiness", "grade", "spec", "offline"],
+    )
+    a2a_registry_print_table(
+        result.get("findings") or [],
+        ["tier", "severity", "code", "title"],
+        limit=100,
+    )
+    return result
+
+
+def a2a_registry_batch_validate(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    limit: int = 3,
+    delay_seconds: float = 0.5,
+) -> list[dict[str, Any]]:
+    """Validate a bounded set of discovered hosted manifests."""
+    audits = []
+    candidates = [row for row in rows if row.get("manifest")][:limit]
+    for row in candidates:
+        response = a2a_registry_request_json(
+            "POST",
+            "/public/tools/validate-url",
+            body={"url": row["manifest"]},
+            authenticated=False,
+            timeout=45,
+        )
+        result = a2a_registry_validation_data(response) or {}
+        findings = result.get("findings") or []
+        audits.append(
+            {
+                "package": row.get("package"),
+                "identityLevel": row.get("verification"),
+                "http": response.get("status"),
+                "valid": result.get("isValid"),
+                "readiness": result.get("readinessScore"),
+                "grade": result.get("grade"),
+                "errors": sum(
+                    finding.get("severity") == "error"
+                    for finding in findings
+                ),
+                "warnings": sum(
+                    finding.get("severity") == "warning"
+                    for finding in findings
+                ),
+                "signatureFindings": [
+                    finding.get("code")
+                    for finding in findings
+                    if "SIGNATURE" in str(finding.get("code", ""))
+                ],
+            }
+        )
+        time.sleep(delay_seconds)
+    return audits
+
+
+def a2a_registry_cross_check_agent(
+    row: Mapping[str, Any],
+    card: Mapping[str, Any] | None,
+) -> list[dict[str, str]]:
+    """Compare registry metadata with deterministic claims in an Agent Card."""
+    card = card or {}
+    manifest = str(row.get("manifest") or "")
+    manifest_host = urlparse(manifest).hostname or ""
+    interfaces = card.get("supportedInterfaces") or []
+    interface_hosts = sorted(
+        {
+            urlparse(str(item.get("url", ""))).hostname or ""
+            for item in interfaces
+            if isinstance(item, Mapping)
+        }
+    )
+    capabilities = card.get("capabilities") or {}
+    extensions = (
+        capabilities.get("extensions")
+        if isinstance(capabilities, Mapping)
+        else []
+    ) or []
+    registry_extensions = [
+        item
+        for item in extensions
+        if isinstance(item, Mapping)
+        and item.get("uri")
+        == "https://a2a-registry.org/extensions/registry/v1"
+    ]
+    identity: Mapping[str, Any] = {}
+    if registry_extensions:
+        extension_params = registry_extensions[0].get("params") or {}
+        if isinstance(extension_params, Mapping):
+            candidate_identity = extension_params.get("identity") or {}
+            if isinstance(candidate_identity, Mapping):
+                identity = candidate_identity
+    package_hint = identity.get("packageName")
+    security_declared = bool(card.get("securitySchemes")) or (
+        card.get("security") is not None
+    )
+    return [
+        {
+            "check": "manifest_https",
+            "status": "pass" if manifest.startswith("https://") else "review",
+            "evidence": manifest,
+        },
+        {
+            "check": "interface_https",
+            "status": (
+                "pass"
+                if interfaces
+                and all(
+                    str(item.get("url", "")).startswith("https://")
+                    for item in interfaces
+                    if isinstance(item, Mapping)
+                )
+                else "review"
+            ),
+            "evidence": str(interface_hosts),
+        },
+        {
+            "check": "host_relationship",
+            "status": "pass" if manifest_host in interface_hosts else "review",
+            "evidence": (
+                f"manifest={manifest_host}; interfaces={interface_hosts}"
+            ),
+        },
+        {
+            "check": "package_hint",
+            "status": (
+                "pass"
+                if not package_hint or package_hint == row.get("package")
+                else "review"
+            ),
+            "evidence": str(package_hint),
+        },
+        {
+            "check": "security_declared",
+            "status": "pass" if security_declared else "review",
+            "evidence": str(security_declared),
+        },
+    ]
