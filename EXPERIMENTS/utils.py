@@ -1,7 +1,7 @@
-"""Read-only helper functions for AgentCensus experiments.
+"""Read-only helper functions for agent discovery experiments.
 
-Every public function is prefixed with ``agentcensus_`` so this module can
-later hold clearly separated helpers for other agent-discovery tools.
+Public functions are grouped by service and prefixed with ``agentcensus_`` or
+``a2a_registry_`` so evidence from different sources remains distinguishable.
 """
 
 from __future__ import annotations
@@ -477,11 +477,15 @@ A2A_REGISTRY_CARD_URL = (
     "https://www.a2a-registry.org/.well-known/agent-card.json"
 )
 A2A_REGISTRY_DOCUMENTED_VERIFICATION_RANK = {
+    # ``unclaimed`` is returned by the live public catalog. ``unverified`` is
+    # retained for compatibility with the registry's earlier terminology.
+    "unclaimed": 0,
     "unverified": 0,
     "github_verified": 1,
     "domain_verified": 2,
     "ans_verified": 3,
 }
+A2A_REGISTRY_MAX_VERIFICATION_RANK = 3
 
 _A2A_REGISTRY_SAFE_RESPONSE_HEADERS = (
     "content-type",
@@ -714,7 +718,7 @@ def a2a_registry_print_table(
 
 
 def a2a_registry_summarize_agents(payload: Any) -> list[dict[str, Any]]:
-    """Normalize agents returned by browse, REST search, or nested results."""
+    """Normalize search results while retaining each raw registry record."""
     if not isinstance(payload, Mapping):
         return []
     agents = payload.get("agents") or payload.get("results") or []
@@ -724,21 +728,75 @@ def a2a_registry_summarize_agents(payload: Any) -> list[dict[str, Any]]:
             continue
         nested = item.get("agent")
         agent = nested if isinstance(nested, Mapping) else item
+        verification_level = (
+            agent.get("verification_level")
+            or agent.get("verificationLevel")
+            or "missing"
+        )
         rows.append(
             {
                 "package": agent.get("packageName")
                 or agent.get("package_name"),
                 "name": agent.get("displayName") or agent.get("name"),
-                "verification": agent.get("verification_level")
-                or agent.get("verificationLevel"),
+                "description": agent.get("description"),
+                "category": agent.get("category"),
+                "targetAudience": agent.get("targetAudience"),
+                "protocol": agent.get("protocolStd"),
+                "verificationLevel": verification_level,
+                "verificationRank": (
+                    A2A_REGISTRY_DOCUMENTED_VERIFICATION_RANK.get(
+                        verification_level
+                    )
+                ),
+                "verificationMaxRank": A2A_REGISTRY_MAX_VERIFICATION_RANK,
                 "isVerified": agent.get("isVerified"),
                 "manifest": agent.get("manifestUrl")
                 or agent.get("manifest_url"),
                 "payment": agent.get("payment"),
-                "score": item.get("score"),
+                # The registry returns this as search relevance. It is not a
+                # trust, identity, or Agent Card quality score.
+                "relevanceScore": item.get("score"),
+                "lastCheckStatus": agent.get("lastCheckStatus"),
+                "consecutiveFailures": agent.get("consecutiveFailures"),
+                "ratingAverage": agent.get("ratingAvg"),
+                "ratingCount": agent.get("ratingCount"),
+                "rawRegistryRecord": dict(agent),
             }
         )
     return rows
+
+
+def a2a_registry_search_agents(
+    query: str,
+    *,
+    page: int = 1,
+    category: str | None = None,
+    target: str | None = None,
+    sort: str | None = None,
+    payment_model: str | None = None,
+) -> dict[str, Any]:
+    """Search the public catalog and return normalized rows plus raw evidence."""
+    response = a2a_registry_request_json(
+        "GET",
+        "/public/agents",
+        params={
+            "q": query,
+            "page": page,
+            "category": category,
+            "target": target,
+            "sort": sort,
+            "payment_model": payment_model,
+        },
+        authenticated=False,
+    )
+    payload = response.get("data")
+    payload = payload if isinstance(payload, Mapping) else {}
+    return {
+        "query": query,
+        "agents": a2a_registry_summarize_agents(payload),
+        "total": payload.get("total"),
+        "response": response,
+    }
 
 
 def a2a_registry_fetch_all_public_agents(
@@ -807,7 +865,7 @@ def a2a_registry_verification_report(
 ) -> None:
     """Report canonical and unknown identity-verification values."""
     counts = Counter(
-        (row.get("verification") or "missing") for row in rows
+        (row.get("verificationLevel") or "missing") for row in rows
     )
     print("Verification values returned:", dict(counts))
     unknown = sorted(
@@ -828,7 +886,7 @@ def a2a_registry_meets_documented_level(
     """Apply a strict documented verification-level threshold."""
     if minimum not in A2A_REGISTRY_DOCUMENTED_VERIFICATION_RANK:
         raise ValueError(f"Unknown documented minimum level: {minimum}")
-    level = row.get("verification")
+    level = row.get("verificationLevel")
     return bool(
         level in A2A_REGISTRY_DOCUMENTED_VERIFICATION_RANK
         and A2A_REGISTRY_DOCUMENTED_VERIFICATION_RANK[level]
@@ -896,7 +954,8 @@ def a2a_registry_batch_validate(
         audits.append(
             {
                 "package": row.get("package"),
-                "identityLevel": row.get("verification"),
+                "identityLevel": row.get("verificationLevel"),
+                "identityRank": row.get("verificationRank"),
                 "http": response.get("status"),
                 "valid": result.get("isValid"),
                 "readiness": result.get("readinessScore"),
@@ -918,6 +977,81 @@ def a2a_registry_batch_validate(
         )
         time.sleep(delay_seconds)
     return audits
+
+
+def a2a_registry_assess_agent(
+    row: Mapping[str, Any],
+    *,
+    timeout: int = 45,
+) -> dict[str, Any]:
+    """Validate one discovered Agent Card and keep all scoring evidence.
+
+    The returned values deliberately remain separate: ``relevanceScore`` is a
+    search signal, ``verificationRank`` is an ordinal registry identity level,
+    and ``readinessScore`` measures Agent Card readiness. The A2A Registry does
+    not provide enough behavioral evidence for a general trust score.
+    """
+    manifest = row.get("manifest")
+    if not manifest:
+        response: Mapping[str, Any] = {
+            "ok": False,
+            "status": None,
+            "url": "",
+            "elapsedMs": 0,
+            "headers": {},
+            "data": {"error": "No manifest URL in registry record"},
+        }
+        result: Mapping[str, Any] = {}
+    else:
+        response = a2a_registry_request_json(
+            "POST",
+            "/public/tools/validate-url",
+            body={"url": manifest},
+            authenticated=False,
+            timeout=timeout,
+        )
+        result = a2a_registry_validation_data(response) or {}
+
+    findings = result.get("findings") or []
+    signature_findings = [
+        finding.get("code")
+        for finding in findings
+        if isinstance(finding, Mapping)
+        and "SIGNATURE" in str(finding.get("code", ""))
+    ]
+    return {
+        "package": row.get("package"),
+        "name": row.get("name"),
+        "relevanceScore": row.get("relevanceScore"),
+        "verificationLevel": row.get("verificationLevel"),
+        "verificationRank": row.get("verificationRank"),
+        "verificationMaxRank": row.get(
+            "verificationMaxRank", A2A_REGISTRY_MAX_VERIFICATION_RANK
+        ),
+        "cardValid": result.get("isValid"),
+        "readinessScore": result.get("readinessScore"),
+        "readinessGrade": result.get("grade"),
+        "errors": sum(
+            isinstance(finding, Mapping)
+            and finding.get("severity") == "error"
+            for finding in findings
+        ),
+        "warnings": sum(
+            isinstance(finding, Mapping)
+            and finding.get("severity") == "warning"
+            for finding in findings
+        ),
+        "signatureFindings": signature_findings,
+        "trustScore": None,
+        "trustExplanation": (
+            "Not computed: registry identity and card readiness do not measure "
+            "behavioral trust."
+        ),
+        "card": result.get("cardData"),
+        "findings": findings,
+        "validatorResult": result,
+        "validatorResponse": response,
+    }
 
 
 def a2a_registry_cross_check_agent(
