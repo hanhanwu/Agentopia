@@ -1,193 +1,291 @@
-# Agentopia and Skynet Build Plan
+# Agentopia + Skynet Build Plan
 
-## Purpose
+## Goal
 
-Build two related but independently useful open-source products:
+Build toward a small observable world of AI agents.
 
-- **Agentopia:** an environment for publishing, connecting, testing, and simulating agents and tools.
-- **Skynet:** an observation and analysis system for real and simulated agent discovery, selection, interaction, tool use, and verification.
-- **Studio:** a combined experience that presents Agentopia and Skynet over the same activity history.
+- **Agentopia** — eventually becomes a controlled agent world for reproducing and testing real behaviors.
+- **Skynet** — observes, records, visualizes, and analyzes what happens during agent discovery and interaction.
 
-The first release must demonstrate real public agents and real protocol traffic. Simulation remains important, but it must be clearly distinguished from observation.
+**Current priority:** learn from real agents already on the Internet before spending time and money building many agents ourselves.
 
-## Durable Principles
+---
 
-- **Events are the source of truth.** Meaningful activity produces a structured, causally linked event.
-- **Evidence is inspectable.** Explanations link to the discovery artifact, protocol exchange, or prior event that supports them.
-- **Provenance is explicit.** Distinguish `observed`, `reported`, `derived`, and `simulated` information.
-- **Visibility is honest.** Never present an external agent's unavailable internals or private reasoning as observed fact.
-- **Protocols remain open.** Do not bind either product to one agent framework or model provider.
-- **Live and reproducible both matter.** Support live observation and replay of timestamped real observations, alongside explicitly simulated runs.
-- **Security is part of the product.** Treat public endpoints as untrusted and protect credentials, private data, and state-changing actions.
-- **Build thin vertical slices.** Keep a modular monolith until demonstrated needs justify additional infrastructure.
+# Phase 1 — OBSERVE
 
-## Durable UI Direction
+## Objective
 
-- **Skynet is the primary information surface.** On wide screens, begin with roughly two-fifths of the workspace for Agentopia and three-fifths for Skynet; adapt responsively without losing either view.
-- **Agentopia provides orientation, not decorative scenery.** Use a dark, minimal, line-based world that makes agents, connections, messages, tools, waiting, failures, and outcomes easy to follow.
-- **Agents use a coherent visual grammar.** Begin with the approved arch-and-tentacle character silhouette, then distinguish agents through shape details, symbols, labels, and color rather than color alone.
-- **White linework communicates user ownership.** Mochi, the user's personal agent, is the only agent with a bright white identity outline and glow; its body remains dark and unfilled by white, consistent with the other agents. Service, external, and system agents use non-white identity colors; semantic event colors remain independent of agent identity.
-- **Animation communicates recorded state.** Motion must correspond to activity events and must not imply work, communication, or reasoning that was not observed or simulated.
-- **Skynet explains before exposing raw detail.** Present a plain-language finding first, followed by causal trace, provenance, protocol data, and exact evidence.
-- **Both views share selection and time.** Selecting an agent, connection, tool, artifact, or event updates both products against the same history and replay cursor.
-- **Every UI-element change requires design approval before implementation.** First update the relevant editable design master and review artifact in `UI_elements_design`, then wait for explicit user approval. Until that approval is received, do not update application code, tests, or other documentation for the proposed UI change. Approved implementations must reuse the approved concept rather than inventing a replacement.
-- **Accessibility is required.** Preserve readable contrast, keyboard access, reduced-motion behavior, and non-animated representations of meaningful states.
-
-## Product Boundaries
+Observe real published agents and understand what actually happens across:
 
 ```text
-published first-party agents ─┐
-external public agents ──────┼── activity events ──▶ Skynet
-Agentopia scenarios ─────────┘                         │
-                                                      ▼
-                                             evidence and projections
-                                                      │
-Agentopia ◀──────────── shared history ─────────── Studio
+discover → inspect → connect → interact
 ```
 
-### Agentopia owns
+Skynet should record every observable step and keep the underlying evidence.
 
-- First-party agent and tool environments.
-- Scenarios, world state, commands, and simulated time.
-- Connections to external agents.
-- Reproducible simulation and test inputs.
-- Neutral activity-event production.
+Do **not** invent failure scenarios first.
 
-### Skynet owns
+> Observe the ecosystem → identify real gaps → later reproduce the important ones with controlled agents.
 
-- Event ingestion, validation, normalization, and storage.
-- Live and historical timelines.
-- Discovery-path and causal-trace reconstruction.
-- Evidence-backed observations, comparisons, and verification.
-- Read models and explanations for its UI and API.
+## Initial workflow
 
-### Shared activity protocol owns
+```text
+Personal Agent / User Intent
+        ↓
+Search
+        ↓
+Candidate Agents
+        ↓
+Agent Card / Metadata
+        ↓
+Identity Verification
+        ↓
+Capability Selection
+        ↓
+Protocol / Connection Setup
+        ↓
+Authentication
+        ↓
+Interaction
+        ↓
+Tool / Action / Result
+        ↓
+Trace + Findings
+```
 
-- Versioned runtime-validated event schemas.
-- Stable run, trace, span, actor, subject, artifact, and causal identifiers.
-- Provenance, visibility, timing, compatibility, and redaction metadata.
-- Neutral contracts that do not depend on either product's UI.
+Possible discovery sources include:
 
-## Phase 1: Real Observable Vertical Slice
+- Web search
+- A2A registries / directories
+- MCP registries / directories
+- ARD or other discovery mechanisms
+- Known public agent domains/endpoints
 
-### Current status and next focus
+---
 
-The first Studio UI baseline is complete. It establishes the intended product hierarchy and interaction language, but still runs on local simulated events and must later be connected to the shared runtime and real agents.
+## Phase 1 To-Dos
 
-- [x] Implement the responsive two-fifths Agentopia and three-fifths Skynet workspace.
-- [x] Establish distinct visual identities: bright-white linework and subtle pink facial blush for the dark-bodied user agent, non-white service agents, a minimal green/orange Agentopia world, and an evidence-focused blue Skynet console.
-- [x] Represent the user, Mochi, and Luca with the approved agent silhouette and event-driven states.
-- [x] Show directional user-to-agent and agent-to-agent activity without displaying a Luca connection before discovery.
-- [x] Provide Skynet findings, provenance, causal event history, live viewing, and historical review for the simulated flow.
-- [x] Verify the UI baseline with automated tests, production builds, and rendered browser checks.
+Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each experiment should save the raw evidence before adding interpretation or visualization.
 
-**Next focus:** define, build, and publish the first-party agent cast behind stable public identities. Begin with the smallest real discovery and interaction path needed for Mochi to evaluate alternatives, select Luca, and complete one verifiable task. Replace simulated Studio events incrementally as each real protocol step becomes available.
+### 1. Search & Discovery
 
-### 1. Define the demonstration and visual language
+- [ ] Search for agents from the same natural-language request using multiple discovery sources.
+- [ ] Compare which agents each source returns.
+- [ ] Record agents found by one source but missing from another.
+- [ ] Record ranking/order differences across sources.
+- [ ] Measure duplicate, stale, unreachable, or invalid results.
+- [ ] Record what searchable metadata each source exposes.
 
-- [ ] Write one short vertical-slice specification covering the user task, candidate source, candidate roles, expected decisions, interaction, tool result, verification, and completion criteria.
-- [ ] Define a small first-party cast: Mochi, Luca, and several plausible alternatives with overlapping, partial, unavailable, or incompatible capabilities.
-- [ ] Map each step of the demonstration to its observable evidence, required activity events, Agentopia representation, and Skynet explanation.
-- [x] Establish `UI_elements_design` as the source for approved visual concepts, with editable SVG masters, reviewable image previews, and short behavioral notes.
-- [x] Define the initial dark visual system: color roles, typography, spacing, line weights, contrast, and reduced-motion behavior.
-- [x] Design the base agent silhouette and initial distinguishable variants that remain identifiable without relying only on color.
-- [ ] Design the essential activity states: idle, discovering, validating, rejected, selected, communicating, waiting, using a tool, failed, and verified.
-- [ ] Design connection, message, tool, artifact, evidence, provenance, and status primitives.
-- [x] Approve one combined layout in which Agentopia provides orientation and Skynet receives more space for explanation and evidence.
-- [ ] Approve one storyboard showing the complete vertical slice at the intended screen size before producing additional visual assets.
+**Questions to explore**
 
-### 2. Establish the shared runtime foundation
+- Can an agent exist but be difficult to discover?
+- Do different discovery systems describe the same ecosystem differently?
+- What information is needed to reliably identify the same agent across sources?
 
-- [ ] Establish clear Agentopia, Skynet, shared-protocol, and Studio boundaries in the repository.
-- [ ] Define runtime-validated schemas for the events required by the vertical slice before adding new activity payloads.
-- [ ] Include stable identifiers, causality, timing, provenance, visibility, redaction, and artifact references in the shared contract.
-- [ ] Move commands and the canonical append-only run history to a server-authoritative path.
-- [ ] Make both live observations and replayed observations enter through the same validated event-ingestion boundary.
-- [ ] Derive Agentopia, Skynet, selection, and replay state from the same event history and stable identifiers.
+### 2. Agent Metadata / Agent Card Inspection
 
-### 3. Publish the first-party agents
+- [ ] Fetch available Agent Cards, manifests, catalogs, MCP metadata, or equivalent artifacts.
+- [ ] Normalize useful fields into one comparison structure.
+- [ ] Compare capability claims across registry metadata, Agent Cards, websites, and observed behavior.
+- [ ] Detect missing, conflicting, ambiguous, or outdated metadata.
+- [ ] Record protocol, endpoint, authentication, ownership, and capability declarations when available.
 
-- [ ] Publish Luca behind a stable public identity with machine-readable discovery metadata and at least one real A2A or MCP interaction path.
-- [ ] Give Luca one small, safe tool that returns a verifiable result through a real protocol exchange.
-- [ ] Publish the alternative agents behind their own stable identities and real discovery metadata.
-- [ ] Ensure the alternatives create meaningful validation and rejection outcomes rather than differing only in name or appearance.
-- [ ] Publish Mochi behind a stable public identity and make it accept the demonstration task through a real interface.
-- [ ] Keep deployment and model providers replaceable behind the public identities and protocol contracts.
+**Questions to explore**
 
-### 4. Implement real discovery and orchestration
+- Does the discovery source describe the agent consistently with its own metadata?
+- Are capability claims specific enough for another agent to make a selection?
 
-- [ ] Define a transparent candidate source and identify it honestly in every run.
-- [ ] Implement interchangeable discovery and selection-policy boundaries.
-- [ ] Fetch and validate public discovery artifacts instead of inserting capabilities or endpoints from frontend fixtures.
-- [ ] Record every candidate, artifact fetch, extracted claim, validation outcome, rejection, ranking decision, and final selection.
-- [ ] Make Mochi select Luca from observed evidence rather than a hardcoded identity or keyword route.
-- [ ] Complete the real interaction, tool call, result delivery, and evidence-linked verification.
-- [ ] Preserve claimed identity, verified ownership, network location, and observed behavior as separate concepts.
+### 3. Identity & Ownership
 
-### 5. Build the evidence-first Studio experience
+- [ ] Record claimed agent identity, domain, organization, endpoint, and identifiers separately.
+- [ ] Check what evidence links an agent endpoint to the organization it claims to represent.
+- [ ] Compare identity information exposed across discovery mechanisms.
+- [ ] Record cases where ownership can be claimed but not independently verified.
+- [ ] Explore whether one agent appears under multiple identifiers or endpoints.
 
-- [ ] Implement the shared timeline, event selection, and synchronized historical cursor first.
-- [ ] Make Skynet present a plain-language finding before deeper causal, protocol, and artifact evidence.
-- [ ] Show discovery hops, extracted fields, candidate decisions, protocol negotiation, tool calls, failures, timing, and verification with links to exact evidence.
-- [ ] Label every conclusion as observed, reported, derived, or simulated and show when external internals are unavailable.
-- [ ] Rebuild Agentopia as a compact dark visual representation driven by the same events shown in Skynet.
-- [ ] Ensure selecting an agent, connection, tool, artifact, or moment updates both Agentopia and Skynet.
-- [ ] Provide accessible non-animated representations for every important state.
+**Questions to explore**
 
-### 6. Add external observation and reproducibility
+- How does another agent know who it is actually talking to?
+- What identity evidence is verifiable versus self-reported?
 
-- [ ] Adapt a small curated set of Comparison Engine cases into the neutral activity protocol without coupling Skynet to its UI.
-- [ ] Complete at least one external-agent investigation that exposes a meaningful agreement, conflict, partial result, or failure without inventing missing information.
-- [ ] Support three explicit run modes: live observation, replay of a recorded real observation, and simulation.
-- [ ] Store timestamped artifacts and recorded events needed to replay important real runs when public endpoints change or disappear.
-- [ ] Apply endpoint allowlisting, network protections, timeouts, size limits, redaction, and credential isolation.
-- [ ] Require explicit approval before state-changing external actions.
+### 4. Capability & Trust
 
-### 7. Verify and release the vertical slice
+- [ ] Record the capabilities an agent claims.
+- [ ] Test a small set of safe capabilities where public interaction is allowed.
+- [ ] Compare claimed capability with observed behavior/result.
+- [ ] Record whether capability claims have any external verification, reputation, certification, or provenance.
+- [ ] Record evidence useful for deciding whether an agent should be trusted for a task.
 
-- [ ] Add contract, projection, discovery-policy, adapter, security, and replay tests for the complete demonstration.
-- [ ] Verify that the same recorded run reconstructs the same Agentopia and Skynet state.
-- [ ] Verify that live failures remain understandable and do not silently fall back to simulated success.
-- [ ] Document how to publish a compatible agent, run the demonstration locally, and distinguish the three run modes.
-- [ ] Confirm the first-release definition below with the complete first-party flow and at least one external case.
+**Questions to explore**
 
-## Phase 2: Durability and Operational Safety
+- Who verifies capability claims?
+- Can capability claims be meaningfully compared across agents?
 
-- [ ] Persist runs, events, agents, observations, and artifact references.
-- [ ] Add live event delivery, cancellation, retries, timeouts, and recovery.
-- [ ] Support durable asynchronous tasks without relying on one process or in-memory session state.
-- [ ] Add structured retention, access, redaction, and visibility controls.
-- [ ] Instrument the platform with correlated traces, logs, and metrics.
-- [ ] Test interrupted, malicious, slow, invalid, and partially completed runs.
+### 5. Protocol & Connectivity
 
-## Phase 3: Independent Products and Extensions
+- [ ] Detect which interaction protocols each agent exposes.
+- [ ] Attempt safe connection/handshake flows where permitted.
+- [ ] Record protocol versions, required fields, errors, redirects, and unsupported flows.
+- [ ] Compare agents that advertise similar capabilities but expose incompatible interfaces.
+- [ ] Record fallback paths such as A2A → MCP → HTTPS when applicable.
 
-- [ ] Provide stable Agentopia APIs for loading agents, tools, scenarios, constraints, and success criteria.
-- [ ] Make Agentopia usable without Skynet for agent development and automated testing.
-- [ ] Provide Skynet event-ingestion, trace-import, and instrumentation interfaces that do not require Agentopia.
-- [ ] Stabilize adapter, event, scenario, and verification extension points.
-- [ ] Publish contributor guides and reference agents that demonstrate interoperability.
-- [ ] Validate standalone uses before separating repositories or deployments.
+**Questions to explore**
 
-## Phase 4: Behavioral Analysis and Scale
+- Can two discovered agents actually communicate?
+- Where do protocol incompatibilities appear?
 
-- [ ] Define privacy-aware behavioral observations and versioned identity hypotheses.
-- [ ] Link every inference to supporting and contradicting evidence and publish its limitations.
-- [ ] Evaluate analysis quality against consented ground truth.
-- [ ] Add adversarial scenarios for impersonation, manipulation, and unreliable claims.
-- [ ] Introduce stronger isolation, additional services, or separate deployments only when security, users, release cadence, or measured scale requires them.
+### 6. Authentication
 
-## Definition of a Successful First Release
+- [ ] Record authentication mechanisms required by each endpoint.
+- [ ] Compare advertised authentication requirements with actual connection behavior.
+- [ ] Identify incompatible authentication expectations between agents/services.
+- [ ] Record when authentication requirements are missing or unclear from metadata.
+- [ ] Keep credentials and secrets out of experiment logs.
 
-A visitor can watch Skynet discover several genuinely published agents, understand why candidates were accepted or rejected, observe a real A2A or MCP interaction and tool call, inspect the evidence behind each explanation, and replay the run. The visitor can also inspect at least one external-agent case and can always tell whether information was observed, reported, derived, recorded, or simulated.
+**Questions to explore**
 
-## Guidance for Future Work
+- Can authentication requirements be discovered before attempting interaction?
+- What prevents two otherwise compatible agents from connecting?
 
-- Preserve Agentopia and Skynet as independent products connected by a neutral protocol.
-- Read the Durable UI Direction and inspect approved work in `UI_elements_design` before changing the Studio UI or creating visual assets.
-- Do not describe a configured candidate list as an open-ended search of the agent ecosystem.
-- Add or update schemas before introducing unstructured activity payloads.
-- Prefer evidence-backed explanations over hidden reasoning or unsupported certainty.
-- Preserve stable public agent identities even when hosting or implementation changes.
-- Keep deployment providers and model providers replaceable.
-- Update this plan only for durable product or architectural decisions; keep temporary implementation details in progress notes.
+### 7. Permissions & Data Requests
+
+- [ ] Record what data, scopes, permissions, or credentials an agent requests.
+- [ ] Compare requested access with the task being attempted.
+- [ ] Record whether permission requirements are visible before interaction.
+- [ ] Record unexpected requests for additional information or broader access.
+- [ ] Avoid granting sensitive or state-changing permissions during Phase 1 experiments.
+
+**Questions to explore**
+
+- Does the requested access appear necessary for the task?
+- Can another agent or user understand the permission boundary before proceeding?
+
+### 8. Interaction Behavior
+
+- [ ] Record request, response, timing, status, protocol, and endpoint for each observable interaction step.
+- [ ] Record redirects, delegation, tool calls, external services, and follow-up agents when visible.
+- [ ] Compare expected flow from metadata with the actual flow.
+- [ ] Record failures, partial results, retries, and unexpected transitions.
+- [ ] Keep observed facts separate from inferred explanations.
+
+**Questions to explore**
+
+- Does the interaction follow the path the user or calling agent expected?
+- Are important transitions hidden from the original requester?
+
+### 9. Traceability & Provenance
+
+- [ ] Create a trace for each experiment from discovery through final observable result.
+- [ ] Preserve timestamps, source URLs/endpoints, artifacts, and raw responses where safe.
+- [ ] Track agent/service/tool transitions such as `A → B → C → tool`.
+- [ ] Record which statements are **reported**, **observed**, or **derived**.
+- [ ] Identify where responsibility or provenance becomes unclear.
+
+**Questions to explore**
+
+- Can we reconstruct how the final result was produced?
+- When multiple agents/services participate, who performed each action?
+
+### 10. Cross-Agent / Cross-Source Analysis
+
+- [ ] Compare multiple agents attempting the same or similar task.
+- [ ] Compare the same agent discovered through different sources.
+- [ ] Look for repeated failure patterns across agents.
+- [ ] Group findings into recurring categories rather than one-off anecdotes.
+- [ ] Identify which findings are important enough to reproduce later in Agentopia.
+
+---
+
+## Experiment Output
+
+Each experiment in `EXPERIMENTS/` should produce a small, inspectable record such as:
+
+```text
+experiment
+├── input / user intent
+├── discovery source
+├── candidate agents
+├── raw metadata / Agent Cards
+├── identity evidence
+├── protocol + auth observations
+├── interaction trace
+├── raw responses / artifacts
+└── findings
+```
+
+Minimum finding format:
+
+```text
+Observation:
+Evidence:
+Why it matters:
+Open question:
+```
+
+Avoid labeling something a security or trust failure unless the evidence supports that conclusion.
+
+---
+
+## Skynet Phase 1 Requirements
+
+Skynet should gradually make the experiments easier to inspect rather than replacing the experiments too early.
+
+- [ ] Capture structured observations from Python experiments.
+- [ ] Preserve raw evidence alongside normalized fields.
+- [ ] Visualize the discovery and interaction path.
+- [ ] Compare agents, discovery sources, metadata, protocols, and outcomes.
+- [ ] Surface inconsistencies, missing information, and observable gaps.
+- [ ] Distinguish **reported**, **observed**, and **derived** information.
+- [ ] Make every finding traceable back to evidence.
+
+---
+
+# Phase 2 — REPRODUCE
+
+Take important gaps observed in Phase 1 and build controlled Agentopia agents/scenarios that reproduce them.
+
+```text
+real observed gap
+      ↓
+controlled agents + scenarios
+      ↓
+reproduce / manipulate behavior
+      ↓
+Agentopia becomes an agent-world testbed
+```
+
+This phase enables experiments that cannot safely or reliably be performed on third-party agents, including adversarial and controlled A/B scenarios.
+
+Detailed scope will be defined from Phase 1 findings.
+
+---
+
+# Phase 3 — MONITOR
+
+Use what was learned from observation and controlled reproduction to continuously inspect real agent ecosystems and detect meaningful abnormal, unsafe, or inconsistent behavior.
+
+```text
+observe + reproduce knowledge
+          ↓
+continuous ecosystem observation
+          ↓
+detection + evidence
+          ↓
+agent monitoring / security infrastructure
+```
+
+Detailed scope will be defined after Phases 1 and 2.
+
+---
+
+## Current Build Principle
+
+**Do not build complexity before the observations justify it.**
+
+For now:
+
+1. Run Python experiments.
+2. Collect real evidence.
+3. Identify recurring gaps.
+4. Build Skynet views that make those gaps understandable.
+5. Only then decide which Agentopia agents and controlled scenarios are worth building.
