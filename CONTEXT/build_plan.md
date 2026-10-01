@@ -78,9 +78,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 **Questions to explore**
 
-- Can an agent exist but be difficult to discover?
-- Do different discovery systems describe the same ecosystem differently?
-- What information is needed to reliably identify the same agent across sources?
+- Can an agent exist in an A2A registry but remain undiscoverable through web search?
 
 ### 2. Agent Metadata / Agent Card Inspection
 
@@ -94,6 +92,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 - Does the discovery source describe the agent consistently with its own metadata?
 - Are capability claims specific enough for another agent to make a selection?
+- What happens when a registry describes an agent's capability as "travel booking," but its Agent Card describes something different?
 
 ### 3. Identity & Ownership
 
@@ -107,6 +106,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 - How does another agent know who it is actually talking to?
 - What identity evidence is verifiable versus self-reported?
+- After finding an agent endpoint, how can we verify that it belongs to the organization it claims to represent?
 
 ### 4. Capability & Trust
 
@@ -120,6 +120,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 - Who verifies capability claims?
 - Can capability claims be meaningfully compared across agents?
+- If an Agent Card says the agent can perform capability X, who has verified that claim?
 
 ### 5. Protocol & Connectivity
 
@@ -146,6 +147,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 - Can authentication requirements be discovered before attempting interaction?
 - What prevents two otherwise compatible agents from connecting?
+- What happens when Agent A wants to communicate with Agent B, but their authentication mechanisms do not match?
 
 ### 7. Permissions & Data Requests
 
@@ -159,6 +161,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 - Does the requested access appear necessary for the task?
 - Can another agent or user understand the permission boundary before proceeding?
+- What should happen when an agent requests more data than appears necessary for the task?
 
 ### 8. Interaction Behavior
 
@@ -172,6 +175,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 - Does the interaction follow the path the user or calling agent expected?
 - Are important transitions hidden from the original requester?
+- If an agent redirects to another agent or service, can the original user see and understand that transition?
 
 ### 9. Traceability & Provenance
 
@@ -185,6 +189,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 - Can we reconstruct how the final result was produced?
 - When multiple agents/services participate, who performed each action?
+- In a chain such as `A → B → C → tool`, who is responsible for the final action?
 
 ### 10. Cross-Agent / Cross-Source Analysis
 
