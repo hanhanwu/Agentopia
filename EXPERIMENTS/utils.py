@@ -733,6 +733,8 @@ def a2a_registry_summarize_agents(payload: Any) -> list[dict[str, Any]]:
             or agent.get("verificationLevel")
             or "missing"
         )
+        manifest = agent.get("manifestUrl") or agent.get("manifest_url")
+        openapi = agent.get("openapiUrl") or agent.get("openapi_url")
         rows.append(
             {
                 "package": agent.get("packageName")
@@ -750,8 +752,14 @@ def a2a_registry_summarize_agents(payload: Any) -> list[dict[str, Any]]:
                 ),
                 "verificationMaxRank": A2A_REGISTRY_MAX_VERIFICATION_RANK,
                 "isVerified": agent.get("isVerified"),
-                "manifest": agent.get("manifestUrl")
-                or agent.get("manifest_url"),
+                "manifest": manifest,
+                "manifestDomain": (
+                    urlparse(str(manifest)).hostname if manifest else None
+                ),
+                "openapi": openapi,
+                "openapiDomain": (
+                    urlparse(str(openapi)).hostname if openapi else None
+                ),
                 "payment": agent.get("payment"),
                 # The registry returns this as search relevance. It is not a
                 # trust, identity, or Agent Card quality score.
