@@ -70,6 +70,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 ### 1. Search & Discovery
 
 - [ ] Search for agents from the same natural-language request using multiple discovery sources.
+- [ ] Compare agent search with MCP service search for the same request: what each returns, which better matches the task, and whether the personal agent should contact another agent or use an MCP service directly.
 - [ ] Compare which agents each source returns.
 - [ ] Record agents found by one source but missing from another.
 - [ ] Record ranking/order differences across sources.
