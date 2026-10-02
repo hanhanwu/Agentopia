@@ -1,4 +1,4 @@
-# Agentopia and Skynet
+# Agentopia
 
 An open-source environment for making agent discovery, interaction, and evidence visible.
 
