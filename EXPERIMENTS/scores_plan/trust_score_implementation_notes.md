@@ -1,0 +1,157 @@
+# Trust score implementation notes
+
+## AgentCensus / ATD model
+
+Observed from `GET /api/v1/agents/{agentKey}/trust` on 2026-09-29 using
+ATD version `6ec1034`.
+
+### Evaluation pipeline
+
+1. AgentCensus passively crawls discovery documents, DNS, and TLS.
+2. It converts those observations into signals for the external Agent Trust
+   Discovery (ATD) scorer.
+3. ATD maps each signal to a raw score from 0 to 100 and groups signals into
+   five dimensions.
+4. AgentCensus derives a coverage-aware composite from the dimensions ATD
+   actually measured.
+5. AgentCensus attaches a separate behavior/safety overlay. The overlay does
+   not currently affect the Trust Vector or composite.
+
+### Current dimensions and signals
+
+Only `identity` and `integrity` are measured by the current engine.
+`solvency`, `behavior`, and `safety` are returned with `active: false`; their
+zeroes mean **not measured**, not untrustworthy.
+
+| Dimension | Signal | Raw-score rule |
+|---|---|---|
+| Identity | `certtype` | EV = 100, OV = 70, DV = 40, absent = 0 |
+| Integrity | `dnssecurity` | DNSSEC + CAA = 100, one = 50, neither = 0 |
+| Integrity | `agentage` | `round(100 * age_days / 180)`, capped at 100 |
+| Integrity | `versionstability` | `round(100 / (1 + version_changes_30d))` |
+| Integrity | fingerprint/DNS drift | match = 100, mismatch or absent = 0 |
+
+AgentCensus currently gives the four drift signals weight 0, so they are
+shown as evidence but do not move the dimension score.
+
+### Score calculation
+
+For each active dimension:
+
+```text
+dimension_score = round(sum(raw_score * weight) / sum(weight))
+```
+
+The composite is the integer mean of measured dimensions only:
+
+```text
+composite = round(sum(active_dimension_scores) / measured_dimension_count)
+```
+
+Always store and display `measured` beside the composite. For example, a score
+of 78 from 2/5 dimensions is not equivalent to 78 from 5/5 dimensions. Scores
+should only be compared when `atdVersion` is the same.
+
+### Recommended profile and risks
+
+The profile is determined from individual active dimensions, not from the
+composite. With the default thresholds, any active dimension below 20 yields
+`UNTRUSTED`. Signals also emit explanatory risk codes such as:
+
+- `IDENTITY_CERT_DV_ONLY`
+- `INTEGRITY_DNSSEC_BROKEN`
+- `INTEGRITY_AGENT_NEW`
+
+Risk codes explain contributing conditions; they are not separate scores.
+
+### Observed example
+
+For `ag_9b1affba8bee`, AgentCensus returned integrity 7 and identity 40:
+
+```text
+composite = round((7 + 40) / 2) = 24, measured 2 of 5
+```
+
+The agent was classified `UNTRUSTED` because integrity 7 was below 20. The
+main evidence was: DV TLS certificate, no DNSSEC or CAA, record age 23 days,
+and no version observation.
+
+There is an important reproducibility discrepancy: the visible integrity
+signals and weights imply `round((0 + 13 + 0) / 3) = 4`, but the API returned
+7, equal to `round((0 + 13) / 2)`. This suggests the missing version signal was
+excluded from the real denominator even though it was displayed with weight
+1, or the API displayed the wrong effective weight. Do not copy this ambiguity.
+
+## Proposed stronger trust model
+
+Treat published claims as hypotheses to verify, not as proof. Keep each score's
+evidence, coverage, time window, confidence, and rule version. The APIs marked
+**write** require an owned agent/domain and explicit approval before use. All
+AgentCensus paths below are relative to `/api/v1`. The A2A Registry column is
+limited to the two public operations already used in
+`a2a_registry_api_explorer.ipynb`: `GET /public/agents` (through
+`search_agents`) and `POST /public/tools/validate-url` (through
+`assess_agent`). Reuse their atomic observations, not the aggregate readiness
+score or grade. ANS is an optional evidence provider, not a numeric score and
+not a prerequisite for evaluating a non-ANS agent.
+
+### Source inputs and outputs
+
+This inventory separates what a source needs from what it produces. A returned
+artifact is raw evidence until its signatures, bindings, expiry, and provenance
+have been verified locally where applicable.
+
+| Source | Input and access needed | Raw outputs | Current role and boundary |
+|---|---|---|---|
+| **AgentCensus** | Agent key or domain for public reads; an owned agent/domain and approval for claim, credential, recrawl, active-verification, and synthetic-check writes. | Crawled discovery documents, DNS/TLS observations, history, ATD signals and explanations, claims, insights, and active-verification results. | Existing source for identity and integrity and a possible source for repeated behavioral and authorization evidence. Its current ATD evaluation mainly measures identity and integrity. |
+| **A2A Registry** | Search parameters for `GET /public/agents`; an Agent Card URL for `POST /public/tools/validate-url`. | Registry identity level and claims, fetched Agent Card, schema/network/trust-artifact findings, and readiness result. | Supplies registry assertions, self-reported claims, and validator observations. `ans_verified`, relevance, and readiness are not general trust scores. |
+| **ANS public verification** | An ANS agent ID/name, host, or badge/receipt location; public reads depend on the deployment's access policy. | Lifecycle status, sealed lifecycle event, certificate and metadata attestations, linked identities, audit history, Merkle proof, SCITT receipt, and signed status token. | Optional cryptographic identity, provenance, continuity, and integrity evidence. Receiving an artifact is not the same as verifying it, and ANS does not measure behavior or safety. |
+| **ANS registration and management** | Authentication plus display name, host, semantic version, endpoint/protocol, and a server CSR or certificate; activation also requires control of the domain and prescribed DNS records. An identity CSR and operator-identity proofs are optional. | ANS ID/name, registration state, certificates, DNS instructions, sealed events, receipts, catalog artifacts, and linked verified identities when configured. | Owner-controlled workflow; it cannot be performed for an arbitrary discovered agent. Registration and `ACTIVE` status are evidence, not scores. |
+
+### Evidence by trust dimension
+
+| Dimension | Definition | AgentCensus APIs to explore | A2A Registry APIs to explore | ANS APIs and artifacts to explore |
+|---|---|---|---|---|
+| **Identity and control** | Who operates the agent, and has control been proved? | `GET /agents/{agentKey}` and `GET /domains/{domain}` for identity evidence; `GET/POST /orgs/{slug}/agents/{agentKey}/claim` and `POST /orgs/{slug}/agents/{agentKey}/claim/verify` (**POSTs are write**) for agent-control verification; `POST /orgs/{slug}/domains` and `POST /orgs/{slug}/domains/{domain}/verify` (**write**) for domain-control verification; `GET /orgs/{slug}/agents/{agentKey}/claim/assertion` for the signed ACV assertion. | `GET /public/agents`: retain `verificationLevel`, `isVerified`, organization/package claims, and manifest domain as registry-reported identity evidence. Do not convert the verification rank into a percentage or assume it proves the real-world organization. | `GET /v1/agents/{agentId}` on the Transparency Log: retain `ansId`/agent ID, `ansName`, current lifecycle status, sealed registration event, certificate attestations, and currently linked identities. Explore `/v1/agents/{agentId}/identities` and the corresponding identity badges and proof events for `did:web`, `did:key`, or LEI evidence. Verify the producer/TL signatures, inclusion proof, status, expiry, and certificate or identity binding locally. Domain control establishes control of the registered host, not automatically the real-world organization. |
+| **Integrity** | Are its discovery records, versions, endpoints, and signatures consistent? | `GET /agents/{agentKey}`, `GET /agents/{agentKey}/documents/{document}`, and `GET /domains/{domain}` for provenance, history, TLS, and DNS evidence; `GET /orgs/{slug}/agents/{agentKey}/insights` for conformance and trust drift; `POST /orgs/{slug}/domains/{domain}/recrawl` (**write**) to request fresh observations. Do not reuse readiness-owned schema, protocol-negotiation, or latest-reachability signals in this score. | `POST /public/tools/validate-url`: retain valid JWS-signature findings as document-integrity evidence. A signature counts as identity evidence only when its key is independently bound to a verified operator. Schema findings, specification version, and reachability belong to operational readiness; do not use the readiness score, grade, error count, or warning count. | Retain the badge's sealed event and Merkle proof, `GET /v1/agents/{agentId}/audit`, the SCITT receipt from `/receipt`, and the signed `/status-token` when enabled. Extract sealed certificate fingerprints, metadata hashes, DNS-record attestations, lifecycle history, and their timestamps. Compare authenticated sealed values with fresh DNS, TLS, and document observations; an ANS artifact alone does not establish that the current live value still matches. |
+| **Behavioral reliability** | Does it remain available and produce correct results repeatedly? | `PUT /orgs/{slug}/domains/{domain}/active-verification` (**write**) to enable scheduled introspection; `GET/POST /orgs/{slug}/domains/{domain}/checks` (**POST is write**) to inspect or define MCP/A2A/OpenAPI checks; `POST /orgs/{slug}/domains/{domain}/checks/{checkId}/test` (**write**) for a manual test. Calculate reliability only from repeated observations over a defined window; the latest reachability result alone belongs to operational readiness. Manual tests are diagnostic and do not enter AgentCensus measurements. | — No direct evidence. | — No direct evidence. Registration continuity and certificate availability do not demonstrate repeated task success or service reliability. |
+| **Security and authorization** | Does it enforce authentication, scope, and destructive-action boundaries? | `GET /agents/{agentKey}` for declared auth posture; `PUT/DELETE /orgs/{slug}/agents/{agentKey}/credential` (**write**) for authenticated read-only verification; active-verification results for unauthenticated refusal and declared-versus-enforced auth; synthetic-check APIs for narrowly scoped calls and destructive-tool acknowledgement. | `POST /public/tools/validate-url`: retain HTTPS enforcement and the fetched card's `securitySchemes` and `security` fields. Treat the latter as self-reported claims; this endpoint does not show that authentication, scopes, or destructive-action boundaries are enforced. | Partial: retain verified server/identity certificate bindings and declared mTLS-capable identity material. These can authenticate a connection or peer but do not show that application-level authentication, scopes, least privilege, or destructive-action boundaries are enforced. |
+| **Safety** | Does it avoid prohibited or harmful behavior under controlled tests? | `GET /agents/{agentKey}/trust` for the DNS-AID safety overlay; `GET /domains/{domain}` for DNS-AID conformance evidence; owner-defined synthetic checks for controlled safety tests. Current AgentCensus safety observations are an overlay and do not affect its Trust Vector. | — No direct evidence. | — No direct evidence. |
+| **Claim accuracy** | How often do published claims agree with independent observations? | `GET /agents/{agentKey}` and `GET /agents/{agentKey}/documents/{document}` for published claims; active-verification results for declared-versus-observed versions, capabilities, and auth; `GET /orgs/{slug}/agents/{agentKey}/insights` for source disagreements and history; synthetic checks for independently validated outcomes. | Compare registry fields from `GET /public/agents` with the fetched `cardData` and observations from `POST /public/tools/validate-url`, including identity, description, protocol/version, endpoint, capabilities, and authentication declarations. Agreement is cross-source consistency, not independent proof that capability or behavior claims are true. | Use sealed version, endpoint, certificate, metadata-hash, and DNS attestations as an authenticated baseline, then compare them with fresh independent observations. Agreement establishes consistency with the registered baseline, not that capability or behavior claims are true. |
+
+## Requirements for our implementation
+
+- Preserve raw observations, timestamps, provenance, signal version, weights,
+  and explanations so every score can be reproduced exactly.
+- Represent `missing`, `not applicable`, `not checked`, and an observed zero as
+  different states. Never silently treat missing evidence as failure or omit it
+  from a denominator.
+- Return the numerator and denominator used for every dimension and composite.
+- Version the scoring rules and never compare scores across versions without an
+  explicit migration or re-evaluation.
+- Keep self-reported claims, ownership proofs, passive observations, active
+  verification, and inferred conclusions as separate evidence classes.
+- Treat received ANS artifacts as unverified until the relevant producer and
+  Transparency Log signatures, inclusion proof, status, expiry, and bindings
+  have been checked. Record both receipt and verification outcomes.
+- Keep ANS lifecycle states and A2A `ans_verified` categorical; do not convert
+  them into percentages or treat them as standalone trust scores.
+- Distinguish an agent that is not ANS-registered from one that was not checked,
+  could not be verified, failed verification, or was verified successfully.
+- Deduplicate evidence by underlying fact and provenance. An ANS fact repeated
+  by AgentCensus and the A2A Registry is not three independent confirmations.
+- Add real behavior and safety measurements instead of presenting infrastructure
+  posture as overall agent trust.
+- Treat a composite as a summary with coverage, not a verdict, probability, or
+  ranking key.
+
+## References
+
+- AgentCensus API: <https://agentcensus.io/docs>
+- AgentCensus signal definitions: <https://agentcensus.io/docs/signals>
+- AgentCensus OpenAPI: <https://agentcensus.io/openapi.json>
+- ATD source: <https://github.com/agentnameservice/agent-trust-discovery>
+- Exact observed scorer version: <https://github.com/agentnameservice/agent-trust-discovery/tree/6ec1034>
+- ANS source: <https://github.com/agentnameservice/ans>
+- ANS Management API: <https://github.com/agentnameservice/ans/blob/main/spec/api-spec-v2.yaml>
+- ANS Transparency Log API: <https://github.com/agentnameservice/ans/blob/main/spec/api-spec-tl-v2.yaml>
