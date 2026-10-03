@@ -1,0 +1,75 @@
+{
+  "ok": true,
+  "status": 200,
+  "url": "https://agentcensus.io/api/v1/domains/selnoviktech.com",
+  "elapsedMs": 136.7,
+  "headers": {
+    "content-type": "application/json",
+    "x-request-id": "Bn5XZllVWKJB2vuvTWx5lOuI7b3BTFodMk-YX-2Rbxr7reBhshLlkQ==",
+    "x-ratelimit-limit": "50000",
+    "x-ratelimit-remaining": "49893",
+    "x-ratelimit-reset": "2026-10-04T00:00:00Z"
+  },
+  "data": {
+    "agentCount": 6,
+    "gate": null,
+    "observed": {
+      "dnsAidCheckedAt": "2026-09-19T01:32:27Z",
+      "dnsAidChecks": [
+        {
+          "check": "alias_mode",
+          "detail": "entry point publishes no AliasMode record, so it names no per-agent leaf. The record is well formed and a client can connect to it, but the per-agent cap/bap/well-known parameters the draft puts on _<name>._<proto>._agents leaves cannot be reached from here, and automated discovery sees one endpoint rather than an inventory.",
+          "draftVersion": "draft-mozleywilliams-dnsop-dnsaid-02",
+          "observedAt": "2026-09-19T01:32:11Z",
+          "recordName": "_index._agents.selnoviktech.com",
+          "status": "info"
+        },
+        {
+          "check": "dnssec",
+          "detail": "Answer was DNSSEC-authenticated.",
+          "draftVersion": "draft-mozleywilliams-dnsop-dnsaid-02",
+          "observedAt": "2026-09-19T01:32:11Z",
+          "recordName": "_index._agents.selnoviktech.com",
+          "status": "info"
+        },
+        {
+          "check": "entry_point",
+          "detail": "SVCB record present at the well-known label",
+          "draftVersion": "draft-mozleywilliams-dnsop-dnsaid-02",
+          "observedAt": "2026-09-19T01:32:11Z",
+          "recordName": "_index._agents.selnoviktech.com",
+          "status": "pass"
+        },
+        {
+          "check": "mandatory_listed",
+          "detail": "mandatory= is present",
+          "draftVersion": "draft-mozleywilliams-dnsop-dnsaid-02",
+          "observedAt": "2026-09-19T01:32:11Z",
+          "recordName": "_index._agents.selnoviktech.com",
+          "status": "pass"
+        },
+        {
+          "check": "params_survived",
+          "detail": "DNS-AID SvcParams present in the answer",
+          "draftVersion": "draft-mozleywilliams-dnsop-dnsaid-02",
+          "observedAt": "2026-09-19T01:32:11Z",
+          "recordName": "_index._agents.selnoviktech.com",
+          "status": "pass"
+        },
+        {
+          "check": "protocol_declared",
+          "detail": "protocol declared in alpn: h2",
+          "draftVersion": "draft-mozleywilliams-dnsop-dnsaid-02",
+          "observedAt": "2026-09-19T01:32:11Z",
+          "recordName": "_index._agents.selnoviktech.com",
+          "status": "pass"
+        }
+      ],
+      "firstSeen": "2026-09-13T23:19:42Z",
+      "lastProbed": "2026-09-19T01:32:46Z",
+      "spans": []
+    },
+    "optOut": false,
+    "registrableDomain": "selnoviktech.com"
+  }
+}

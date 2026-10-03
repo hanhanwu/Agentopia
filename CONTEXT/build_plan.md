@@ -103,6 +103,19 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 - [ ] Record cases where ownership can be claimed but not independently verified.
 - [ ] Explore whether one agent appears under multiple identifiers or endpoints.
 
+**Trust-model comparison progress**
+
+- [x] Add the AgentCensus identity-and-control section to `EXPERIMENTS/trust_model_comparison.ipynb`.
+- [x] Set up both AgentCensus and A2A Registry before the trust dimensions, send the same natural-language query to both, and preserve both raw search responses.
+- [x] Retain one shared example, one AgentCensus-only example, and one A2A Registry-only example in a canonical `AGENTS` list reused by later dimensions.
+- [x] Write complete comparison API responses to clearly named JSON files in `EXPERIMENTS/output/` and keep notebook cell output limited to file locations.
+- [x] Maintain exactly two source-specific field catalogs in `EXPERIMENTS/data_schema/`, with one non-duplicated name, description, and observed example for every field currently present in the JSON outputs.
+- [x] Preserve complete raw responses from `GET /agents/{agentKey}` and `GET /domains/{domain}` without a derived summary or score.
+- [x] Add guarded, read-only cells for the organization's domain claims, agent ACV claim or permitted-method offer, and signed ACV assertion.
+- [ ] Run the organization-scoped reads after setting `AGENTCENSUS_ORG_SLUG` and `AGENTCENSUS_OWNED_AGENT_KEY` for an agent the organization controls.
+- [ ] Start or verify an AgentCensus agent/domain claim only with an owned target and explicit approval because those requests change external state.
+- [ ] Add the A2A Registry identity-and-control evidence for comparison after the AgentCensus evidence is reviewed.
+
 **Questions to explore**
 
 - How does another agent know who it is actually talking to?

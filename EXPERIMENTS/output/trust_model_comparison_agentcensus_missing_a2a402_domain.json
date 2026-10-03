@@ -1,0 +1,17 @@
+{
+  "ok": false,
+  "status": 404,
+  "url": "https://agentcensus.io/api/v1/domains/a2a402.market",
+  "elapsedMs": 131.8,
+  "headers": {
+    "content-type": "application/json",
+    "x-request-id": "rM5gURXmv3fyvQTncYL3nJhWn_JS1uztQ2LjFOmNrkgGn1uG9_GNgg==",
+    "x-ratelimit-limit": "50000",
+    "x-ratelimit-remaining": "49892",
+    "x-ratelimit-reset": "2026-10-04T00:00:00Z"
+  },
+  "data": {
+    "code": "not_found",
+    "message": "No record for that domain. It may never have been probed, or it may have been removed at its owner's request."
+  }
+}

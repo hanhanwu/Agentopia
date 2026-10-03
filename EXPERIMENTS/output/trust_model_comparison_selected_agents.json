@@ -1,0 +1,29 @@
+[
+  {
+    "case": "shared",
+    "output_label": "shared_council_of_ai",
+    "name": "Council of AI — Measurement Agent",
+    "domain": "councilof.ai",
+    "agentcensus_agent_key": "ag_0257be5ab061",
+    "a2a_registry_package": "ai.councilof.council_of_ai__measurement_agent",
+    "a2a_manifest_url": "https://councilof.ai/.well-known/agent.json"
+  },
+  {
+    "case": "agentcensus_only",
+    "output_label": "only_selnoviktech",
+    "name": "Selnoviktech Agent",
+    "domain": "selnoviktech.com",
+    "agentcensus_agent_key": "ag_050fb7a9ceea",
+    "a2a_registry_package": null,
+    "a2a_manifest_url": null
+  },
+  {
+    "case": "a2a_registry_only",
+    "output_label": "missing_a2a402",
+    "name": "A2A402 Agent Marketplace",
+    "domain": "a2a402.market",
+    "agentcensus_agent_key": null,
+    "a2a_registry_package": "market.a2a402.a2a402_agent_origin_market",
+    "a2a_manifest_url": "https://a2a402.market/.well-known/agent-card.json"
+  }
+]
