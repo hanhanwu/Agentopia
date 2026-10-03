@@ -1,6 +1,6 @@
 # AgentCensus data schema
 
-This catalog covers every field currently present in the AgentCensus JSON files under `EXPERIMENTS/output/`. It also owns the locally derived `trust_model_comparison_selected_agents.json` artifact so the schema directory remains source-oriented and contains exactly two files.
+This catalog covers every field currently present in the AgentCensus JSON files under `EXPERIMENTS/output/`.
 
 When a new AgentCensus output introduces a field, add one row here with its canonical name, description, and an observed example. Reusable structures are defined once and their locations are listed together; do not create duplicate definitions for search and detail responses.
 
@@ -157,17 +157,3 @@ These fields occur under `data` when an AgentCensus endpoint returns an error.
 |---|---|---|
 | `error.code` | Machine-readable error identifier. | `not_found` |
 | `error.message` | Human-readable error explanation. | `No record for that domain. It may never have been probed, or it may have been removed at its owner's request.` |
-
-## Local selected-agent record
-
-These fields occur in `trust_model_comparison_selected_agents.json`. This is a local comparison artifact, not an AgentCensus API response.
-
-| Name | Description | Example value |
-|---|---|---|
-| `selectedAgent.case` | Cross-source availability category assigned by the experiment. | `shared` |
-| `selectedAgent.output_label` | Stable filename-safe label used for evidence artifacts. | `shared_council_of_ai` |
-| `selectedAgent.name` | Display name used across the comparison notebook. | `Council of AI — Measurement Agent` |
-| `selectedAgent.domain` | Domain used to align records across sources. | `councilof.ai` |
-| `selectedAgent.agentcensus_agent_key` | AgentCensus identifier, or null when the source did not return the subject. | `ag_0257be5ab061` |
-| `selectedAgent.a2a_registry_package` | A2A Registry package name, or null when the source did not return the subject. | `ai.councilof.council_of_ai__measurement_agent` |
-| `selectedAgent.a2a_manifest_url` | Registry-reported Agent Card URL, or null when unavailable. | `https://councilof.ai/.well-known/agent.json` |
