@@ -1,6 +1,6 @@
 # A2A Registry data schema
 
-This catalog covers every field currently present in `trust_model_comparison_a2a_registry_search.json` under `EXPERIMENTS/output/`.
+This catalog covers every field currently present in the A2A Registry JSON files under `EXPERIMENTS/output/`.
 
 When a new A2A Registry output introduces a field, add one row here with its canonical name, description, and an observed example. Define each field once.
 
@@ -31,7 +31,7 @@ These fields occur under `data` in the response envelope.
 
 ## Registry agent record
 
-These fields occur at `data.agents[]`.
+These fields occur at `data.agents[]` in the search response and at the root of the selected identity-record outputs.
 
 | Name | Description | Example value | Found in API endpoint(s) |
 |---|---|---|---|

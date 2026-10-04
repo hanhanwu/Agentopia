@@ -2,13 +2,13 @@
   "ok": true,
   "status": 200,
   "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea",
-  "elapsedMs": 268.2,
+  "elapsedMs": 220.8,
   "headers": {
     "content-type": "application/json",
-    "x-request-id": "HrCmIfkcUN7batYKOw_M7yeO-z3mDb-CUar8KSMHNnAAPwsu3oj31A==",
+    "x-request-id": "uz2k-GA6SW_NzdeD6Px_scX_F5cRDeEPhx1rGBbpOSc2FBeyvtPGPg==",
     "x-ratelimit-limit": "50000",
-    "x-ratelimit-remaining": "49895",
-    "x-ratelimit-reset": "2026-10-04T00:00:00Z"
+    "x-ratelimit-remaining": "49997",
+    "x-ratelimit-reset": "2026-10-05T00:00:00Z"
   },
   "data": {
     "activeVerification": null,

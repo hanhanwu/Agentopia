@@ -2,13 +2,13 @@
   "ok": false,
   "status": 404,
   "url": "https://agentcensus.io/api/v1/domains/a2a402.market",
-  "elapsedMs": 131.8,
+  "elapsedMs": 219.3,
   "headers": {
     "content-type": "application/json",
-    "x-request-id": "rM5gURXmv3fyvQTncYL3nJhWn_JS1uztQ2LjFOmNrkgGn1uG9_GNgg==",
+    "x-request-id": "XXhWZkJnPJWZsoMQ3KqlW71-0tiPGgP5JM_cMjJzEwQXqfjE4lCzSQ==",
     "x-ratelimit-limit": "50000",
-    "x-ratelimit-remaining": "49892",
-    "x-ratelimit-reset": "2026-10-04T00:00:00Z"
+    "x-ratelimit-remaining": "49994",
+    "x-ratelimit-reset": "2026-10-05T00:00:00Z"
   },
   "data": {
     "code": "not_found",

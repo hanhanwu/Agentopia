@@ -112,7 +112,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 - [x] Maintain exactly two source-specific field catalogs in `EXPERIMENTS/data_schema/`, with one non-duplicated name, description, and observed example for every field currently present in the JSON outputs.
 - [x] Preserve complete raw responses from `GET /agents/{agentKey}` and `GET /domains/{domain}` without a derived summary or score.
 - [x] Limit the AgentCensus comparison to available public reads; exclude organization-scoped claims, assertions, credentials, recrawls, active verification, and synthetic checks.
-- [ ] Add the A2A Registry identity-and-control evidence for comparison after the AgentCensus evidence is reviewed.
+- [x] Preserve the selected A2A Registry records from `GET /public/agents` as raw identity-and-control evidence alongside the AgentCensus outputs.
 
 **Questions to explore**
 
