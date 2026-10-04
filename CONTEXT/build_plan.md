@@ -105,7 +105,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 **Trust-model comparison progress**
 
-- [x] Add the AgentCensus identity-and-control section to `EXPERIMENTS/trust_model_comparison.ipynb`.
+- [x] Add the AgentCensus identity-and-control section to `EXPERIMENTS/notebooks/trust_model_comparison.ipynb`.
 - [x] Set up both AgentCensus and A2A Registry before the trust dimensions, send the same natural-language query to both, and preserve both raw search responses.
 - [x] Retain one shared example, one AgentCensus-only example, and one A2A Registry-only example in a canonical `AGENTS` list reused by later dimensions.
 - [x] Write complete API responses to clearly named JSON files in `EXPERIMENTS/output/`; print their locations in the notebook and render the selected-agent comparison directly as a table.

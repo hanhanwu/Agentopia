@@ -51,7 +51,7 @@ def agentcensus_load_api_key(
         [Path(credentials_path)]
         if credentials_path is not None
         else [
-            Path("EXPERIMENTS/credentials.yaml"),
+            Path("EXPERIMENTS/notebooks/credentials.yaml"),
             Path("credentials.yaml"),
             Path(__file__).resolve().with_name("credentials.yaml"),
         ]
@@ -511,7 +511,7 @@ def a2a_registry_load_api_key(
         [Path(credentials_path)]
         if credentials_path is not None
         else [
-            Path("EXPERIMENTS/credentials.yaml"),
+            Path("EXPERIMENTS/notebooks/credentials.yaml"),
             Path("credentials.yaml"),
             Path(__file__).resolve().with_name("credentials.yaml"),
         ]

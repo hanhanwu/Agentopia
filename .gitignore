@@ -219,4 +219,4 @@ __marimo__/
 .streamlit/secrets.toml
 
 /tmp/
-EXPERIMENTS/credentials.yaml
+EXPERIMENTS/notebooks/credentials.yaml
