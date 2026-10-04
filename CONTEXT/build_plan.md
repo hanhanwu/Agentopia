@@ -109,10 +109,11 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 - [x] Set up both AgentCensus and A2A Registry before the trust dimensions, send the same natural-language query to both, and preserve both raw search responses.
 - [x] Retain one shared example, one AgentCensus-only example, and one A2A Registry-only example in a canonical `AGENTS` list reused by later dimensions.
 - [x] Write complete API responses to clearly named JSON files in `EXPERIMENTS/output/`; print their locations in the notebook and render the selected-agent comparison directly as a table.
-- [x] Maintain exactly two source-specific field catalogs in `EXPERIMENTS/data_schema/`, with one non-duplicated name, description, and observed example for every field currently present in the JSON outputs.
+- [x] Maintain one source-specific field catalog per API represented in `EXPERIMENTS/output/`, with one non-duplicated name, description, and observed example for every field currently present in the JSON outputs.
 - [x] Preserve complete raw responses from `GET /agents/{agentKey}` and `GET /domains/{domain}` without a derived summary or score.
 - [x] Limit the AgentCensus comparison to available public reads; exclude organization-scoped claims, assertions, credentials, recrawls, active verification, and synthetic checks.
 - [x] Preserve the selected A2A Registry records from `GET /public/agents` as raw identity-and-control evidence alongside the AgentCensus outputs.
+- [x] Check ANS `_ans-badge` and legacy `_ra-badge` discovery for the same selected domains; preserve the raw DNS responses and distinguish missing discovery from failed verification.
 
 **Questions to explore**
 

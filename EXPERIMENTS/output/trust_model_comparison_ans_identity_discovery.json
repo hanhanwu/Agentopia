@@ -1,0 +1,182 @@
+[
+  {
+    "outputLabel": "shared_council_of_ai",
+    "domain": "councilof.ai",
+    "recordName": "_ans-badge.councilof.ai",
+    "url": "https://dns.google/resolve?name=_ans-badge.councilof.ai&type=TXT",
+    "httpStatus": 200,
+    "data": {
+      "Status": 3,
+      "TC": false,
+      "RD": true,
+      "RA": true,
+      "AD": false,
+      "CD": false,
+      "Question": [
+        {
+          "name": "_ans-badge.councilof.ai.",
+          "type": 16
+        }
+      ],
+      "Authority": [
+        {
+          "name": "councilof.ai.",
+          "type": 6,
+          "TTL": 1800,
+          "data": "elliot.ns.cloudflare.com. dns.cloudflare.com. 2416219770 10000 2400 604800 1800"
+        }
+      ],
+      "Comment": "Response from 108.162.193.162."
+    }
+  },
+  {
+    "outputLabel": "shared_council_of_ai",
+    "domain": "councilof.ai",
+    "recordName": "_ra-badge.councilof.ai",
+    "url": "https://dns.google/resolve?name=_ra-badge.councilof.ai&type=TXT",
+    "httpStatus": 200,
+    "data": {
+      "Status": 3,
+      "TC": false,
+      "RD": true,
+      "RA": true,
+      "AD": false,
+      "CD": false,
+      "Question": [
+        {
+          "name": "_ra-badge.councilof.ai.",
+          "type": 16
+        }
+      ],
+      "Authority": [
+        {
+          "name": "councilof.ai.",
+          "type": 6,
+          "TTL": 1800,
+          "data": "elliot.ns.cloudflare.com. dns.cloudflare.com. 2416219770 10000 2400 604800 1800"
+        }
+      ],
+      "Comment": "Response from 172.64.32.234."
+    }
+  },
+  {
+    "outputLabel": "only_selnoviktech",
+    "domain": "selnoviktech.com",
+    "recordName": "_ans-badge.selnoviktech.com",
+    "url": "https://dns.google/resolve?name=_ans-badge.selnoviktech.com&type=TXT",
+    "httpStatus": 200,
+    "data": {
+      "Status": 0,
+      "TC": false,
+      "RD": true,
+      "RA": true,
+      "AD": true,
+      "CD": false,
+      "Question": [
+        {
+          "name": "_ans-badge.selnoviktech.com.",
+          "type": 16
+        }
+      ],
+      "Authority": [
+        {
+          "name": "selnoviktech.com.",
+          "type": 6,
+          "TTL": 1800,
+          "data": "julian.ns.cloudflare.com. dns.cloudflare.com. 2416264876 10000 2400 604800 1800"
+        }
+      ],
+      "Comment": "Response from 172.64.34.35."
+    }
+  },
+  {
+    "outputLabel": "only_selnoviktech",
+    "domain": "selnoviktech.com",
+    "recordName": "_ra-badge.selnoviktech.com",
+    "url": "https://dns.google/resolve?name=_ra-badge.selnoviktech.com&type=TXT",
+    "httpStatus": 200,
+    "data": {
+      "Status": 0,
+      "TC": false,
+      "RD": true,
+      "RA": true,
+      "AD": true,
+      "CD": false,
+      "Question": [
+        {
+          "name": "_ra-badge.selnoviktech.com.",
+          "type": 16
+        }
+      ],
+      "Authority": [
+        {
+          "name": "selnoviktech.com.",
+          "type": 6,
+          "TTL": 1800,
+          "data": "julian.ns.cloudflare.com. dns.cloudflare.com. 2416264876 10000 2400 604800 1800"
+        }
+      ],
+      "Comment": "Response from 162.159.44.94."
+    }
+  },
+  {
+    "outputLabel": "missing_a2a402",
+    "domain": "a2a402.market",
+    "recordName": "_ans-badge.a2a402.market",
+    "url": "https://dns.google/resolve?name=_ans-badge.a2a402.market&type=TXT",
+    "httpStatus": 200,
+    "data": {
+      "Status": 3,
+      "TC": false,
+      "RD": true,
+      "RA": true,
+      "AD": false,
+      "CD": false,
+      "Question": [
+        {
+          "name": "_ans-badge.a2a402.market.",
+          "type": 16
+        }
+      ],
+      "Authority": [
+        {
+          "name": "a2a402.market.",
+          "type": 6,
+          "TTL": 1800,
+          "data": "dns1.p01.nsone.net. domains+netlify.netlify.com. 1786236711 43200 7200 1209600 3600"
+        }
+      ],
+      "Comment": "Response from 198.51.45.8."
+    }
+  },
+  {
+    "outputLabel": "missing_a2a402",
+    "domain": "a2a402.market",
+    "recordName": "_ra-badge.a2a402.market",
+    "url": "https://dns.google/resolve?name=_ra-badge.a2a402.market&type=TXT",
+    "httpStatus": 200,
+    "data": {
+      "Status": 3,
+      "TC": false,
+      "RD": true,
+      "RA": true,
+      "AD": false,
+      "CD": false,
+      "Question": [
+        {
+          "name": "_ra-badge.a2a402.market.",
+          "type": 16
+        }
+      ],
+      "Authority": [
+        {
+          "name": "a2a402.market.",
+          "type": 6,
+          "TTL": 1800,
+          "data": "dns1.p01.nsone.net. domains+netlify.netlify.com. 1786236711 43200 7200 1209600 3600"
+        }
+      ],
+      "Comment": "Response from 198.51.45.72."
+    }
+  }
+]
