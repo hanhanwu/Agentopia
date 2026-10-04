@@ -111,9 +111,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 - [x] Write complete API responses to clearly named JSON files in `EXPERIMENTS/output/`; print their locations in the notebook and render the selected-agent comparison directly as a table.
 - [x] Maintain exactly two source-specific field catalogs in `EXPERIMENTS/data_schema/`, with one non-duplicated name, description, and observed example for every field currently present in the JSON outputs.
 - [x] Preserve complete raw responses from `GET /agents/{agentKey}` and `GET /domains/{domain}` without a derived summary or score.
-- [x] Add guarded, read-only cells for the organization's domain claims, agent ACV claim or permitted-method offer, and signed ACV assertion.
-- [ ] Run the organization-scoped reads after setting `AGENTCENSUS_ORG_SLUG` and `AGENTCENSUS_OWNED_AGENT_KEY` for an agent the organization controls.
-- [ ] Start or verify an AgentCensus agent/domain claim only with an owned target and explicit approval because those requests change external state.
+- [x] Limit the AgentCensus comparison to available public reads; exclude organization-scoped claims, assertions, credentials, recrawls, active verification, and synthetic checks.
 - [ ] Add the A2A Registry identity-and-control evidence for comparison after the AgentCensus evidence is reviewed.
 
 **Questions to explore**
