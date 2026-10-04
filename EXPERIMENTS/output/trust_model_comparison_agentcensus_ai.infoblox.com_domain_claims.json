@@ -1,0 +1,14 @@
+{
+  "ok": false,
+  "status": 401,
+  "url": "https://agentcensus.io/api/v1/orgs/ai.infoblox.com/domains",
+  "elapsedMs": 364.9,
+  "headers": {
+    "content-type": "application/json",
+    "x-request-id": "GHMhIqiYAAAEq_R5Upsxf_INz6UnBLZwYgl5teG2c4IjindkltqZZQ=="
+  },
+  "data": {
+    "code": "account_required",
+    "message": "sign in to do this"
+  }
+}
