@@ -69,13 +69,14 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 ### 1. Search & Discovery
 
-- [ ] Search for agents from the same natural-language request using multiple discovery sources.
+- [ ] Run the same natural-language request through AgentCensus and A2A Registry and preserve successful raw responses from both sources.
 - [ ] Compare agent search with MCP service search for the same request: what each returns, which better matches the task, and whether the personal agent should contact another agent or use an MCP service directly.
-- [ ] Compare which agents each source returns.
-- [ ] Record agents found by one source but missing from another.
+- [ ] Compare result overlap between AgentCensus and A2A Registry for one shared natural-language query.
+- [ ] Record sampled shared, AgentCensus-only, and A2A Registry-only results.
 - [ ] Record ranking/order differences across sources.
-- [ ] Measure duplicate, stale, unreachable, or invalid results.
-- [ ] Record what searchable metadata each source exposes.
+- [ ] Measure duplicate and stale results across sources.
+- [x] Record current reachability and Agent Card validity for sampled A2A Registry results.
+- [x] Record what searchable metadata each source exposes.
 
 **Questions to explore**
 
@@ -83,11 +84,13 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 ### 2. Agent Metadata / Agent Card Inspection
 
-- [ ] Fetch available Agent Cards, manifests, catalogs, MCP metadata, or equivalent artifacts.
-- [ ] Normalize useful fields into one comparison structure.
+- [x] Fetch and preserve Agent Cards and equivalent validation artifacts for sampled A2A Registry results.
+- [x] Normalize useful source-specific fields into comparison tables and summaries.
+- [ ] Define one canonical cross-source metadata comparison structure.
 - [ ] Compare capability claims across registry metadata, Agent Cards, websites, and observed behavior.
-- [ ] Detect missing, conflicting, ambiguous, or outdated metadata.
-- [ ] Record protocol, endpoint, authentication, ownership, and capability declarations when available.
+- [x] Detect missing or invalid Agent Card fields through the A2A Registry validator.
+- [ ] Detect conflicting, ambiguous, or outdated metadata across sources.
+- [x] Record protocol, endpoint, declared authentication, ownership, and capability declarations when available.
 
 **Questions to explore**
 
@@ -97,11 +100,11 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 ### 3. Identity & Ownership
 
-- [ ] Record claimed agent identity, domain, organization, endpoint, and identifiers separately.
-- [ ] Check what evidence links an agent endpoint to the organization it claims to represent.
-- [ ] Compare identity information exposed across discovery mechanisms.
-- [ ] Record cases where ownership can be claimed but not independently verified.
-- [ ] Explore whether one agent appears under multiple identifiers or endpoints.
+- [x] Record claimed agent identity, domain, organization, endpoint, and identifiers separately.
+- [x] Check what evidence links an agent endpoint to the organization it claims to represent.
+- [x] Compare identity information exposed across discovery mechanisms.
+- [x] Record cases where ownership can be claimed but not independently verified.
+- [x] Record sampled cases where one agent appears under multiple source-specific identifiers or endpoints.
 
 **Trust-model comparison progress**
 
@@ -114,6 +117,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 - [x] Limit the AgentCensus comparison to available public reads; exclude organization-scoped claims, assertions, credentials, recrawls, active verification, and synthetic checks.
 - [x] Preserve the selected A2A Registry records from `GET /public/agents` as raw identity-and-control evidence alongside the AgentCensus outputs.
 - [x] Check ANS `_ans-badge` and legacy `_ra-badge` discovery for the same selected domains; preserve the raw DNS responses and distinguish missing discovery from failed verification.
+- [ ] Re-run the shared AgentCensus search successfully and replace the current HTTP 500 artifact before marking the cross-source discovery comparison complete.
 
 **Questions to explore**
 
@@ -123,11 +127,12 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 ### 4. Capability & Trust
 
-- [ ] Record the capabilities an agent claims.
+- [x] Record the capabilities an agent claims.
 - [ ] Test a small set of safe capabilities where public interaction is allowed.
 - [ ] Compare claimed capability with observed behavior/result.
-- [ ] Record whether capability claims have any external verification, reputation, certification, or provenance.
-- [ ] Record evidence useful for deciding whether an agent should be trusted for a task.
+- [x] Record available identity-verification, reputation, signature, and provenance signals alongside capability claims without treating them as capability proof.
+- [x] Document current identity/control evidence and source-assessment boundaries useful for trust decisions.
+- [ ] Collect direct capability-correctness, authorization, behavioral, safety, and reliability evidence for task-specific trust decisions.
 
 **Questions to explore**
 
@@ -137,9 +142,10 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 ### 5. Protocol & Connectivity
 
-- [ ] Detect which interaction protocols each agent exposes.
+- [x] Detect which interaction protocols each agent advertises.
 - [ ] Attempt safe connection/handshake flows where permitted.
-- [ ] Record protocol versions, required fields, errors, redirects, and unsupported flows.
+- [x] Record advertised protocol/specification versions and validator errors for sampled Agent Cards.
+- [ ] Record runtime handshake fields, errors, redirects, and unsupported flows.
 - [ ] Compare agents that advertise similar capabilities but expose incompatible interfaces.
 - [ ] Record fallback paths such as A2A → MCP → HTTPS when applicable.
 
@@ -150,11 +156,11 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 ### 6. Authentication
 
-- [ ] Record authentication mechanisms required by each endpoint.
+- [x] Record authentication mechanisms declared by each endpoint's metadata.
 - [ ] Compare advertised authentication requirements with actual connection behavior.
 - [ ] Identify incompatible authentication expectations between agents/services.
 - [ ] Record when authentication requirements are missing or unclear from metadata.
-- [ ] Keep credentials and secrets out of experiment logs.
+- [x] Keep credentials and secrets out of experiment logs.
 
 **Questions to explore**
 
@@ -168,7 +174,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 - [ ] Compare requested access with the task being attempted.
 - [ ] Record whether permission requirements are visible before interaction.
 - [ ] Record unexpected requests for additional information or broader access.
-- [ ] Avoid granting sensitive or state-changing permissions during Phase 1 experiments.
+- [x] Avoid granting sensitive or state-changing permissions during Phase 1 experiments.
 
 **Questions to explore**
 
@@ -178,11 +184,12 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 ### 8. Interaction Behavior
 
-- [ ] Record request, response, timing, status, protocol, and endpoint for each observable interaction step.
+- [x] Record URL, status, elapsed time, and raw response for discovery and inspection API calls.
+- [ ] Record request, response, capture timestamp, protocol, and endpoint for each live agent-interaction step.
 - [ ] Record redirects, delegation, tool calls, external services, and follow-up agents when visible.
 - [ ] Compare expected flow from metadata with the actual flow.
 - [ ] Record failures, partial results, retries, and unexpected transitions.
-- [ ] Keep observed facts separate from inferred explanations.
+- [x] Keep observed facts separate from inferred explanations.
 
 **Questions to explore**
 
@@ -193,9 +200,11 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 ### 9. Traceability & Provenance
 
 - [ ] Create a trace for each experiment from discovery through final observable result.
-- [ ] Preserve timestamps, source URLs/endpoints, artifacts, and raw responses where safe.
+- [x] Preserve source URLs/endpoints, artifacts, and raw responses where safe.
+- [ ] Add explicit experiment capture timestamps and an artifact manifest.
 - [ ] Track agent/service/tool transitions such as `A → B → C → tool`.
-- [ ] Record which statements are **reported**, **observed**, or **derived**.
+- [x] Define and apply **reported**, **observed**, and **derived** distinctions in notebook interpretation and supporting notes.
+- [ ] Attach an explicit evidence classification to each stored observation and finding.
 - [ ] Identify where responsibility or provenance becomes unclear.
 
 **Questions to explore**
@@ -207,7 +216,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 ### 10. Cross-Agent / Cross-Source Analysis
 
 - [ ] Compare multiple agents attempting the same or similar task.
-- [ ] Compare the same agent discovered through different sources.
+- [x] Compare the same agent discovered through different sources.
 - [ ] Look for repeated failure patterns across agents.
 - [ ] Group findings into recurring categories rather than one-off anecdotes.
 - [ ] Identify which findings are important enough to reproduce later in Agentopia.
@@ -249,7 +258,7 @@ Avoid labeling something a security or trust failure unless the evidence support
 Skynet should gradually make the experiments easier to inspect rather than replacing the experiments too early.
 
 - [ ] Capture structured observations from Python experiments.
-- [ ] Preserve raw evidence alongside normalized fields.
+- [x] Preserve raw evidence alongside normalized fields.
 - [ ] Visualize the discovery and interaction path.
 - [ ] Compare agents, discovery sources, metadata, protocols, and outcomes.
 - [ ] Surface inconsistencies, missing information, and observable gaps.
