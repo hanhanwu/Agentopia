@@ -484,14 +484,17 @@ def agentcensus_render_integrity_table(
     output_path = Path(output_dir)
     table_rows: list[str] = []
 
-    for agent in agents:
+    for agent_index, agent in enumerate(agents):
+        agent_class = f"agent-group-{agent_index % 3}"
         agent_key = agent["agentcensus_agent_key"]
         if agent_key is None:
             table_rows.append(
-                f"<tr><th>{escape(str(agent['name']))}</th>"
+                f"<tr><th class='{agent_class}'>{escape(str(agent['name']))}</th>"
                 "<td>None</td><td>Not available</td><td>--</td><td>--</td>"
-                "<td>--</td><td>--</td><td>--</td><td>--</td>"
-                "<td>Not assessed</td><td>Not assessed</td></tr>"
+                "<td>--</td><td>--</td><td>--</td>"
+                f"<td class='{agent_class}'>--</td>"
+                f"<td class='{agent_class}'>Not assessed</td>"
+                f"<td class='{agent_class}'>Not assessed</td></tr>"
             )
             continue
 
@@ -632,7 +635,7 @@ def agentcensus_render_integrity_table(
             cells = []
             if index == 0:
                 cells.append(
-                    f"<th rowspan='{len(mechanism_rows)}'>"
+                    f"<th class='{agent_class}' rowspan='{len(mechanism_rows)}'>"
                     f"{escape(str(agent['name']))}</th>"
                 )
             cells.extend(
@@ -649,10 +652,13 @@ def agentcensus_render_integrity_table(
             if index == 0:
                 cells.extend(
                     [
-                        f"<td rowspan='{len(mechanism_rows)}'>{alignment}</td>",
-                        f"<td rowspan='{len(mechanism_rows)}'>{version_coverage}"
+                        f"<td class='{agent_class}' "
+                        f"rowspan='{len(mechanism_rows)}'>{alignment}</td>",
+                        f"<td class='{agent_class}' "
+                        f"rowspan='{len(mechanism_rows)}'>{version_coverage}"
                         "<br>expected available snapshots</td>",
-                        f"<td rowspan='{len(mechanism_rows)}'>{reading}</td>",
+                        f"<td class='{agent_class}' "
+                        f"rowspan='{len(mechanism_rows)}'>{reading}</td>",
                     ]
                 )
             table_rows.append("<tr>" + "".join(cells) + "</tr>")
@@ -662,6 +668,15 @@ def agentcensus_render_integrity_table(
         ".agentcensus-integrity-table th,"
         ".agentcensus-integrity-table td {"
         "text-align: left !important; vertical-align: top !important;"
+        "}"
+        ".agentcensus-integrity-table .agent-group-0 {"
+        "background-color: #e8f1ff !important; color: #172554 !important;"
+        "}"
+        ".agentcensus-integrity-table .agent-group-1 {"
+        "background-color: #fff2d8 !important; color: #451a03 !important;"
+        "}"
+        ".agentcensus-integrity-table .agent-group-2 {"
+        "background-color: #eaf7ee !important; color: #14532d !important;"
         "}"
         "</style>"
         "<table class='agentcensus-integrity-table'><thead><tr>"
