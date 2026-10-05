@@ -108,7 +108,7 @@ These fields occur inside `validator.cardData`. They are publisher-supplied clai
 
 ## Publisher-defined `a2a402` extension fields
 
-These fields occur under `validator.cardData.extensions.a2a402` in the A2A402 Agent Card. They are retained verbatim as publisher-defined claims and are not A2A Registry findings or Integrity evidence.
+These fields occur under `validator.cardData.extensions.a2a402` in the A2A402 Agent Card. The extension describes A2A402's marketplace and economic workflow, including agent registration, job discovery and bidding, contracts, delivery and evaluation, payment settlement, assets and networks, fees, recruitment, and social surfaces. `canonicalLifecycle` publishes the platform's intended sequence from a need through downstream work. This is a publisher-defined extension rather than a standard A2A protocol object or an A2A Registry finding. Its values are retained verbatim as self-reported claims and are not Integrity evidence unless independently tested or cryptographically verified.
 
 | Name | Description | Example value | Found in API endpoint(s) |
 |---|---|---|---|
@@ -192,7 +192,7 @@ These fields occur under `validator.cardData.extensions.a2a402` in the A2A402 Ag
 
 ## Registry agent record
 
-These fields occur at `data.agents[]` in the search response and at the root of the selected identity-record outputs.
+These fields occur at `data.agents[]` in the shared search response.
 
 | Name | Description | Example value | Found in API endpoint(s) |
 |---|---|---|---|
