@@ -1,6 +1,13 @@
-# A2A Registry data schema
+# A2A Registry observed-data catalog
 
 This catalog covers every field currently present in the A2A Registry JSON files under `EXPERIMENTS/output/`.
+
+This is an inventory of observed response data, not a normative A2A Agent Card
+schema. A field's presence here means that it occurred in at least one retained
+response; it does not mean that every agent, every Agent Card version, or every
+registry record supports that field. The sections below keep registry fields,
+standard or version-specific Agent Card fields, and publisher-defined fields
+separate.
 
 When a new A2A Registry output introduces a field, add one row here with its canonical name, description, and an observed example. Define each field once.
 
@@ -73,14 +80,21 @@ These fields occur under `data` in the raw validator response. The complete fetc
 
 These fields occur inside `validator.cardData`. They are publisher-supplied claims returned by the validator. Except for the JWS fields cataloged above, they are preserved as raw context and are not used in the Integrity interpretation.
 
+The retained cards are structurally different because the validator identified
+the Council of AI card as A2A v1.0 and the A2A402 card as A2A v0.3. The A2A402
+card also contains a v1.0-style `supportedInterfaces` entry, so it should be
+treated as an observed hybrid document rather than as a template for all v0.3
+cards. `validator.cardData.version` is the publisher's agent release version;
+it is not the A2A specification version inferred in
+`validator.specVersionDetected`.
+
+### Shared and v1.0-style Agent Card fields
+
 | Name | Description | Example value | Found in API endpoint(s) |
 |---|---|---|---|
 | `validator.cardData.name` | Published Agent Card name. | `Council of AI — Measurement Agent` | `POST /public/tools/validate-url` |
 | `validator.cardData.description` | Published Agent Card description. | `Independent AI-governance MEASUREMENT body...` | `POST /public/tools/validate-url` |
 | `validator.cardData.version` | Published agent release version. | `1.4.0` | `POST /public/tools/validate-url` |
-| `validator.cardData.protocolVersion` | Published A2A protocol version. | `0.3.0` | `POST /public/tools/validate-url` |
-| `validator.cardData.url` | Legacy or preferred interaction URL when published. | `https://a2a402.market/a2a` | `POST /public/tools/validate-url` |
-| `validator.cardData.preferredTransport` | Published preferred transport token. | `JSONRPC` | `POST /public/tools/validate-url` |
 | `validator.cardData.provider.organization` | Published provider organization. | `CSOAI Ltd` | `POST /public/tools/validate-url` |
 | `validator.cardData.provider.url` | Published provider URL. | `https://councilof.ai` | `POST /public/tools/validate-url` |
 | `validator.cardData.supportedInterfaces[].url` | Published interaction URL for one supported interface. | `https://councilof.ai/api/a2a` | `POST /public/tools/validate-url` |
@@ -88,15 +102,11 @@ These fields occur inside `validator.cardData`. They are publisher-supplied clai
 | `validator.cardData.supportedInterfaces[].protocolVersion` | Protocol version for one supported interface. | `1.0` | `POST /public/tools/validate-url` |
 | `validator.cardData.documentationUrl` | Published documentation URL. | `https://councilof.ai/llms.txt` | `POST /public/tools/validate-url` |
 | `validator.cardData.iconUrl` | Published agent icon URL. | `https://councilof.ai/og-image.png` | `POST /public/tools/validate-url` |
-| `validator.cardData.catalogUrl` | Published catalog URL. | `https://councilof.ai/interop/surface-catalog.json` | `POST /public/tools/validate-url` |
-| `validator.cardData.doi` | Published digital object identifier. | `10.5281/zenodo.21991104` | `POST /public/tools/validate-url` |
-| `validator.cardData.explicitly_not[]` | Publisher-declared exclusions or non-claims. | `certification` | `POST /public/tools/validate-url` |
 | `validator.cardData.defaultInputModes[]` | Published default input media types. | `text/plain` | `POST /public/tools/validate-url` |
 | `validator.cardData.defaultOutputModes[]` | Published default output media types. | `application/json` | `POST /public/tools/validate-url` |
 | `validator.cardData.capabilities.streaming` | Whether streaming is declared. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
 | `validator.cardData.capabilities.pushNotifications` | Whether push notifications are declared. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
 | `validator.cardData.capabilities.extendedAgentCard` | Whether an extended Agent Card is declared. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
-| `validator.cardData.capabilities.stateTransitionHistory` | Legacy state-transition-history capability declaration. Values observed: `true`. | `true` | `POST /public/tools/validate-url` |
 | `validator.cardData.capabilities.extensions[].uri` | URI identifying a declared capability extension. | `https://councilof.ai/a2a/extensions/signed-receipts/v1/` | `POST /public/tools/validate-url` |
 | `validator.cardData.capabilities.extensions[].required` | Whether the capability extension is required. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
 | `validator.cardData.capabilities.extensions[].description` | Publisher description of a capability extension. | `A DRAFT WE PUBLISH AND DO NOT YET EMIT...` | `POST /public/tools/validate-url` |
@@ -106,9 +116,59 @@ These fields occur inside `validator.cardData`. They are publisher-supplied clai
 | `validator.cardData.skills[].tags[]` | Published skill tag. | `measurement` | `POST /public/tools/validate-url` |
 | `validator.cardData.skills[].examples[]` | Published example invocation or usage text. | `SendMessage with Part.data...` | `POST /public/tools/validate-url` |
 
-## Publisher-defined `a2a402` extension fields
+### Observed legacy v0.3 fields
 
-These fields occur under `validator.cardData.extensions.a2a402` in the A2A402 Agent Card. The extension describes A2A402's marketplace and economic workflow, including agent registration, job discovery and bidding, contracts, delivery and evaluation, payment settlement, assets and networks, fees, recruitment, and social surfaces. `canonicalLifecycle` publishes the platform's intended sequence from a need through downstream work. This is a publisher-defined extension rather than a standard A2A protocol object or an A2A Registry finding. Its values are retained verbatim as self-reported claims and are not Integrity evidence unless independently tested or cryptographically verified.
+The A2A402 card contains these top-level v0.3 fields. The retained validator
+reports `preferredTransport` and `capabilities.stateTransitionHistory` as
+deprecated or outside its v1.0 schema. Preserve them as publisher claims, but
+do not require them when comparing cards from different A2A versions.
+
+| Name | Description | Example value | Found in API endpoint(s) |
+|---|---|---|---|
+| `validator.cardData.protocolVersion` | Publisher-declared top-level A2A protocol version. | `0.3` | `POST /public/tools/validate-url` |
+| `validator.cardData.url` | Legacy top-level interaction URL. | `https://a2a402.market/a2a` | `POST /public/tools/validate-url` |
+| `validator.cardData.preferredTransport` | Legacy top-level preferred transport token. | `JSONRPC` | `POST /public/tools/validate-url` |
+| `validator.cardData.capabilities.stateTransitionHistory` | Legacy state-transition-history capability declaration. Observed value: `false`. | `false` | `POST /public/tools/validate-url` |
+
+### Observed publisher-specific top-level fields
+
+These fields were published by the Council of AI card at the Agent Card root.
+The retained validator reported additional root properties against its schema,
+so their presence in this catalog must not be read as evidence that they are
+standard A2A fields.
+
+| Name | Description | Example value | Found in API endpoint(s) |
+|---|---|---|---|
+| `validator.cardData.catalogUrl` | Publisher-defined catalog URL. | `https://councilof.ai/interop/surface-catalog.json` | `POST /public/tools/validate-url` |
+| `validator.cardData.doi` | Publisher-defined digital object identifier. | `10.5281/zenodo.21991104` | `POST /public/tools/validate-url` |
+| `validator.cardData.explicitly_not[]` | Publisher-defined exclusions or non-claims. | `certification` | `POST /public/tools/validate-url` |
+
+## Publisher-defined Agent Card extensions
+
+Publisher-defined extension content is retained for provenance and possible
+source-specific analysis. It must not be normalized into the common Agent Card
+model, assumed to apply to other agents, or interpreted as an A2A Registry
+finding.
+
+### A2A402 marketplace extension
+
+These fields occur only under `validator.cardData.extensions.a2a402` in the
+retained **A2A402 Agent Marketplace** card. That card represents a
+marketplace-level gateway or broker agent; it is not a member-agent record and
+does not describe each agent participating in the marketplace. The extension
+describes platform-wide marketplace and economic workflows, including agent
+registration, job discovery and bidding, contracts, delivery and evaluation,
+payment settlement, assets and networks, fees, recruitment, and social
+surfaces. `canonicalLifecycle` publishes the platform's intended sequence from
+a need through downstream work.
+
+Every name in the following table is relative to
+`validator.cardData.extensions`; for example, `a2a402.platform` denotes the
+full path `validator.cardData.extensions.a2a402.platform`. These values are
+retained verbatim as self-reported, publisher-specific claims. They are not
+standard A2A fields, A2A Registry findings, properties of every marketplace
+agent, or Integrity evidence unless independently tested or cryptographically
+verified.
 
 | Name | Description | Example value | Found in API endpoint(s) |
 |---|---|---|---|
@@ -199,8 +259,8 @@ These fields occur at `data.agents[]` in the shared search response.
 | `registryAgent.id` | Registry record UUID. | `d875ed2b-acbf-4d83-`<br>`ad3f-47543336c0fc` | `GET /public/agents` |
 | `registryAgent.orgId` | Registry organization identifier associated with the record. | `HWEFZBB4UVzDhkGB`<br>`ZIjtGdIlihvEf9JP` | `GET /public/agents` |
 | `registryAgent.packageName` | Registry package identifier. | `market.a2a402.`<br>`a2a402_agent_origin_market` | `GET /public/agents` |
-| `registryAgent.displayName` | Registry-reported display name. | `A2A402 Agent Marketplace` | `GET /public/agents` |
-| `registryAgent.description` | Registry-reported agent description. | `A2A402 is a live production autonomous-agent work router and marketplace...` | `GET /public/agents` |
+| `registryAgent.displayName` | Registry-reported display name. `A2A402 Agent Marketplace` names one marketplace-level gateway or broker agent; it is not the collective name of every agent listed by that marketplace. | `A2A402 Agent Marketplace` | `GET /public/agents` |
+| `registryAgent.description` | Registry-reported agent description. A platform-wide description can describe the service represented by a gateway agent without becoming metadata about each member agent. | `A2A402 is a live production autonomous-agent work router and marketplace...` | `GET /public/agents` |
 | `registryAgent.targetAudience` | Intended audience category. Observed values: `General`, `Business`. | `General` | `GET /public/agents` |
 | `registryAgent.category` | Registry category. | `General` | `GET /public/agents` |
 | `registryAgent.manifestUrl` | Agent Card or manifest URL recorded by the registry. | `https://a2a402.market/`<br>`.well-known/agent-card.json` | `GET /public/agents` |
