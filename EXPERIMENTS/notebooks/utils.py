@@ -615,11 +615,18 @@ def agentcensus_render_integrity_table(
                 else ""
             )
         )
-        reading = (
-            "Consistent observed records"
-            if len(available) == len(sources) and not differing
-            else "Mixed observed records"
-        )
+        missing_count = len(sources) - len(available)
+        if not differing and missing_count == 0:
+            reading = "No inconsistency found in available snapshots"
+        else:
+            reading = "Source-specific differences; no integrity failure established"
+            if missing_count:
+                snapshot_word = "snapshot" if missing_count == 1 else "snapshots"
+                missing_label = "one" if missing_count == 1 else str(missing_count)
+                reading += (
+                    f"<br><br>Evidence coverage: {len(available)}/{len(sources)}; "
+                    f"{missing_label} AgentCensus {snapshot_word} unavailable"
+                )
 
         for index, row in enumerate(mechanism_rows):
             cells = []
@@ -651,7 +658,13 @@ def agentcensus_render_integrity_table(
             table_rows.append("<tr>" + "".join(cells) + "</tr>")
 
     return (
-        "<table><thead><tr>"
+        "<style>"
+        ".agentcensus-integrity-table th,"
+        ".agentcensus-integrity-table td {"
+        "text-align: left !important; vertical-align: top !important;"
+        "}"
+        "</style>"
+        "<table class='agentcensus-integrity-table'><thead><tr>"
         "<th>Agent</th><th>Mechanism</th><th>Snapshot</th><th>Name / status</th>"
         "<th>Version applicability</th><th>Version</th><th>TLS / transport</th>"
         "<th>Hash baseline</th><th>Available-snapshot comparison</th>"
