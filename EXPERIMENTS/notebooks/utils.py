@@ -11,6 +11,7 @@ import os
 import ssl
 import time
 from collections import Counter
+from html import escape
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 from urllib.error import HTTPError, URLError
@@ -465,6 +466,199 @@ def agentcensus_summarize_domain_agents(response: Mapping[str, Any]) -> None:
         rows,
         ["key", "name", "type", "mechanisms", "protocols", "capabilities"],
         limit=100,
+    )
+
+
+def agentcensus_render_integrity_table(
+    agents: Sequence[Mapping[str, Any]],
+    agent_responses: Mapping[str, Mapping[str, Any]],
+    output_dir: str | Path,
+) -> str:
+    """Render per-mechanism integrity evidence with merged agent summaries.
+
+    Version coverage includes only successful A2A and A2A-alt snapshots,
+    where an agent version is expected. Missing snapshots remain visible but
+    cannot contribute to the version denominator.
+    """
+    version_expected_sources = {"a2a", "a2a_alt"}
+    output_path = Path(output_dir)
+    table_rows: list[str] = []
+
+    for agent in agents:
+        agent_key = agent["agentcensus_agent_key"]
+        if agent_key is None:
+            table_rows.append(
+                f"<tr><th>{escape(str(agent['name']))}</th>"
+                "<td>None</td><td>Not available</td><td>--</td><td>--</td>"
+                "<td>--</td><td>--</td><td>--</td><td>--</td>"
+                "<td>Not assessed</td><td>Not assessed</td></tr>"
+            )
+            continue
+
+        sources = agent_responses[agent_key]["data"]["mechanisms"]
+        mechanism_rows: list[dict[str, Any]] = []
+        available: list[tuple[str, Mapping[str, Any], Mapping[str, Any]]] = []
+
+        for source in sources:
+            document_path = output_path / (
+                "trust_model_comparison_agentcensus_"
+                f"{agent['output_label']}_{source}_document.json"
+            )
+            payload = json.loads(document_path.read_text(encoding="utf-8"))
+            if payload["ok"]:
+                data = payload["data"]
+                snapshot = json.loads(data["snapshot"])
+                available.append((source, data, snapshot))
+                version_expected = source in version_expected_sources
+                mechanism_rows.append(
+                    {
+                        "source": source,
+                        "available": True,
+                        "snapshot": "Available",
+                        "name_status": (
+                            f"{escape(str(snapshot['display_name']))}<br>"
+                            f"{escape(str(snapshot['status']))}"
+                        ),
+                        "version_expected": (
+                            "Expected" if version_expected else "Not expected"
+                        ),
+                        "version": (
+                            str(snapshot.get("version") or "Missing")
+                            if version_expected
+                            else "N/A"
+                        ),
+                        "transport": (
+                            f"{snapshot.get('tls_version')} / "
+                            f"{snapshot.get('transport')}"
+                        ),
+                        "hash": "Recorded" if data.get("contentHash") else "Missing",
+                    }
+                )
+            else:
+                mechanism_rows.append(
+                    {
+                        "source": source,
+                        "available": False,
+                        "snapshot": f"Missing for this agent (HTTP {payload['status']})",
+                        "name_status": "--",
+                        "version_expected": (
+                            "Expected; snapshot missing"
+                            if source in version_expected_sources
+                            else "Not expected"
+                        ),
+                        "version": "--",
+                        "transport": "--",
+                        "hash": "--",
+                    }
+                )
+
+        mechanism_rows.sort(key=lambda row: not row["available"])
+        snapshots = [snapshot for _, _, snapshot in available]
+        aligned: list[str] = []
+        differing: list[str] = []
+        checks = [
+            (
+                "registrable domain",
+                [item.get("registrable_domain") for item in snapshots],
+            ),
+            ("crawl run", [item.get("run_id") for item in snapshots]),
+            ("display name", [item.get("display_name") for item in snapshots]),
+            ("status", [item.get("status") for item in snapshots]),
+            (
+                "capabilities",
+                [tuple(item.get("capabilities", [])) for item in snapshots],
+            ),
+            (
+                "TLS/transport",
+                [
+                    (item.get("tls_version"), item.get("transport"))
+                    for item in snapshots
+                ],
+            ),
+        ]
+        for label, values in checks:
+            (aligned if len(set(values)) == 1 else differing).append(label)
+
+        version_snapshots = [
+            snapshot
+            for source, _, snapshot in available
+            if source in version_expected_sources
+        ]
+        version_count = sum(
+            snapshot.get("version") is not None for snapshot in version_snapshots
+        )
+        version_coverage = f"{version_count}/{len(version_snapshots)}"
+        if len(version_snapshots) > 1:
+            versions = [snapshot.get("version") for snapshot in version_snapshots]
+            (aligned if len(set(versions)) == 1 else differing).append("version")
+
+        compared_sources = ", ".join(
+            f"<code>{escape(source)}</code>" for source, _, _ in available
+        )
+        missing_sources = ", ".join(
+            f"<code>{escape(str(row['source']))}</code>"
+            for row in mechanism_rows
+            if not row["available"]
+        )
+        alignment = (
+            f"Compared {len(available)} available snapshots:<br>{compared_sources}"
+            f"<br><br>Aligned:<br>{', '.join(aligned)}"
+            + (
+                f"<br><br>Differ by source:<br>{', '.join(differing)}"
+                if differing
+                else ""
+            )
+            + (
+                f"<br><br>Excluded because no snapshot was returned:<br>"
+                f"{missing_sources}"
+                if missing_sources
+                else ""
+            )
+        )
+        reading = (
+            "Consistent observed records"
+            if len(available) == len(sources) and not differing
+            else "Mixed observed records"
+        )
+
+        for index, row in enumerate(mechanism_rows):
+            cells = []
+            if index == 0:
+                cells.append(
+                    f"<th rowspan='{len(mechanism_rows)}'>"
+                    f"{escape(str(agent['name']))}</th>"
+                )
+            cells.extend(
+                [
+                    f"<td><code>{escape(row['source'])}</code></td>",
+                    f"<td>{escape(row['snapshot'])}</td>",
+                    f"<td>{row['name_status']}</td>",
+                    f"<td>{escape(row['version_expected'])}</td>",
+                    f"<td>{escape(row['version'])}</td>",
+                    f"<td>{escape(row['transport'])}</td>",
+                    f"<td>{escape(row['hash'])}</td>",
+                ]
+            )
+            if index == 0:
+                cells.extend(
+                    [
+                        f"<td rowspan='{len(mechanism_rows)}'>{alignment}</td>",
+                        f"<td rowspan='{len(mechanism_rows)}'>{version_coverage}"
+                        "<br>expected available snapshots</td>",
+                        f"<td rowspan='{len(mechanism_rows)}'>{reading}</td>",
+                    ]
+                )
+            table_rows.append("<tr>" + "".join(cells) + "</tr>")
+
+    return (
+        "<table><thead><tr>"
+        "<th>Agent</th><th>Mechanism</th><th>Snapshot</th><th>Name / status</th>"
+        "<th>Version applicability</th><th>Version</th><th>TLS / transport</th>"
+        "<th>Hash baseline</th><th>Available-snapshot comparison</th>"
+        "<th>Version coverage</th><th>Reading</th>"
+        "</tr></thead><tbody>"
+        + "".join(table_rows)
+        + "</tbody></table>"
     )
 
 

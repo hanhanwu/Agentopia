@@ -10,21 +10,22 @@ API endpoints used below:
 
 - `GET /api/v1/search`
 - `GET /api/v1/agents/{agentKey}`
+- `GET /api/v1/agents/{agentKey}/documents/{source}`
 - `GET /api/v1/domains/{domain}`
 
 ## Response envelope
 
 | Name | Description | Example value | Found in API endpoint(s) |
 |---|---|---|---|
-| `ok` | Whether the HTTP request completed with a successful status. Values: `true`, `false`. | `true` | <ul><li><code>GET /api/v1/search</code></li><li><code>GET /api/v1/agents/{agentKey}</code></li><li><code>GET /api/v1/domains/{domain}</code></li></ul> |
-| `status` | HTTP response status; may be null for a transport failure. | `200` | <ul><li><code>GET /api/v1/search</code></li><li><code>GET /api/v1/agents/{agentKey}</code></li><li><code>GET /api/v1/domains/{domain}</code></li></ul> |
-| `url` | Fully resolved request URL. | `https://agentcensus.io/`<br>`api/v1/agents/ag_0257be5ab061` | <ul><li><code>GET /api/v1/search</code></li><li><code>GET /api/v1/agents/{agentKey}</code></li><li><code>GET /api/v1/domains/{domain}</code></li></ul> |
-| `elapsedMs` | Client-observed request duration in milliseconds. | `131.8` | <ul><li><code>GET /api/v1/search</code></li><li><code>GET /api/v1/agents/{agentKey}</code></li><li><code>GET /api/v1/domains/{domain}</code></li></ul> |
-| `headers.content-type` | Response media type retained by the experiment helper. | `application/json` | <ul><li><code>GET /api/v1/search</code></li><li><code>GET /api/v1/agents/{agentKey}</code></li><li><code>GET /api/v1/domains/{domain}</code></li></ul> |
-| `headers.x-request-id` | AgentCensus request identifier for tracing one call. | `rM5gURX...GNgg==` | <ul><li><code>GET /api/v1/search</code></li><li><code>GET /api/v1/agents/{agentKey}</code></li><li><code>GET /api/v1/domains/{domain}</code></li></ul> |
-| `headers.x-ratelimit-limit` | Request allowance reported for the current rate-limit window. | `50000` | <ul><li><code>GET /api/v1/search</code></li><li><code>GET /api/v1/agents/{agentKey}</code></li><li><code>GET /api/v1/domains/{domain}</code></li></ul> |
-| `headers.x-ratelimit-remaining` | Requests remaining in the current window. | `49892` | <ul><li><code>GET /api/v1/search</code></li><li><code>GET /api/v1/agents/{agentKey}</code></li><li><code>GET /api/v1/domains/{domain}</code></li></ul> |
-| `headers.x-ratelimit-reset` | UTC timestamp when the current rate-limit window resets. | `2026-10-04T00:00:00Z` | <ul><li><code>GET /api/v1/search</code></li><li><code>GET /api/v1/agents/{agentKey}</code></li><li><code>GET /api/v1/domains/{domain}</code></li></ul> |
+| `ok` | Whether the HTTP request completed with a successful status. Values: `true`, `false`. | `true` | All endpoints listed above. |
+| `status` | HTTP response status; may be null for a transport failure. | `200` | All endpoints listed above. |
+| `url` | Fully resolved request URL. | `https://agentcensus.io/`<br>`api/v1/agents/ag_0257be5ab061` | All endpoints listed above. |
+| `elapsedMs` | Client-observed request duration in milliseconds. | `131.8` | All endpoints listed above. |
+| `headers.content-type` | Response media type retained by the experiment helper. | `application/json` | All endpoints listed above. |
+| `headers.x-request-id` | AgentCensus request identifier for tracing one call. | `rM5gURX...GNgg==` | All endpoints listed above. |
+| `headers.x-ratelimit-limit` | Request allowance reported for the current rate-limit window. | `50000` | All endpoints listed above. |
+| `headers.x-ratelimit-remaining` | Requests remaining in the current window. | `49892` | All endpoints listed above. |
+| `headers.x-ratelimit-reset` | UTC timestamp when the current rate-limit window resets. | `2026-10-04T00:00:00Z` | All endpoints listed above. |
 
 ## Search response
 
@@ -135,6 +136,20 @@ These fields occur under the agent-detail `data.observed` and `data.posture`. Fi
 | `posture.deprecated` | Whether the agent is marked deprecated. Values: `true`, `false`. | `false` | `GET /api/v1/agents/{agentKey}` |
 | `posture.endpointHost` | Hostname of the observed declared endpoint. | `selnoviktech.com` | `GET /api/v1/agents/{agentKey}` |
 
+## Discovery-document record
+
+These fields occur under `data` in successful document-snapshot outputs. `snapshot` is the complete normalized parsed record returned by AgentCensus, not the original fetched bytes.
+
+| Name | Description | Example value | Found in API endpoint(s) |
+|---|---|---|---|
+| `document.agentKey` | Stable AgentCensus identifier for the agent associated with the snapshot. | `ag_0257be5ab061` | `GET /api/v1/agents/{agentKey}/documents/{source}` |
+| `document.source` | Discovery mechanism whose parsed snapshot was requested. | `a2a` | `GET /api/v1/agents/{agentKey}/documents/{source}` |
+| `document.observedAt` | Timestamp when this specific discovery mechanism last answered. | `2026-09-25T11:42:10Z` | `GET /api/v1/agents/{agentKey}/documents/{source}` |
+| `document.contentHash` | Content digest retained for this parsed discovery record. | `4534a687...532648` | `GET /api/v1/agents/{agentKey}/documents/{source}` |
+| `document.sourceUrl` | URL from which AgentCensus obtained the source representation. | `https://pack.councilof.ai/`<br>`.well-known/agent.json` | `GET /api/v1/agents/{agentKey}/documents/{source}` |
+| `document.snapshot` | Formatted JSON string containing the complete normalized parsed snapshot. | `{"event_id": "01a0d85e...", ...}` | `GET /api/v1/agents/{agentKey}/documents/{source}` |
+| `document.snapshotType` | Kind of stored snapshot. Value: `parsed`. | `parsed` | `GET /api/v1/agents/{agentKey}/documents/{source}` |
+
 ## Domain record
 
 These fields occur under `data` in domain-detail outputs.
@@ -163,5 +178,5 @@ These fields occur under `data` when an AgentCensus endpoint returns an error.
 
 | Name | Description | Example value | Found in API endpoint(s) |
 |---|---|---|---|
-| `error.code` | Machine-readable error identifier. | `not_found` | `GET /api/v1/domains/{domain}` |
-| `error.message` | Human-readable error explanation. | `No record for that domain...` | `GET /api/v1/domains/{domain}` |
+| `error.code` | Machine-readable error identifier. | `not_found` | <ul><li><code>GET /api/v1/domains/{domain}</code></li><li><code>GET /api/v1/agents/{agentKey}/documents/{source}</code></li></ul> |
+| `error.message` | Human-readable error explanation. | `No snapshot found for that source.` | <ul><li><code>GET /api/v1/domains/{domain}</code></li><li><code>GET /api/v1/agents/{agentKey}/documents/{source}</code></li></ul> |

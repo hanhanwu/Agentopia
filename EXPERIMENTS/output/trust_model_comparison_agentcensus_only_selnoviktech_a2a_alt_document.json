@@ -1,0 +1,17 @@
+{
+  "ok": false,
+  "status": 404,
+  "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/a2a_alt",
+  "elapsedMs": 266.9,
+  "headers": {
+    "content-type": "application/json",
+    "x-request-id": "5a_X9ZLy4KxvrwfvvMNTcZ-vJdxGL3dQRtjJ_j7tgXSjfirF9eOzaA==",
+    "x-ratelimit-limit": "50000",
+    "x-ratelimit-remaining": "49991",
+    "x-ratelimit-reset": "2026-10-05T00:00:00Z"
+  },
+  "data": {
+    "code": "not_found",
+    "message": "No snapshot found for that source."
+  }
+}

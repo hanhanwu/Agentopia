@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "status": 200,
+  "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/ard",
+  "elapsedMs": 215.4,
+  "headers": {
+    "content-type": "application/json",
+    "x-request-id": "AU7Vs1bfYx_3b28ZxWd5cgdSh14nSGm24JnSAv4cSxOhd2yiwMSVBg==",
+    "x-ratelimit-limit": "50000",
+    "x-ratelimit-remaining": "49988",
+    "x-ratelimit-reset": "2026-10-05T00:00:00Z"
+  },
+  "data": {
+    "agentKey": "ag_050fb7a9ceea",
+    "contentHash": "85fef5b05f8ee6cfa4fdf181c925eefe7af419a2f21fa2e927d52fbc08242525",
+    "observedAt": "2026-09-19T01:32:33Z",
+    "snapshot": "{\n  \"event_id\": \"01a0b74b-0345-7df4-bb3a-a6eaebde3bbb\",\n  \"run_id\": \"01a0b564-a415-780a-be5e-89c3229c6f80\",\n  \"observed_at\": \"2026-09-19T01:32:21.629594299Z\",\n  \"source\": \"ard\",\n  \"source_identifier\": \"ard://https://selnoviktech.com/.well-known/agent.json\",\n  \"domain\": \"selnoviktech.com\",\n  \"registrable_domain\": \"selnoviktech.com\",\n  \"publishing_zone\": \"selnoviktech.com\",\n  \"display_name\": \"Selnoviktech Agent\",\n  \"description\": \"\",\n  \"protocols\": [\n    \"a2a\"\n  ],\n  \"capabilities\": [],\n  \"card_url\": \"https://selnoviktech.com/.well-known/ai-catalog.json\",\n  \"status\": \"ACTIVE\",\n  \"content_hash\": \"85fef5b05f8ee6cfa4fdf181c925eefe7af419a2f21fa2e927d52fbc08242525\",\n  \"auth_declared\": false,\n  \"transport\": \"h2\",\n  \"tls_version\": \"TLS 1.3\"\n}",
+    "snapshotType": "parsed",
+    "source": "ard",
+    "sourceUrl": "https://selnoviktech.com/.well-known/ai-catalog.json"
+  }
+}
