@@ -1126,6 +1126,115 @@ def a2a_registry_validation_data(
     return outer if isinstance(outer, Mapping) else None
 
 
+def a2a_registry_render_integrity_table(
+    agents: Sequence[Mapping[str, Any]],
+    validation_responses: Mapping[str, Mapping[str, Any]],
+) -> str:
+    """Render only JWS-related Agent Card integrity evidence."""
+    agent_markers = ("🟣", "🟢", "🟠")
+    rows = []
+
+    for agent_index, agent in enumerate(agents):
+        marker = agent_markers[agent_index % len(agent_markers)]
+        manifest_url = agent.get("a2a_manifest_url")
+        if not manifest_url:
+            rows.append(
+                "<tr>"
+                f"<th>{marker} {escape(str(agent['name']))}</th>"
+                "<td>Not available in selected registry evidence</td>"
+                f"<td>{marker} Not assessed</td>"
+                f"<td>{marker} Not assessed</td>"
+                f"<td>{marker} Not assessed</td>"
+                "</tr>"
+            )
+            continue
+
+        response = validation_responses.get(str(agent["output_label"]))
+        result = (
+            a2a_registry_validation_data(response)
+            if isinstance(response, Mapping)
+            else None
+        )
+        if not response or not response.get("ok") or result is None:
+            rows.append(
+                "<tr>"
+                f"<th>{marker} {escape(str(agent['name']))}</th>"
+                f"<td><code>{escape(str(manifest_url))}</code></td>"
+                "<td>Unknown</td><td>Validator response unavailable</td>"
+                "<td>Not assessed</td>"
+                "</tr>"
+            )
+            continue
+
+        card = result.get("cardData")
+        card = card if isinstance(card, Mapping) else {}
+        signatures = card.get("signatures")
+        signatures = signatures if isinstance(signatures, list) else []
+        signature_findings = [
+            finding
+            for finding in result.get("findings") or []
+            if isinstance(finding, Mapping)
+            and any(
+                token in str(finding.get("code", "")).upper()
+                for token in ("JWS", "SIGNATURE")
+            )
+        ]
+        valid_findings = [
+            finding
+            for finding in signature_findings
+            if finding.get("severity") == "pass"
+        ]
+        invalid_findings = [
+            finding
+            for finding in signature_findings
+            if finding.get("severity") == "error"
+        ]
+
+        if signature_findings:
+            finding_text = "<br><br>".join(
+                f"<code>{escape(str(finding.get('code')))}</code> "
+                f"({escape(str(finding.get('severity')))})<br>"
+                f"{escape(str(finding.get('message') or finding.get('title')))}"
+                for finding in signature_findings
+            )
+        else:
+            finding_text = "No signature-related finding returned"
+
+        if valid_findings:
+            reading = "Validator reported valid JWS document-integrity evidence"
+        elif invalid_findings:
+            reading = "Validator reported invalid JWS document-integrity evidence"
+        elif signatures:
+            reading = "JWS present but not validated; no positive integrity evidence"
+        else:
+            reading = "No JWS integrity evidence observed; absence is not failure"
+
+        rows.append(
+            "<tr>"
+            f"<th>{marker} {escape(str(agent['name']))}</th>"
+            f"<td><code>{escape(str(manifest_url))}</code></td>"
+            f"<td>{marker} {len(signatures)} JWS signature"
+            f"{'s' if len(signatures) != 1 else ''}</td>"
+            f"<td>{marker} {finding_text}</td>"
+            f"<td>{marker} {reading}</td>"
+            "</tr>"
+        )
+
+    return (
+        "<style>"
+        ".a2a-integrity-table th,.a2a-integrity-table td {"
+        "text-align: left !important; vertical-align: top !important;"
+        "}"
+        "</style>"
+        "<table class='a2a-integrity-table'><thead><tr>"
+        "<th>Agent</th><th>Agent Card URL</th><th>Card JWS</th>"
+        "<th>Signature-related validator finding</th><th>Reading</th>"
+        "</tr></thead><tbody>"
+        + "".join(rows)
+        + "</tbody></table>"
+    )
+
+
 def a2a_registry_summarize_validation(
     response: Mapping[str, Any],
 ) -> Mapping[str, Any] | None:

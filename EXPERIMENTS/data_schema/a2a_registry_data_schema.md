@@ -6,19 +6,20 @@ When a new A2A Registry output introduces a field, add one row here with its can
 
 For categorical or boolean fields with fewer than five distinct values in the current output, the description lists those values as **observed**, not necessarily exhaustive registry enums.
 
-API endpoint used below:
+API endpoints used below:
 
 - `GET /public/agents`
+- `POST /public/tools/validate-url`
 
 ## Response envelope
 
 | Name | Description | Example value | Found in API endpoint(s) |
 |---|---|---|---|
-| `ok` | Whether the HTTP request completed with a successful status. Values: `true`, `false`. | `true` | `GET /public/agents` |
-| `status` | HTTP response status. | `200` | `GET /public/agents` |
-| `url` | Fully resolved request URL. | `https://api.a2a-registry.org/`<br>`public/agents?q=Find+an+A2A+agent...` | `GET /public/agents` |
-| `elapsedMs` | Client-observed request duration in milliseconds. | `612.6` | `GET /public/agents` |
-| `headers.content-type` | Response media type retained by the experiment helper. | `application/json` | `GET /public/agents` |
+| `ok` | Whether the HTTP request completed with a successful status. Values: `true`, `false`. | `true` | All endpoints listed above. |
+| `status` | HTTP response status. | `200` | All endpoints listed above. |
+| `url` | Fully resolved request URL. | `https://api.a2a-registry.org/`<br>`public/agents?q=Find+an+A2A+agent...` | All endpoints listed above. |
+| `elapsedMs` | Client-observed request duration in milliseconds. | `612.6` | All endpoints listed above. |
+| `headers.content-type` | Response media type retained by the experiment helper. | `application/json` | All endpoints listed above. |
 
 ## Search body
 
@@ -28,6 +29,45 @@ These fields occur under `data` in the response envelope.
 |---|---|---|---|
 | `search.success` | Registry body-level success indicator. Values: `true`, `false`. | `true` | `GET /public/agents` |
 | `search.total` | Total registry results reported for the query. | `47` | `GET /public/agents` |
+
+## Validator response
+
+These fields occur under `data` in the raw validator response. The complete fetched Agent Card is retained in `validator.cardData`, including source-defined extension fields, but only `signatures` and signature-related findings are interpreted for Integrity.
+
+| Name | Description | Example value | Found in API endpoint(s) |
+|---|---|---|---|
+| `validator.success` | Registry body-level success indicator. Values observed: `true`. | `true` | `POST /public/tools/validate-url` |
+| `validator.isValid` | Whether the fetched card passed the validator's complete schema/readiness rules; not an Integrity result. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
+| `validator.readinessScore` | Registry readiness score retained in the raw response but excluded from Integrity. | `40` | `POST /public/tools/validate-url` |
+| `validator.grade` | Registry readiness grade retained in the raw response but excluded from Integrity. | `Needs Work` | `POST /public/tools/validate-url` |
+| `validator.specVersionDetected` | Protocol specification version inferred by the validator; excluded from Integrity. | `v1.0` | `POST /public/tools/validate-url` |
+| `validator.cardData` | Complete fetched Agent Card, including its standard fields and publisher-defined nested extensions. | `{"name": "Council of AI — Measurement Agent", ...}` | `POST /public/tools/validate-url` |
+| `validator.cardData.signatures[].protected` | JWS protected header encoded with base64url. | `eyJhbGciOiJFZERTQSIs...` | `POST /public/tools/validate-url` |
+| `validator.cardData.signatures[].signature` | JWS signature value encoded with base64url. | `EEmnLz2PbJppVHOB...` | `POST /public/tools/validate-url` |
+| `validator.targetUrl` | Agent Card URL fetched by the validator. | `https://councilof.ai/`<br>`.well-known/agent.json` | `POST /public/tools/validate-url` |
+| `validator.isOffline` | Validator reachability classification retained raw but excluded from Integrity. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
+| `validator.findings` | Complete ordered validator findings, including schema, network, discovery, and trust findings. | `[{"code": "HTTP_200_OK", ...}]` | `POST /public/tools/validate-url` |
+| `validator.findings[].tier` | Validator tier associated with one finding. | `tier4_trust` | `POST /public/tools/validate-url` |
+| `validator.findings[].severity` | Finding outcome classification. Values observed: `pass`, `warning`, `error`. | `warning` | `POST /public/tools/validate-url` |
+| `validator.findings[].code` | Stable validator finding identifier. | `JWS_PUBLIC_KEY_UNRESOLVED` | `POST /public/tools/validate-url` |
+| `validator.findings[].title` | Short finding title. | `Signature [0] Key Unresolved` | `POST /public/tools/validate-url` |
+| `validator.findings[].message` | Finding explanation. | `Could not resolve public key...` | `POST /public/tools/validate-url` |
+| `validator.findings[].field` | Agent Card field associated with a finding when supplied. | `preferredTransport` | `POST /public/tools/validate-url` |
+| `validator.findings[].suggestion` | Suggested remediation when supplied. | `Remove preferredTransport...` | `POST /public/tools/validate-url` |
+| `validator.summary.tier1Status` | Aggregate Tier 1 readiness status; excluded from Integrity. | `fail` | `POST /public/tools/validate-url` |
+| `validator.summary.tier2Status` | Aggregate Tier 2 readiness status; excluded from Integrity. | `warn` | `POST /public/tools/validate-url` |
+| `validator.summary.tier3Status` | Aggregate Tier 3 readiness status; excluded from Integrity. | `pass` | `POST /public/tools/validate-url` |
+| `validator.summary.tier4Status` | Aggregate Tier 4 status; the underlying signature findings, not this aggregate, are retained for Integrity. | `warning` | `POST /public/tools/validate-url` |
+| `validator.summary.totalErrors` | Complete-validator error count; excluded from Integrity. | `3` | `POST /public/tools/validate-url` |
+| `validator.summary.totalWarnings` | Complete-validator warning count; excluded from Integrity. | `2` | `POST /public/tools/validate-url` |
+| `validator.summary.totalPasses` | Complete-validator pass count; excluded from Integrity. | `4` | `POST /public/tools/validate-url` |
+| `validator.metadata.targetUrl` | Target URL repeated in validator request metadata. | `https://a2a402.market/`<br>`.well-known/agent-card.json` | `POST /public/tools/validate-url` |
+| `validator.metadata.responseTimeMs` | Registry-observed fetch duration; excluded from Integrity. | `168` | `POST /public/tools/validate-url` |
+| `validator.metadata.contentType` | Fetched response media type; excluded from Integrity. | `application/json` | `POST /public/tools/validate-url` |
+| `validator.metadata.contentLengthBytes` | Fetched body length; excluded from Integrity. | `7139` | `POST /public/tools/validate-url` |
+| `validator.metadata.isOffline` | Reachability classification repeated in validator metadata; excluded from Integrity. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
+| `validator.metadata.dnsTxtFound` | Whether the validator found its expected DNS TXT discovery evidence; excluded from Integrity. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
+| `validator.metadata.godaddyAnsFound` | Whether the validator found its GoDaddy ANS integration evidence; excluded from Integrity. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
 
 ## Registry agent record
 
