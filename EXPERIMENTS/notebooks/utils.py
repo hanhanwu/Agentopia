@@ -21,6 +21,42 @@ from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
 
 
+def _artifact_record(
+    artifacts: Mapping[str, Any] | str | Path,
+    filename: str,
+) -> Any:
+    """Load one artifact from a capture bundle or a legacy output directory."""
+    if isinstance(artifacts, Mapping):
+        if filename not in artifacts:
+            raise KeyError(f"Artifact not found in capture bundle: {filename}")
+        return artifacts[filename]
+    return json.loads((Path(artifacts) / filename).read_text(encoding="utf-8"))
+
+
+def _artifact_json(
+    artifacts: Mapping[str, Any] | str | Path,
+    filename: str,
+) -> Any:
+    """Return parsed JSON from a bundled record or legacy JSON file."""
+    record = _artifact_record(artifacts, filename)
+    if isinstance(record, Mapping) and "payload" in record:
+        return record["payload"]
+    return record
+
+
+def _artifact_sha256(
+    artifacts: Mapping[str, Any] | str | Path,
+    filename: str,
+) -> str:
+    """Return the SHA-256 digest retained for an exact captured response body."""
+    if isinstance(artifacts, Mapping):
+        record = _artifact_record(artifacts, filename)
+        if isinstance(record, Mapping) and record.get("sha256"):
+            return str(record["sha256"])
+        raise KeyError(f"Artifact has no retained SHA-256 digest: {filename}")
+    return hashlib.sha256((Path(artifacts) / filename).read_bytes()).hexdigest()
+
+
 # ---------------------------------------------------------------------------
 # AgentCensus
 # ---------------------------------------------------------------------------
@@ -474,7 +510,7 @@ def agentcensus_summarize_domain_agents(response: Mapping[str, Any]) -> None:
 def agentcensus_render_integrity_table(
     agents: Sequence[Mapping[str, Any]],
     agent_responses: Mapping[str, Mapping[str, Any]],
-    output_dir: str | Path,
+    artifacts: Mapping[str, Any] | str | Path,
 ) -> str:
     """Render per-mechanism integrity evidence with merged agent summaries.
 
@@ -483,7 +519,6 @@ def agentcensus_render_integrity_table(
     cannot contribute to the version denominator.
     """
     version_expected_sources = {"a2a", "a2a_alt"}
-    output_path = Path(output_dir)
     table_rows: list[str] = []
 
     agent_markers = ("🟣", "🟢", "🟠")
@@ -506,11 +541,11 @@ def agentcensus_render_integrity_table(
         available: list[tuple[str, Mapping[str, Any], Mapping[str, Any]]] = []
 
         for source in sources:
-            document_path = output_path / (
+            filename = (
                 "trust_model_comparison_agentcensus_"
                 f"{agent['output_label']}_{source}_document.json"
             )
-            payload = json.loads(document_path.read_text(encoding="utf-8"))
+            payload = _artifact_json(artifacts, filename)
             if payload["ok"]:
                 data = payload["data"]
                 snapshot = json.loads(data["snapshot"])
@@ -686,10 +721,9 @@ def agentcensus_render_integrity_table(
 
 def agentcensus_render_ans_corroboration_table(
     examples: Sequence[Mapping[str, Any]],
-    output_dir: str | Path,
+    artifacts: Mapping[str, Any] | str | Path,
 ) -> str:
     """Compare AgentCensus snapshots with live and sealed ANS versions."""
-    output_path = Path(output_dir)
     markers = ("🔵", "🟡")
     table_rows = []
 
@@ -711,16 +745,10 @@ def agentcensus_render_ans_corroboration_table(
 
     for example_index, example in enumerate(examples):
         marker = markers[example_index % len(markers)]
-        agent_response = json.loads(
-            (output_path / str(example["agent_file"])).read_text(encoding="utf-8")
-        )
+        agent_response = _artifact_json(artifacts, str(example["agent_file"]))
         agent = agent_response["data"]
-        dns_response = json.loads(
-            (output_path / str(example["ans_dns_file"])).read_text(encoding="utf-8")
-        )
-        badge = json.loads(
-            (output_path / str(example["ans_badge_file"])).read_text(encoding="utf-8")
-        )
+        dns_response = _artifact_json(artifacts, str(example["ans_dns_file"]))
+        badge = _artifact_json(artifacts, str(example["ans_badge_file"]))
         live_badge_value = next(
             (
                 str(answer.get("data"))
@@ -734,9 +762,7 @@ def agentcensus_render_ans_corroboration_table(
 
         grouped_documents: dict[str, dict[str, Any]] = {}
         for source, filename in example["documents"].items():
-            document_response = json.loads(
-                (output_path / str(filename)).read_text(encoding="utf-8")
-            )
+            document_response = _artifact_json(artifacts, str(filename))
             document = document_response["data"]
             content_hash = str(document["contentHash"])
             group = grouped_documents.setdefault(
@@ -1489,21 +1515,16 @@ def ans_render_integrity_table(
 
 def ans_render_integrity_examples_table(
     examples: Sequence[Mapping[str, Any]],
-    output_dir: str | Path,
+    artifacts: Mapping[str, Any] | str | Path,
 ) -> str:
     """Compare live ANS artifacts with values sealed in Transparency Log badges."""
-    output_path = Path(output_dir)
     markers = ("🔵", "🟡")
     rows = []
 
     for example_index, example in enumerate(examples):
         marker = markers[example_index % len(markers)]
-        dns_response = json.loads(
-            (output_path / str(example["dns_file"])).read_text(encoding="utf-8")
-        )
-        badge = json.loads(
-            (output_path / str(example["badge_file"])).read_text(encoding="utf-8")
-        )
+        dns_response = _artifact_json(artifacts, str(example["dns_file"]))
+        badge = _artifact_json(artifacts, str(example["badge_file"]))
         event = badge["payload"]["producer"]["event"]
         attestations = event["attestations"]
         record_name = str(example["record_name"])
@@ -1537,9 +1558,9 @@ def ans_render_integrity_examples_table(
         sealed_hashes = attestations.get("metadataHashes") or {}
         for protocol, metadata in example.get("metadata", {}).items():
             filename = metadata["file"]
-            observed_hash = "SHA256:" + hashlib.sha256(
-                (output_path / str(filename)).read_bytes()
-            ).hexdigest()
+            observed_hash = "SHA256:" + _artifact_sha256(
+                artifacts, str(filename)
+            )
             expected_hash = sealed_hashes.get(protocol)
             metadata_match_values.append(expected_hash == observed_hash)
             metadata_results.append(

@@ -1,6 +1,10 @@
 # AgentCensus data schema
 
-This catalog covers every field currently present in the AgentCensus JSON files under `EXPERIMENTS/output/`.
+This catalog covers AgentCensus fields captured by the experiment. Current
+trust-comparison responses are stored under `dimensions.*.raw.agentcensus` in
+`trust_model_search_bundle.json` and under `captures.*.payload` in
+`trust_model_evidence_bundle.json`. The superseded per-response JSON files have
+been removed; the collection workflow writes only these two bundles.
 
 When a new AgentCensus output introduces a field, add one row here with its canonical name, description, and an observed example. Reusable structures are defined once and their locations are listed together; do not create duplicate definitions for search and detail responses.
 
@@ -29,7 +33,9 @@ API endpoints used below:
 
 ## Search response
 
-These fields occur under `data` in `trust_model_comparison_agentcensus_search.json`.
+These fields occur under
+`dimensions.<dimension_id>.raw.agentcensus.data` in
+`trust_model_search_bundle.json`.
 
 | Name | Description | Example value | Found in API endpoint(s) |
 |---|---|---|---|

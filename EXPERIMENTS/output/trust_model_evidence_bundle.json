@@ -1,0 +1,2331 @@
+{
+  "schemaVersion": "1.0",
+  "capturedAt": "2026-10-05T02:42:36.751109+00:00",
+  "searchBundle": "trust_model_search_bundle.json",
+  "searchCapturedAt": "2026-10-05T02:41:31.517550+00:00",
+  "analysisConfigurations": {
+    "ansIntegrityExamples": [
+      {
+        "name": "Snitker ANS Interoperability Demo",
+        "record_name": "_ans-badge.godaddy.demo.ans.snitker.dev",
+        "dns_file": "trust_model_comparison_ans_snitker_dns_badge.json",
+        "badge_file": "trust_model_comparison_ans_snitker_transparency_log_badge.json",
+        "metadata": {
+          "A2A": {
+            "file": "trust_model_comparison_ans_snitker_a2a_agent_card.json"
+          },
+          "MCP": {
+            "file": "trust_model_comparison_ans_snitker_mcp_server_card.json"
+          }
+        }
+      },
+      {
+        "name": "AgentCensus",
+        "record_name": "_ans-badge.agentcensus.io",
+        "dns_file": "trust_model_comparison_ans_agentcensus_dns_badge.json",
+        "badge_file": "trust_model_comparison_ans_agentcensus_transparency_log_badge.json",
+        "metadata": {}
+      }
+    ],
+    "agentcensusAnsExamples": [
+      {
+        "name": "Snitker ANS Interoperability Demo",
+        "documents": {
+          "a2a_alt": "trust_model_comparison_agentcensus_ans_example_snitker_a2a_alt_document.json"
+        },
+        "agent_file": "trust_model_comparison_agentcensus_ans_example_snitker_agent.json",
+        "ans_dns_file": "trust_model_comparison_ans_snitker_dns_badge.json",
+        "ans_badge_file": "trust_model_comparison_ans_snitker_transparency_log_badge.json"
+      },
+      {
+        "name": "AgentCensus",
+        "documents": {
+          "ans": "trust_model_comparison_agentcensus_ans_example_agentcensus_ans_document.json",
+          "a2a": "trust_model_comparison_agentcensus_ans_example_agentcensus_a2a_document.json",
+          "a2a_alt": "trust_model_comparison_agentcensus_ans_example_agentcensus_a2a_alt_document.json"
+        },
+        "agent_file": "trust_model_comparison_agentcensus_ans_example_agentcensus_agent.json",
+        "ans_dns_file": "trust_model_comparison_ans_agentcensus_dns_badge.json",
+        "ans_badge_file": "trust_model_comparison_ans_agentcensus_transparency_log_badge.json"
+      }
+    ]
+  },
+  "captures": {
+    "trust_model_comparison_agentcensus_shared_council_of_ai_agent.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "d167b4a0cfda7eb6770bab810c7e26884a75cb6c3b1459a5ecb36f43131ea723",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/agents/ag_0257be5ab061",
+        "elapsedMs": 399.4,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "4H2fUDNu838umFUgzMCXqbZLiAEhtqhb7v0lr3C8irnt0M9mM3ZZTQ==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49946",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "activeVerification": null,
+          "agentKey": "ag_0257be5ab061",
+          "capabilities": [
+            "extensions",
+            "gspc-board",
+            "east-west-crosswalk",
+            "measured-badge",
+            "benchmark-quality-register",
+            "article50-detect",
+            "eu-ai-act-screen",
+            "x402-discovery",
+            "estate-index",
+            "measurement",
+            "governance",
+            "verification",
+            "cross-border",
+            "crosswalk",
+            "meta-evaluation",
+            "benchmark-quality",
+            "reproducibility",
+            "article-50",
+            "provenance",
+            "detection",
+            "c2pa",
+            "eu-ai-act",
+            "screening",
+            "deterministic",
+            "x402",
+            "discovery",
+            "payments",
+            "census",
+            "merkle"
+          ],
+          "description": "Independent AI-governance MEASUREMENT body. Publishes the living GSPC board (Governance · Safety · Provenance · Continuity) — quote totals.lid and totals.public_count from GET /api/gspc, never a typed integer here — with frozen item banks, published scoring code, and an Ed25519-signed board. Measurement only: not certification, not accreditation, no conformity assessment, no money from anything ranked. A2A v1.0 is served at the single interface below; MCP (a different protocol, not A2A) is[truncated] · SendMessage answers with the live board: totals.lid verbatim from GET /api/gspc and the derived axis rows (axis, family, kind, status, n, separation, leader state). Empty cells stay empty; a withheld leader is a state, not a zero; a fetch failure is UNCHECKABLE, never a fabricated number. Live JSON, recomputable from published rows. · One signed GSPC measurement mapped across EU, UK, US, Illinois, and China GB/T alignment surfaces. Crosswalk v1 JSON, cross-border signed card, and stranger verify at /gspc-verify. Measurement only — determination stays with authorities. · A global-board README link plus a card-bound status badge. The global board never becomes a model score. A model-specific score may render only from a VALID signed cell that names the exact subject and immutable revision; otherwise the subject is UNMEASURED or UNSIGNED. · Signed register of what third-party AI benchmarks disclose about their own process integrity. Deterministic predicates only — no language model judges. Records are unsolicited; nothing on the register is certification or endorsement. · Verify a C2PA-style signed manifest for AI-generated content (EU AI Act Article 50) at POST https://councilof.ai/api/detect. Deterministically checks the Ed25519-signed metadata layer and the IPTC/schema.org digitalSourceType; returns AI_MARKED / NOT_AI_MARKED / UNVERIFIABLE with a signed verdict receipt (in-toto/DSSE when a board key is bound). The imperceptible-watermark layer we cannot see is declared, never claimed. Free for all; unrestricted for authorities, media, fact-checkers, researchers[truncated] · POST https://councilof.ai/api/assess with a system description. Keyword matches name the Annex III categories and Article 5 patterns a human should inspect; no model is consulted. It does not establish legal tier, applicability, exceptions or compliance, and an empty description is UNMEASURED, not a low-risk finding. When no signing key is provisioned the report says UNSIGNED out loud. · Agents discover paid artefact rails via GET https://councilof.ai/.well-known/x402.json (mode is reported from runtime env, Base eip155:8453, USDC; amounts from challenge only — no invent price). Catalog GET /api/x402. Free door GET /api/free-door amount 0 settles and charges nothing — proves the rail. Living board GET /api/gspc. Verification stays free at /gspc-verify. payTo is merchant receive, never the signer. Self-settle proves the rail; stranger revenue is separate (do not invent buyers)[truncated] · SendMessage answers with the estate census summary from GET /api/state -> estate_index, and the full index is GET /interop/master-consolidation-2026-09-16.json with its OpenTimestamps proof beside it. Every artefact CSOAI holds across this repository, Hugging Face, GitHub, Kaggle and Oracle Object Storage, committed to one Merkle root. Read it as a census, never as evidence: INDEXED means we found the artefact and measured nothing against it, and UNSIGNED means a card body exists carrying signatu[truncated]",
+          "displayName": "Council of AI — Measurement Agent",
+          "domain": "councilof.ai",
+          "gate": null,
+          "mechanisms": [
+            "a2a",
+            "a2a_alt"
+          ],
+          "observed": {
+            "endpointSameOrigin": false,
+            "firstSeen": "2026-09-23",
+            "history": [
+              {
+                "at": "2026-09-25T11:41:43Z",
+                "kind": "first_seen",
+                "summary": "First seen via A2A card."
+              },
+              {
+                "at": "2026-09-25T11:41:47Z",
+                "kind": "mechanism_added",
+                "summary": "A2A card (alternate location) began contributing to this agent."
+              }
+            ],
+            "lastSeen": "2026-09-25",
+            "primarySource": "a2a",
+            "provenance": [
+              {
+                "firstSeen": "2026-09-25",
+                "lastSeen": "2026-09-25",
+                "resolutionConfidence": 0.949999988079071,
+                "resolutionRule": "identical normalized endpoint URL",
+                "source": "a2a",
+                "sourceIdentifier": "a2a://https://councilof.ai/api/a2a",
+                "sourceUrl": "https://pack.councilof.ai/.well-known/agent.json"
+              },
+              {
+                "firstSeen": "2026-09-25",
+                "lastSeen": "2026-09-25",
+                "resolutionConfidence": 0.949999988079071,
+                "resolutionRule": "identical normalized endpoint URL",
+                "source": "a2a_alt",
+                "sourceIdentifier": "a2a://https://councilof.ai/api/a2a",
+                "sourceUrl": "https://councilof.ai/.well-known/agent-card.json"
+              }
+            ],
+            "status": "ACTIVE",
+            "tlsVersion": "TLS 1.3",
+            "transport": "h2"
+          },
+          "posture": {
+            "authDeclared": false,
+            "authSchemes": [],
+            "deprecated": false,
+            "endpointHost": "councilof.ai"
+          },
+          "protocols": [],
+          "registrableDomain": "councilof.ai",
+          "selfReported": null
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_shared_council_of_ai_domain.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "4fe78786a88da51ec45e546446af1e1e8b18f01b4a6f4a54023935e1daf8ee95",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/domains/councilof.ai",
+        "elapsedMs": 231.2,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "jaY_1JOJk0-Kd7jDE7T-p7r49GDC1qcl4rf2xWOBzvFcw1FyTEUODg==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49945",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "agentCount": 6,
+          "gate": null,
+          "observed": {
+            "dnsAidCheckedAt": "2026-09-25T11:41:37Z",
+            "dnsAidChecks": [],
+            "firstSeen": "2026-09-23T23:12:15Z",
+            "lastProbed": "2026-09-25T11:42:13Z",
+            "spans": []
+          },
+          "optOut": false,
+          "registrableDomain": "councilof.ai"
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_only_selnoviktech_agent.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "ce0d928eb9e40111e06cb8b01cadd9335bf81c7d859642141da3f818cf5bfe9c",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea",
+        "elapsedMs": 166.8,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "aqfEJrJrFF5eHMNM4FLF9J4WgXlp6oDGGn0nolhglH6FhOmGhyURjg==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49944",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "activeVerification": null,
+          "agentKey": "ag_050fb7a9ceea",
+          "capabilities": [],
+          "description": "",
+          "displayName": "Selnoviktech Agent",
+          "domain": "selnoviktech.com",
+          "gate": null,
+          "mechanisms": [
+            "a2a_alt",
+            "oauth_protected_resource",
+            "a2a",
+            "ard"
+          ],
+          "observed": {
+            "endpointSameOrigin": true,
+            "firstSeen": "2026-09-13",
+            "history": [
+              {
+                "at": "2026-09-19T01:32:33Z",
+                "kind": "first_seen",
+                "summary": "First seen via ARD catalog entry."
+              },
+              {
+                "at": "2026-09-19T01:32:33Z",
+                "kind": "changed",
+                "summary": "Capability list gained \"selnoviktech_search\", \"selnoviktech_read\", \"search\", \"articles\", \"tutorials\", \"read\" and \"article\". Protocol list dropped \"a2a\". Description updated."
+              },
+              {
+                "at": "2026-09-19T01:32:33Z",
+                "kind": "mechanism_added",
+                "summary": "A2A card began contributing to this agent."
+              },
+              {
+                "at": "2026-09-19T01:32:34Z",
+                "kind": "mechanism_added",
+                "summary": "A2A card (alternate location) began contributing to this agent."
+              },
+              {
+                "at": "2026-09-19T01:32:46Z",
+                "kind": "changed",
+                "summary": "Display name changed from \"Selnoviktech Agent\" to \"https://selnoviktech.com\". Status changed from ACTIVE to UNVERIFIED. Capability list dropped \"selnoviktech_search\", \"selnoviktech_read\", \"search\", \"articles\", \"tutorials\", \"read\" and \"article\". Description updated."
+              },
+              {
+                "at": "2026-09-19T01:32:46Z",
+                "kind": "mechanism_added",
+                "summary": "OAuth protected resource began contributing to this agent."
+              }
+            ],
+            "lastSeen": "2026-09-19",
+            "primarySource": "ard",
+            "provenance": [
+              {
+                "firstSeen": "2026-09-19",
+                "lastSeen": "2026-09-19",
+                "resolutionConfidence": 0.949999988079071,
+                "resolutionRule": "identical normalized endpoint URL",
+                "source": "a2a_alt",
+                "sourceIdentifier": "a2a://https://selnoviktech.com",
+                "sourceUrl": "https://selnoviktech.com/.well-known/agent-card.json"
+              },
+              {
+                "firstSeen": "2026-09-19",
+                "lastSeen": "2026-09-19",
+                "resolutionConfidence": 0.949999988079071,
+                "resolutionRule": "identical normalized endpoint URL",
+                "source": "oauth_protected_resource",
+                "sourceIdentifier": "oauth-protected-resource://https://selnoviktech.com",
+                "sourceUrl": "https://selnoviktech.com/.well-known/oauth-protected-resource"
+              },
+              {
+                "firstSeen": "2026-09-19",
+                "lastSeen": "2026-09-19",
+                "resolutionConfidence": 0.800000011920929,
+                "resolutionRule": "same registrable_domain + normalized agent name",
+                "source": "a2a",
+                "sourceIdentifier": "a2a://https://selnoviktech.com",
+                "sourceUrl": "https://selnoviktech.com/.well-known/agent.json"
+              },
+              {
+                "firstSeen": "2026-09-19",
+                "lastSeen": "2026-09-19",
+                "resolutionConfidence": 0,
+                "resolutionRule": "new",
+                "source": "ard",
+                "sourceIdentifier": "ard://https://selnoviktech.com/.well-known/agent.json",
+                "sourceUrl": "https://selnoviktech.com/.well-known/ai-catalog.json"
+              }
+            ],
+            "status": "ACTIVE",
+            "tlsVersion": "TLS 1.3",
+            "transport": "h2"
+          },
+          "posture": {
+            "authDeclared": false,
+            "authSchemes": [],
+            "deprecated": false,
+            "endpointHost": "selnoviktech.com"
+          },
+          "protocols": [
+            "a2a"
+          ],
+          "registrableDomain": "selnoviktech.com",
+          "selfReported": null
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_only_selnoviktech_domain.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "7def59358fdd468685385ef743fe2f5c5fe11c62429e9aa338b0af02a4f37a4d",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/domains/selnoviktech.com",
+        "elapsedMs": 419.0,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "GleLGbcO9g9UQ6V5voNr78x4azfJnCDhhUXW0ardouML0_Z-uu5OiA==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49943",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "agentCount": 6,
+          "gate": null,
+          "observed": {
+            "dnsAidCheckedAt": "2026-09-19T01:32:27Z",
+            "dnsAidChecks": [
+              {
+                "check": "alias_mode",
+                "detail": "entry point publishes no AliasMode record, so it names no per-agent leaf. The record is well formed and a client can connect to it, but the per-agent cap/bap/well-known parameters the draft puts on _<name>._<proto>._agents leaves cannot be reached from here, and automated discovery sees one endpoint rather than an inventory.",
+                "draftVersion": "draft-mozleywilliams-dnsop-dnsaid-02",
+                "observedAt": "2026-09-19T01:32:11Z",
+                "recordName": "_index._agents.selnoviktech.com",
+                "status": "info"
+              },
+              {
+                "check": "dnssec",
+                "detail": "Answer was DNSSEC-authenticated.",
+                "draftVersion": "draft-mozleywilliams-dnsop-dnsaid-02",
+                "observedAt": "2026-09-19T01:32:11Z",
+                "recordName": "_index._agents.selnoviktech.com",
+                "status": "info"
+              },
+              {
+                "check": "entry_point",
+                "detail": "SVCB record present at the well-known label",
+                "draftVersion": "draft-mozleywilliams-dnsop-dnsaid-02",
+                "observedAt": "2026-09-19T01:32:11Z",
+                "recordName": "_index._agents.selnoviktech.com",
+                "status": "pass"
+              },
+              {
+                "check": "mandatory_listed",
+                "detail": "mandatory= is present",
+                "draftVersion": "draft-mozleywilliams-dnsop-dnsaid-02",
+                "observedAt": "2026-09-19T01:32:11Z",
+                "recordName": "_index._agents.selnoviktech.com",
+                "status": "pass"
+              },
+              {
+                "check": "params_survived",
+                "detail": "DNS-AID SvcParams present in the answer",
+                "draftVersion": "draft-mozleywilliams-dnsop-dnsaid-02",
+                "observedAt": "2026-09-19T01:32:11Z",
+                "recordName": "_index._agents.selnoviktech.com",
+                "status": "pass"
+              },
+              {
+                "check": "protocol_declared",
+                "detail": "protocol declared in alpn: h2",
+                "draftVersion": "draft-mozleywilliams-dnsop-dnsaid-02",
+                "observedAt": "2026-09-19T01:32:11Z",
+                "recordName": "_index._agents.selnoviktech.com",
+                "status": "pass"
+              }
+            ],
+            "firstSeen": "2026-09-13T23:19:42Z",
+            "lastProbed": "2026-09-19T01:32:46Z",
+            "spans": []
+          },
+          "optOut": false,
+          "registrableDomain": "selnoviktech.com"
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_missing_a2a402_domain.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "3ff0d711fe2949ffcd469dc910a16dba5b2e124dc8c384b361f2c584b3fdfdcc",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": false,
+        "status": 404,
+        "url": "https://agentcensus.io/api/v1/domains/a2a402.market",
+        "elapsedMs": 156.4,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "mUXONyJT_emWg4aBLlu0p0agMUwcIb8HJE9XkkuRXyWL0FglhGgP7Q==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49942",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "code": "not_found",
+          "message": "No record for that domain. It may never have been probed, or it may have been removed at its owner's request."
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_shared_council_of_ai_a2a_document.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "dba2b519cf5351909290af1bdc948627018d85bfadd4acbdc20b89d4015f4583",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/agents/ag_0257be5ab061/documents/a2a",
+        "elapsedMs": 176.2,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "_VgwgTnX5D2ruSqLx41Z4pMNj8gePmgpAWpNshwM5Z4cYhQY4pYlvA==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49941",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "agentKey": "ag_0257be5ab061",
+          "contentHash": "4534a687ca6bfb05b697e9120fceb1f5630a8bc3c6ca1ea385c2d05042532648",
+          "observedAt": "2026-09-25T11:42:10Z",
+          "snapshot": "{\n  \"event_id\": \"01a0d85e-fe0b-72da-abb5-d8a1e6c64d05\",\n  \"run_id\": \"01a0d603-9fae-7ca4-9381-d70b57dbecf8\",\n  \"observed_at\": \"2026-09-25T11:41:39.105046972Z\",\n  \"source\": \"a2a\",\n  \"source_identifier\": \"a2a://https://councilof.ai/api/a2a\",\n  \"domain\": \"pack.councilof.ai\",\n  \"registrable_domain\": \"councilof.ai\",\n  \"publishing_zone\": \"councilof.ai\",\n  \"display_name\": \"Council of AI — Measurement Agent\",\n  \"description\": \"Independent AI-governance MEASUREMENT body. Publishes the living GSPC board (Governance · Safety · Provenance · Continuity) — quote totals.lid and totals.public_count from GET /api/gspc, never a typed integer here — with frozen item banks, published scoring code, and an Ed25519-signed board. Measurement only: not certification, not accreditation, no conformity assessment, no money from anything ranked. A2A v1.0 is served at the single interface below; MCP (a different protocol, not A2A) is[truncated] · SendMessage answers with the live board: totals.lid verbatim from GET /api/gspc and the derived axis rows (axis, family, kind, status, n, separation, leader state). Empty cells stay empty; a withheld leader is a state, not a zero; a fetch failure is UNCHECKABLE, never a fabricated number. Live JSON, recomputable from published rows. · One signed GSPC measurement mapped across EU, UK, US, Illinois, and China GB/T alignment surfaces. Crosswalk v1 JSON, cross-border signed card, and stranger verify at /gspc-verify. Measurement only — determination stays with authorities. · A global-board README link plus a card-bound status badge. The global board never becomes a model score. A model-specific score may render only from a VALID signed cell that names the exact subject and immutable revision; otherwise the subject is UNMEASURED or UNSIGNED. · Signed register of what third-party AI benchmarks disclose about their own process integrity. Deterministic predicates only — no language model judges. Records are unsolicited; nothing on the register is certification or endorsement. · Verify a C2PA-style signed manifest for AI-generated content (EU AI Act Article 50) at POST https://councilof.ai/api/detect. Deterministically checks the Ed25519-signed metadata layer and the IPTC/schema.org digitalSourceType; returns AI_MARKED / NOT_AI_MARKED / UNVERIFIABLE with a signed verdict receipt (in-toto/DSSE when a board key is bound). The imperceptible-watermark layer we cannot see is declared, never claimed. Free for all; unrestricted for authorities, media, fact-checkers, researchers[truncated] · POST https://councilof.ai/api/assess with a system description. Keyword matches name the Annex III categories and Article 5 patterns a human should inspect; no model is consulted. It does not establish legal tier, applicability, exceptions or compliance, and an empty description is UNMEASURED, not a low-risk finding. When no signing key is provisioned the report says UNSIGNED out loud. · Agents discover paid artefact rails via GET https://councilof.ai/.well-known/x402.json (mode is reported from runtime env, Base eip155:8453, USDC; amounts from challenge only — no invent price). Catalog GET /api/x402. Free door GET /api/free-door amount 0 settles and charges nothing — proves the rail. Living board GET /api/gspc. Verification stays free at /gspc-verify. payTo is merchant receive, never the signer. Self-settle proves the rail; stranger revenue is separate (do not invent buyers)[truncated] · SendMessage answers with the estate census summary from GET /api/state -\\u003e estate_index, and the full index is GET /interop/master-consolidation-2026-09-16.json with its OpenTimestamps proof beside it. Every artefact CSOAI holds across this repository, Hugging Face, GitHub, Kaggle and Oracle Object Storage, committed to one Merkle root. Read it as a census, never as evidence: INDEXED means we found the artefact and measured nothing against it, and UNSIGNED means a card body exists carrying signatu[truncated]\",\n  \"protocols\": [],\n  \"capabilities\": [\n    \"extensions\",\n    \"gspc-board\",\n    \"east-west-crosswalk\",\n    \"measured-badge\",\n    \"benchmark-quality-register\",\n    \"article50-detect\",\n    \"eu-ai-act-screen\",\n    \"x402-discovery\",\n    \"estate-index\",\n    \"measurement\",\n    \"governance\",\n    \"verification\",\n    \"cross-border\",\n    \"crosswalk\",\n    \"meta-evaluation\",\n    \"benchmark-quality\",\n    \"reproducibility\",\n    \"article-50\",\n    \"provenance\",\n    \"detection\",\n    \"c2pa\",\n    \"eu-ai-act\",\n    \"screening\",\n    \"deterministic\",\n    \"x402\",\n    \"discovery\",\n    \"payments\",\n    \"census\",\n    \"merkle\"\n  ],\n  \"card_url\": \"https://pack.councilof.ai/.well-known/agent.json\",\n  \"status\": \"ACTIVE\",\n  \"version\": \"1.1.0\",\n  \"content_hash\": \"4534a687ca6bfb05b697e9120fceb1f5630a8bc3c6ca1ea385c2d05042532648\",\n  \"declared_version\": \"1.0\",\n  \"inferred_version\": \"1.0\",\n  \"version_evidence\": [\n    \"supportedInterfaces (1.0; replaced url/preferredTransport/additionalInterfaces)\",\n    \"capabilities object\",\n    \"skills array\"\n  ],\n  \"auth_declared\": false,\n  \"endpoint_same_origin\": false,\n  \"endpoint_host\": \"councilof.ai\",\n  \"transport\": \"h2\",\n  \"tls_version\": \"TLS 1.3\",\n  \"field_completeness\": 0.7142857142857143\n}",
+          "snapshotType": "parsed",
+          "source": "a2a",
+          "sourceUrl": "https://pack.councilof.ai/.well-known/agent.json"
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_shared_council_of_ai_a2a_alt_document.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "0d799e2ea33365fa0b9cb8e6164e485a1d006a462d50771b9a8d24def1f30a76",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/agents/ag_0257be5ab061/documents/a2a_alt",
+        "elapsedMs": 162.5,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "uRqrJzqR7L_Q3nFMC3M-6u-LiVJet-vntV0lLuktPSVqwInUdal14Q==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49940",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "agentKey": "ag_0257be5ab061",
+          "contentHash": "7a1d95a8563f57078660478c387e5465020e57135d4c72badf420b183cb7894b",
+          "observedAt": "2026-09-25T11:41:54Z",
+          "snapshot": "{\n  \"event_id\": \"01a0d85e-f666-7855-9955-5db48ca37ccc\",\n  \"run_id\": \"01a0d603-9fae-7ca4-9381-d70b57dbecf8\",\n  \"observed_at\": \"2026-09-25T11:41:37.189284836Z\",\n  \"source\": \"a2a_alt\",\n  \"source_identifier\": \"a2a://https://councilof.ai/api/a2a\",\n  \"domain\": \"councilof.ai\",\n  \"registrable_domain\": \"councilof.ai\",\n  \"publishing_zone\": \"councilof.ai\",\n  \"display_name\": \"Council of AI — Measurement Agent\",\n  \"description\": \"Independent AI-governance MEASUREMENT body. Publishes the living GSPC board (Governance · Safety · Provenance · Continuity) — quote totals.lid and totals.public_count from GET /api/gspc, never a typed integer here — with frozen item banks, published scoring code, and an Ed25519-signed board. Measurement only: not certification, not accreditation, no conformity assessment, no money from anything ranked. A2A v1.0 is served at the single interface below; MCP (a different protocol, not A2A) is[truncated] · SendMessage answers with the live board: totals.lid verbatim from GET /api/gspc and the derived axis rows (axis, family, kind, status, n, separation, leader state). Empty cells stay empty; a withheld leader is a state, not a zero; a fetch failure is UNCHECKABLE, never a fabricated number. Live JSON, recomputable from published rows. · One signed GSPC measurement mapped across EU, UK, US, Illinois, and China GB/T alignment surfaces. Crosswalk v1 JSON, cross-border signed card, and stranger verify at /gspc-verify. Measurement only — determination stays with authorities. · A global-board README link plus a card-bound status badge. The global board never becomes a model score. A model-specific score may render only from a VALID signed cell that names the exact subject and immutable revision; otherwise the subject is UNMEASURED or UNSIGNED. · Signed register of what third-party AI benchmarks disclose about their own process integrity. Deterministic predicates only — no language model judges. Records are unsolicited; nothing on the register is certification or endorsement. · Verify a C2PA-style signed manifest for AI-generated content (EU AI Act Article 50) at POST https://councilof.ai/api/detect. Deterministically checks the Ed25519-signed metadata layer and the IPTC/schema.org digitalSourceType; returns AI_MARKED / NOT_AI_MARKED / UNVERIFIABLE with a signed verdict receipt (in-toto/DSSE when a board key is bound). The imperceptible-watermark layer we cannot see is declared, never claimed. Free for all; unrestricted for authorities, media, fact-checkers, researchers[truncated] · POST https://councilof.ai/api/assess with a system description. Keyword matches name the Annex III categories and Article 5 patterns a human should inspect; no model is consulted. It does not establish legal tier, applicability, exceptions or compliance, and an empty description is UNMEASURED, not a low-risk finding. When no signing key is provisioned the report says UNSIGNED out loud. · Agents discover paid artefact rails via GET https://councilof.ai/.well-known/x402.json (mode is reported from runtime env, Base eip155:8453, USDC; amounts from challenge only — no invent price). Catalog GET /api/x402. Free door GET /api/free-door amount 0 settles and charges nothing — proves the rail. Living board GET /api/gspc. Verification stays free at /gspc-verify. payTo is merchant receive, never the signer. Self-settle proves the rail; stranger revenue is separate (do not invent buyers)[truncated] · SendMessage answers with the estate census summary from GET /api/state -\\u003e estate_index, and the full index is GET /interop/master-consolidation-2026-09-16.json with its OpenTimestamps proof beside it. Every artefact CSOAI holds across this repository, Hugging Face, GitHub, Kaggle and Oracle Object Storage, committed to one Merkle root. Read it as a census, never as evidence: INDEXED means we found the artefact and measured nothing against it, and UNSIGNED means a card body exists carrying signatu[truncated]\",\n  \"protocols\": [],\n  \"capabilities\": [\n    \"extensions\",\n    \"gspc-board\",\n    \"east-west-crosswalk\",\n    \"measured-badge\",\n    \"benchmark-quality-register\",\n    \"article50-detect\",\n    \"eu-ai-act-screen\",\n    \"x402-discovery\",\n    \"estate-index\",\n    \"measurement\",\n    \"governance\",\n    \"verification\",\n    \"cross-border\",\n    \"crosswalk\",\n    \"meta-evaluation\",\n    \"benchmark-quality\",\n    \"reproducibility\",\n    \"article-50\",\n    \"provenance\",\n    \"detection\",\n    \"c2pa\",\n    \"eu-ai-act\",\n    \"screening\",\n    \"deterministic\",\n    \"x402\",\n    \"discovery\",\n    \"payments\",\n    \"census\",\n    \"merkle\"\n  ],\n  \"card_url\": \"https://councilof.ai/.well-known/agent-card.json\",\n  \"status\": \"ACTIVE\",\n  \"version\": \"1.1.0\",\n  \"content_hash\": \"7a1d95a8563f57078660478c387e5465020e57135d4c72badf420b183cb7894b\",\n  \"declared_version\": \"1.0\",\n  \"inferred_version\": \"1.0\",\n  \"version_evidence\": [\n    \"supportedInterfaces (1.0; replaced url/preferredTransport/additionalInterfaces)\",\n    \"capabilities object\",\n    \"skills array\"\n  ],\n  \"auth_declared\": false,\n  \"endpoint_same_origin\": true,\n  \"endpoint_host\": \"councilof.ai\",\n  \"transport\": \"h2\",\n  \"tls_version\": \"TLS 1.3\",\n  \"field_completeness\": 0.7142857142857143\n}",
+          "snapshotType": "parsed",
+          "source": "a2a_alt",
+          "sourceUrl": "https://councilof.ai/.well-known/agent-card.json"
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_only_selnoviktech_a2a_alt_document.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "f7788e1890c73d6fe3b30649be2d37a07b6d27f9247ce10f374595c78c17314a",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": false,
+        "status": 404,
+        "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/a2a_alt",
+        "elapsedMs": 169.1,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "zb02scx4Rn5l0K1X9-Ix_njhfrRn8PoN-Ut2jai2OTVNWtUf8kauMA==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49939",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "code": "not_found",
+          "message": "No snapshot found for that source."
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_only_selnoviktech_oauth_protected_resource_document.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "196cd5d0ef4d240a8908ac0ecf126605c5642e66205da8a1281ced3188c855bb",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/oauth_protected_resource",
+        "elapsedMs": 159.9,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "N8Qe8anabn4xwq1534k-YLhWkp9PeUm9LXEMzfjTUEMQ1RKV03rpuQ==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49938",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "agentKey": "ag_050fb7a9ceea",
+          "contentHash": "62c19aff3cce67252cf0e8815c503dcefeb5fdda851ae40464c5c47ed44c92db",
+          "observedAt": "2026-09-19T01:32:46Z",
+          "snapshot": "{\n  \"event_id\": \"01a0b74b-1890-70f5-85e5-8f1a5e9c0e38\",\n  \"run_id\": \"01a0b564-a415-780a-be5e-89c3229c6f80\",\n  \"observed_at\": \"2026-09-19T01:32:26.852101494Z\",\n  \"source\": \"oauth_protected_resource\",\n  \"source_identifier\": \"oauth-protected-resource://https://selnoviktech.com\",\n  \"domain\": \"selnoviktech.com\",\n  \"registrable_domain\": \"selnoviktech.com\",\n  \"publishing_zone\": \"selnoviktech.com\",\n  \"display_name\": \"https://selnoviktech.com\",\n  \"description\": \"\",\n  \"protocols\": [],\n  \"capabilities\": [],\n  \"card_url\": \"https://selnoviktech.com/.well-known/oauth-protected-resource\",\n  \"status\": \"UNVERIFIED\",\n  \"content_hash\": \"62c19aff3cce67252cf0e8815c503dcefeb5fdda851ae40464c5c47ed44c92db\",\n  \"auth_declared\": false,\n  \"transport\": \"h2\",\n  \"tls_version\": \"TLS 1.3\"\n}",
+          "snapshotType": "parsed",
+          "source": "oauth_protected_resource",
+          "sourceUrl": "https://selnoviktech.com/.well-known/oauth-protected-resource"
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_only_selnoviktech_a2a_document.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "e2890b1bfd191f612c0afd158672ba89d6395822c63052c351275658ae6e2c92",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/a2a",
+        "elapsedMs": 153.7,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "YgScWDvxOfyxKYoa-bfpFuNYzINYfveMTiLChZKQz1l3ychZrXfmGg==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49937",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "agentKey": "ag_050fb7a9ceea",
+          "contentHash": "dccd1c41a7a0c1b74c6295c7801d776cde63fdcd0bf2a715950c3db0bd9c001a",
+          "observedAt": "2026-09-19T01:32:33Z",
+          "snapshot": "{\n  \"event_id\": \"01a0b74b-07f1-71ee-85fd-1868240596e8\",\n  \"run_id\": \"01a0b564-a415-780a-be5e-89c3229c6f80\",\n  \"observed_at\": \"2026-09-19T01:32:22.581855518Z\",\n  \"source\": \"a2a\",\n  \"source_identifier\": \"a2a://https://selnoviktech.com\",\n  \"domain\": \"selnoviktech.com\",\n  \"registrable_domain\": \"selnoviktech.com\",\n  \"publishing_zone\": \"selnoviktech.com\",\n  \"display_name\": \"Selnoviktech Agent\",\n  \"description\": \"Selnoviktech AI agent surface — lets agents search and read Selnoviktech public articles and pages. · Search Selnoviktech articles, pages, and tutorials by keyword. · Fetch the full text of a Selnoviktech article by URL or wp-json post id.\",\n  \"protocols\": [],\n  \"capabilities\": [\n    \"selnoviktech_search\",\n    \"selnoviktech_read\",\n    \"search\",\n    \"articles\",\n    \"tutorials\",\n    \"read\",\n    \"article\"\n  ],\n  \"card_url\": \"https://selnoviktech.com/.well-known/agent.json\",\n  \"status\": \"ACTIVE\",\n  \"version\": \"1.0.0\",\n  \"content_hash\": \"dccd1c41a7a0c1b74c6295c7801d776cde63fdcd0bf2a715950c3db0bd9c001a\",\n  \"declared_version\": \"1.0\",\n  \"inferred_version\": \"1.0\",\n  \"version_evidence\": [\n    \"supportedInterfaces (1.0; replaced url/preferredTransport/additionalInterfaces)\",\n    \"capabilities object\",\n    \"skills array\"\n  ],\n  \"auth_declared\": false,\n  \"endpoint_same_origin\": true,\n  \"endpoint_host\": \"selnoviktech.com\",\n  \"transport\": \"h2\",\n  \"tls_version\": \"TLS 1.3\",\n  \"field_completeness\": 0.5714285714285714\n}",
+          "snapshotType": "parsed",
+          "source": "a2a",
+          "sourceUrl": "https://selnoviktech.com/.well-known/agent.json"
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_only_selnoviktech_ard_document.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "b6ceb94c9120c024d6c4cdf9c81809293b1d6ed04c279b43a39d2b7ea09b10a5",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/ard",
+        "elapsedMs": 166.9,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "BVdrbB8qRnoMd02zKqTH3CZRqX0boF1v2VIorzPZXDPzGgqny5AYRA==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49936",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "agentKey": "ag_050fb7a9ceea",
+          "contentHash": "85fef5b05f8ee6cfa4fdf181c925eefe7af419a2f21fa2e927d52fbc08242525",
+          "observedAt": "2026-09-19T01:32:33Z",
+          "snapshot": "{\n  \"event_id\": \"01a0b74b-0345-7df4-bb3a-a6eaebde3bbb\",\n  \"run_id\": \"01a0b564-a415-780a-be5e-89c3229c6f80\",\n  \"observed_at\": \"2026-09-19T01:32:21.629594299Z\",\n  \"source\": \"ard\",\n  \"source_identifier\": \"ard://https://selnoviktech.com/.well-known/agent.json\",\n  \"domain\": \"selnoviktech.com\",\n  \"registrable_domain\": \"selnoviktech.com\",\n  \"publishing_zone\": \"selnoviktech.com\",\n  \"display_name\": \"Selnoviktech Agent\",\n  \"description\": \"\",\n  \"protocols\": [\n    \"a2a\"\n  ],\n  \"capabilities\": [],\n  \"card_url\": \"https://selnoviktech.com/.well-known/ai-catalog.json\",\n  \"status\": \"ACTIVE\",\n  \"content_hash\": \"85fef5b05f8ee6cfa4fdf181c925eefe7af419a2f21fa2e927d52fbc08242525\",\n  \"auth_declared\": false,\n  \"transport\": \"h2\",\n  \"tls_version\": \"TLS 1.3\"\n}",
+          "snapshotType": "parsed",
+          "source": "ard",
+          "sourceUrl": "https://selnoviktech.com/.well-known/ai-catalog.json"
+        }
+      }
+    },
+    "trust_model_comparison_a2a_registry_shared_council_of_ai_integrity_validation.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "cfe5b60878e40b76a20b77acaa1e07ad20d8ef469b9f951f9e952da113b9876f",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://api.a2a-registry.org/public/tools/validate-url",
+        "elapsedMs": 903.9,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "data": {
+          "success": true,
+          "data": {
+            "isValid": false,
+            "readinessScore": 10,
+            "grade": "Needs Work",
+            "specVersionDetected": "v1.0",
+            "cardData": {
+              "name": "Council of AI — Measurement Agent",
+              "description": "Independent AI-governance MEASUREMENT body. Publishes the living GSPC board (Governance · Safety · Provenance · Continuity) — quote totals.lid and totals.public_count from GET /api/gspc, never a typed integer here — with frozen item banks, published scoring code, and an Ed25519-signed board. Measurement only: not certification, not accreditation, no conformity assessment, no money from anything ranked. A2A v1.0 is served at the single interface below; MCP (a different protocol, not A2A) is at https://councilof.ai/mcp.",
+              "version": "1.4.0",
+              "provider": {
+                "organization": "CSOAI Ltd",
+                "url": "https://councilof.ai"
+              },
+              "supportedInterfaces": [
+                {
+                  "url": "https://councilof.ai/api/a2a",
+                  "protocolBinding": "JSONRPC",
+                  "protocolVersion": "1.0"
+                }
+              ],
+              "documentationUrl": "https://councilof.ai/llms.txt",
+              "iconUrl": "https://councilof.ai/og-image.png",
+              "capabilities": {
+                "streaming": false,
+                "pushNotifications": false,
+                "extendedAgentCard": false,
+                "extensions": [
+                  {
+                    "uri": "https://councilof.ai/a2a/extensions/signed-receipts/v1/",
+                    "required": false,
+                    "description": "A DRAFT WE PUBLISH AND DO NOT YET EMIT: this agent attaches no receipt to a response today. Declared because we author the specification, not because the door implements it. Ed25519-signed task-outcome receipts plus a did:web key-trust convention for AgentCard signing (A2A v1.0 §8.4). A receipt is evidence of what was claimed, not a certification, and a signature over it is an integrity claim rather than a truth claim."
+                  },
+                  {
+                    "uri": "https://councilof.ai/.well-known/x402.json",
+                    "required": false,
+                    "description": "x402 discovery index for the agent pay rail (also GET /api/x402). Free door amount 0 at /api/free-door. Verification stays free. payTo is merchant not payer. Self-settle is not revenue. Settlement is PROVEN on Base mainnet: transaction hashes are published in docs/product/SETTLED-DOORS and verifiable on chain by anyone, independently of this server. Measurement credential, never a grade."
+                  },
+                  {
+                    "uri": "https://github.com/x402-foundation/x402/blob/69652a69798f0b08f95bef33318896e36e210f7e/specs/extensions/extension-offer-and-receipt.md",
+                    "required": false,
+                    "description": "x402 Offer & Receipt extension (v0.6), JWS profile — CONDITIONALLY EMITTED. A signed offer is attached only when BOARD_SIGN_KEY_PKCS8_B64 is provisioned and an accepts[] entry can be committed; otherwise the 402 carries csoai.offer_receipt with the gap and no offer-receipt extension block. A signed receipt is attached only after facilitator-confirmed settlement when the facilitator names a payer and the board key is available; otherwise the paid artefact still delivers and receiptGap states why no signed receipt was attached. When emitted, the format is jws, alg EdDSA, kid did:web:csoai.org#board-attestation-1, resolvable at https://csoai.org/.well-known/did.json (an authorization mechanism the extension names in section 4.5.1). eip712 is NOT emitted: the edge has no secp256k1 signer; when the optional Ed25519 board key is provisioned it signs JWS. A format we cannot produce is better declared missing than faked. A receipt proves this server signed those bytes; it is not by itself proof that money moved, and the transaction field, when present, is a claim to check against the chain."
+                  }
+                ]
+              },
+              "defaultInputModes": [
+                "text/plain",
+                "application/json"
+              ],
+              "defaultOutputModes": [
+                "text/plain",
+                "application/json"
+              ],
+              "skills": [
+                {
+                  "id": "gspc-board",
+                  "name": "Signed GSPC Board",
+                  "description": "SendMessage answers with the live board: totals.lid verbatim from GET /api/gspc and the derived axis rows (axis, family, kind, status, n, separation, leader state). Empty cells stay empty; a withheld leader is a state, not a zero; a fetch failure is UNCHECKABLE, never a fabricated number. Live JSON, recomputable from published rows.",
+                  "tags": [
+                    "measurement",
+                    "governance",
+                    "verification"
+                  ],
+                  "examples": [
+                    "SendMessage with Part.data {\"skill\":\"gspc-board\",\"input\":{}}",
+                    "Legacy compatibility: one text Part containing exactly \"board\"",
+                    "GET /api/gspc — the same board, outside A2A"
+                  ]
+                },
+                {
+                  "id": "east-west-crosswalk",
+                  "name": "East-West crosswalk & cross-border card",
+                  "description": "One signed GSPC measurement mapped across EU, UK, US, Illinois, and China GB/T alignment surfaces. Crosswalk v1 JSON, cross-border signed card, and stranger verify at /gspc-verify. Measurement only — determination stays with authorities.",
+                  "tags": [
+                    "cross-border",
+                    "crosswalk",
+                    "measurement",
+                    "verification"
+                  ],
+                  "examples": [
+                    "SendMessage with Part.data {\"skill\":\"east-west-crosswalk\",\"input\":{}}",
+                    "GET /api/cross — cross-border signed card"
+                  ]
+                },
+                {
+                  "id": "card-status-link",
+                  "name": "Card status link",
+                  "description": "A global-board README link plus a card-bound status link: the state of one signed card for one exact subject, never a mark or a grade. The global board never becomes a model score. A model-specific result may render only from a VALID signed cell that names the exact subject and immutable revision; otherwise the subject is UNMEASURED or UNSIGNED. Former id measured-badge is still accepted.",
+                  "tags": [
+                    "measurement",
+                    "governance",
+                    "verification"
+                  ],
+                  "examples": [
+                    "SendMessage with Part.data {\"skill\":\"card-status-link\",\"input\":{\"card\":\"<64-hex-signed-card-sha256>\",\"subject\":\"owner/model@<40-or-64-hex-revision>\"}}",
+                    "GET /api/badge?card=<signed-card-sha256>&subject=<url-encoded-owner/model@commit-sha>"
+                  ]
+                },
+                {
+                  "id": "benchmark-quality-register",
+                  "name": "Benchmark-quality register",
+                  "description": "Signed register of what third-party AI benchmarks disclose about their own process integrity. Deterministic predicates only — no language model judges. Records are unsolicited; nothing on the register is certification or endorsement.",
+                  "tags": [
+                    "meta-evaluation",
+                    "benchmark-quality",
+                    "reproducibility",
+                    "governance"
+                  ],
+                  "examples": [
+                    "SendMessage with Part.data {\"skill\":\"benchmark-quality-register\",\"input\":{}}",
+                    "GET /api/benchmark-quality"
+                  ]
+                },
+                {
+                  "id": "article50-detect",
+                  "name": "Article 50 provenance detection (free)",
+                  "description": "Verify a C2PA-style signed manifest for AI-generated content (EU AI Act Article 50) at POST https://councilof.ai/api/detect. Deterministically checks the Ed25519-signed metadata layer and the IPTC/schema.org digitalSourceType; returns AI_MARKED / NOT_AI_MARKED / UNVERIFIABLE with a signed verdict receipt (in-toto/DSSE when a board key is bound). The imperceptible-watermark layer we cannot see is declared, never claimed. Free for all; unrestricted for authorities, media, fact-checkers, researchers and civil society. Not certification.",
+                  "tags": [
+                    "article-50",
+                    "provenance",
+                    "detection",
+                    "verification",
+                    "c2pa"
+                  ],
+                  "examples": [
+                    "SendMessage with Part.data {\"skill\":\"article50-detect\",\"input\":{\"manifest\":{\"claim\":{}}}}",
+                    "POST /api/detect {\"manifest\":{...},\"asset_hash\":\"<optional-64-hex>\"}"
+                  ]
+                },
+                {
+                  "id": "eu-ai-act-screen",
+                  "name": "EU AI Act screening helper (deterministic, text-only)",
+                  "description": "POST https://councilof.ai/api/assess with a system description. Keyword matches name the Annex III categories and Article 5 patterns a human should inspect; no model is consulted. It does not establish legal tier, applicability, exceptions or compliance, and an empty description is UNMEASURED, not a low-risk finding. When no signing key is provisioned the report says UNSIGNED out loud.",
+                  "tags": [
+                    "eu-ai-act",
+                    "screening",
+                    "deterministic"
+                  ],
+                  "examples": [
+                    "SendMessage with Part.data {\"skill\":\"eu-ai-act-screen\",\"input\":{\"system\":\"<what the system does and for whom>\"}}",
+                    "POST /api/assess {\"system\": \"<what the system does and for whom>\"}"
+                  ]
+                },
+                {
+                  "id": "x402-discovery",
+                  "name": "x402 discovery + free door",
+                  "description": "Agents discover paid artefact rails via GET https://councilof.ai/.well-known/x402.json (mode is reported from runtime env, Base eip155:8453, USDC; amounts from challenge only — no invent price). Catalog GET /api/x402. Free door GET /api/free-door amount 0 settles and charges nothing — proves the rail. Living board GET /api/gspc. Verification stays free at /gspc-verify. payTo is merchant receive, never the signer. Self-settle proves the rail; stranger revenue is separate (do not invent buyers). Coming—Paddle not live. No card-processor invent. Measurement, never certification. Signed offers and receipts are conditional: a 402 carries extensions['offer-receipt'].info.offers[] only when BOARD_SIGN_KEY_PKCS8_B64 is provisioned and an accepts[] entry can be committed; otherwise csoai.offer_receipt names the gap. A signed receipt appears in the X-PAYMENT-RESPONSE SettlementResponse only after facilitator-confirmed settlement when the facilitator names a payer and the board key is available; otherwise receiptGap states why no signed receipt was attached. Emitted signatures use format jws, alg EdDSA, kid did:web:csoai.org#board-attestation-1. Verify one without trusting us: POST it to /api/receipts/verify, or run scripts/verify_receipt.py against https://csoai.org/.well-known/did.json. Your own receipts: GET /api/receipts?payer=0x... (status UNRECORDED means no store is bound on that deployment, never that you did not pay). No eip712 is emitted — the edge has no secp256k1 signer.",
+                  "tags": [
+                    "x402",
+                    "discovery",
+                    "payments",
+                    "measurement"
+                  ],
+                  "examples": [
+                    "SendMessage with Part.data {\"skill\":\"x402-discovery\",\"input\":{}} — catalog only; it makes no payment",
+                    "GET https://councilof.ai/.well-known/x402.json",
+                    "GET https://councilof.ai/api/free-door",
+                    "GET https://councilof.ai/api/gspc",
+                    "GET https://councilof.ai/gspc-verify",
+                    "GET https://councilof.ai/api/free-door  # inspect csoai.offer_receipt; read extensions['offer-receipt'].info.offers[0].signature only when signed",
+                    "POST https://councilof.ai/api/receipts/verify -d '{\"receipt\":\"eyJ...\"}'",
+                    "GET https://councilof.ai/api/receipts?payer=0x4dB7AAFbe797a39Cd6Cc4E7aa64d970F7F6E02B7"
+                  ]
+                },
+                {
+                  "id": "estate-index",
+                  "name": "Estate index (census, not evidence)",
+                  "description": "SendMessage answers with the estate census summary from GET /api/state -> estate_index, and the full index is GET /interop/master-consolidation-2026-09-16.json with its OpenTimestamps proof beside it. Every artefact CSOAI holds across this repository, Hugging Face, GitHub, Kaggle and Oracle Object Storage, committed to one Merkle root. Read it as a census, never as evidence: INDEXED means we found the artefact and measured nothing against it, and UNSIGNED means a card body exists carrying signature: null awaiting a signing decision. Two leaf classes sit under the root and are never added together: a bytes leaf is the sha256 of an artefact we read, a record leaf is the sha256 of our own note about a remote artefact we did not download and proves nothing about the remote bytes. The root is UNSIGNED, so it records when the set existed and not who assembled it, and it is therefore not Rekor-witnessable the way public/root.json is. It does not replace root.json or the signed card index, each of which commits to its own separate corpus with zero identifier overlap. Some identifiers are withheld because they carry internal names; those entries are kept and their digests untouched, so inclusion can still be proved by a holder of the real identifier. Measurement, never certification.",
+                  "tags": [
+                    "census",
+                    "provenance",
+                    "merkle",
+                    "measurement"
+                  ],
+                  "examples": [
+                    "SendMessage with Part.data {\"skill\":\"estate-index\",\"input\":{}} — returns the summary, not the 7,940 rows",
+                    "GET https://councilof.ai/api/state  # estate_index.merkle_root and the counts",
+                    "GET https://councilof.ai/interop/master-consolidation-2026-09-16.json",
+                    "GET https://councilof.ai/interop/master-consolidation-2026-09-16.json.ots",
+                    "GET https://councilof.ai/estate/"
+                  ]
+                },
+                {
+                  "id": "measurement-capsules",
+                  "name": "Measurement capsules: index and verify (free)",
+                  "description": "Read the latest signed measurement-capsule index, or verify one capsule. {\"op\":\"index\"} returns the index root over every published capsule, each batch's Merkle root, capsule count and measurement states, the index's board signature re-verified against the pinned key, and the published anchor states (OpenTimestamps, Rekor, XRPL) — PENDING is never called attested. {\"op\":\"verify\",\"capsule_json\":...} recomputes the capsule id, picks the Merkle rule by the capsule's schema (v0.2: RFC 6962 with domain separation) and returns the audit path against the batch root the signed index names: INCLUDED, NOT_INCLUDED, ID_MISMATCH, UNCHECKABLE or NOT_PUBLISHED. The same module as the MCP tools measurement_index and verify_capsule. Verification is free forever. Measurement, not endorsement: no verdict, score or ranking.",
+                  "tags": [
+                    "measurement",
+                    "merkle",
+                    "verification",
+                    "provenance"
+                  ],
+                  "examples": [
+                    "SendMessage with Part.data {\"skill\":\"measurement-capsules\",\"input\":{\"op\":\"index\"}}",
+                    "SendMessage with Part.data {\"skill\":\"measurement-capsules\",\"input\":{\"op\":\"verify\",\"capsule_json\":\"<the capsule's JSON text>\"}}",
+                    "GET https://councilof.ai/measurement-capsules/latest.json"
+                  ]
+                },
+                {
+                  "id": "server-evidence",
+                  "name": "Server evidence: every capsule about one endpoint (free)",
+                  "description": "Trust per server, not totals. Every published measurement capsule about ONE endpoint URL across all batches: MCP contract-parity dimensions (AUTH, PAYMENT, PROTOCOL, TOOLS, VERSION), A2A agent-card signature state, self-parity cells for CSOAI's own doors, and later adapters such as tool drift. Each capsule comes with its measurement_state, observed_at, correction_pointer, limitations, batch Merkle root and an inclusion pointer; measurement-capsules {op: verify} re-derives inclusion. Read from a static per-endpoint shard keyed by sha256 of the normalised URL. An endpoint with no capsule is NOT_MEASURED with an empty list, never an error and never a clean bill. The same module as the MCP tool server_evidence. Measurement, not endorsement.",
+                  "tags": [
+                    "measurement",
+                    "mcp",
+                    "a2a",
+                    "per-server",
+                    "evidence"
+                  ],
+                  "examples": [
+                    "SendMessage with Part.data {\"skill\":\"server-evidence\",\"input\":{\"endpoint_url\":\"https://example.com/mcp\"}}"
+                  ]
+                },
+                {
+                  "id": "evidence-bundle",
+                  "name": "Evidence bundle preview: signed cards relevant to one obligation (free)",
+                  "description": "For ONE obligation (article-50, article-53 GPAI transparency, dora or cra) and an optional subject: the obligation record, its counsel-gate status and the already-signed measurement cards that are relevant to it, read from GET /api/evidence-bundle. The same module as the free MCP tool evidence_bundle_preview. Relevant-to is never a determination: no answer says satisfied or not satisfied, and zero relevant cards is answered EMPTY. Article 53 output is evidence for review, not a legal determination. The assembled OSCAL bundle is the x402 MCP tool evidence_bundle on https://councilof.ai/mcp; this skill never charges. Not a conformity assessment, certification, audit opinion or compliance determination; grants no status.",
+                  "tags": [
+                    "evidence",
+                    "oscal",
+                    "eu-ai-act",
+                    "dora",
+                    "cra"
+                  ],
+                  "examples": [
+                    "SendMessage with Part.data {\"skill\":\"evidence-bundle\",\"input\":{\"obligation\":\"article-50\"}}",
+                    "SendMessage with Part.data {\"skill\":\"evidence-bundle\",\"input\":{\"obligation\":\"article-53\",\"subject\":\"gpt\"}}"
+                  ]
+                },
+                {
+                  "id": "gspc-route",
+                  "name": "GSPC Route: decide a path under your policy (free, decide-only)",
+                  "description": "GSPC Route (free, decide-only): applies the caller's Cedar policy (presets read-only, local-only, eu-only, no-unmeasured; forbid_providers; allow_kinds) and the fixed GSPC floor to candidates the caller declares, or to the GSPC MCP tools, reads the live board for the named quality axis, and returns the chosen candidate with an unsigned route record (csoai.evidence-event/0.1, profile csoai.route-evidence/0.1). The same module as the free MCP tool route. Routing is not ranking: TIE and UNTESTED are stated as they are, and a caller tie_break decides an unseparated comparison. Nothing is executed or charged; mode execute answers NOT_ENABLED. Measurement, not certification.",
+                  "tags": [
+                    "routing",
+                    "policy",
+                    "cedar",
+                    "evidence",
+                    "decide-only"
+                  ],
+                  "examples": [
+                    "SendMessage with Part.data {\"skill\":\"gspc-route\",\"input\":{\"task\":\"Summarise a public paragraph.\",\"objective\":{\"quality_axis\":\"governance\"},\"candidates\":[{\"id\":\"local:llama3.2-3b\",\"kind\":\"local_gpu\",\"model\":\"llama3.2:3b\",\"endpoint\":\"local:ollama/llama3.2:3b\",\"read_only\":true},{\"id\":\"local:mistral-7b\",\"kind\":\"local_gpu\",\"model\":\"mistral:7b\",\"endpoint\":\"local:ollama/mistral:7b\",\"read_only\":true}]}}"
+                  ]
+                }
+              ],
+              "catalogUrl": "https://councilof.ai/interop/surface-catalog.json",
+              "doi": "10.5281/zenodo.21991104",
+              "explicitly_not": [
+                "certification",
+                "accreditation",
+                "conformity-assessment",
+                "legal-determination",
+                "enforcement"
+              ],
+              "signatures": [
+                {
+                  "protected": "eyJhbGciOiJFZERTQSIsImtpZCI6ImRpZDp3ZWI6Y3NvYWkub3JnI2NhcmQtYXR0ZXN0YXRpb24tMiIsInR5cCI6IkpPU0UifQ",
+                  "signature": "EEmnLz2PbJppVHOBXRpRC0lvKoWffwGjSwuRn8kbGLVSOdh4h3oVftHh40GOVWOnE3NICstoLwHDOjBKZZ-PDQ"
+                }
+              ]
+            },
+            "targetUrl": "https://councilof.ai/.well-known/agent.json",
+            "isOffline": false,
+            "findings": [
+              {
+                "tier": "tier2_network",
+                "severity": "pass",
+                "code": "HTTP_200_OK",
+                "title": "HTTP Status 200 OK",
+                "message": "Manifest endpoint successfully responded with HTTP 200 in 488ms."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "pass",
+                "code": "HTTPS_ENFORCED",
+                "title": "HTTPS Encryption Valid",
+                "message": "Endpoint is served over secure TLS/HTTPS."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "warning",
+                "code": "MIME_TYPE_JSON_ADVISORY",
+                "title": "Standard JSON MIME Header",
+                "message": "Content-Type is 'application/json'. The recommended canonical header is 'application/a2a+json'.",
+                "suggestion": "Serve with header 'Content-Type: application/a2a+json; charset=utf-8'."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "pass",
+                "code": "CORS_ENABLED",
+                "title": "CORS Cross-Origin Allowed",
+                "message": "Access-Control-Allow-Origin header is present ('*')."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "warning",
+                "code": "PAYLOAD_EXCEEDS_10KB",
+                "title": "Manifest Exceeds 10KB",
+                "message": "Card payload is 18.3KB, exceeding the recommended 10KB limit.",
+                "suggestion": "Optimize descriptions, prune unused fields, or link out to external documentationUrl."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: root",
+                "message": "root must NOT have additional properties",
+                "field": "root",
+                "suggestion": "Check the A2A v1.0 specification for field 'root'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: root",
+                "message": "root must NOT have additional properties",
+                "field": "root",
+                "suggestion": "Check the A2A v1.0 specification for field 'root'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: root",
+                "message": "root must NOT have additional properties",
+                "field": "root",
+                "suggestion": "Check the A2A v1.0 specification for field 'root'."
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "pass",
+                "code": "DOCUMENTATION_URL_VALID",
+                "title": "Documentation URL Declared",
+                "message": "Agent references public documentation: https://councilof.ai/llms.txt"
+              },
+              {
+                "tier": "tier4_trust",
+                "severity": "warning",
+                "code": "JWS_PUBLIC_KEY_UNRESOLVED",
+                "title": "Signature [0] Key Unresolved",
+                "message": "Could not resolve public key for kid 'did:web:csoai.org#card-attestation-2' from jku 'none'."
+              }
+            ],
+            "summary": {
+              "totalErrors": 3,
+              "totalWarnings": 3,
+              "totalPasses": 4,
+              "tier1Status": "fail",
+              "tier2Status": "warn",
+              "tier3Status": "pass",
+              "tier4Status": "warn"
+            },
+            "metadata": {
+              "isOffline": false,
+              "targetUrl": "https://councilof.ai/.well-known/agent.json",
+              "responseTimeMs": 488,
+              "contentLengthBytes": 18668,
+              "contentType": "application/json",
+              "dnsTxtFound": false,
+              "godaddyAnsFound": false
+            }
+          }
+        }
+      }
+    },
+    "trust_model_comparison_a2a_registry_missing_a2a402_integrity_validation.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "ce46fa7408e004e6d8bd8eacf8393112af92e6f1b5fc625a93711da1f9df63d5",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://api.a2a-registry.org/public/tools/validate-url",
+        "elapsedMs": 952.3,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "data": {
+          "success": true,
+          "data": {
+            "isValid": false,
+            "readinessScore": 40,
+            "grade": "Needs Work",
+            "specVersionDetected": "v0.3",
+            "cardData": {
+              "protocolVersion": "0.3",
+              "name": "A2A402 Agent Marketplace",
+              "description": "A2A402 is a live production autonomous-agent work router and marketplace. Agents can express a need, discover jobs, register, bid, deliver verified work, build reputation, and settle primarily in USDC across supported EVM networks. A2A is an optional Base-native settlement asset.",
+              "url": "https://a2a402.market/a2a",
+              "preferredTransport": "JSONRPC",
+              "capabilities": {
+                "streaming": false,
+                "pushNotifications": false,
+                "stateTransitionHistory": false
+              },
+              "skills": [
+                {
+                  "id": "cap_10_broker",
+                  "name": "broker",
+                  "description": "Coordinates autonomous-agent discovery, jobs, bids, contracts, deliverables, evaluation, settlement, reputation, and downstream work.",
+                  "tags": [
+                    "broker",
+                    "agent-economy",
+                    "capability-discovery",
+                    "jobs",
+                    "contracts",
+                    "A2A"
+                  ]
+                },
+                {
+                  "id": "a2a402-paid-work-discovery",
+                  "name": "Discover paid autonomous-agent work",
+                  "description": "Discover live paid A2A402 marketplace jobs using the public structured job feed, including independent specialist work.",
+                  "tags": [
+                    "paid-work",
+                    "jobs",
+                    "agent-marketplace",
+                    "A2A402",
+                    "USDC"
+                  ],
+                  "examples": [
+                    "Find open paid jobs",
+                    "Find jobs matching my capabilities",
+                    "Route a capability need"
+                  ]
+                },
+                {
+                  "id": "trustroom-construction-project-review",
+                  "name": "TrustRoom construction project review opportunities",
+                  "description": "Discover paid TrustRoom-originated construction project-review jobs requiring construction.project.review. TrustRoom supplies sanitized project data; qualified independent agents perform the specialist review.",
+                  "tags": [
+                    "construction",
+                    "project-review",
+                    "TrustRoom",
+                    "paid-work",
+                    "construction.project.review"
+                  ],
+                  "examples": [
+                    "Find TrustRoom construction review jobs",
+                    "I can perform construction.project.review",
+                    "Show paid project review work"
+                  ]
+                }
+              ],
+              "documentationUrl": "https://a2a402.market/docs/",
+              "extensions": {
+                "a2a402": {
+                  "platform": "A2A402",
+                  "platformType": "autonomous-agent platform, protocol, marketplace, and economic network",
+                  "nativeToken": {
+                    "name": "A2A",
+                    "symbol": "A2A",
+                    "network": "base",
+                    "chainId": 8453,
+                    "contract": "0xf9e891696c022f9fe4a143a92255371253c5567a",
+                    "decimals": 18,
+                    "role": "secondary"
+                  },
+                  "environment": "production",
+                  "realMoney": true,
+                  "walletRequiredForRegistration": false,
+                  "walletRequiredForA2ASettlement": true,
+                  "authentication": {
+                    "type": "bearer-token",
+                    "agentHeader": "X-Agent-Id",
+                    "registrationUrl": "https://a2a402.market/agents/register",
+                    "rotationUrlTemplate": "https://a2a402.market/agents/{agentId}/auth/rotate",
+                    "rotationInvalidatesPreviousToken": true
+                  },
+                  "canonicalLifecycle": [
+                    "need",
+                    "discover",
+                    "register",
+                    "create-job",
+                    "bid",
+                    "select-bid",
+                    "contract",
+                    "artifact",
+                    "delivery",
+                    "evaluation",
+                    "settlement",
+                    "reputation",
+                    "downstream-work"
+                  ],
+                  "openapiUrl": "https://a2a402.market/openapi.json",
+                  "llmsUrl": "https://a2a402.market/llms.txt",
+                  "humanDocsUrl": "https://a2a402.market/docs/",
+                  "recruitmentUrl": "https://a2a402.market/recruit.json",
+                  "humanRecruitmentUrl": "https://a2a402.market/beta/",
+                  "needUrl": "https://a2a402.market/need",
+                  "jobsUrl": "https://a2a402.market/jobs",
+                  "humanJobsUrl": "https://a2a402.market/jobs-ui/",
+                  "tokenUrl": "https://a2a402.market/token.json",
+                  "tokenListingUrl": "https://a2a402.market/token-listing.json",
+                  "humanTokenUrl": "https://a2a402.market/token/",
+                  "humanPlatformUrl": "https://a2a402.market/",
+                  "humanAgentsUrl": "https://a2a402.market/agents/",
+                  "humanStatsUrl": "https://a2a402.market/stats/",
+                  "humanSocialUrl": "https://a2a402.market/social/",
+                  "humanEconomicGraphUrl": "https://a2a402.market/graph/",
+                  "humanAgentGlobeUrl": "https://a2a402.market/agentglobe/",
+                  "humanGrowthDashboardUrl": "https://a2a402.market/growth/",
+                  "founderProgramUrl": "https://a2a402.market/founders/",
+                  "socialFeedUrl": "https://a2a402.market/social/feed",
+                  "socialAgentsUrl": "https://a2a402.market/social/agents",
+                  "loungeMessagesUrl": "https://a2a402.market/lounge/messages",
+                  "acceptedAssets": [
+                    "USDC",
+                    "A2A"
+                  ],
+                  "primarySettlementAsset": "USDC",
+                  "supportedUSDCNetworks": [
+                    "base",
+                    "ethereum",
+                    "arbitrum",
+                    "optimism",
+                    "polygon"
+                  ],
+                  "secondarySettlementAsset": "A2A",
+                  "a2aNetwork": "base",
+                  "caipChainId": "eip155:8453",
+                  "chainId": 8453,
+                  "tokenContract": "0xf9e891696c022f9fe4a143a92255371253c5567a",
+                  "marketplaceTreasury": "0xD08eA67ef730fc336a9B6fB89A4B66dF67Fbb69c",
+                  "marketplaceFeeBps": 500,
+                  "workerShareBps": 9500,
+                  "humanTradingEnabled": false,
+                  "custody": false,
+                  "jobFeed": {
+                    "transport": "http-polling",
+                    "recommendedPollingSeconds": [
+                      15,
+                      30
+                    ],
+                    "structuredRequirementsVersion": "1",
+                    "defaultScope": "public-production",
+                    "internalHistoryExcluded": true,
+                    "promotionalGenesisIncluded": false
+                  },
+                  "paymentExecution": {
+                    "protocol": "a2a402-payment-intent-v1",
+                    "mode": "authenticated-pull",
+                    "pendingIntentsUrl": "https://a2a402.market/payments/execution/intents",
+                    "authenticationRequired": true,
+                    "signer": "payer-agent-controlled",
+                    "referenceRunner": "npm run payments:watch",
+                    "privateKeyRequiredByMarketplace": false
+                  },
+                  "openWork": {
+                    "canonicalJobsUrl": "https://a2a402.market/jobs",
+                    "constructionReviewFeed": "https://a2a402.market/jobs?status=OPEN&capability=construction.project.review",
+                    "trustRoomCoordinatorAgentId": "agent_trustroom_project_coordinator",
+                    "capability": "construction.project.review",
+                    "preferredAsset": "USDC",
+                    "supportedUSDCNetworks": [
+                      "base",
+                      "ethereum",
+                      "arbitrum",
+                      "optimism",
+                      "polygon"
+                    ],
+                    "secondaryAsset": "A2A",
+                    "marketplaceFeeBps": 500,
+                    "workerShareBps": 9500,
+                    "note": "Job availability is live and may change when an independent agent claims work."
+                  }
+                }
+              },
+              "version": "0.1.0",
+              "provider": {
+                "organization": "A2A402",
+                "url": "https://a2a402.market"
+              },
+              "defaultInputModes": [
+                "text/plain",
+                "application/json"
+              ],
+              "defaultOutputModes": [
+                "text/plain",
+                "application/json"
+              ],
+              "supportedInterfaces": [
+                {
+                  "url": "https://a2a402.market/a2a",
+                  "protocolBinding": "JSONRPC",
+                  "protocolVersion": "1.0"
+                }
+              ]
+            },
+            "targetUrl": "https://a2a402.market/.well-known/agent-card.json",
+            "isOffline": false,
+            "findings": [
+              {
+                "tier": "tier2_network",
+                "severity": "pass",
+                "code": "HTTP_200_OK",
+                "title": "HTTP Status 200 OK",
+                "message": "Manifest endpoint successfully responded with HTTP 200 in 560ms."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "pass",
+                "code": "HTTPS_ENFORCED",
+                "title": "HTTPS Encryption Valid",
+                "message": "Endpoint is served over secure TLS/HTTPS."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "warning",
+                "code": "MIME_TYPE_JSON_ADVISORY",
+                "title": "Standard JSON MIME Header",
+                "message": "Content-Type is 'application/json'. The recommended canonical header is 'application/a2a+json'.",
+                "suggestion": "Serve with header 'Content-Type: application/a2a+json; charset=utf-8'."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "warning",
+                "code": "CORS_MISSING",
+                "title": "Missing CORS Headers",
+                "message": "No 'Access-Control-Allow-Origin: *' header found. Web browser agents may fail to fetch this card directly.",
+                "suggestion": "Add 'Access-Control-Allow-Origin: *' to your agent card endpoint."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "pass",
+                "code": "PAYLOAD_SIZE_OK",
+                "title": "Payload Size OK",
+                "message": "Card payload is 7.0KB (well under 10KB)."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "V03_LEGACY_TRANSPORT_FIELD",
+                "title": "Legacy v0.3 preferredTransport Field",
+                "message": "Top-level 'preferredTransport' field is deprecated in v1.0.",
+                "field": "preferredTransport",
+                "suggestion": "Declare transport via 'protocolBinding' inside 'supportedInterfaces[]'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "V03_PHANTOM_CAPABILITY",
+                "title": "Deprecated stateTransitionHistory Capability",
+                "message": "'capabilities.stateTransitionHistory' is not part of the v1.0 spec.",
+                "field": "capabilities.stateTransitionHistory",
+                "suggestion": "Remove 'stateTransitionHistory' from capabilities."
+              }
+            ],
+            "summary": {
+              "totalErrors": 2,
+              "totalWarnings": 2,
+              "totalPasses": 3,
+              "tier1Status": "fail",
+              "tier2Status": "warn",
+              "tier3Status": "pass",
+              "tier4Status": "pass"
+            },
+            "metadata": {
+              "isOffline": false,
+              "targetUrl": "https://a2a402.market/.well-known/agent-card.json",
+              "responseTimeMs": 560,
+              "contentLengthBytes": 7139,
+              "contentType": "application/json",
+              "dnsTxtFound": false,
+              "godaddyAnsFound": false
+            }
+          }
+        }
+      }
+    },
+    "trust_model_comparison_ans_identity_discovery.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "4eafe6f79a6896ec5c58d3279635880eaeccb2e7d7941598f5196407acbef8d8",
+      "hashScope": "canonical-json",
+      "payload": [
+        {
+          "outputLabel": "shared_council_of_ai",
+          "domain": "councilof.ai",
+          "recordName": "_ans-badge.councilof.ai",
+          "url": "https://dns.google/resolve?name=_ans-badge.councilof.ai&type=TXT",
+          "httpStatus": 200,
+          "data": {
+            "Status": 3,
+            "TC": false,
+            "RD": true,
+            "RA": true,
+            "AD": false,
+            "CD": false,
+            "Question": [
+              {
+                "name": "_ans-badge.councilof.ai.",
+                "type": 16
+              }
+            ],
+            "Authority": [
+              {
+                "name": "councilof.ai.",
+                "type": 6,
+                "TTL": 1800,
+                "data": "elliot.ns.cloudflare.com. dns.cloudflare.com. 2416219770 10000 2400 604800 1800"
+              }
+            ],
+            "Comment": "Response from 172.64.33.162."
+          }
+        },
+        {
+          "outputLabel": "shared_council_of_ai",
+          "domain": "councilof.ai",
+          "recordName": "_ra-badge.councilof.ai",
+          "url": "https://dns.google/resolve?name=_ra-badge.councilof.ai&type=TXT",
+          "httpStatus": 200,
+          "data": {
+            "Status": 3,
+            "TC": false,
+            "RD": true,
+            "RA": true,
+            "AD": false,
+            "CD": false,
+            "Question": [
+              {
+                "name": "_ra-badge.councilof.ai.",
+                "type": 16
+              }
+            ],
+            "Authority": [
+              {
+                "name": "councilof.ai.",
+                "type": 6,
+                "TTL": 1800,
+                "data": "elliot.ns.cloudflare.com. dns.cloudflare.com. 2416219770 10000 2400 604800 1800"
+              }
+            ],
+            "Comment": "Response from 172.64.32.234."
+          }
+        },
+        {
+          "outputLabel": "only_selnoviktech",
+          "domain": "selnoviktech.com",
+          "recordName": "_ans-badge.selnoviktech.com",
+          "url": "https://dns.google/resolve?name=_ans-badge.selnoviktech.com&type=TXT",
+          "httpStatus": 200,
+          "data": {
+            "Status": 0,
+            "TC": false,
+            "RD": true,
+            "RA": true,
+            "AD": true,
+            "CD": false,
+            "Question": [
+              {
+                "name": "_ans-badge.selnoviktech.com.",
+                "type": 16
+              }
+            ],
+            "Authority": [
+              {
+                "name": "selnoviktech.com.",
+                "type": 6,
+                "TTL": 1800,
+                "data": "julian.ns.cloudflare.com. dns.cloudflare.com. 2416653147 10000 2400 604800 1800"
+              }
+            ],
+            "Comment": "Response from 172.64.34.35."
+          }
+        },
+        {
+          "outputLabel": "only_selnoviktech",
+          "domain": "selnoviktech.com",
+          "recordName": "_ra-badge.selnoviktech.com",
+          "url": "https://dns.google/resolve?name=_ra-badge.selnoviktech.com&type=TXT",
+          "httpStatus": 200,
+          "data": {
+            "Status": 0,
+            "TC": false,
+            "RD": true,
+            "RA": true,
+            "AD": true,
+            "CD": false,
+            "Question": [
+              {
+                "name": "_ra-badge.selnoviktech.com.",
+                "type": 16
+              }
+            ],
+            "Authority": [
+              {
+                "name": "selnoviktech.com.",
+                "type": 6,
+                "TTL": 1800,
+                "data": "julian.ns.cloudflare.com. dns.cloudflare.com. 2416653147 10000 2400 604800 1800"
+              }
+            ],
+            "Comment": "Response from 108.162.194.35."
+          }
+        },
+        {
+          "outputLabel": "missing_a2a402",
+          "domain": "a2a402.market",
+          "recordName": "_ans-badge.a2a402.market",
+          "url": "https://dns.google/resolve?name=_ans-badge.a2a402.market&type=TXT",
+          "httpStatus": 200,
+          "data": {
+            "Status": 3,
+            "TC": false,
+            "RD": true,
+            "RA": true,
+            "AD": false,
+            "CD": false,
+            "Question": [
+              {
+                "name": "_ans-badge.a2a402.market.",
+                "type": 16
+              }
+            ],
+            "Authority": [
+              {
+                "name": "a2a402.market.",
+                "type": 6,
+                "TTL": 1800,
+                "data": "dns1.p01.nsone.net. domains+netlify.netlify.com. 1786236711 43200 7200 1209600 3600"
+              }
+            ],
+            "Comment": "Response from 198.51.44.72."
+          }
+        },
+        {
+          "outputLabel": "missing_a2a402",
+          "domain": "a2a402.market",
+          "recordName": "_ra-badge.a2a402.market",
+          "url": "https://dns.google/resolve?name=_ra-badge.a2a402.market&type=TXT",
+          "httpStatus": 200,
+          "data": {
+            "Status": 3,
+            "TC": false,
+            "RD": true,
+            "RA": true,
+            "AD": false,
+            "CD": false,
+            "Question": [
+              {
+                "name": "_ra-badge.a2a402.market.",
+                "type": 16
+              }
+            ],
+            "Authority": [
+              {
+                "name": "a2a402.market.",
+                "type": 6,
+                "TTL": 482,
+                "data": "dns1.p01.nsone.net. domains+netlify.netlify.com. 1786236711 43200 7200 1209600 3600"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "trust_model_comparison_ans_snitker_dns_badge.json": {
+      "mediaType": "application/json",
+      "url": "https://dns.google/resolve?name=_ans-badge.godaddy.demo.ans.snitker.dev&type=TXT",
+      "sha256": "79e4bf14dfe3195b8e768a228f7e7c54dc14d9792028d28f4eda1d6c1bc38e94",
+      "hashScope": "response-bytes",
+      "payload": {
+        "Status": 0,
+        "TC": false,
+        "RD": true,
+        "RA": true,
+        "AD": true,
+        "CD": false,
+        "Question": [
+          {
+            "name": "_ans-badge.godaddy.demo.ans.snitker.dev.",
+            "type": 16
+          }
+        ],
+        "Answer": [
+          {
+            "name": "_ans-badge.godaddy.demo.ans.snitker.dev.",
+            "type": 16,
+            "TTL": 3600,
+            "data": "v=ans-badge1; version=v1.2.0; url=https://transparency.ans.godaddy.com/v1/agents/7d54a8d6-89d7-4d53-93ee-802e410ab1b3"
+          }
+        ],
+        "Comment": "Response from 173.245.59.225."
+      }
+    },
+    "trust_model_comparison_ans_snitker_transparency_log_badge.json": {
+      "mediaType": "application/json",
+      "url": "https://transparency.ans.godaddy.com/v1/agents/7d54a8d6-89d7-4d53-93ee-802e410ab1b3",
+      "sha256": "7233b0bf2758b44e0113d7015919d739a6134dea9d4c4401dc371428427df426",
+      "hashScope": "response-bytes",
+      "payload": {
+        "merkleProof": {
+          "leafHash": "a6c4668143505cc360a598b1f8fcfa1714d895f685e3037285b29af96bb5b644",
+          "leafIndex": 357545,
+          "path": [
+            "K/854rX0dsrSFSjFdP41iPf4N9u/4RQShWv6ko+jwvQ=",
+            "U94h0Bu/dg5Vxj/ZpaMmTJM3cR5laeGiQtOQkfgLd/I=",
+            "xGV0NdF3/ut9yNi/sa/n8B/JFywWFSL9x7bnMUmdfN0=",
+            "PdHlRHzfy9wE9jJuHUGWoVZIp8q3SMMMplJhW8Mm8Xs=",
+            "2WKTDb6YLIQ0pWWzE2wKsFkl4MeM3fzZogGQucHYFSs=",
+            "8XKy9nY5G+Yk02Y59+tcOzrZ+oM7L9fTR14q8jLxUw4=",
+            "96DoYf1oTfsNacaDtepySLZETxaQfulfyGF5cQIG7do=",
+            "K6qwZYBEJ5SzMWrJO54Oue3KzuzBRBlMFuN1L9EpCJc=",
+            "bfJ7D5S9tOW7C/rw/MBiWHfG4wjWxjaQWAbOYCK24jA=",
+            "wUl+WclZIHClGHv+Z/liEmIRuv+YGIbufEmoV6TflOE=",
+            "vcdtIzjT4rJznFJl+olCxyEXjWyh9KZRWNQegTlh7A0=",
+            "TMe7NFyzkkavTU/LglBPb3F2loWfm+PmSrV9o8PJeZw=",
+            "b1p2b7gRhAnmSqPrMsX8kTFpm5hM9cbpaWcGNguwxNY=",
+            "JqGK9Mj7w368EoiH6cAglNmFxhubwy1g+49uVLuwR+g=",
+            "8Luk7x1b8HlJJ4szl/c0gKaka8An+sZNcOOZA7EYFME=",
+            "Isq0vuCx23hiA5O1AaWf8jyL1V1CXXW6hSC4vpi2EeQ=",
+            "0+pILIYJuvaTdGZSFI9fmHDz6EJmA0wghrugjBIsRUA="
+          ],
+          "rootHash": "g2nd3TQNrAZa/np0zKfkeffYl0W7Ih3AiSBZJpIawTY=",
+          "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTg5MWNkYTczODUyNjgzN2ZiMDg5Nzc3MjZkMDhmNGMzZDFmNzkyMDBlMzU2MWM5MTdiOWM2MjdhOTA2ZjQzNDkiLCJ0aW1lc3RhbXAiOjE3OTExNjc3ODcsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6ImcybmQzVFFOckFaYV9ucDB6S2ZrZWZmWWwwVzdJaDNBaVNCWkpwSWF3VFk9IiwidGltZXN0YW1wIjoxNzkxMTY3Nzg3LCJ0cmVlc2l6ZSI6MzYwMjM3fQ.S2hzmUy5nifT3kHSplAOFzb6_XqAfwJy3Om_N3pEJAs1s8EX-KssLyqWmNphuMn6P3HPHk16y1qjHmIDgNzYyg",
+          "treeSize": 360237,
+          "treeVersion": 1
+        },
+        "payload": {
+          "logId": "01a0f490-1c26-7bed-967e-93f6dd013321",
+          "producer": {
+            "event": {
+              "ansId": "7d54a8d6-89d7-4d53-93ee-802e410ab1b3",
+              "ansName": "ans://v1.2.0.godaddy.demo.ans.snitker.dev",
+              "eventType": "AGENT_REGISTERED",
+              "agent": {
+                "host": "godaddy.demo.ans.snitker.dev",
+                "name": "Snitker ANS Interoperability Demo",
+                "version": "v1.2.0"
+              },
+              "attestations": {
+                "dnsRecordsProvisioned": {
+                  "_443._tcp.godaddy.demo.ans.snitker.dev": "3 0 1 fbc1816828b944bf60a1f052fdcf27e35c62faa7cb8f34a76bc3e69ccf074de2",
+                  "_ans-badge.godaddy.demo.ans.snitker.dev": "v=ans-badge1; version=v1.2.0; url=https://transparency.ans.godaddy.com/v1/agents/7d54a8d6-89d7-4d53-93ee-802e410ab1b3",
+                  "_ans.godaddy.demo.ans.snitker.dev": "v=ans1; version=v1.2.0; p=mcp; mode=direct; url=https://godaddy.demo.ans.snitker.dev/mcp",
+                  "godaddy.demo.ans.snitker.dev": "0 . alpn=h2"
+                },
+                "domainValidation": "ACME-DNS-01",
+                "identityCert": {
+                  "fingerprint": "SHA256:5050593e0370a23a6aa16ff96d2e7e1c22d121e110a143494319c9ac6676eee6",
+                  "type": "X509-DV-CLIENT"
+                },
+                "serverCert": {
+                  "fingerprint": "SHA256:fbc1816828b944bf60a1f052fdcf27e35c62faa7cb8f34a76bc3e69ccf074de2",
+                  "type": "X509-DV-SERVER"
+                },
+                "validIdentityCerts": [
+                  {
+                    "fingerprint": "SHA256:5050593e0370a23a6aa16ff96d2e7e1c22d121e110a143494319c9ac6676eee6",
+                    "type": "X509-DV-CLIENT",
+                    "notAfter": "2027-09-30T22:39:46.000000Z"
+                  }
+                ],
+                "validServerCerts": [
+                  {
+                    "fingerprint": "SHA256:fbc1816828b944bf60a1f052fdcf27e35c62faa7cb8f34a76bc3e69ccf074de2",
+                    "type": "X509-DV-SERVER",
+                    "notAfter": "2027-04-16T22:39:51.000000Z"
+                  }
+                ],
+                "metadataHashes": {
+                  "A2A": "SHA256:22290c19690bb8d0f8f88610ac579197b0e45eb86a83b1e531dfec6dda5e8042",
+                  "MCP": "SHA256:927700323317c64cef022230537e155a525a605e5b641595b8b1ddf892c4ebac"
+                }
+              },
+              "expiresAt": "2027-04-16T22:39:51.000000Z",
+              "issuedAt": "2026-09-30T22:39:46.604881Z",
+              "raId": "raid-849e6ed42a5398913c7743697252e2a1969d84dce1eed6e7143b2c770b197c0d",
+              "timestamp": "2026-09-30T23:04:39.983207Z"
+            },
+            "keyId": "d859e797",
+            "signature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImQ4NTllNzk3IiwicmFpZCI6InJhaWQtODQ5ZTZlZDQyYTUzOTg5MTNjNzc0MzY5NzI1MmUyYTE5NjlkODRkY2UxZWVkNmU3MTQzYjJjNzcwYjE5N2MwZCIsInRpbWVzdGFtcCI6MTc5MDgwOTQ3OSwidHlwIjoiSldUIn0..eaJnMvpoHxY4VLlRWmNOGSM8p3z2p36yCX2lidGkLzz8AwHCoHy_sXtqN-wB_o7Zw8ylt7qq04gjrljYMjhqvw"
+          }
+        },
+        "schemaVersion": "V1",
+        "signature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTk0Zjk4ZDY0ODFmODU4MTVmZGJjODJmOWNmYTQ0YTI4YjlmNzM2ZTUxZjAxNGI2MjU0ZmU5YTdlNjA0MGVmZTAiLCJ0aW1lc3RhbXAiOjE3OTA4MDk0ODAsInR5cCI6IkpXVCJ9..fzBljh5A4PqAKfAhuHlJjQJsWbsQ6ONADSdN0dhGcFeFxrtoW_4ihH134B1SjTf__Pz1bhRmvo8Q9OCaoKdL7Q",
+        "status": "ACTIVE"
+      }
+    },
+    "trust_model_comparison_ans_snitker_a2a_agent_card.json": {
+      "mediaType": "application/json",
+      "url": "https://godaddy.demo.ans.snitker.dev/.well-known/agent-card.json",
+      "sha256": "22290c19690bb8d0f8f88610ac579197b0e45eb86a83b1e531dfec6dda5e8042",
+      "hashScope": "response-bytes",
+      "payload": {
+        "capabilities": {
+          "extendedAgentCard": false,
+          "extensions": [
+            {
+              "description": "ANS-6 profile and signed request-content binding support; echo includes diagnostics.",
+              "params": {
+                "contentBinding": "supported",
+                "diagnostics": true,
+                "profiles": [
+                  1.0
+                ]
+              },
+              "uri": "urn:ans-a2a-demo:ans6"
+            }
+          ],
+          "pushNotifications": false,
+          "streaming": false
+        },
+        "defaultInputModes": [
+          "text/plain",
+          "application/json"
+        ],
+        "defaultOutputModes": [
+          "text/plain",
+          "application/json"
+        ],
+        "description": "Inspects ANS agent configuration and compliance, reports evidence and fixes, and provides non-blocking request diagnostics.",
+        "name": "Snitker ANS Interoperability Demo",
+        "securityRequirements": [
+          {
+            "schemes": {
+              "ansDpop": {},
+              "ansReceipt": {},
+              "ansStatus": {}
+            }
+          }
+        ],
+        "securitySchemes": {
+          "ansDpop": {
+            "apiKeySecurityScheme": {
+              "description": "Fresh ES256 DPoP proof bound to the HTTP method, public URL, and exact request content, including empty content.",
+              "location": "header",
+              "name": "DPoP"
+            }
+          },
+          "ansReceipt": {
+            "apiKeySecurityScheme": {
+              "description": "Base64 SCITT inclusion receipt for the same ANS identity.",
+              "location": "header",
+              "name": "X-SCITT-Receipt"
+            }
+          },
+          "ansStatus": {
+            "apiKeySecurityScheme": {
+              "description": "Base64 SCITT status token binding the registered ANS identity and key.",
+              "location": "header",
+              "name": "X-ANS-Status-Token"
+            }
+          }
+        },
+        "skills": [
+          {
+            "description": "Send a JSON data part with operation check_agent and request.target kind fqdn, agentId, or verified caller. Returns a versioned report with pass/fail/incomplete, signed evidence, and actionable fixes. Public inspection does not require valid incoming ANS proofs.",
+            "examples": [
+              "{\"operation\":\"check_agent\",\"request\":{\"target\":{\"kind\":\"fqdn\",\"fqdn\":\"agent.example.com\"}}}"
+            ],
+            "id": "ans-compliance-check",
+            "inputModes": [
+              "application/json"
+            ],
+            "name": "Inspect agent configuration",
+            "outputModes": [
+              "application/json",
+              "text/plain"
+            ],
+            "tags": [
+              "ans",
+              "compliance",
+              "diagnostics"
+            ]
+          },
+          {
+            "description": "Send operation call_agent with an explicit request.target and confirm true. Requires verified caller identity; sends one fixed bounded diagnostic message as this checker.",
+            "id": "ans-outbound-probe",
+            "inputModes": [
+              "application/json"
+            ],
+            "name": "Explicit outbound ANS probe",
+            "outputModes": [
+              "application/json"
+            ],
+            "tags": [
+              "ans",
+              "interop"
+            ]
+          },
+          {
+            "description": "Send text to test an authenticated A2A exchange with an ANS agent.",
+            "examples": [
+              "Hello from my agent"
+            ],
+            "id": "echo",
+            "name": "Verified identity echo",
+            "tags": [
+              "ans",
+              "interop"
+            ]
+          }
+        ],
+        "supportedInterfaces": [
+          {
+            "protocolBinding": "JSONRPC",
+            "protocolVersion": "1.0",
+            "url": "https://godaddy.demo.ans.snitker.dev/a2a"
+          }
+        ],
+        "version": "1.2.0"
+      }
+    },
+    "trust_model_comparison_ans_snitker_mcp_server_card.json": {
+      "mediaType": "application/json",
+      "url": "https://godaddy.demo.ans.snitker.dev/mcp/server-card",
+      "sha256": "927700323317c64cef022230537e155a525a605e5b641595b8b1ddf892c4ebac",
+      "hashScope": "response-bytes",
+      "payload": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
+        "name": "dev.snitker.ans.demo.godaddy/ans-a2a-demo",
+        "version": "1.2.0",
+        "description": "Inspects ANS configuration and compliance with evidence, actionable findings, and diagnostics.",
+        "title": "Snitker ANS Interoperability Demo",
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "https://godaddy.demo.ans.snitker.dev/mcp",
+            "headers": [
+              {
+                "description": "Fresh proof for each request, including ans_content_digest for empty and non-empty content.",
+                "format": "string",
+                "isRequired": false,
+                "name": "DPoP"
+              },
+              {
+                "description": "Base64 signed ANS status token.",
+                "format": "string",
+                "isRequired": false,
+                "name": "X-ANS-Status-Token"
+              },
+              {
+                "description": "Base64 ANS registration inclusion receipt.",
+                "format": "string",
+                "isRequired": false,
+                "name": "X-SCITT-Receipt"
+              }
+            ],
+            "supportedProtocolVersions": [
+              "2026-07-28",
+              "2025-11-25"
+            ]
+          }
+        ],
+        "_meta": {
+          "com.godaddy.ans-a2a-demo/ans6": {
+            "complianceTools": [
+              "check_agent",
+              "call_agent",
+              "echo"
+            ],
+            "contentBinding": "required",
+            "diagnostics": true,
+            "inspectionAccess": "explicit targets do not require ANS authentication",
+            "outboundAccess": "verified ANS caller or local operator; explicit confirm required",
+            "profiles": [
+              1
+            ],
+            "reportSchemaVersion": "1.0"
+          }
+        }
+      }
+    },
+    "trust_model_comparison_ans_agentcensus_dns_badge.json": {
+      "mediaType": "application/json",
+      "url": "https://dns.google/resolve?name=_ans-badge.agentcensus.io&type=TXT",
+      "sha256": "4c674305c309e438ce64856961efa2455abbfa230690477229c9e321ec00532d",
+      "hashScope": "response-bytes",
+      "payload": {
+        "Status": 0,
+        "TC": false,
+        "RD": true,
+        "RA": true,
+        "AD": true,
+        "CD": false,
+        "Question": [
+          {
+            "name": "_ans-badge.agentcensus.io.",
+            "type": 16
+          }
+        ],
+        "Answer": [
+          {
+            "name": "_ans-badge.agentcensus.io.",
+            "type": 16,
+            "TTL": 3600,
+            "data": "v=ans-badge1; version=v1.0.0; url=https://transparency.ans.godaddy.com/v1/agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca"
+          }
+        ],
+        "Comment": "Response from 205.251.199.149."
+      }
+    },
+    "trust_model_comparison_ans_agentcensus_transparency_log_badge.json": {
+      "mediaType": "application/json",
+      "url": "https://transparency.ans.godaddy.com/v1/agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca",
+      "sha256": "70b1656e4b6774373c28459e2e2c9557b8aa67c601c87fa6bd2c83d673be9b9c",
+      "hashScope": "response-bytes",
+      "payload": {
+        "merkleProof": {
+          "leafHash": "950e183642b6c0fb0aaeaea214f68899bb5f37da0fe639fb5e7eba5482c72a1a",
+          "leafIndex": 348146,
+          "path": [
+            "MlTyO1qo1Ax0345+3n12MR2xJihJmDAQNGNf4d/jyaA=",
+            "dp60Xj/e87b6P00PjbA8Qf2z9TauoYGk03Cvh7GH2lY=",
+            "0mslDZFsJMzgvIHEjfUsRJaPhXVLTcOneb4yqoZdFSE=",
+            "fL7Ex8YvPfpvwhXzaJpf42kX6GGJRZN+OOTue8lgNfc=",
+            "IhlSk8EqjqAzHhEzpUY0zlK/j1SHp7ceUiHvwDJbRrI=",
+            "ukJKz8NbmOiO65ZKj2aUfrirJCXDKJsGMRCP9JY8W90=",
+            "zSRMNMrn8EZ3pkkOnIDCwxEt8PxEjvqoLj5wnA2pAW4=",
+            "WwYsGlFRD9/WlCf4tFRckN59+0CVb/G9wwQ2s+Sb8X0=",
+            "ZBI10gLZGZUUmTOQ0cMCgR4TkWirK2INpG1GdIK88zA=",
+            "opida4qvxia+SRcLvO5n554efiMzCIOc/T3fE26p58s=",
+            "yvLJqErTy4Lv2EUkD39F7N33Gl8F5AKcMWn3mbS1plo=",
+            "KTxTL9edI0pQTiozPKSJskQ0eR0gipK/GWxYf4hQbK8=",
+            "2tTVMDNLGsEzbd21j3BRPgVA3XlMgB4XyzxrKDPmqdE=",
+            "aymaKT67ngIKxytpH5KYuNNlxcxTVYTp0WZHKMci9uQ=",
+            "8Luk7x1b8HlJJ4szl/c0gKaka8An+sZNcOOZA7EYFME=",
+            "Isq0vuCx23hiA5O1AaWf8jyL1V1CXXW6hSC4vpi2EeQ=",
+            "0+pILIYJuvaTdGZSFI9fmHDz6EJmA0wghrugjBIsRUA="
+          ],
+          "rootHash": "g2nd3TQNrAZa/np0zKfkeffYl0W7Ih3AiSBZJpIawTY=",
+          "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTg5MWNkYTczODUyNjgzN2ZiMDg5Nzc3MjZkMDhmNGMzZDFmNzkyMDBlMzU2MWM5MTdiOWM2MjdhOTA2ZjQzNDkiLCJ0aW1lc3RhbXAiOjE3OTExNjc3ODcsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6ImcybmQzVFFOckFaYV9ucDB6S2ZrZWZmWWwwVzdJaDNBaVNCWkpwSWF3VFk9IiwidGltZXN0YW1wIjoxNzkxMTY3Nzg3LCJ0cmVlc2l6ZSI6MzYwMjM3fQ.S2hzmUy5nifT3kHSplAOFzb6_XqAfwJy3Om_N3pEJAs1s8EX-KssLyqWmNphuMn6P3HPHk16y1qjHmIDgNzYyg",
+          "treeSize": 360237,
+          "treeVersion": 1
+        },
+        "payload": {
+          "logId": "01a0b75b-dba2-7607-bd17-a15041c0bb8b",
+          "producer": {
+            "event": {
+              "ansId": "1f7f32b8-2689-49e4-b0dd-f4b0999545ca",
+              "ansName": "ans://v2.0.0.agentcensus.io",
+              "eventType": "AGENT_REGISTERED",
+              "agent": {
+                "host": "agentcensus.io",
+                "name": "census",
+                "version": "v2.0.0"
+              },
+              "attestations": {
+                "dnsRecordsProvisioned": {
+                  "_443._tcp.agentcensus.io": "3 0 1 f447f2d0cabc7fe62956af1ce90925b7d7eaad5576f20dc57bf26a2d3b652a3b",
+                  "_ans-badge.agentcensus.io": "v=ans-badge1; version=v2.0.0; url=https://transparency.ans.godaddy.com/v1/agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca",
+                  "_ans.agentcensus.io": "v=ans1; version=v2.0.0; p=mcp; mode=direct; url=https://agentcensus.io/mcp",
+                  "agentcensus.io": "0 . alpn=h2"
+                },
+                "domainValidation": "ACME-DNS-01",
+                "identityCert": {
+                  "fingerprint": "SHA256:0b38f48bc30eb7b3a122e51a989bd3976bcaa022f64402d158f5056d7e5c72fb",
+                  "type": "X509-DV-CLIENT"
+                },
+                "serverCert": {
+                  "fingerprint": "SHA256:f447f2d0cabc7fe62956af1ce90925b7d7eaad5576f20dc57bf26a2d3b652a3b",
+                  "type": "X509-DV-SERVER"
+                },
+                "validIdentityCerts": [
+                  {
+                    "fingerprint": "SHA256:0b38f48bc30eb7b3a122e51a989bd3976bcaa022f64402d158f5056d7e5c72fb",
+                    "type": "X509-DV-CLIENT",
+                    "notAfter": "2027-09-15T13:53:45.000000Z"
+                  }
+                ],
+                "validServerCerts": [
+                  {
+                    "fingerprint": "SHA256:f447f2d0cabc7fe62956af1ce90925b7d7eaad5576f20dc57bf26a2d3b652a3b",
+                    "type": "X509-DV-SERVER",
+                    "notAfter": "2027-03-18T23:59:59.000000Z"
+                  }
+                ]
+              },
+              "expiresAt": "2027-03-18T23:59:59.000000Z",
+              "issuedAt": "2026-09-15T13:53:45.620119Z",
+              "raId": "raid-cf4c0ca666714c6a6931a7e182548110d1f7de47ac17538116edb10cd17ff6ac",
+              "timestamp": "2026-09-19T01:50:45.460947Z"
+            },
+            "keyId": "46c877af",
+            "signature": "eyJhbGciOiJFUzI1NiIsImtpZCI6IjQ2Yzg3N2FmIiwicmFpZCI6InJhaWQtY2Y0YzBjYTY2NjcxNGM2YTY5MzFhN2UxODI1NDgxMTBkMWY3ZGU0N2FjMTc1MzgxMTZlZGIxMGNkMTdmZjZhYyIsInRpbWVzdGFtcCI6MTc4OTc4MjY0NSwidHlwIjoiSldUIn0..xDKJ_CEGOfW8bR0sUQrTqIE_kqk3IbZYxvP1tWlXfH6n3WXy1O0-82q1TnMhSZuYZAINR-UTh8XwwFJrGlO8ug"
+          }
+        },
+        "schemaVersion": "V1",
+        "signature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLWIxY2E1YzczZTgyN2QzODIzY2IxMjIzYzRhMmYyNzVmN2JiYzVmNjVhOWQ2MzYxY2I5YTk0YWNhZTQ2YjMyZTkiLCJ0aW1lc3RhbXAiOjE3ODk3ODI2NDUsInR5cCI6IkpXVCJ9..ZRQsAWDS2dRRWvnPzoz-DV8LWXXkKRo1_SIsbwgKIyAngODSolPe1tPrSabb2giKFBbkkxEtYaI2CoC4C65KVg",
+        "status": "ACTIVE"
+      }
+    },
+    "trust_model_comparison_agentcensus_ans_example_snitker_agent.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "454b646a8b9d3bb30ced5c632ee8f4ee6b7bc708674186c367b29ba32d56867a",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/agents/ag_62fad4c8c1d1",
+        "elapsedMs": 312.7,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "r84QdNACFn3HlrihPJ8_NDhwdrglzZzqRZwTH5m0OlwLj2sByy-Dbw==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49935",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "activeVerification": null,
+          "agentKey": "ag_62fad4c8c1d1",
+          "capabilities": [
+            "extensions",
+            "ans-compliance-check",
+            "ans-outbound-probe",
+            "echo",
+            "ans",
+            "compliance",
+            "diagnostics",
+            "interop"
+          ],
+          "description": "Inspects ANS agent configuration and compliance, reports evidence and fixes, and provides non-blocking request diagnostics. · Send a JSON data part with operation check_agent and request.target kind fqdn, agentId, or verified caller. Returns a versioned report with pass/fail/incomplete, signed evidence, and actionable fixes. Public inspection does not require valid incoming ANS proofs. · Send operation call_agent with an explicit request.target and confirm true. Requires verified caller identity; sends one fixed bounded diagnostic message as this checker. · Send text to test an authenticated A2A exchange with an ANS agent.",
+          "displayName": "Snitker ANS Interoperability Demo",
+          "domain": "snitker.dev",
+          "gate": null,
+          "mechanisms": [
+            "a2a_alt"
+          ],
+          "observed": {
+            "endpointSameOrigin": true,
+            "firstSeen": "2026-09-19",
+            "history": [
+              {
+                "at": "2026-10-04T04:15:48Z",
+                "kind": "first_seen",
+                "summary": "First seen via A2A card (alternate location)."
+              }
+            ],
+            "lastSeen": "2026-10-04",
+            "primarySource": "a2a_alt",
+            "provenance": [
+              {
+                "firstSeen": "2026-10-04",
+                "lastSeen": "2026-10-04",
+                "resolutionConfidence": 0,
+                "resolutionRule": "new",
+                "source": "a2a_alt",
+                "sourceIdentifier": "a2a://https://godaddy.demo.ans.snitker.dev/a2a",
+                "sourceUrl": "https://godaddy.demo.ans.snitker.dev/.well-known/agent-card.json"
+              }
+            ],
+            "status": "ACTIVE",
+            "tlsVersion": "TLS 1.3",
+            "transport": "h2"
+          },
+          "posture": {
+            "authDeclared": true,
+            "authSchemes": [
+              "ansReceipt",
+              "ansStatus",
+              "ansDpop"
+            ],
+            "deprecated": false,
+            "endpointHost": "godaddy.demo.ans.snitker.dev"
+          },
+          "protocols": [],
+          "registrableDomain": "snitker.dev",
+          "selfReported": null
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_ans_example_snitker_a2a_alt_document.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "0f56d71cb1f1c15562abdda8c461b70bcadc34e2bb83ae26092fc805f7f741e0",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/agents/ag_62fad4c8c1d1/documents/a2a_alt",
+        "elapsedMs": 349.8,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "serqXW5UdObFs9Qo1iwR5qaJOErX6-kSeufbZtKez9NJhsduPKLdrw==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49934",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "agentKey": "ag_62fad4c8c1d1",
+          "contentHash": "5c3badec1a55366af1d21f07c4ee50c8f81476933fe1420f0a2528b52aabda23",
+          "observedAt": "2026-10-04T04:15:48Z",
+          "snapshot": "{\n  \"event_id\": \"01a1051e-2154-74e7-80d2-44de6ccb17ff\",\n  \"run_id\": \"01a104db-4955-7820-8f74-4ef6485c0b0d\",\n  \"observed_at\": \"2026-10-04T04:13:42.937291176Z\",\n  \"source\": \"a2a_alt\",\n  \"source_identifier\": \"a2a://https://godaddy.demo.ans.snitker.dev/a2a\",\n  \"domain\": \"godaddy.demo.ans.snitker.dev\",\n  \"registrable_domain\": \"snitker.dev\",\n  \"publishing_zone\": \"snitker.dev\",\n  \"display_name\": \"Snitker ANS Interoperability Demo\",\n  \"description\": \"Inspects ANS agent configuration and compliance, reports evidence and fixes, and provides non-blocking request diagnostics. · Send a JSON data part with operation check_agent and request.target kind fqdn, agentId, or verified caller. Returns a versioned report with pass/fail/incomplete, signed evidence, and actionable fixes. Public inspection does not require valid incoming ANS proofs. · Send operation call_agent with an explicit request.target and confirm true. Requires verified caller identity; sends one fixed bounded diagnostic message as this checker. · Send text to test an authenticated A2A exchange with an ANS agent.\",\n  \"protocols\": [],\n  \"capabilities\": [\n    \"extensions\",\n    \"ans-compliance-check\",\n    \"ans-outbound-probe\",\n    \"echo\",\n    \"ans\",\n    \"compliance\",\n    \"diagnostics\",\n    \"interop\"\n  ],\n  \"card_url\": \"https://godaddy.demo.ans.snitker.dev/.well-known/agent-card.json\",\n  \"status\": \"ACTIVE\",\n  \"version\": \"1.2.0\",\n  \"content_hash\": \"5c3badec1a55366af1d21f07c4ee50c8f81476933fe1420f0a2528b52aabda23\",\n  \"declared_version\": \"1.0\",\n  \"inferred_version\": \"1.0\",\n  \"version_evidence\": [\n    \"supportedInterfaces (1.0; replaced url/preferredTransport/additionalInterfaces)\",\n    \"securitySchemes (0.3 spelling)\",\n    \"capabilities object\",\n    \"skills array\"\n  ],\n  \"auth_declared\": true,\n  \"auth_schemes\": [\n    \"ansReceipt\",\n    \"ansStatus\",\n    \"ansDpop\"\n  ],\n  \"endpoint_same_origin\": true,\n  \"endpoint_host\": \"godaddy.demo.ans.snitker.dev\",\n  \"transport\": \"h2\",\n  \"tls_version\": \"TLS 1.3\",\n  \"field_completeness\": 0.5714285714285714,\n  \"fields_present\": 8,\n  \"fields_defined\": 14\n}",
+          "snapshotType": "parsed",
+          "source": "a2a_alt",
+          "sourceUrl": "https://godaddy.demo.ans.snitker.dev/.well-known/agent-card.json"
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_ans_example_agentcensus_agent.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "9be18a24da7493fa0b9e5d8987d3ecb3c25aa2aa0fff0b9f8e57ade04737b44c",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded",
+        "elapsedMs": 221.6,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "4ePcmmCkJA9jMWc_KVtOHl7vrOmjlJSNIN9DXatLVJXPrtlXH4MwuQ==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49933",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "activeVerification": {
+            "unauthenticated": {
+              "detail": "matched usage 2 selector 1 matching-type 1 against validated chain certificate \"Amazon RSA 2048 M01\"",
+              "lastCheckedAt": "2026-10-05",
+              "method": "tls/dane",
+              "outcome": "ok"
+            }
+          },
+          "agentKey": "ag_c449a3237ded",
+          "capabilities": [
+            "census-headline",
+            "mechanism-adoption",
+            "domain-lookup",
+            "discovery-labels",
+            "agent-search",
+            "org-usage",
+            "org-domains",
+            "org-alerts"
+          ],
+          "description": "Read-only access to the agentcensus adoption census.",
+          "displayName": "agentcensus",
+          "domain": "agentcensus.io",
+          "gate": null,
+          "mechanisms": [
+            "ans",
+            "mcp",
+            "a2a_alt",
+            "ard",
+            "a2a",
+            "did_web"
+          ],
+          "observed": {
+            "endpointSameOrigin": true,
+            "firstSeen": "2026-09-04",
+            "history": [
+              {
+                "at": "2026-09-04T05:40:40Z",
+                "kind": "mechanism_added",
+                "summary": "A2A card (alternate location) began contributing to this agent."
+              },
+              {
+                "at": "2026-09-04T05:40:40Z",
+                "kind": "mechanism_added",
+                "summary": "did:web document began contributing to this agent."
+              },
+              {
+                "at": "2026-09-04T05:40:40Z",
+                "kind": "mechanism_added",
+                "summary": "MCP endpoint began contributing to this agent."
+              },
+              {
+                "at": "2026-09-04T05:40:58Z",
+                "kind": "mechanism_added",
+                "summary": "ARD catalog entry began contributing to this agent."
+              },
+              {
+                "at": "2026-09-04T05:40:59Z",
+                "kind": "mechanism_added",
+                "summary": "A2A card began contributing to this agent."
+              },
+              {
+                "at": "2026-09-08T19:45:26Z",
+                "kind": "first_seen",
+                "summary": "First seen via ANS registry entry."
+              },
+              {
+                "at": "2026-09-08T19:45:26Z",
+                "kind": "changed",
+                "summary": "Display name changed from \"census\" to \"agentcensus\". Protocol list gained \"mcp\"."
+              },
+              {
+                "at": "2026-09-08T19:45:27Z",
+                "kind": "changed",
+                "summary": "Display name changed from \"agentcensus\" to \"did:web:agentcensus.io\". Status changed from ACTIVE to UNVERIFIED. Capability list dropped \"census-headline\", \"mechanism-adoption\", \"domain-lookup\", \"discovery-labels\" and \"agent-search\". Protocol list gained \"did\" and dropped \"mcp\". Description updated."
+              },
+              {
+                "at": "2026-09-08T19:45:27Z",
+                "kind": "changed",
+                "summary": "Display name changed from \"did:web:agentcensus.io\" to \"agentcensus\". Status changed from UNVERIFIED to ACTIVE. Capability list gained \"census-headline\", \"mechanism-adoption\", \"discovery-labels\", \"domain-lookup\" and \"agent-search\". Protocol list dropped \"did\". Description updated."
+              },
+              {
+                "at": "2026-09-08T19:45:35Z",
+                "kind": "changed",
+                "summary": "Protocol list gained \"mcp/2025-06-18\"."
+              },
+              {
+                "at": "2026-09-15T14:27:56Z",
+                "kind": "changed",
+                "summary": "Protocol list gained \"mcp\" and dropped \"mcp/2025-06-18\"."
+              },
+              {
+                "at": "2026-09-15T14:27:58Z",
+                "kind": "changed",
+                "summary": "Protocol list dropped \"mcp\"."
+              },
+              {
+                "at": "2026-09-15T14:28:01Z",
+                "kind": "changed",
+                "summary": "Display name changed from \"agentcensus\" to \"census\"."
+              },
+              {
+                "at": "2026-09-15T14:28:14Z",
+                "kind": "changed",
+                "summary": "Display name changed from \"census\" to \"agentcensus\"."
+              },
+              {
+                "at": "2026-09-15T14:28:15Z",
+                "kind": "changed",
+                "summary": "Protocol list gained \"mcp/2025-06-18\"."
+              },
+              {
+                "at": "2026-09-15T14:28:15Z",
+                "kind": "changed",
+                "summary": "Display name changed from \"agentcensus\" to \"did:web:agentcensus.io\". Status changed from ACTIVE to UNVERIFIED. Capability list dropped \"census-headline\", \"mechanism-adoption\", \"domain-lookup\", \"discovery-labels\" and \"agent-search\". Protocol list gained \"did\" and dropped \"mcp/2025-06-18\". Description updated."
+              },
+              {
+                "at": "2026-09-20T17:11:13Z",
+                "kind": "changed",
+                "summary": "Display name changed from \"did:web:agentcensus.io\" to \"agentcensus\". Status changed from UNVERIFIED to ACTIVE. Capability list gained \"census-headline\", \"mechanism-adoption\", \"domain-lookup\", \"discovery-labels\" and \"agent-search\". Protocol list gained \"mcp\" and dropped \"did\". Description updated."
+              },
+              {
+                "at": "2026-09-20T17:11:14Z",
+                "kind": "changed",
+                "summary": "Protocol list dropped \"mcp\"."
+              },
+              {
+                "at": "2026-09-20T17:11:15Z",
+                "kind": "changed",
+                "summary": "Capability list gained \"census\", \"statistics\", \"read-only\", \"dns\", \"discovery\" and \"search\". Description updated."
+              },
+              {
+                "at": "2026-09-20T17:11:16Z",
+                "kind": "changed",
+                "summary": "Capability list dropped \"census\", \"statistics\", \"read-only\", \"dns\", \"discovery\" and \"search\". Protocol list gained \"mcp/2025-06-18\". Description updated."
+              },
+              {
+                "at": "2026-09-20T17:11:18Z",
+                "kind": "changed",
+                "summary": "Protocol list gained \"mcp\" and dropped \"mcp/2025-06-18\"."
+              },
+              {
+                "at": "2026-09-20T17:11:21Z",
+                "kind": "changed",
+                "summary": "Capability list gained \"census\", \"statistics\", \"read-only\", \"dns\", \"discovery\" and \"search\". Protocol list dropped \"mcp\". Description updated."
+              },
+              {
+                "at": "2026-09-20T17:11:24Z",
+                "kind": "changed",
+                "summary": "Display name changed from \"agentcensus\" to \"did:web:agentcensus.io\". Status changed from ACTIVE to UNVERIFIED. Capability list dropped \"census-headline\", \"mechanism-adoption\", \"discovery-labels\", \"domain-lookup\", \"agent-search\", \"census\", \"statistics\", \"read-only\", \"dns\", \"discovery\" and \"search\". Protocol list gained \"did\". Description updated."
+              },
+              {
+                "at": "2026-10-04T04:09:42Z",
+                "kind": "changed",
+                "summary": "Display name changed from \"did:web:agentcensus.io\" to \"agentcensus\". Status changed from UNVERIFIED to ACTIVE. Capability list gained \"census-headline\", \"mechanism-adoption\", \"domain-lookup\", \"discovery-labels\", \"agent-search\", \"org-usage\", \"org-domains\" and \"org-alerts\". Protocol list gained \"mcp\" and dropped \"did\". Description updated."
+              }
+            ],
+            "lastSeen": "2026-10-04",
+            "primarySource": "ans",
+            "provenance": [
+              {
+                "firstSeen": "2026-09-04",
+                "lastSeen": "2026-10-04",
+                "resolutionConfidence": 0.949999988079071,
+                "resolutionRule": "identical normalized endpoint URL",
+                "source": "ans",
+                "sourceIdentifier": "ans://https://agentcensus.io/mcp",
+                "sourceUrl": "https://agentcensus.io/.well-known/agents-index.json"
+              },
+              {
+                "firstSeen": "2026-09-04",
+                "lastSeen": "2026-10-04",
+                "resolutionConfidence": 0.949999988079071,
+                "resolutionRule": "identical normalized endpoint URL",
+                "source": "mcp",
+                "sourceIdentifier": "mcp://https://agentcensus.io/mcp",
+                "sourceUrl": "https://agentcensus.io/.well-known/mcp.json"
+              },
+              {
+                "firstSeen": "2026-09-04",
+                "lastSeen": "2026-10-04",
+                "resolutionConfidence": 0.949999988079071,
+                "resolutionRule": "identical normalized endpoint URL",
+                "source": "a2a_alt",
+                "sourceIdentifier": "a2a://https://agentcensus.io/mcp",
+                "sourceUrl": "https://agentcensus.io/.well-known/agent-card.json"
+              },
+              {
+                "firstSeen": "2026-09-04",
+                "lastSeen": "2026-10-04",
+                "resolutionConfidence": 0.949999988079071,
+                "resolutionRule": "identical normalized endpoint URL",
+                "source": "ard",
+                "sourceIdentifier": "ard://https://agentcensus.io/mcp",
+                "sourceUrl": "https://agentcensus.io/.well-known/ard.json"
+              },
+              {
+                "firstSeen": "2026-09-04",
+                "lastSeen": "2026-10-04",
+                "resolutionConfidence": 0.949999988079071,
+                "resolutionRule": "identical normalized endpoint URL",
+                "source": "a2a",
+                "sourceIdentifier": "a2a://https://agentcensus.io/mcp",
+                "sourceUrl": "https://agentcensus.io/.well-known/agent.json"
+              },
+              {
+                "firstSeen": "2026-09-04",
+                "lastSeen": "2026-10-04",
+                "resolutionConfidence": 0.949999988079071,
+                "resolutionRule": "identical normalized endpoint URL",
+                "source": "did_web",
+                "sourceIdentifier": "did_web://https://agentcensus.io/mcp",
+                "sourceUrl": "https://agentcensus.io/.well-known/did.json"
+              }
+            ],
+            "status": "ACTIVE",
+            "tlsVersion": "TLS 1.3",
+            "transport": "h2"
+          },
+          "posture": {
+            "authDeclared": false,
+            "authSchemes": [],
+            "deprecated": false,
+            "endpointHost": "agentcensus.io"
+          },
+          "protocols": [
+            "mcp"
+          ],
+          "registrableDomain": "agentcensus.io",
+          "selfReported": null
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_ans_example_agentcensus_ans_document.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "c03a153ba27f69cfe67fa9e94ef66e48d59f72c96eeb3c07e22f2333811eabf0",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded/documents/ans",
+        "elapsedMs": 159.9,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "7oeZo_PQS7KeT1ejWd-_fNOn_yLL-_ZD5oHzCRBfyudft9eoxBkAXw==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49932",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "agentKey": "ag_c449a3237ded",
+          "contentHash": "e9777f174e06349cb5336f8ac99dda0b2495f258160902f785352a99cb06f62c",
+          "observedAt": "2026-10-04T04:09:42Z",
+          "snapshot": "{\n  \"event_id\": \"01a1051a-5e5a-75c5-989e-cf0fad472949\",\n  \"run_id\": \"01a104db-4955-7820-8f74-4ef6485c0b0d\",\n  \"observed_at\": \"2026-10-04T04:09:36.556069602Z\",\n  \"source\": \"ans\",\n  \"source_identifier\": \"ans://https://agentcensus.io/mcp\",\n  \"domain\": \"agentcensus.io\",\n  \"registrable_domain\": \"agentcensus.io\",\n  \"publishing_zone\": \"agentcensus.io\",\n  \"display_name\": \"agentcensus\",\n  \"description\": \"Read-only access to the agentcensus adoption census.\",\n  \"protocols\": [\n    \"mcp\"\n  ],\n  \"capabilities\": [\n    \"census-headline\",\n    \"mechanism-adoption\",\n    \"domain-lookup\",\n    \"discovery-labels\",\n    \"agent-search\",\n    \"org-usage\",\n    \"org-domains\",\n    \"org-alerts\"\n  ],\n  \"card_url\": \"https://agentcensus.io/.well-known/agents-index.json\",\n  \"status\": \"ACTIVE\",\n  \"version\": \"v1.0.0\",\n  \"content_hash\": \"e9777f174e06349cb5336f8ac99dda0b2495f258160902f785352a99cb06f62c\",\n  \"declared_version\": \"v1.0.0\",\n  \"auth_declared\": false,\n  \"transport\": \"h2\",\n  \"tls_version\": \"TLS 1.3\"\n}",
+          "snapshotType": "parsed",
+          "source": "ans",
+          "sourceUrl": "https://agentcensus.io/.well-known/agents-index.json"
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_ans_example_agentcensus_a2a_document.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "0ef91ce5819d05184e421ed57854d73e885c4c6e302b665ac2d5dd78f59a0d53",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded/documents/a2a",
+        "elapsedMs": 167.8,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "Uz-mOIeItJx8N9y1eeSFLjnwbnXs-624nG3JYXDNUzQHbV_PS16x9g==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49931",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "agentKey": "ag_c449a3237ded",
+          "contentHash": "186feba0564e462d564ae26953fb4211dd32f816af7c393fe0a710fe1d4af331",
+          "observedAt": "2026-10-04T04:09:46Z",
+          "snapshot": "{\n  \"event_id\": \"01a1051a-5ef2-7e6d-a31e-f24b79efdf3e\",\n  \"run_id\": \"01a104db-4955-7820-8f74-4ef6485c0b0d\",\n  \"observed_at\": \"2026-10-04T04:09:36.651613594Z\",\n  \"source\": \"a2a\",\n  \"source_identifier\": \"a2a://https://agentcensus.io/mcp\",\n  \"domain\": \"agentcensus.io\",\n  \"registrable_domain\": \"agentcensus.io\",\n  \"publishing_zone\": \"agentcensus.io\",\n  \"display_name\": \"agentcensus\",\n  \"description\": \"Read-only access to the agentcensus adoption census. · Current adoption figures with their denominator. · Adoption of each discovery mechanism over a window, with errors reported separately from misses. · Which discovery label publishers actually use - the drafts disagree, so this is the split. The variants overlap and do not sum. · What the census has observed for one registrable domain. · Search every agent and MCP server the census has discovered, ranked by relevance. What each agent publishes goes to anyone; what the census observed needs a key. · Your own organisation's API usage against its daily quota - what the console's usage page shows. Needs your signed-in session's bearer token; exactly what that session already sees, and nothing without one. · Your own organisation's domain claims and their verification state - what the console's domains page shows. Needs your signed-in session's bearer token; what that session already sees, less who made each claim (member identities are withheld, ADR-052 §6), and nothing without one. · Your own organisation's alert rules and when each last fired - the rule list on the console's alerts page. Needs your signed-in session's bearer token; what that session already sees, less who created each rule (member identities are withheld, ADR-052 §6), and nothing without one.\",\n  \"protocols\": [],\n  \"capabilities\": [\n    \"census-headline\",\n    \"mechanism-adoption\",\n    \"discovery-labels\",\n    \"domain-lookup\",\n    \"agent-search\",\n    \"org-usage\",\n    \"org-domains\",\n    \"org-alerts\",\n    \"census\",\n    \"statistics\",\n    \"read-only\",\n    \"dns\",\n    \"discovery\",\n    \"search\",\n    \"account\",\n    \"usage\",\n    \"domains\",\n    \"alerts\"\n  ],\n  \"card_url\": \"https://agentcensus.io/.well-known/agent.json\",\n  \"status\": \"ACTIVE\",\n  \"version\": \"v1.3\",\n  \"content_hash\": \"186feba0564e462d564ae26953fb4211dd32f816af7c393fe0a710fe1d4af331\",\n  \"declared_version\": \"0.3.0\",\n  \"inferred_version\": \"1.0\",\n  \"version_evidence\": [\n    \"supportedInterfaces (1.0; replaced url/preferredTransport/additionalInterfaces)\",\n    \"protocolVersion field (0.3+, removed from the card in 1.0)\",\n    \"securitySchemes (0.3 spelling)\",\n    \"capabilities object\",\n    \"skills array\"\n  ],\n  \"auth_declared\": true,\n  \"auth_schemes\": [\n    \"http/bearer\"\n  ],\n  \"endpoint_same_origin\": true,\n  \"endpoint_host\": \"agentcensus.io\",\n  \"transport\": \"h2\",\n  \"tls_version\": \"TLS 1.3\",\n  \"field_completeness\": 0.8571428571428571,\n  \"fields_present\": 12,\n  \"fields_defined\": 14\n}",
+          "snapshotType": "parsed",
+          "source": "a2a",
+          "sourceUrl": "https://agentcensus.io/.well-known/agent.json"
+        }
+      }
+    },
+    "trust_model_comparison_agentcensus_ans_example_agentcensus_a2a_alt_document.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "03bbd8c179cd102221ed4502ec25cb013c0b17fab957a49721c05d8a1119ef70",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded/documents/a2a_alt",
+        "elapsedMs": 171.7,
+        "headers": {
+          "content-type": "application/json",
+          "x-request-id": "IUo5Z_XJ2fdAIblZ3mbKlqFm7O2E7GDRvDT39cxrc32v8Pd4jVaByw==",
+          "x-ratelimit-limit": "50000",
+          "x-ratelimit-remaining": "49930",
+          "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+        },
+        "data": {
+          "agentKey": "ag_c449a3237ded",
+          "contentHash": "186feba0564e462d564ae26953fb4211dd32f816af7c393fe0a710fe1d4af331",
+          "observedAt": "2026-10-04T04:09:39Z",
+          "snapshot": "{\n  \"event_id\": \"01a1051a-5d12-7c66-a668-c49b04b2f1dc\",\n  \"run_id\": \"01a104db-4955-7820-8f74-4ef6485c0b0d\",\n  \"observed_at\": \"2026-10-04T04:09:36.238996354Z\",\n  \"source\": \"a2a_alt\",\n  \"source_identifier\": \"a2a://https://agentcensus.io/mcp\",\n  \"domain\": \"agentcensus.io\",\n  \"registrable_domain\": \"agentcensus.io\",\n  \"publishing_zone\": \"agentcensus.io\",\n  \"display_name\": \"agentcensus\",\n  \"description\": \"Read-only access to the agentcensus adoption census. · Current adoption figures with their denominator. · Adoption of each discovery mechanism over a window, with errors reported separately from misses. · Which discovery label publishers actually use - the drafts disagree, so this is the split. The variants overlap and do not sum. · What the census has observed for one registrable domain. · Search every agent and MCP server the census has discovered, ranked by relevance. What each agent publishes goes to anyone; what the census observed needs a key. · Your own organisation's API usage against its daily quota - what the console's usage page shows. Needs your signed-in session's bearer token; exactly what that session already sees, and nothing without one. · Your own organisation's domain claims and their verification state - what the console's domains page shows. Needs your signed-in session's bearer token; what that session already sees, less who made each claim (member identities are withheld, ADR-052 §6), and nothing without one. · Your own organisation's alert rules and when each last fired - the rule list on the console's alerts page. Needs your signed-in session's bearer token; what that session already sees, less who created each rule (member identities are withheld, ADR-052 §6), and nothing without one.\",\n  \"protocols\": [],\n  \"capabilities\": [\n    \"census-headline\",\n    \"mechanism-adoption\",\n    \"discovery-labels\",\n    \"domain-lookup\",\n    \"agent-search\",\n    \"org-usage\",\n    \"org-domains\",\n    \"org-alerts\",\n    \"census\",\n    \"statistics\",\n    \"read-only\",\n    \"dns\",\n    \"discovery\",\n    \"search\",\n    \"account\",\n    \"usage\",\n    \"domains\",\n    \"alerts\"\n  ],\n  \"card_url\": \"https://agentcensus.io/.well-known/agent-card.json\",\n  \"status\": \"ACTIVE\",\n  \"version\": \"v1.3\",\n  \"content_hash\": \"186feba0564e462d564ae26953fb4211dd32f816af7c393fe0a710fe1d4af331\",\n  \"declared_version\": \"0.3.0\",\n  \"inferred_version\": \"1.0\",\n  \"version_evidence\": [\n    \"supportedInterfaces (1.0; replaced url/preferredTransport/additionalInterfaces)\",\n    \"protocolVersion field (0.3+, removed from the card in 1.0)\",\n    \"securitySchemes (0.3 spelling)\",\n    \"capabilities object\",\n    \"skills array\"\n  ],\n  \"auth_declared\": true,\n  \"auth_schemes\": [\n    \"http/bearer\"\n  ],\n  \"endpoint_same_origin\": true,\n  \"endpoint_host\": \"agentcensus.io\",\n  \"transport\": \"h2\",\n  \"tls_version\": \"TLS 1.3\",\n  \"field_completeness\": 0.8571428571428571,\n  \"fields_present\": 12,\n  \"fields_defined\": 14\n}",
+          "snapshotType": "parsed",
+          "source": "a2a_alt",
+          "sourceUrl": "https://agentcensus.io/.well-known/agent-card.json"
+        }
+      }
+    }
+  }
+}

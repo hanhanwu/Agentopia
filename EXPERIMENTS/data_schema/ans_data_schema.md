@@ -1,8 +1,14 @@
 # ANS data schema
 
-This catalog covers every field currently present in the ANS JSON files under `EXPERIMENTS/output/`.
+This catalog covers the ANS captures stored under `captures.*.payload` in
+`EXPERIMENTS/output/trust_model_evidence_bundle.json`.
 
-The original comparison output contains raw DNS-over-HTTPS responses used to discover ANS `_ans-badge` and legacy `_ra-badge` TXT records. None of those three domains returned a badge. The Integrity demonstration adds two badge-discoverable examples, their complete Transparency Log badge responses, and the two live Snitker metadata documents whose byte hashes are compared with sealed values.
+The bundle contains raw DNS-over-HTTPS responses used to discover ANS
+`_ans-badge` and legacy `_ra-badge` TXT records. None of the original three
+domains returned a badge. The Integrity demonstration adds two
+badge-discoverable examples, their complete Transparency Log badge responses,
+and the two live Snitker metadata documents whose byte hashes are compared with
+sealed values.
 
 API endpoint used below:
 
@@ -33,11 +39,16 @@ API endpoint used below:
 | `discovery[].data.Authority[].data` | Raw SOA record describing the authoritative negative response. | `elliot.ns.cloudflare.com. dns.cloudflare.com. ...` | `GET https://dns.google/resolve` |
 | `discovery[].data.Comment` | Resolver-provided diagnostic identifying the responding nameserver. | `Response from 108.162.192.234.` | `GET https://dns.google/resolve` |
 
-`data.Answer[]` is absent from every response in the original three-agent discovery file. The separate Integrity examples below do contain badge answers.
+`data.Answer[]` is absent from every response in the original three-agent
+discovery capture. The separate Integrity examples below do contain badge
+answers.
 
 ## Discoverable badge DNS responses
 
-The two Integrity-example DNS files contain the resolver response directly at the root. The fields `Status`, `TC`, `RD`, `RA`, `AD`, `CD`, `Question[]`, and optional `Comment` have the same meanings as their `discovery[].data.*` counterparts above.
+The two Integrity-example DNS captures contain the resolver response directly
+at the root. The fields `Status`, `TC`, `RD`, `RA`, `AD`, `CD`, `Question[]`,
+and optional `Comment` have the same meanings as their
+`discovery[].data.*` counterparts above.
 
 | Name | Description | Example value | Found in API endpoint(s) |
 |---|---|---|---|
