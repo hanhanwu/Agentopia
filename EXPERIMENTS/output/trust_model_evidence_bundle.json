@@ -1,20 +1,24 @@
 {
   "schemaVersion": "1.0",
-  "capturedAt": "2026-10-05T02:42:36.751109+00:00",
+  "capturedAt": "2026-10-05T05:28:18.135760+00:00",
   "searchBundle": "trust_model_search_bundle.json",
-  "searchCapturedAt": "2026-10-05T02:41:31.517550+00:00",
+  "searchCapturedAt": "2026-10-05T05:28:10.516250+00:00",
   "analysisConfigurations": {
     "ansIntegrityExamples": [
       {
         "name": "Snitker ANS Interoperability Demo",
         "record_name": "_ans-badge.godaddy.demo.ans.snitker.dev",
+        "dns_url": "https://dns.google/resolve?name=_ans-badge.godaddy.demo.ans.snitker.dev&type=TXT",
         "dns_file": "trust_model_comparison_ans_snitker_dns_badge.json",
         "badge_file": "trust_model_comparison_ans_snitker_transparency_log_badge.json",
+        "audit_file": "trust_model_comparison_ans_snitker_transparency_log_audit.json",
         "metadata": {
           "A2A": {
+            "url": "https://godaddy.demo.ans.snitker.dev/.well-known/agent-card.json",
             "file": "trust_model_comparison_ans_snitker_a2a_agent_card.json"
           },
           "MCP": {
+            "url": "https://godaddy.demo.ans.snitker.dev/mcp/server-card",
             "file": "trust_model_comparison_ans_snitker_mcp_server_card.json"
           }
         }
@@ -22,14 +26,52 @@
       {
         "name": "AgentCensus",
         "record_name": "_ans-badge.agentcensus.io",
+        "dns_url": "https://dns.google/resolve?name=_ans-badge.agentcensus.io&type=TXT",
         "dns_file": "trust_model_comparison_ans_agentcensus_dns_badge.json",
         "badge_file": "trust_model_comparison_ans_agentcensus_transparency_log_badge.json",
+        "audit_file": "trust_model_comparison_ans_agentcensus_transparency_log_audit.json",
+        "live_dns": {
+          "ans": {
+            "record_name": "_ans.agentcensus.io",
+            "type": "TXT",
+            "file": "trust_model_comparison_ans_agentcensus_dns_ans.json"
+          },
+          "https": {
+            "record_name": "agentcensus.io",
+            "type": "HTTPS",
+            "file": "trust_model_comparison_ans_agentcensus_dns_https.json"
+          },
+          "tlsa": {
+            "record_name": "_443._tcp.agentcensus.io",
+            "type": "TLSA",
+            "file": "trust_model_comparison_ans_agentcensus_dns_tlsa.json"
+          }
+        },
+        "live_metadata": {
+          "A2A": {
+            "url": "https://agentcensus.io/.well-known/agent.json",
+            "file": "trust_model_comparison_ans_agentcensus_live_a2a_card.json"
+          },
+          "ANS": {
+            "url": "https://agentcensus.io/.well-known/agents-index.json",
+            "file": "trust_model_comparison_ans_agentcensus_live_ans_index.json"
+          }
+        },
+        "tls": {
+          "host": "agentcensus.io",
+          "port": 443,
+          "file": "trust_model_comparison_ans_agentcensus_live_tls.json"
+        },
+        "registry_url": "https://api.godaddy.com/v1/ans/registered-agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca",
+        "registry_file": "trust_model_comparison_ans_agentcensus_registry_current.json",
         "metadata": {}
       }
     ],
     "agentcensusAnsExamples": [
       {
         "name": "Snitker ANS Interoperability Demo",
+        "agent_key": "ag_62fad4c8c1d1",
+        "output_label": "snitker",
         "documents": {
           "a2a_alt": "trust_model_comparison_agentcensus_ans_example_snitker_a2a_alt_document.json"
         },
@@ -39,6 +81,8 @@
       },
       {
         "name": "AgentCensus",
+        "agent_key": "ag_c449a3237ded",
+        "output_label": "agentcensus",
         "documents": {
           "ans": "trust_model_comparison_agentcensus_ans_example_agentcensus_ans_document.json",
           "a2a": "trust_model_comparison_agentcensus_ans_example_agentcensus_a2a_document.json",
@@ -54,18 +98,18 @@
     "trust_model_comparison_agentcensus_shared_council_of_ai_agent.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "d167b4a0cfda7eb6770bab810c7e26884a75cb6c3b1459a5ecb36f43131ea723",
+      "sha256": "228014e3fc6c69e1395c4edb0659260185de51bc3bf5964b222c36926a5d2def",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_0257be5ab061",
-        "elapsedMs": 399.4,
+        "elapsedMs": 390.0,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "4H2fUDNu838umFUgzMCXqbZLiAEhtqhb7v0lr3C8irnt0M9mM3ZZTQ==",
+          "x-request-id": "ki_6YLtnWAhlu9xJ3uU2K2Xw1wX-UuvStT7_efRyFnfJGKtxO6_RKg==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49946",
+          "x-ratelimit-remaining": "49900",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -166,18 +210,18 @@
     "trust_model_comparison_agentcensus_shared_council_of_ai_domain.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "4fe78786a88da51ec45e546446af1e1e8b18f01b4a6f4a54023935e1daf8ee95",
+      "sha256": "cd8b3a37db1dfd6c78a276fda9a75ab0171c39fbe71f4185e39ed4dfae5f01bc",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/domains/councilof.ai",
-        "elapsedMs": 231.2,
+        "elapsedMs": 152.4,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "jaY_1JOJk0-Kd7jDE7T-p7r49GDC1qcl4rf2xWOBzvFcw1FyTEUODg==",
+          "x-request-id": "nCjDS5g9a909TX2SgK4A3BggPlNAVlwn42Vo4iBLIJFi7TdhfCMKkA==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49945",
+          "x-ratelimit-remaining": "49899",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -198,18 +242,18 @@
     "trust_model_comparison_agentcensus_only_selnoviktech_agent.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "ce0d928eb9e40111e06cb8b01cadd9335bf81c7d859642141da3f818cf5bfe9c",
+      "sha256": "c6db09c6e99e53bc1bc2ab0881902d191ec2ffcb1e0171ebe4f6d9a19808d946",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea",
-        "elapsedMs": 166.8,
+        "elapsedMs": 252.8,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "aqfEJrJrFF5eHMNM4FLF9J4WgXlp6oDGGn0nolhglH6FhOmGhyURjg==",
+          "x-request-id": "p68pZ5geRPFUY86kUqjAePvGZQW6HHm7sfbLzszoueIxahHjGhrpXA==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49944",
+          "x-ratelimit-remaining": "49898",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -322,18 +366,18 @@
     "trust_model_comparison_agentcensus_only_selnoviktech_domain.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "7def59358fdd468685385ef743fe2f5c5fe11c62429e9aa338b0af02a4f37a4d",
+      "sha256": "730226651447c2196132633370becc73855d1e188dabef7aea1fc940ec0ca4ca",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/domains/selnoviktech.com",
-        "elapsedMs": 419.0,
+        "elapsedMs": 143.4,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "GleLGbcO9g9UQ6V5voNr78x4azfJnCDhhUXW0ardouML0_Z-uu5OiA==",
+          "x-request-id": "TcGYXcAv9LNRJ1CwzBwy0OEwQHg3vG4Q_PaNjtTSfARvQd7Wp1VAcw==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49943",
+          "x-ratelimit-remaining": "49897",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -403,18 +447,18 @@
     "trust_model_comparison_agentcensus_missing_a2a402_domain.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "3ff0d711fe2949ffcd469dc910a16dba5b2e124dc8c384b361f2c584b3fdfdcc",
+      "sha256": "ab2ac6b8a9bbf9bd099e859a3eeda508124bb81b921f9b88e7141251c0842825",
       "hashScope": "canonical-json",
       "payload": {
         "ok": false,
         "status": 404,
         "url": "https://agentcensus.io/api/v1/domains/a2a402.market",
-        "elapsedMs": 156.4,
+        "elapsedMs": 139.2,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "mUXONyJT_emWg4aBLlu0p0agMUwcIb8HJE9XkkuRXyWL0FglhGgP7Q==",
+          "x-request-id": "FoXgBNi8fpPetPbMCcTPAMtpHZyfKXHxIuM3YUf5te9A6Ltyuic5FA==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49942",
+          "x-ratelimit-remaining": "49896",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -426,18 +470,18 @@
     "trust_model_comparison_agentcensus_shared_council_of_ai_a2a_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "dba2b519cf5351909290af1bdc948627018d85bfadd4acbdc20b89d4015f4583",
+      "sha256": "9e81ba2c4ea8a0acec92b3fddb3357494adbe798fe684e03fc2dd67feeeb1970",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_0257be5ab061/documents/a2a",
-        "elapsedMs": 176.2,
+        "elapsedMs": 168.0,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "_VgwgTnX5D2ruSqLx41Z4pMNj8gePmgpAWpNshwM5Z4cYhQY4pYlvA==",
+          "x-request-id": "bYUcnN-d_vddO71d16OTcpnyPIKaVZ6pCcAu93gTe-JVSOLJbs9PEQ==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49941",
+          "x-ratelimit-remaining": "49895",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -454,18 +498,18 @@
     "trust_model_comparison_agentcensus_shared_council_of_ai_a2a_alt_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "0d799e2ea33365fa0b9cb8e6164e485a1d006a462d50771b9a8d24def1f30a76",
+      "sha256": "ab3c952fc5d11b022a9d7422c9b3e861d49ce9371f3fa6c06694959a31c1218a",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_0257be5ab061/documents/a2a_alt",
-        "elapsedMs": 162.5,
+        "elapsedMs": 158.4,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "uRqrJzqR7L_Q3nFMC3M-6u-LiVJet-vntV0lLuktPSVqwInUdal14Q==",
+          "x-request-id": "ABDVYsxCCysFLD-2xAzJvoYX1Xf8Ud0CLNUeqINt2DHJI8NSiKLiTA==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49940",
+          "x-ratelimit-remaining": "49894",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -482,18 +526,18 @@
     "trust_model_comparison_agentcensus_only_selnoviktech_a2a_alt_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "f7788e1890c73d6fe3b30649be2d37a07b6d27f9247ce10f374595c78c17314a",
+      "sha256": "5637af43ce003e62da9a03f0e771ad096ee44a88af5ecea873736320e1e20411",
       "hashScope": "canonical-json",
       "payload": {
         "ok": false,
         "status": 404,
         "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/a2a_alt",
-        "elapsedMs": 169.1,
+        "elapsedMs": 151.0,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "zb02scx4Rn5l0K1X9-Ix_njhfrRn8PoN-Ut2jai2OTVNWtUf8kauMA==",
+          "x-request-id": "RG5Vq3RVkSOD7PlCsnU7vPQtiI2PKQxp8K0VYkOgFjEQGIjGcuDkbg==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49939",
+          "x-ratelimit-remaining": "49893",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -505,18 +549,18 @@
     "trust_model_comparison_agentcensus_only_selnoviktech_oauth_protected_resource_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "196cd5d0ef4d240a8908ac0ecf126605c5642e66205da8a1281ced3188c855bb",
+      "sha256": "0a25164e631a27807bc8fe6ceec256e9e8f755da7defafaed3d7f88fb0f806fb",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/oauth_protected_resource",
-        "elapsedMs": 159.9,
+        "elapsedMs": 137.3,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "N8Qe8anabn4xwq1534k-YLhWkp9PeUm9LXEMzfjTUEMQ1RKV03rpuQ==",
+          "x-request-id": "oxUE51jawY8k1-ii9nScABH3XYxKGzcft2vDsFJdmn0gAmfzLath7Q==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49938",
+          "x-ratelimit-remaining": "49892",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -533,18 +577,18 @@
     "trust_model_comparison_agentcensus_only_selnoviktech_a2a_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "e2890b1bfd191f612c0afd158672ba89d6395822c63052c351275658ae6e2c92",
+      "sha256": "ba6bc4a90ba658ed6b4414da6b6b25522937b07aad28844667af80b535213ab4",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/a2a",
-        "elapsedMs": 153.7,
+        "elapsedMs": 134.9,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "YgScWDvxOfyxKYoa-bfpFuNYzINYfveMTiLChZKQz1l3ychZrXfmGg==",
+          "x-request-id": "ow9F-ayyhW3r8M8uejrwLBI5wBLrfN9hpBFFP9QmGs_N5zTuxV-_sw==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49937",
+          "x-ratelimit-remaining": "49891",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -561,18 +605,18 @@
     "trust_model_comparison_agentcensus_only_selnoviktech_ard_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "b6ceb94c9120c024d6c4cdf9c81809293b1d6ed04c279b43a39d2b7ea09b10a5",
+      "sha256": "43401f9e971352897f04829e675a99f781b21d20d98936ad4b18f4a1b910beab",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/ard",
-        "elapsedMs": 166.9,
+        "elapsedMs": 151.8,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "BVdrbB8qRnoMd02zKqTH3CZRqX0boF1v2VIorzPZXDPzGgqny5AYRA==",
+          "x-request-id": "4_jqAo1jsxznHyh8I05pIcy_vrzh5gj1ybN-snH7K3Xq5qMFbDx8kQ==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49936",
+          "x-ratelimit-remaining": "49890",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -589,13 +633,13 @@
     "trust_model_comparison_a2a_registry_shared_council_of_ai_integrity_validation.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "cfe5b60878e40b76a20b77acaa1e07ad20d8ef469b9f951f9e952da113b9876f",
+      "sha256": "3807d71d869a8549ad53cb3f5a4f98ab1a74639f27b6dad1bfdd3b02ead75057",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://api.a2a-registry.org/public/tools/validate-url",
-        "elapsedMs": 903.9,
+        "elapsedMs": 661.3,
         "headers": {
           "content-type": "application/json"
         },
@@ -869,7 +913,7 @@
                 "severity": "pass",
                 "code": "HTTP_200_OK",
                 "title": "HTTP Status 200 OK",
-                "message": "Manifest endpoint successfully responded with HTTP 200 in 488ms."
+                "message": "Manifest endpoint successfully responded with HTTP 200 in 360ms."
               },
               {
                 "tier": "tier2_network",
@@ -955,7 +999,7 @@
             "metadata": {
               "isOffline": false,
               "targetUrl": "https://councilof.ai/.well-known/agent.json",
-              "responseTimeMs": 488,
+              "responseTimeMs": 360,
               "contentLengthBytes": 18668,
               "contentType": "application/json",
               "dnsTxtFound": false,
@@ -968,13 +1012,13 @@
     "trust_model_comparison_a2a_registry_missing_a2a402_integrity_validation.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "ce46fa7408e004e6d8bd8eacf8393112af92e6f1b5fc625a93711da1f9df63d5",
+      "sha256": "560991e64597d5cdba2482f5fc3b7d0c592b19db7f1290680336875c6118e731",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://api.a2a-registry.org/public/tools/validate-url",
-        "elapsedMs": 952.3,
+        "elapsedMs": 921.3,
         "headers": {
           "content-type": "application/json"
         },
@@ -1198,7 +1242,7 @@
                 "severity": "pass",
                 "code": "HTTP_200_OK",
                 "title": "HTTP Status 200 OK",
-                "message": "Manifest endpoint successfully responded with HTTP 200 in 560ms."
+                "message": "Manifest endpoint successfully responded with HTTP 200 in 521ms."
               },
               {
                 "tier": "tier2_network",
@@ -1261,7 +1305,7 @@
             "metadata": {
               "isOffline": false,
               "targetUrl": "https://a2a402.market/.well-known/agent-card.json",
-              "responseTimeMs": 560,
+              "responseTimeMs": 521,
               "contentLengthBytes": 7139,
               "contentType": "application/json",
               "dnsTxtFound": false,
@@ -1274,7 +1318,7 @@
     "trust_model_comparison_ans_identity_discovery.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "4eafe6f79a6896ec5c58d3279635880eaeccb2e7d7941598f5196407acbef8d8",
+      "sha256": "87e2f8b5f91a042158d0158c3291e0b3f8d1ef71920aabe42523ec2a4dec22f8",
       "hashScope": "canonical-json",
       "payload": [
         {
@@ -1304,7 +1348,7 @@
                 "data": "elliot.ns.cloudflare.com. dns.cloudflare.com. 2416219770 10000 2400 604800 1800"
               }
             ],
-            "Comment": "Response from 172.64.33.162."
+            "Comment": "Response from 173.245.58.234."
           }
         },
         {
@@ -1334,7 +1378,7 @@
                 "data": "elliot.ns.cloudflare.com. dns.cloudflare.com. 2416219770 10000 2400 604800 1800"
               }
             ],
-            "Comment": "Response from 172.64.32.234."
+            "Comment": "Response from 108.162.193.162."
           }
         },
         {
@@ -1364,7 +1408,7 @@
                 "data": "julian.ns.cloudflare.com. dns.cloudflare.com. 2416653147 10000 2400 604800 1800"
               }
             ],
-            "Comment": "Response from 172.64.34.35."
+            "Comment": "Response from 172.64.35.94."
           }
         },
         {
@@ -1394,7 +1438,7 @@
                 "data": "julian.ns.cloudflare.com. dns.cloudflare.com. 2416653147 10000 2400 604800 1800"
               }
             ],
-            "Comment": "Response from 108.162.194.35."
+            "Comment": "Response from 172.64.35.94."
           }
         },
         {
@@ -1424,7 +1468,7 @@
                 "data": "dns1.p01.nsone.net. domains+netlify.netlify.com. 1786236711 43200 7200 1209600 3600"
               }
             ],
-            "Comment": "Response from 198.51.44.72."
+            "Comment": "Response from 198.51.45.72."
           }
         },
         {
@@ -1450,10 +1494,11 @@
               {
                 "name": "a2a402.market.",
                 "type": 6,
-                "TTL": 482,
+                "TTL": 1800,
                 "data": "dns1.p01.nsone.net. domains+netlify.netlify.com. 1786236711 43200 7200 1209600 3600"
               }
-            ]
+            ],
+            "Comment": "Response from 198.51.45.72."
           }
         }
       ]
@@ -1490,7 +1535,7 @@
     "trust_model_comparison_ans_snitker_transparency_log_badge.json": {
       "mediaType": "application/json",
       "url": "https://transparency.ans.godaddy.com/v1/agents/7d54a8d6-89d7-4d53-93ee-802e410ab1b3",
-      "sha256": "7233b0bf2758b44e0113d7015919d739a6134dea9d4c4401dc371428427df426",
+      "sha256": "440e8d4c954456acc1e22706d7e3cb879074562ed7086bc85ca0f5f873b82064",
       "hashScope": "response-bytes",
       "payload": {
         "merkleProof": {
@@ -1508,16 +1553,16 @@
             "bfJ7D5S9tOW7C/rw/MBiWHfG4wjWxjaQWAbOYCK24jA=",
             "wUl+WclZIHClGHv+Z/liEmIRuv+YGIbufEmoV6TflOE=",
             "vcdtIzjT4rJznFJl+olCxyEXjWyh9KZRWNQegTlh7A0=",
-            "TMe7NFyzkkavTU/LglBPb3F2loWfm+PmSrV9o8PJeZw=",
+            "nb50KQ2IUJh/hXAYxJtxEuZfGBV/Yub+ta8Ti3Bai9g=",
             "b1p2b7gRhAnmSqPrMsX8kTFpm5hM9cbpaWcGNguwxNY=",
             "JqGK9Mj7w368EoiH6cAglNmFxhubwy1g+49uVLuwR+g=",
             "8Luk7x1b8HlJJ4szl/c0gKaka8An+sZNcOOZA7EYFME=",
             "Isq0vuCx23hiA5O1AaWf8jyL1V1CXXW6hSC4vpi2EeQ=",
             "0+pILIYJuvaTdGZSFI9fmHDz6EJmA0wghrugjBIsRUA="
           ],
-          "rootHash": "g2nd3TQNrAZa/np0zKfkeffYl0W7Ih3AiSBZJpIawTY=",
-          "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTg5MWNkYTczODUyNjgzN2ZiMDg5Nzc3MjZkMDhmNGMzZDFmNzkyMDBlMzU2MWM5MTdiOWM2MjdhOTA2ZjQzNDkiLCJ0aW1lc3RhbXAiOjE3OTExNjc3ODcsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6ImcybmQzVFFOckFaYV9ucDB6S2ZrZWZmWWwwVzdJaDNBaVNCWkpwSWF3VFk9IiwidGltZXN0YW1wIjoxNzkxMTY3Nzg3LCJ0cmVlc2l6ZSI6MzYwMjM3fQ.S2hzmUy5nifT3kHSplAOFzb6_XqAfwJy3Om_N3pEJAs1s8EX-KssLyqWmNphuMn6P3HPHk16y1qjHmIDgNzYyg",
-          "treeSize": 360237,
+          "rootHash": "hy2//1/UW1ppY8U9o3DUEt6FnsN06diVHQxSo2D9dS4=",
+          "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTg5MWNkYTczODUyNjgzN2ZiMDg5Nzc3MjZkMDhmNGMzZDFmNzkyMDBlMzU2MWM5MTdiOWM2MjdhOTA2ZjQzNDkiLCJ0aW1lc3RhbXAiOjE3OTExNzgwNzAsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6Imh5Ml9fMV9VVzFwcFk4VTlvM0RVRXQ2Rm5zTjA2ZGlWSFF4U28yRDlkUzQ9IiwidGltZXN0YW1wIjoxNzkxMTc4MDcwLCJ0cmVlc2l6ZSI6MzYwMjc4fQ.buhpke5wZe_PtHO-312b4IruXCQk_8gNujCMs3B9Tt-38Cpf3nyEKqnz2mQnlFW1O5UBgWQpWySS2URgBbzQCA",
+          "treeSize": 360278,
           "treeVersion": 1
         },
         "payload": {
@@ -1579,6 +1624,104 @@
         "schemaVersion": "V1",
         "signature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTk0Zjk4ZDY0ODFmODU4MTVmZGJjODJmOWNmYTQ0YTI4YjlmNzM2ZTUxZjAxNGI2MjU0ZmU5YTdlNjA0MGVmZTAiLCJ0aW1lc3RhbXAiOjE3OTA4MDk0ODAsInR5cCI6IkpXVCJ9..fzBljh5A4PqAKfAhuHlJjQJsWbsQ6ONADSdN0dhGcFeFxrtoW_4ihH134B1SjTf__Pz1bhRmvo8Q9OCaoKdL7Q",
         "status": "ACTIVE"
+      }
+    },
+    "trust_model_comparison_ans_snitker_transparency_log_audit.json": {
+      "mediaType": "application/json",
+      "url": "https://transparency.ans.godaddy.com/v1/agents/7d54a8d6-89d7-4d53-93ee-802e410ab1b3/audit",
+      "sha256": "18b9224730baffc3e597c0fa3b521c80b6005a2e3803ac87dd8794c97a451210",
+      "hashScope": "response-bytes",
+      "payload": {
+        "records": [
+          {
+            "merkleProof": {
+              "leafHash": "a6c4668143505cc360a598b1f8fcfa1714d895f685e3037285b29af96bb5b644",
+              "leafIndex": 357545,
+              "path": [
+                "K/854rX0dsrSFSjFdP41iPf4N9u/4RQShWv6ko+jwvQ=",
+                "U94h0Bu/dg5Vxj/ZpaMmTJM3cR5laeGiQtOQkfgLd/I=",
+                "xGV0NdF3/ut9yNi/sa/n8B/JFywWFSL9x7bnMUmdfN0=",
+                "PdHlRHzfy9wE9jJuHUGWoVZIp8q3SMMMplJhW8Mm8Xs=",
+                "2WKTDb6YLIQ0pWWzE2wKsFkl4MeM3fzZogGQucHYFSs=",
+                "8XKy9nY5G+Yk02Y59+tcOzrZ+oM7L9fTR14q8jLxUw4=",
+                "96DoYf1oTfsNacaDtepySLZETxaQfulfyGF5cQIG7do=",
+                "K6qwZYBEJ5SzMWrJO54Oue3KzuzBRBlMFuN1L9EpCJc=",
+                "bfJ7D5S9tOW7C/rw/MBiWHfG4wjWxjaQWAbOYCK24jA=",
+                "wUl+WclZIHClGHv+Z/liEmIRuv+YGIbufEmoV6TflOE=",
+                "vcdtIzjT4rJznFJl+olCxyEXjWyh9KZRWNQegTlh7A0=",
+                "nb50KQ2IUJh/hXAYxJtxEuZfGBV/Yub+ta8Ti3Bai9g=",
+                "b1p2b7gRhAnmSqPrMsX8kTFpm5hM9cbpaWcGNguwxNY=",
+                "JqGK9Mj7w368EoiH6cAglNmFxhubwy1g+49uVLuwR+g=",
+                "8Luk7x1b8HlJJ4szl/c0gKaka8An+sZNcOOZA7EYFME=",
+                "Isq0vuCx23hiA5O1AaWf8jyL1V1CXXW6hSC4vpi2EeQ=",
+                "0+pILIYJuvaTdGZSFI9fmHDz6EJmA0wghrugjBIsRUA="
+              ],
+              "rootHash": "hy2//1/UW1ppY8U9o3DUEt6FnsN06diVHQxSo2D9dS4=",
+              "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTg5MWNkYTczODUyNjgzN2ZiMDg5Nzc3MjZkMDhmNGMzZDFmNzkyMDBlMzU2MWM5MTdiOWM2MjdhOTA2ZjQzNDkiLCJ0aW1lc3RhbXAiOjE3OTExNzgwNzAsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6Imh5Ml9fMV9VVzFwcFk4VTlvM0RVRXQ2Rm5zTjA2ZGlWSFF4U28yRDlkUzQ9IiwidGltZXN0YW1wIjoxNzkxMTc4MDcwLCJ0cmVlc2l6ZSI6MzYwMjc4fQ.buhpke5wZe_PtHO-312b4IruXCQk_8gNujCMs3B9Tt-38Cpf3nyEKqnz2mQnlFW1O5UBgWQpWySS2URgBbzQCA",
+              "treeSize": 360278,
+              "treeVersion": 1
+            },
+            "payload": {
+              "logId": "01a0f490-1c26-7bed-967e-93f6dd013321",
+              "producer": {
+                "event": {
+                  "ansId": "7d54a8d6-89d7-4d53-93ee-802e410ab1b3",
+                  "ansName": "ans://v1.2.0.godaddy.demo.ans.snitker.dev",
+                  "eventType": "AGENT_REGISTERED",
+                  "agent": {
+                    "host": "godaddy.demo.ans.snitker.dev",
+                    "name": "Snitker ANS Interoperability Demo",
+                    "version": "v1.2.0"
+                  },
+                  "attestations": {
+                    "dnsRecordsProvisioned": {
+                      "_443._tcp.godaddy.demo.ans.snitker.dev": "3 0 1 fbc1816828b944bf60a1f052fdcf27e35c62faa7cb8f34a76bc3e69ccf074de2",
+                      "_ans-badge.godaddy.demo.ans.snitker.dev": "v=ans-badge1; version=v1.2.0; url=https://transparency.ans.godaddy.com/v1/agents/7d54a8d6-89d7-4d53-93ee-802e410ab1b3",
+                      "_ans.godaddy.demo.ans.snitker.dev": "v=ans1; version=v1.2.0; p=mcp; mode=direct; url=https://godaddy.demo.ans.snitker.dev/mcp",
+                      "godaddy.demo.ans.snitker.dev": "0 . alpn=h2"
+                    },
+                    "domainValidation": "ACME-DNS-01",
+                    "identityCert": {
+                      "fingerprint": "SHA256:5050593e0370a23a6aa16ff96d2e7e1c22d121e110a143494319c9ac6676eee6",
+                      "type": "X509-DV-CLIENT"
+                    },
+                    "serverCert": {
+                      "fingerprint": "SHA256:fbc1816828b944bf60a1f052fdcf27e35c62faa7cb8f34a76bc3e69ccf074de2",
+                      "type": "X509-DV-SERVER"
+                    },
+                    "validIdentityCerts": [
+                      {
+                        "fingerprint": "SHA256:5050593e0370a23a6aa16ff96d2e7e1c22d121e110a143494319c9ac6676eee6",
+                        "type": "X509-DV-CLIENT",
+                        "notAfter": "2027-09-30T22:39:46.000000Z"
+                      }
+                    ],
+                    "validServerCerts": [
+                      {
+                        "fingerprint": "SHA256:fbc1816828b944bf60a1f052fdcf27e35c62faa7cb8f34a76bc3e69ccf074de2",
+                        "type": "X509-DV-SERVER",
+                        "notAfter": "2027-04-16T22:39:51.000000Z"
+                      }
+                    ],
+                    "metadataHashes": {
+                      "A2A": "SHA256:22290c19690bb8d0f8f88610ac579197b0e45eb86a83b1e531dfec6dda5e8042",
+                      "MCP": "SHA256:927700323317c64cef022230537e155a525a605e5b641595b8b1ddf892c4ebac"
+                    }
+                  },
+                  "expiresAt": "2027-04-16T22:39:51.000000Z",
+                  "issuedAt": "2026-09-30T22:39:46.604881Z",
+                  "raId": "raid-849e6ed42a5398913c7743697252e2a1969d84dce1eed6e7143b2c770b197c0d",
+                  "timestamp": "2026-09-30T23:04:39.983207Z"
+                },
+                "keyId": "d859e797",
+                "signature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImQ4NTllNzk3IiwicmFpZCI6InJhaWQtODQ5ZTZlZDQyYTUzOTg5MTNjNzc0MzY5NzI1MmUyYTE5NjlkODRkY2UxZWVkNmU3MTQzYjJjNzcwYjE5N2MwZCIsInRpbWVzdGFtcCI6MTc5MDgwOTQ3OSwidHlwIjoiSldUIn0..eaJnMvpoHxY4VLlRWmNOGSM8p3z2p36yCX2lidGkLzz8AwHCoHy_sXtqN-wB_o7Zw8ylt7qq04gjrljYMjhqvw"
+              }
+            },
+            "schemaVersion": "V1",
+            "signature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTk0Zjk4ZDY0ODFmODU4MTVmZGJjODJmOWNmYTQ0YTI4YjlmNzM2ZTUxZjAxNGI2MjU0ZmU5YTdlNjA0MGVmZTAiLCJ0aW1lc3RhbXAiOjE3OTA4MDk0ODAsInR5cCI6IkpXVCJ9..fzBljh5A4PqAKfAhuHlJjQJsWbsQ6ONADSdN0dhGcFeFxrtoW_4ihH134B1SjTf__Pz1bhRmvo8Q9OCaoKdL7Q",
+            "status": "ACTIVE"
+          }
+        ]
       }
     },
     "trust_model_comparison_ans_snitker_a2a_agent_card.json": {
@@ -1769,7 +1912,7 @@
     "trust_model_comparison_ans_agentcensus_dns_badge.json": {
       "mediaType": "application/json",
       "url": "https://dns.google/resolve?name=_ans-badge.agentcensus.io&type=TXT",
-      "sha256": "4c674305c309e438ce64856961efa2455abbfa230690477229c9e321ec00532d",
+      "sha256": "a36d021655e5bade13cc4e63153d435be99865d9d4a6f384c8bd4d16825aa136",
       "hashScope": "response-bytes",
       "payload": {
         "Status": 0,
@@ -1792,13 +1935,13 @@
             "data": "v=ans-badge1; version=v1.0.0; url=https://transparency.ans.godaddy.com/v1/agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca"
           }
         ],
-        "Comment": "Response from 205.251.199.149."
+        "Comment": "Response from 205.251.197.63."
       }
     },
     "trust_model_comparison_ans_agentcensus_transparency_log_badge.json": {
       "mediaType": "application/json",
       "url": "https://transparency.ans.godaddy.com/v1/agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca",
-      "sha256": "70b1656e4b6774373c28459e2e2c9557b8aa67c601c87fa6bd2c83d673be9b9c",
+      "sha256": "5d98ec4d9f9ef675e2a82a625b073a9c3410bd25918d8c451050b415064ac25b",
       "hashScope": "response-bytes",
       "payload": {
         "merkleProof": {
@@ -1818,14 +1961,14 @@
             "yvLJqErTy4Lv2EUkD39F7N33Gl8F5AKcMWn3mbS1plo=",
             "KTxTL9edI0pQTiozPKSJskQ0eR0gipK/GWxYf4hQbK8=",
             "2tTVMDNLGsEzbd21j3BRPgVA3XlMgB4XyzxrKDPmqdE=",
-            "aymaKT67ngIKxytpH5KYuNNlxcxTVYTp0WZHKMci9uQ=",
+            "ukWd5uY8HChDrQ6v23p3Y1gLzYSGltDrV50O3vP5rq4=",
             "8Luk7x1b8HlJJ4szl/c0gKaka8An+sZNcOOZA7EYFME=",
             "Isq0vuCx23hiA5O1AaWf8jyL1V1CXXW6hSC4vpi2EeQ=",
             "0+pILIYJuvaTdGZSFI9fmHDz6EJmA0wghrugjBIsRUA="
           ],
-          "rootHash": "g2nd3TQNrAZa/np0zKfkeffYl0W7Ih3AiSBZJpIawTY=",
-          "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTg5MWNkYTczODUyNjgzN2ZiMDg5Nzc3MjZkMDhmNGMzZDFmNzkyMDBlMzU2MWM5MTdiOWM2MjdhOTA2ZjQzNDkiLCJ0aW1lc3RhbXAiOjE3OTExNjc3ODcsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6ImcybmQzVFFOckFaYV9ucDB6S2ZrZWZmWWwwVzdJaDNBaVNCWkpwSWF3VFk9IiwidGltZXN0YW1wIjoxNzkxMTY3Nzg3LCJ0cmVlc2l6ZSI6MzYwMjM3fQ.S2hzmUy5nifT3kHSplAOFzb6_XqAfwJy3Om_N3pEJAs1s8EX-KssLyqWmNphuMn6P3HPHk16y1qjHmIDgNzYyg",
-          "treeSize": 360237,
+          "rootHash": "hy2//1/UW1ppY8U9o3DUEt6FnsN06diVHQxSo2D9dS4=",
+          "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTg5MWNkYTczODUyNjgzN2ZiMDg5Nzc3MjZkMDhmNGMzZDFmNzkyMDBlMzU2MWM5MTdiOWM2MjdhOTA2ZjQzNDkiLCJ0aW1lc3RhbXAiOjE3OTExNzgwNzAsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6Imh5Ml9fMV9VVzFwcFk4VTlvM0RVRXQ2Rm5zTjA2ZGlWSFF4U28yRDlkUzQ9IiwidGltZXN0YW1wIjoxNzkxMTc4MDcwLCJ0cmVlc2l6ZSI6MzYwMjc4fQ.buhpke5wZe_PtHO-312b4IruXCQk_8gNujCMs3B9Tt-38Cpf3nyEKqnz2mQnlFW1O5UBgWQpWySS2URgBbzQCA",
+          "treeSize": 360278,
           "treeVersion": 1
         },
         "payload": {
@@ -1885,21 +2028,681 @@
         "status": "ACTIVE"
       }
     },
+    "trust_model_comparison_ans_agentcensus_transparency_log_audit.json": {
+      "mediaType": "application/json",
+      "url": "https://transparency.ans.godaddy.com/v1/agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca/audit",
+      "sha256": "5abd292905c31fffc96ecbf3f53c5861e1c2bee98aa5c09347844b5caa33d38a",
+      "hashScope": "response-bytes",
+      "payload": {
+        "records": [
+          {
+            "merkleProof": {
+              "leafHash": "950e183642b6c0fb0aaeaea214f68899bb5f37da0fe639fb5e7eba5482c72a1a",
+              "leafIndex": 348146,
+              "path": [
+                "MlTyO1qo1Ax0345+3n12MR2xJihJmDAQNGNf4d/jyaA=",
+                "dp60Xj/e87b6P00PjbA8Qf2z9TauoYGk03Cvh7GH2lY=",
+                "0mslDZFsJMzgvIHEjfUsRJaPhXVLTcOneb4yqoZdFSE=",
+                "fL7Ex8YvPfpvwhXzaJpf42kX6GGJRZN+OOTue8lgNfc=",
+                "IhlSk8EqjqAzHhEzpUY0zlK/j1SHp7ceUiHvwDJbRrI=",
+                "ukJKz8NbmOiO65ZKj2aUfrirJCXDKJsGMRCP9JY8W90=",
+                "zSRMNMrn8EZ3pkkOnIDCwxEt8PxEjvqoLj5wnA2pAW4=",
+                "WwYsGlFRD9/WlCf4tFRckN59+0CVb/G9wwQ2s+Sb8X0=",
+                "ZBI10gLZGZUUmTOQ0cMCgR4TkWirK2INpG1GdIK88zA=",
+                "opida4qvxia+SRcLvO5n554efiMzCIOc/T3fE26p58s=",
+                "yvLJqErTy4Lv2EUkD39F7N33Gl8F5AKcMWn3mbS1plo=",
+                "KTxTL9edI0pQTiozPKSJskQ0eR0gipK/GWxYf4hQbK8=",
+                "2tTVMDNLGsEzbd21j3BRPgVA3XlMgB4XyzxrKDPmqdE=",
+                "ukWd5uY8HChDrQ6v23p3Y1gLzYSGltDrV50O3vP5rq4=",
+                "8Luk7x1b8HlJJ4szl/c0gKaka8An+sZNcOOZA7EYFME=",
+                "Isq0vuCx23hiA5O1AaWf8jyL1V1CXXW6hSC4vpi2EeQ=",
+                "0+pILIYJuvaTdGZSFI9fmHDz6EJmA0wghrugjBIsRUA="
+              ],
+              "rootHash": "hy2//1/UW1ppY8U9o3DUEt6FnsN06diVHQxSo2D9dS4=",
+              "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTg5MWNkYTczODUyNjgzN2ZiMDg5Nzc3MjZkMDhmNGMzZDFmNzkyMDBlMzU2MWM5MTdiOWM2MjdhOTA2ZjQzNDkiLCJ0aW1lc3RhbXAiOjE3OTExNzgwNzAsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6Imh5Ml9fMV9VVzFwcFk4VTlvM0RVRXQ2Rm5zTjA2ZGlWSFF4U28yRDlkUzQ9IiwidGltZXN0YW1wIjoxNzkxMTc4MDcwLCJ0cmVlc2l6ZSI6MzYwMjc4fQ.buhpke5wZe_PtHO-312b4IruXCQk_8gNujCMs3B9Tt-38Cpf3nyEKqnz2mQnlFW1O5UBgWQpWySS2URgBbzQCA",
+              "treeSize": 360278,
+              "treeVersion": 1
+            },
+            "payload": {
+              "logId": "01a0b75b-dba2-7607-bd17-a15041c0bb8b",
+              "producer": {
+                "event": {
+                  "ansId": "1f7f32b8-2689-49e4-b0dd-f4b0999545ca",
+                  "ansName": "ans://v2.0.0.agentcensus.io",
+                  "eventType": "AGENT_REGISTERED",
+                  "agent": {
+                    "host": "agentcensus.io",
+                    "name": "census",
+                    "version": "v2.0.0"
+                  },
+                  "attestations": {
+                    "dnsRecordsProvisioned": {
+                      "_443._tcp.agentcensus.io": "3 0 1 f447f2d0cabc7fe62956af1ce90925b7d7eaad5576f20dc57bf26a2d3b652a3b",
+                      "_ans-badge.agentcensus.io": "v=ans-badge1; version=v2.0.0; url=https://transparency.ans.godaddy.com/v1/agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca",
+                      "_ans.agentcensus.io": "v=ans1; version=v2.0.0; p=mcp; mode=direct; url=https://agentcensus.io/mcp",
+                      "agentcensus.io": "0 . alpn=h2"
+                    },
+                    "domainValidation": "ACME-DNS-01",
+                    "identityCert": {
+                      "fingerprint": "SHA256:0b38f48bc30eb7b3a122e51a989bd3976bcaa022f64402d158f5056d7e5c72fb",
+                      "type": "X509-DV-CLIENT"
+                    },
+                    "serverCert": {
+                      "fingerprint": "SHA256:f447f2d0cabc7fe62956af1ce90925b7d7eaad5576f20dc57bf26a2d3b652a3b",
+                      "type": "X509-DV-SERVER"
+                    },
+                    "validIdentityCerts": [
+                      {
+                        "fingerprint": "SHA256:0b38f48bc30eb7b3a122e51a989bd3976bcaa022f64402d158f5056d7e5c72fb",
+                        "type": "X509-DV-CLIENT",
+                        "notAfter": "2027-09-15T13:53:45.000000Z"
+                      }
+                    ],
+                    "validServerCerts": [
+                      {
+                        "fingerprint": "SHA256:f447f2d0cabc7fe62956af1ce90925b7d7eaad5576f20dc57bf26a2d3b652a3b",
+                        "type": "X509-DV-SERVER",
+                        "notAfter": "2027-03-18T23:59:59.000000Z"
+                      }
+                    ]
+                  },
+                  "expiresAt": "2027-03-18T23:59:59.000000Z",
+                  "issuedAt": "2026-09-15T13:53:45.620119Z",
+                  "raId": "raid-cf4c0ca666714c6a6931a7e182548110d1f7de47ac17538116edb10cd17ff6ac",
+                  "timestamp": "2026-09-19T01:50:45.460947Z"
+                },
+                "keyId": "46c877af",
+                "signature": "eyJhbGciOiJFUzI1NiIsImtpZCI6IjQ2Yzg3N2FmIiwicmFpZCI6InJhaWQtY2Y0YzBjYTY2NjcxNGM2YTY5MzFhN2UxODI1NDgxMTBkMWY3ZGU0N2FjMTc1MzgxMTZlZGIxMGNkMTdmZjZhYyIsInRpbWVzdGFtcCI6MTc4OTc4MjY0NSwidHlwIjoiSldUIn0..xDKJ_CEGOfW8bR0sUQrTqIE_kqk3IbZYxvP1tWlXfH6n3WXy1O0-82q1TnMhSZuYZAINR-UTh8XwwFJrGlO8ug"
+              }
+            },
+            "schemaVersion": "V1",
+            "signature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLWIxY2E1YzczZTgyN2QzODIzY2IxMjIzYzRhMmYyNzVmN2JiYzVmNjVhOWQ2MzYxY2I5YTk0YWNhZTQ2YjMyZTkiLCJ0aW1lc3RhbXAiOjE3ODk3ODI2NDUsInR5cCI6IkpXVCJ9..ZRQsAWDS2dRRWvnPzoz-DV8LWXXkKRo1_SIsbwgKIyAngODSolPe1tPrSabb2giKFBbkkxEtYaI2CoC4C65KVg",
+            "status": "ACTIVE"
+          }
+        ]
+      }
+    },
+    "trust_model_comparison_ans_agentcensus_dns_ans.json": {
+      "mediaType": "application/json",
+      "url": "https://dns.google/resolve?name=_ans.agentcensus.io&type=TXT",
+      "sha256": "5adb80292655f488cb9f42a2ca42c880679c73836feb33ae7968b56b87e9f25b",
+      "hashScope": "response-bytes",
+      "payload": {
+        "Status": 0,
+        "TC": false,
+        "RD": true,
+        "RA": true,
+        "AD": true,
+        "CD": false,
+        "Question": [
+          {
+            "name": "_ans.agentcensus.io.",
+            "type": 16
+          }
+        ],
+        "Answer": [
+          {
+            "name": "_ans.agentcensus.io.",
+            "type": 16,
+            "TTL": 3600,
+            "data": "v=ans1; version=v1.0.0; p=mcp; mode=direct; url=https://agentcensus.io/mcp"
+          }
+        ],
+        "Comment": "Response from 205.251.197.63."
+      }
+    },
+    "trust_model_comparison_ans_agentcensus_dns_https.json": {
+      "mediaType": "application/json",
+      "url": "https://dns.google/resolve?name=agentcensus.io&type=HTTPS",
+      "sha256": "fa5ea93ed7e263e9ccc6db39b1050b5d718832f51c3294805395bf40114e59c8",
+      "hashScope": "response-bytes",
+      "payload": {
+        "Status": 0,
+        "TC": false,
+        "RD": true,
+        "RA": true,
+        "AD": true,
+        "CD": false,
+        "Question": [
+          {
+            "name": "agentcensus.io.",
+            "type": 65
+          }
+        ],
+        "Answer": [
+          {
+            "name": "agentcensus.io.",
+            "type": 65,
+            "TTL": 3600,
+            "data": "1 . alpn=h2"
+          }
+        ],
+        "Comment": "Response from 205.251.193.140."
+      }
+    },
+    "trust_model_comparison_ans_agentcensus_dns_tlsa.json": {
+      "mediaType": "application/json",
+      "url": "https://dns.google/resolve?name=_443._tcp.agentcensus.io&type=TLSA",
+      "sha256": "b1b64ccb3402b380aede933524cb9690292dbf267aa0d59b56d1f47ba5eb9fc5",
+      "hashScope": "response-bytes",
+      "payload": {
+        "Status": 0,
+        "TC": false,
+        "RD": true,
+        "RA": true,
+        "AD": true,
+        "CD": false,
+        "Question": [
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52
+          }
+        ],
+        "Answer": [
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
+            "data": "2 1 1 9725d02c6ffcd6d1e436ae80b2931bf73323daf85edbdc7993f8aec491e9b26b"
+          },
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
+            "data": "2 1 1 0f11f8b6de342fe79db85eacce963a4ce365c6166105dfa927dc1b1e54367eec"
+          },
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
+            "data": "2 1 1 427dab55bc82df04137b8aca241f5753559a0adc2d04da6eb0cedfe5e1e38fd3"
+          },
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
+            "data": "2 1 1 bf14689ff125e4ab88e2fc797b2d43826b189916349c37790a0e067c9f12f9b8"
+          },
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
+            "data": "2 1 1 f1d71264818e9242405d5ef5307da5b0526e1bc4f61a4900ab7a06c1d0b8b07a"
+          },
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
+            "data": "2 1 1 1bd2cd340aa5f3dede818b1a6dab219335024c4264581ce0a04b64f17ffaefc7"
+          },
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
+            "data": "2 1 1 11e6a7320dd8ab2e9a3762e10b6f300038470c1fdccd9f64e1171ea6fa06c118"
+          },
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
+            "data": "3 0 1 f447f2d0cabc7fe62956af1ce90925b7d7eaad5576f20dc57bf26a2d3b652a3b"
+          },
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
+            "data": "2 1 1 d7cb643f2af69dc92fe1f828d1d84091a52d27686edbcdf5c653b648a86af1d8"
+          }
+        ],
+        "Comment": "Response from 205.251.199.149."
+      }
+    },
+    "trust_model_comparison_ans_agentcensus_live_a2a_card.json": {
+      "mediaType": "application/json",
+      "url": "https://agentcensus.io/.well-known/agent.json",
+      "sha256": "c18c749f5f9da46295ea01b653c90f5586e5990c818fa12302c86bc7e5f56d37",
+      "hashScope": "response-bytes",
+      "payload": {
+        "capabilities": {
+          "pushNotifications": false,
+          "streaming": false
+        },
+        "defaultInputModes": [
+          "text/plain",
+          "application/json"
+        ],
+        "defaultOutputModes": [
+          "application/json"
+        ],
+        "description": "Read-only access to the agentcensus adoption census.",
+        "documentationUrl": "https://agentcensus.io/docs",
+        "name": "agentcensus",
+        "preferredTransport": "JSONRPC",
+        "protocolVersion": "0.3.0",
+        "provider": {
+          "organization": "agentcensus",
+          "url": "https://agentcensus.io"
+        },
+        "securitySchemes": {
+          "bearerAuth": {
+            "description": "Optional. An API key (ac_live_ prefix) or Cognito access token. Anonymous callers are metered per address; authenticated callers per organisation.",
+            "scheme": "bearer",
+            "type": "http"
+          }
+        },
+        "skills": [
+          {
+            "description": "Current adoption figures with their denominator.",
+            "id": "census-headline",
+            "name": "Census headline",
+            "tags": [
+              "census",
+              "statistics",
+              "read-only"
+            ]
+          },
+          {
+            "description": "Adoption of each discovery mechanism over a window, with errors reported separately from misses.",
+            "id": "mechanism-adoption",
+            "name": "Mechanism adoption",
+            "tags": [
+              "census",
+              "statistics",
+              "read-only"
+            ]
+          },
+          {
+            "description": "Which discovery label publishers actually use - the drafts disagree, so this is the split. The variants overlap and do not sum.",
+            "id": "discovery-labels",
+            "name": "Discovery labels",
+            "tags": [
+              "census",
+              "dns",
+              "statistics",
+              "read-only"
+            ]
+          },
+          {
+            "description": "What the census has observed for one registrable domain.",
+            "id": "domain-lookup",
+            "name": "Domain lookup",
+            "tags": [
+              "dns",
+              "discovery",
+              "read-only"
+            ]
+          },
+          {
+            "description": "Search every agent and MCP server the census has discovered, ranked by relevance. What each agent publishes goes to anyone; what the census observed needs a key.",
+            "id": "agent-search",
+            "name": "Agent search",
+            "tags": [
+              "search",
+              "discovery",
+              "read-only"
+            ]
+          },
+          {
+            "description": "Your own organisation's API usage against its daily quota - what the console's usage page shows. Needs your signed-in session's bearer token; exactly what that session already sees, and nothing without one.",
+            "id": "org-usage",
+            "name": "Organisation usage",
+            "tags": [
+              "account",
+              "usage",
+              "read-only"
+            ]
+          },
+          {
+            "description": "Your own organisation's domain claims and their verification state - what the console's domains page shows. Needs your signed-in session's bearer token; what that session already sees, less who made each claim (member identities are withheld, ADR-052 §6), and nothing without one.",
+            "id": "org-domains",
+            "name": "Organisation domains",
+            "tags": [
+              "account",
+              "domains",
+              "read-only"
+            ]
+          },
+          {
+            "description": "Your own organisation's alert rules and when each last fired - the rule list on the console's alerts page. Needs your signed-in session's bearer token; what that session already sees, less who created each rule (member identities are withheld, ADR-052 §6), and nothing without one.",
+            "id": "org-alerts",
+            "name": "Organisation alert rules",
+            "tags": [
+              "account",
+              "alerts",
+              "read-only"
+            ]
+          }
+        ],
+        "supportedInterfaces": [
+          {
+            "protocolBinding": "JSONRPC",
+            "protocolVersion": "0.3.0",
+            "url": "https://agentcensus.io/mcp"
+          }
+        ],
+        "url": "https://agentcensus.io/mcp",
+        "version": "v1.3"
+      }
+    },
+    "trust_model_comparison_ans_agentcensus_live_ans_index.json": {
+      "mediaType": "application/json",
+      "url": "https://agentcensus.io/.well-known/agents-index.json",
+      "sha256": "f585002dabd7e359b2c65b4b10c2b3a640b43f9a41849e9d1b8fe8138142a12a",
+      "hashScope": "response-bytes",
+      "payload": {
+        "agents": [
+          {
+            "ansName": "ans://v1.0.0.agentcensus.io",
+            "capabilities": [
+              "census-headline",
+              "mechanism-adoption",
+              "domain-lookup",
+              "discovery-labels",
+              "agent-search",
+              "org-usage",
+              "org-domains",
+              "org-alerts"
+            ],
+            "description": "Read-only access to the agentcensus adoption census.",
+            "displayName": "agentcensus",
+            "endpoint": "https://agentcensus.io/mcp",
+            "mcpEndpoint": "https://agentcensus.io/mcp",
+            "name": "census",
+            "protocol": "mcp",
+            "summary": "Read-only access to the agentcensus adoption census."
+          }
+        ],
+        "domain": "agentcensus.io",
+        "version": "2.0.0"
+      }
+    },
+    "trust_model_comparison_ans_agentcensus_registry_current.json": {
+      "mediaType": "application/json",
+      "url": "https://api.godaddy.com/v1/ans/registered-agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca",
+      "sha256": "6b06702470001474107a296bcf567644bfa69dd0059d7b48924d6b67b630b6c1",
+      "hashScope": "response-bytes",
+      "payload": {
+        "agentId": "1f7f32b8-2689-49e4-b0dd-f4b0999545ca",
+        "providerId": "86",
+        "ansName": "ans://v2.0.0.agentcensus.io",
+        "agentHost": "agentcensus.io",
+        "agentDisplayName": "census",
+        "agentDescription": "Read-only access to the agentcensus adoption census.",
+        "agentVersion": "v2.0.0",
+        "indexedAt": "2026-10-05T04:31:34.385806536Z",
+        "leafIndex": 348146,
+        "logId": "01a0b75b-dba2-7607-bd17-a15041c0bb8b",
+        "expiresAt": "2027-03-18T23:59:59Z",
+        "lifecycle": {
+          "status": "ACTIVE"
+        },
+        "trustScore": 58,
+        "trustScoreExplanation": {
+          "baseTrustScore": 58,
+          "penaltyScore": 0,
+          "trustScore": 58
+        },
+        "trustVector": {
+          "identity": 55,
+          "integrity": 63
+        },
+        "missingness": {
+          "requiredSignals": [
+            "certtype",
+            "dnssecurity",
+            "agentage",
+            "versionstability",
+            "dnsconsistency",
+            "httpsrecord"
+          ],
+          "missingSignals": [],
+          "penalties": {}
+        },
+        "coverage": {
+          "computedPillars": [
+            "identity",
+            "integrity"
+          ],
+          "coverageRatio": 1
+        },
+        "endpoints": [
+          {
+            "agentUrl": "https://agentcensus.io/mcp",
+            "metaDataUrl": "https://agentcensus.io/.well-known/agent-card.json",
+            "protocol": "MCP",
+            "transports": [
+              "STREAMABLE-HTTP"
+            ],
+            "functions": [
+              {
+                "id": "agent-search",
+                "name": "Agent search",
+                "tags": [
+                  "discovery",
+                  "read-only",
+                  "search"
+                ]
+              },
+              {
+                "id": "census-headline",
+                "name": "Census headline",
+                "tags": [
+                  "census",
+                  "read-only",
+                  "statistics"
+                ]
+              },
+              {
+                "id": "discovery-labels",
+                "name": "Discovery labels",
+                "tags": [
+                  "census",
+                  "dns",
+                  "read-only",
+                  "statistics"
+                ]
+              },
+              {
+                "id": "domain-lookup",
+                "name": "Domain lookup",
+                "tags": [
+                  "discovery",
+                  "dns",
+                  "read-only"
+                ]
+              },
+              {
+                "id": "mechanism-adoption",
+                "name": "Mechanism adoption",
+                "tags": [
+                  "census",
+                  "read-only",
+                  "statistics"
+                ]
+              }
+            ]
+          }
+        ],
+        "signals": {
+          "agentage": {
+            "score": 20,
+            "missing": false,
+            "evidence": {
+              "ageDays": 17,
+              "inputSource": "hydrated_event_time",
+              "issuedAt": "2026-09-15T13:53:45.620119Z"
+            },
+            "computedAt": "2026-10-02T16:28:08.175017726Z",
+            "pillar": "integrity"
+          },
+          "agentcard": {
+            "score": 100,
+            "missing": false,
+            "evidence": {
+              "attemptedCount": 1,
+              "attemptedSources": [
+                "endpointMetaDataUrl"
+              ],
+              "attempts": [
+                {
+                  "result": "success",
+                  "source": "endpointMetaDataUrl",
+                  "url": "https://agentcensus.io/.well-known/agent-card.json"
+                }
+              ],
+              "cardPresent": true,
+              "inputSource": "hydrated_projection",
+              "selectedUrl": "https://agentcensus.io/.well-known/agent-card.json",
+              "source": "endpointMetaDataUrl",
+              "sourceOrder": [
+                "endpointMetaDataUrl",
+                "tlAnsRecordUrl"
+              ]
+            },
+            "computedAt": "2026-10-02T16:28:08.657018115Z",
+            "pillar": "metadata"
+          },
+          "certificatehygiene": {
+            "score": 100,
+            "missing": false,
+            "evidence": {
+              "daysToIdentityExpiry": 347,
+              "daysToServerExpiry": 167,
+              "serverCertificateStatus": "matched"
+            },
+            "computedAt": "2026-10-02T16:28:10.121350638Z",
+            "pillar": "integrity"
+          },
+          "certtype": {
+            "score": 25,
+            "missing": false,
+            "evidence": {
+              "certType": "X509-DV-CLIENT",
+              "fingerprint": "SHA256:0b38f48bc30eb7b3a122e51a989bd3976bcaa022f64402d158f5056d7e5c72fb",
+              "inputSource": "hydrated_projection"
+            },
+            "computedAt": "2026-10-02T16:28:08.716604587Z",
+            "pillar": "identity"
+          },
+          "dnsconsistency": {
+            "score": 30,
+            "missing": false,
+            "evidence": {
+              "actualAns": [
+                "v=ans1; version=v1.0.0; p=mcp; mode=direct; url=https://agentcensus.io/mcp"
+              ],
+              "actualBadgeRecordName": "_ans-badge.agentcensus.io",
+              "actualRaBadge": [
+                "v=ans-badge1; version=v1.0.0; url=https://transparency.ans.godaddy.com/v1/agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca"
+              ],
+              "ansMatch": false,
+              "expectedAns": "v=ans1; version=v2.0.0; p=mcp; mode=direct; url=https://agentcensus.io/mcp",
+              "expectedBadgeRecordName": "_ans-badge.agentcensus.io",
+              "expectedRaBadge": "v=ans-badge1; version=v2.0.0; url=https://transparency.ans.godaddy.com/v1/agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca",
+              "host": "agentcensus.io",
+              "inputSource": "hydrated_projection",
+              "ipCount": 12,
+              "raBadgeMatch": false,
+              "resolved": true
+            },
+            "computedAt": "2026-10-02T16:28:11.170563606Z",
+            "pillar": "integrity"
+          },
+          "dnssecurity": {
+            "score": 100,
+            "missing": false,
+            "evidence": {
+              "badgeRecordName": "_ans-badge.agentcensus.io",
+              "badgeStatus": "authenticated_present",
+              "dnssecAssessmentStatus": "secure",
+              "dnssecStatus": "valid",
+              "dnssecValid": true,
+              "expectedBadgeRecordName": "_ans-badge.agentcensus.io",
+              "host": "agentcensus.io",
+              "inputSource": "hydrated_projection",
+              "raBadgePresent": true,
+              "tlsaPresent": true,
+              "tlsaStatus": "authenticated_present"
+            },
+            "computedAt": "2026-10-02T16:28:09.277264297Z",
+            "pillar": "identity"
+          },
+          "domainvalidation": {
+            "score": 100,
+            "missing": false,
+            "evidence": {
+              "domainValidation": "ACME-DNS-01"
+            },
+            "computedAt": "2026-10-02T16:28:08.659649582Z",
+            "pillar": "identity"
+          },
+          "httpsrecord": {
+            "score": 100,
+            "missing": false,
+            "evidence": {
+              "httpsRecordPresent": true,
+              "inputSource": "hydrated_projection"
+            },
+            "computedAt": "2026-10-02T16:28:08.720292937Z",
+            "pillar": "integrity"
+          },
+          "versionstability": {
+            "score": 100,
+            "missing": false,
+            "evidence": {
+              "changesPerMonth": 0,
+              "daysSinceFirst": 17,
+              "evaluationPath": "hydrated_agent_version_history",
+              "host": "agentcensus.io",
+              "inputState": "ready",
+              "matchedRecords": 1,
+              "providerId": "86",
+              "source": "ra_search_agents",
+              "versionChanges": 0,
+              "versions": 1
+            },
+            "computedAt": "2026-10-02T16:28:08.175017726Z",
+            "pillar": "integrity"
+          }
+        }
+      }
+    },
+    "trust_model_comparison_ans_agentcensus_live_tls.json": {
+      "mediaType": "application/json",
+      "url": "tls://agentcensus.io:443",
+      "sha256": "8be14568a1c60dca203068d76b42012ef63f54de866e9a47b2a8dbdcbd3696ed",
+      "hashScope": "canonical-json",
+      "payload": {
+        "host": "agentcensus.io",
+        "port": 443,
+        "tlsVersion": "TLSv1.3",
+        "sha256Fingerprint": "SHA256:f447f2d0cabc7fe62956af1ce90925b7d7eaad5576f20dc57bf26a2d3b652a3b",
+        "notBefore": "2026-09-02T00:00:00+00:00",
+        "notAfter": "2027-03-18T23:59:59+00:00",
+        "subjectAltNames": [
+          "agentcensus.io",
+          "agentcensus.app",
+          "www.agentcensus.io",
+          "www.agentcensus.app",
+          "origin.agentcensus.io"
+        ]
+      }
+    },
     "trust_model_comparison_agentcensus_ans_example_snitker_agent.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "454b646a8b9d3bb30ced5c632ee8f4ee6b7bc708674186c367b29ba32d56867a",
+      "sha256": "88807fa1d7072da49c05126eb5eb9a5072203ca5d5865f6d980b807484533c15",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_62fad4c8c1d1",
-        "elapsedMs": 312.7,
+        "elapsedMs": 165.0,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "r84QdNACFn3HlrihPJ8_NDhwdrglzZzqRZwTH5m0OlwLj2sByy-Dbw==",
+          "x-request-id": "gQKeXS2KjVWBZX-Cft4CqyJ1iGjA1VaeMqdxlMp95Zt2XL-ghP-znQ==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49935",
+          "x-ratelimit-remaining": "49889",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -1968,18 +2771,18 @@
     "trust_model_comparison_agentcensus_ans_example_snitker_a2a_alt_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "0f56d71cb1f1c15562abdda8c461b70bcadc34e2bb83ae26092fc805f7f741e0",
+      "sha256": "c529c0b95733f2a4390e30379078cd9248cc8938ed0f6f0c34c58151767643fa",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_62fad4c8c1d1/documents/a2a_alt",
-        "elapsedMs": 349.8,
+        "elapsedMs": 157.8,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "serqXW5UdObFs9Qo1iwR5qaJOErX6-kSeufbZtKez9NJhsduPKLdrw==",
+          "x-request-id": "UYUN6NONgYkOtjJf6zHUx33JHc_OH1o5C19jsEEh4o14dkHaObUxgg==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49934",
+          "x-ratelimit-remaining": "49888",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -1996,18 +2799,18 @@
     "trust_model_comparison_agentcensus_ans_example_agentcensus_agent.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "9be18a24da7493fa0b9e5d8987d3ecb3c25aa2aa0fff0b9f8e57ade04737b44c",
+      "sha256": "73abb50e90a5480ea9e87535b3ef985ccd9749f2f6d4dafc9e555449dec88020",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded",
-        "elapsedMs": 221.6,
+        "elapsedMs": 164.7,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "4ePcmmCkJA9jMWc_KVtOHl7vrOmjlJSNIN9DXatLVJXPrtlXH4MwuQ==",
+          "x-request-id": "MyPb7JjUgIcj3oe4Vn-BMz_53cpl7huYav4jcTrpK96u-1ZJSydJ6w==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49933",
+          "x-ratelimit-remaining": "49887",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -2246,18 +3049,18 @@
     "trust_model_comparison_agentcensus_ans_example_agentcensus_ans_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "c03a153ba27f69cfe67fa9e94ef66e48d59f72c96eeb3c07e22f2333811eabf0",
+      "sha256": "44e71d9c47c8ead6809ba1fa970f774c8ce937028d47be81e2f09164dd02d4e6",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded/documents/ans",
-        "elapsedMs": 159.9,
+        "elapsedMs": 138.2,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "7oeZo_PQS7KeT1ejWd-_fNOn_yLL-_ZD5oHzCRBfyudft9eoxBkAXw==",
+          "x-request-id": "fYBXCpXi3MJpu4c-1iext4F0clRYiTybMtyh3qNLY28rnbVLYYJqLA==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49932",
+          "x-ratelimit-remaining": "49886",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -2274,18 +3077,18 @@
     "trust_model_comparison_agentcensus_ans_example_agentcensus_a2a_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "0ef91ce5819d05184e421ed57854d73e885c4c6e302b665ac2d5dd78f59a0d53",
+      "sha256": "80758144d5326a604260c609d008cb37a1df93cc38c227689a407a6e30e2b888",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded/documents/a2a",
-        "elapsedMs": 167.8,
+        "elapsedMs": 134.8,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "Uz-mOIeItJx8N9y1eeSFLjnwbnXs-624nG3JYXDNUzQHbV_PS16x9g==",
+          "x-request-id": "nLlbMgy0J_9x3TBxyFeSFy9d0L8DUQ6-JY6zioMQTYMkG7A1OeGPFw==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49931",
+          "x-ratelimit-remaining": "49885",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {
@@ -2302,18 +3105,18 @@
     "trust_model_comparison_agentcensus_ans_example_agentcensus_a2a_alt_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "03bbd8c179cd102221ed4502ec25cb013c0b17fab957a49721c05d8a1119ef70",
+      "sha256": "da1adb216f200e4f7e91fb1a4279fa39134a1fa03b0ee0e7e064746bcb91d3ef",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded/documents/a2a_alt",
-        "elapsedMs": 171.7,
+        "elapsedMs": 170.6,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "IUo5Z_XJ2fdAIblZ3mbKlqFm7O2E7GDRvDT39cxrc32v8Pd4jVaByw==",
+          "x-request-id": "Lcuo8Zztgj5qUUKbkW8577X5hzLX7QE10Ix2TIEtnwGF3haT7FlV-A==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49930",
+          "x-ratelimit-remaining": "49884",
           "x-ratelimit-reset": "2026-10-06T00:00:00Z"
         },
         "data": {

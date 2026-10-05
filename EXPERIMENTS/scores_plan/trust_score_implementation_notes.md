@@ -156,6 +156,24 @@ comparison set:
   downloaded log badge seals `v2.0.0`. Report this as potential drift requiring
   confirmation, not as a proven failure.
 
+The public `/audit` request for each example returns exactly one record: the
+same `AGENT_REGISTERED` event exposed by its current-agent response, with status
+`ACTIVE`. For Snitker that record is `v1.2.0`; for AgentCensus it is `v2.0.0`.
+The retained audit responses therefore make the current events auditable but do
+not expose an earlier `v1` AgentCensus event or an activation/deprecation
+sequence. Do not describe these responses as complete cross-version history.
+
+The focused AgentCensus audit-to-live comparison shows that the inconsistency
+is broader than `_ans-badge`: live `_ans` and the live ANS index also publish
+`v1.0.0`, and the live HTTPS/SVCB value differs from the sealed value. At the
+same time, the sealed TLSA certificate binding remains present, the presented
+server certificate matches both the primary fingerprint and accepted set, and
+the host, TL agent ID, MCP endpoint, certificate expiry, and current registry
+status align. Interpret this as partial deployment drift, not total identity or
+certificate failure. Metadata integrity and identity-certificate continuity
+remain unassessed because the event seals no metadata hashes and no live agent
+identity certificate was observed.
+
 For the second example, reuse a narrow AgentCensus corroboration capture. Its
 `ans` snapshot also observed `v1.0.0`, matching the live badge rather than the
 log's sealed `v2.0.0`; its A2A and alternate-A2A snapshots share a content hash

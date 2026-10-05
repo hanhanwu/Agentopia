@@ -6,14 +6,15 @@ This catalog covers the ANS captures stored under `captures.*.payload` in
 The bundle contains raw DNS-over-HTTPS responses used to discover ANS
 `_ans-badge` and legacy `_ra-badge` TXT records. None of the original three
 domains returned a badge. The Integrity demonstration adds two
-badge-discoverable examples, their complete Transparency Log badge responses,
-and the two live Snitker metadata documents whose byte hashes are compared with
-sealed values.
+badge-discoverable examples, their complete current and audit Transparency Log
+responses, and the two live Snitker metadata documents whose byte hashes are
+compared with sealed values.
 
 API endpoint used below:
 
 - `GET https://dns.google/resolve`
 - `GET https://transparency.ans.godaddy.com/v1/agents/{agentId}`
+- `GET https://transparency.ans.godaddy.com/v1/agents/{agentId}/audit`
 - The public A2A Agent Card and MCP Server Card URLs named in the Snitker registration
 
 | Name | Description | Example value | Found in API endpoint(s) |
@@ -108,6 +109,43 @@ These fields occur in each complete `GET /v1/agents/{agentId}` response. Receipt
 | `badge.schemaVersion` | Transparency Log envelope schema version. The observed deployment returned `V1`. | `V1` | `GET /v1/agents/{agentId}` |
 | `badge.signature` | Transparency Log signature over the envelope. | `eyJhbGci...` | `GET /v1/agents/{agentId}` |
 | `badge.status` | Current lifecycle status computed by the log. | `ACTIVE` | `GET /v1/agents/{agentId}` |
+
+## Transparency Log audit response
+
+`GET /v1/agents/{agentId}/audit` returns `records[]`, whose entries use the
+same Transparency Log envelope, producer event, attestation, signature, and
+Merkle-proof fields documented above. In the two retained examples, the public
+audit response returns exactly one record: the same `AGENT_REGISTERED` event
+returned by the current-agent endpoint. Consequently, the endpoint provides an
+auditable current event for these IDs but does not expose earlier versions or a
+registration-to-activation transition in these captures.
+
+| Name | Description | Example value | Found in API endpoint(s) |
+|---|---|---|---|
+| `audit.records[]` | Ordered audit records returned for the requested ANS agent ID. Record count must be retained rather than assuming the response is a complete cross-version history. | One record | `GET /v1/agents/{agentId}/audit` |
+| `audit.records[].payload.logId` | Log event identifier; used to determine whether an audit entry is the same event as the current-agent response. | `01a0b75b-...` | `GET /v1/agents/{agentId}/audit` |
+| `audit.records[].payload.producer.event.eventType` | Sealed event type. Both retained responses contain `AGENT_REGISTERED`. | `AGENT_REGISTERED` | `GET /v1/agents/{agentId}/audit` |
+| `audit.records[].status` | Lifecycle status returned with that audit record. Both retained records are currently returned as `ACTIVE`. | `ACTIVE` | `GET /v1/agents/{agentId}/audit` |
+| `audit.records[].merkleProof` | Inclusion material returned for the record. Retention is not cryptographic verification. | `{...}` | `GET /v1/agents/{agentId}/audit` |
+
+## AgentCensus audit-to-live comparison captures
+
+The focused AgentCensus comparison supplements its audit record with fresh
+DNS-over-HTTPS answers, exact live metadata response bytes, a TLS handshake,
+and the current public ANS registry view. These observations determine whether
+each externally observable sealed value matches; unavailable baselines remain
+not assessed.
+
+| Name | Description | Example value | Found in API endpoint(s) |
+|---|---|---|---|
+| `agentcensusLive.ansDns.Answer[]` | Live `_ans.agentcensus.io` TXT answers. | `version=v1.0.0; ...` | `GET https://dns.google/resolve` |
+| `agentcensusLive.httpsDns.Answer[]` | Live `agentcensus.io` HTTPS/SVCB answers. | `1 . alpn=h2` | `GET https://dns.google/resolve` |
+| `agentcensusLive.tlsaDns.Answer[]` | Complete live `_443._tcp.agentcensus.io` TLSA RRset. | Nine records, including the sealed `3 0 1` value | `GET https://dns.google/resolve` |
+| `agentcensusLive.a2a` | Exact live A2A Agent Card bytes and parsed JSON. | `version = v1.3` | `GET https://agentcensus.io/.well-known/agent.json` |
+| `agentcensusLive.ansIndex` | Exact live ANS index bytes and parsed JSON. | `ansName = ans://v1.0.0.agentcensus.io` | `GET https://agentcensus.io/.well-known/agents-index.json` |
+| `agentcensusLive.tls.sha256Fingerprint` | SHA-256 fingerprint of the certificate returned by a fresh TLS handshake. | `SHA256:f447f2d0...` | TLS handshake to `agentcensus.io:443` |
+| `agentcensusLive.tls.subjectAltNames[]` | DNS SANs from the presented server certificate. | `agentcensus.io` | TLS handshake to `agentcensus.io:443` |
+| `agentcensusLive.registry.lifecycle.status` | Current lifecycle status published by the ANS search/registry surface. | `ACTIVE` | `GET /v1/ans/registered-agents/{agentId}` |
 
 ## Snitker A2A Agent Card
 

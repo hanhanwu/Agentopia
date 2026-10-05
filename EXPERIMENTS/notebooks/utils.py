@@ -13,6 +13,7 @@ import os
 import ssl
 import time
 from collections import Counter
+from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
@@ -888,6 +889,391 @@ def agentcensus_render_ans_corroboration_table(
     )
 
 
+def ans_render_audit_history_table(
+    examples: Sequence[Mapping[str, Any]],
+    artifacts: Mapping[str, Any] | str | Path,
+) -> str:
+    """Summarize public ANS audit coverage against current and live versions."""
+    markers = ("🔵", "🟡")
+    rows = []
+
+    def badge_version(value: str | None) -> str | None:
+        if not value:
+            return None
+        for part in value.split(";"):
+            key, separator, item = part.strip().partition("=")
+            if separator and key == "version":
+                return item
+        return None
+
+    def versions_match(left: Any, right: Any) -> bool:
+        return bool(
+            left
+            and right
+            and str(left).removeprefix("v") == str(right).removeprefix("v")
+        )
+
+    for example_index, example in enumerate(examples):
+        marker = markers[example_index % len(markers)]
+        audit = _artifact_json(artifacts, str(example["audit_file"]))
+        badge = _artifact_json(artifacts, str(example["badge_file"]))
+        dns_response = _artifact_json(artifacts, str(example["dns_file"]))
+        records = audit.get("records") or []
+        current_payload = badge.get("payload") or {}
+        current_event = current_payload.get("producer", {}).get("event", {})
+        current_version = current_event.get("agent", {}).get("version")
+        current_status = badge.get("status")
+        current_log_id = current_payload.get("logId")
+        live_badge = next(
+            (
+                str(answer.get("data"))
+                for answer in dns_response.get("Answer") or []
+                if answer.get("type") == 16
+                and str(answer.get("data", "")).startswith("v=ans-badge1;")
+            ),
+            None,
+        )
+        live_version = badge_version(live_badge)
+
+        event_lines = []
+        log_ids = []
+        for record in records:
+            payload = record.get("payload") or {}
+            event = payload.get("producer", {}).get("event", {})
+            agent = event.get("agent", {})
+            log_ids.append(payload.get("logId"))
+            event_lines.append(
+                f"<code>{escape(str(event.get('eventType')))}</code> "
+                f"<code>{escape(str(agent.get('version')))}</code><br>"
+                f"event: {escape(str(event.get('timestamp')))}<br>"
+                f"returned status: <code>{escape(str(record.get('status')))}</code>"
+            )
+
+        same_current_record = bool(
+            len(records) == 1 and log_ids and log_ids[0] == current_log_id
+        )
+        if same_current_record:
+            coverage = (
+                "The sole audit record is the same log event returned by the "
+                "current badge endpoint"
+            )
+        elif current_log_id in log_ids:
+            coverage = "Audit includes the current log event plus additional records"
+        else:
+            coverage = "Audit does not include the current badge log event"
+
+        if versions_match(live_version, current_version):
+            reading = (
+                "Current TL and live DNS versions agree. The audit response does not "
+                "demonstrate earlier lifecycle history" if len(records) == 1 else
+                "Current TL and live DNS versions agree; additional audit history is available"
+            )
+        else:
+            reading = (
+                "Current TL and live DNS versions disagree. Because the audit returns "
+                "only the current registration event, it cannot show when or why the "
+                "live version diverged" if len(records) == 1 else
+                "Current TL and live DNS versions disagree; inspect the returned event sequence"
+            )
+
+        event_text = "<br><br>".join(event_lines) if event_lines else "No records returned"
+        proof_text = (
+            "Retained, not verified"
+            if records and all(record.get("merkleProof") for record in records)
+            else "Incomplete or unavailable"
+        )
+        rows.append(
+            "<tr>"
+            f"<th>{marker} {escape(str(example['name']))}</th>"
+            f"<td>{marker} {len(records)}</td>"
+            f"<td>{marker} {event_text}</td>"
+            f"<td>{marker} {escape(coverage)}<br>Current: "
+            f"<code>{escape(str(current_version))}</code> / "
+            f"<code>{escape(str(current_status))}</code></td>"
+            f"<td>{marker} Live DNS: <code>{escape(str(live_version))}</code></td>"
+            f"<td>{marker} {proof_text}</td>"
+            f"<td>{marker} {escape(reading)}</td>"
+            "</tr>"
+        )
+
+    return (
+        "<style>"
+        ".ans-audit-table th,.ans-audit-table td {"
+        "text-align: left !important; vertical-align: top !important;"
+        "}"
+        "</style>"
+        "<table class='ans-audit-table'><thead><tr>"
+        "<th>Agent</th><th>Audit records returned</th><th>Returned event(s)</th>"
+        "<th>Coverage versus current TL view</th><th>Current live observation</th>"
+        "<th>Cryptographic verification</th><th>Integrity insight</th>"
+        "</tr></thead><tbody>"
+        + "".join(rows)
+        + "</tbody></table>"
+    )
+
+
+def ans_render_agentcensus_audit_live_table(
+    example: Mapping[str, Any],
+    artifacts: Mapping[str, Any] | str | Path,
+) -> str:
+    """Compare AgentCensus's sealed ANS event with fresh public observations."""
+    audit = _artifact_json(artifacts, str(example["audit_file"]))
+    record = (audit.get("records") or [])[0]
+    event = record["payload"]["producer"]["event"]
+    attestations = event.get("attestations") or {}
+    sealed_dns = attestations.get("dnsRecordsProvisioned") or {}
+    host = str(event["agent"]["host"])
+
+    def dns_values(filename: str, record_type: int) -> list[str]:
+        response = _artifact_json(artifacts, filename)
+        return [
+            str(answer.get("data"))
+            for answer in response.get("Answer") or []
+            if answer.get("type") == record_type
+        ]
+
+    def txt_parts(value: str | None) -> dict[str, str]:
+        if not value:
+            return {}
+        parts = {}
+        for part in value.split(";"):
+            key, separator, item = part.strip().partition("=")
+            if separator:
+                parts[key] = item
+        return parts
+
+    badge_live = dns_values(str(example["dns_file"]), 16)
+    badge_live_value = badge_live[0] if badge_live else None
+    live_dns = example["live_dns"]
+    ans_live_values = dns_values(str(live_dns["ans"]["file"]), 16)
+    ans_live = ans_live_values[0] if ans_live_values else None
+    https_values = dns_values(str(live_dns["https"]["file"]), 65)
+    https_live = https_values[0] if https_values else None
+    tlsa_values = dns_values(str(live_dns["tlsa"]["file"]), 52)
+
+    badge_name = str(example["record_name"])
+    ans_name = f"_ans.{host}"
+    tlsa_name = f"_443._tcp.{host}"
+    badge_sealed = sealed_dns.get(badge_name)
+    ans_sealed = sealed_dns.get(ans_name)
+    https_sealed = sealed_dns.get(host)
+    tlsa_sealed = sealed_dns.get(tlsa_name)
+
+    tls_observation = _artifact_json(artifacts, str(example["tls"]["file"]))
+    live_fingerprint = str(tls_observation.get("sha256Fingerprint"))
+    server_cert = attestations.get("serverCert") or {}
+    sealed_fingerprint = str(server_cert.get("fingerprint"))
+    valid_server_certs = attestations.get("validServerCerts") or []
+    valid_server_fingerprints = {
+        str(item.get("fingerprint")) for item in valid_server_certs
+    }
+
+    live_metadata = example.get("live_metadata") or {}
+    a2a_file = str(live_metadata["A2A"]["file"])
+    ans_index_file = str(live_metadata["ANS"]["file"])
+    a2a = _artifact_json(artifacts, a2a_file)
+    ans_index = _artifact_json(artifacts, ans_index_file)
+    live_ans_name = next(
+        (
+            str(item.get("ansName"))
+            for item in ans_index.get("agents") or []
+            if item.get("ansName")
+        ),
+        None,
+    )
+    registry = _artifact_json(artifacts, str(example["registry_file"]))
+
+    badge_parts = txt_parts(badge_live_value)
+    ans_parts = txt_parts(ans_live)
+    live_agent_id = (
+        badge_parts.get("url", "").rstrip("/").rsplit("/", 1)[-1]
+        if badge_parts.get("url")
+        else None
+    )
+    sealed_endpoint = txt_parts(str(ans_sealed)).get("url")
+    live_endpoint = ans_parts.get("url")
+    metadata_hashes = attestations.get("metadataHashes") or {}
+    a2a_observed_hash = "SHA256:" + _artifact_sha256(artifacts, a2a_file)
+    ans_observed_hash = "SHA256:" + _artifact_sha256(artifacts, ans_index_file)
+
+    def status_label(status: str) -> str:
+        return {
+            "MATCH": "🟢 MATCH",
+            "DRIFT": "🟡 DRIFT",
+            "PARTIAL": "🔵 PARTIAL",
+            "NOT_ASSESSED": "⚪ NOT ASSESSED",
+        }[status]
+
+    rows: list[tuple[str, str, str, str, str]] = []
+
+    def add(signal: str, baseline: Any, live: Any, status: str, reading: str) -> None:
+        rows.append(
+            (
+                signal,
+                str(baseline),
+                str(live),
+                status_label(status),
+                reading,
+            )
+        )
+
+    add(
+        "Badge TXT",
+        badge_sealed,
+        badge_live_value,
+        "MATCH" if badge_sealed == badge_live_value else "DRIFT",
+        "The TL URL/agent ID agrees, but the live badge version is v1.0.0 while the sealed value is v2.0.0.",
+    )
+    add(
+        "ANS discovery TXT",
+        ans_sealed,
+        ans_live,
+        "MATCH" if ans_sealed == ans_live else "DRIFT",
+        "Protocol, mode, and endpoint agree; the version field differs.",
+    )
+    add(
+        "HTTPS/SVCB",
+        https_sealed,
+        https_live,
+        "MATCH" if https_sealed == https_live else "DRIFT",
+        "Both advertise h2, but the sealed priority/alias-mode value is 0 and live DNS returns 1.",
+    )
+    add(
+        "TLSA",
+        tlsa_sealed,
+        f"{len(tlsa_values)} live records; sealed value present={str(tlsa_sealed in tlsa_values).lower()}",
+        (
+            "MATCH"
+            if tlsa_values == [tlsa_sealed]
+            else "PARTIAL" if tlsa_sealed in tlsa_values else "DRIFT"
+        ),
+        "The required sealed certificate binding is present; live DNS also publishes additional TLSA records.",
+    )
+    add(
+        "A2A metadata hash",
+        metadata_hashes.get("A2A", "No sealed hash"),
+        a2a_observed_hash,
+        (
+            "NOT_ASSESSED"
+            if not metadata_hashes.get("A2A")
+            else "MATCH" if metadata_hashes.get("A2A") == a2a_observed_hash else "DRIFT"
+        ),
+        f"The live card reports version {a2a.get('version')}; the audit event provides no hash baseline.",
+    )
+    add(
+        "ANS metadata hash",
+        metadata_hashes.get("ANS", "No sealed hash"),
+        ans_observed_hash,
+        (
+            "NOT_ASSESSED"
+            if not metadata_hashes.get("ANS")
+            else "MATCH" if metadata_hashes.get("ANS") == ans_observed_hash else "DRIFT"
+        ),
+        "A live document was captured, but the audit event provides no corresponding hash baseline.",
+    )
+    add(
+        "Server certificate",
+        sealed_fingerprint,
+        live_fingerprint,
+        "MATCH" if sealed_fingerprint == live_fingerprint else "DRIFT",
+        f"Observed over a fresh {tls_observation.get('tlsVersion')} handshake.",
+    )
+    add(
+        "Accepted server-certificate set",
+        ", ".join(sorted(valid_server_fingerprints)),
+        live_fingerprint,
+        "MATCH" if live_fingerprint in valid_server_fingerprints else "DRIFT",
+        "The currently presented certificate is in the sealed accepted set.",
+    )
+    add(
+        "Identity certificate",
+        (attestations.get("identityCert") or {}).get("fingerprint"),
+        "No public mTLS or signed-interaction identity certificate observed",
+        "NOT_ASSESSED",
+        "The server TLS certificate cannot substitute for the agent identity certificate.",
+    )
+    host_live = host in set(tls_observation.get("subjectAltNames") or [])
+    add(
+        "Host binding",
+        host,
+        f"TLS SAN contains host={str(host_live).lower()}; DNS and endpoint use {host}",
+        "MATCH" if host_live else "DRIFT",
+        "The observed DNS names, endpoint host, and server-certificate SAN align.",
+    )
+    add(
+        "ANS agent ID",
+        event.get("ansId"),
+        live_agent_id,
+        "MATCH" if str(event.get("ansId")) == str(live_agent_id) else "DRIFT",
+        "The live badge still points to the v2 TL registration despite declaring version v1.0.0.",
+    )
+    add(
+        "ANS name",
+        event.get("ansName"),
+        live_ans_name,
+        "MATCH" if str(event.get("ansName")) == str(live_ans_name) else "DRIFT",
+        "The live ANS index declares v1.0.0; the identity-certificate URI SAN was not observed.",
+    )
+    add(
+        "Endpoint URL",
+        sealed_endpoint,
+        live_endpoint,
+        "MATCH" if sealed_endpoint == live_endpoint else "DRIFT",
+        "The MCP endpoint URL itself is aligned.",
+    )
+    event_expiry = str(event.get("expiresAt"))
+    live_expiry = str(tls_observation.get("notAfter"))
+    event_expiry_dt = datetime.fromisoformat(event_expiry.replace("Z", "+00:00"))
+    live_expiry_dt = datetime.fromisoformat(live_expiry.replace("Z", "+00:00"))
+    expiry_valid = min(event_expiry_dt, live_expiry_dt) > datetime.now(timezone.utc)
+    add(
+        "Expiry",
+        event_expiry,
+        live_expiry,
+        "MATCH" if expiry_valid and event_expiry_dt == live_expiry_dt else "PARTIAL",
+        "The sealed event and live server certificate share the same future expiry.",
+    )
+    registry_status = (registry.get("lifecycle") or {}).get("status")
+    add(
+        "Lifecycle status",
+        record.get("status"),
+        registry_status,
+        "PARTIAL" if record.get("status") == registry_status else "DRIFT",
+        "The audit and current ANS registry agree, but both are ANS-operated surfaces; the signed status token and revocation material were not verified.",
+    )
+
+    body = "".join(
+        "<tr>"
+        f"<th>{escape(signal)}</th>"
+        f"<td><code>{escape(baseline)}</code></td>"
+        f"<td><code>{escape(live)}</code></td>"
+        f"<td>{result}</td>"
+        f"<td>{escape(reading)}</td>"
+        "</tr>"
+        for signal, baseline, live, result, reading in rows
+    )
+    return (
+        "<style>"
+        ".ans-audit-live-table th,.ans-audit-live-table td {"
+        "text-align: left !important; vertical-align: top !important;"
+        "}"
+        ".ans-audit-live-table {table-layout: fixed; width: 100%;}"
+        ".ans-audit-live-table th:nth-child(1),.ans-audit-live-table td:nth-child(1) {width: 16%;}"
+        ".ans-audit-live-table th:nth-child(2),.ans-audit-live-table td:nth-child(2),"
+        ".ans-audit-live-table th:nth-child(3),.ans-audit-live-table td:nth-child(3) {width: 18%;}"
+        ".ans-audit-live-table th:nth-child(4),.ans-audit-live-table td:nth-child(4) {width: 12%;}"
+        ".ans-audit-live-table th:nth-child(5),.ans-audit-live-table td:nth-child(5) {width: 36%;}"
+        ".ans-audit-live-table code {white-space: normal; overflow-wrap: anywhere; word-break: break-word;}"
+        "</style>"
+        "<table class='ans-audit-live-table'><thead><tr>"
+        "<th>Signal</th><th>Audit/TL baseline</th><th>Fresh live observation</th>"
+        "<th>Result</th><th>Interpretation</th>"
+        "</tr></thead><tbody>"
+        + body
+        + "</tbody></table>"
+    )
+
+
 # ---------------------------------------------------------------------------
 # A2A Registry
 # ---------------------------------------------------------------------------
@@ -1611,6 +1997,15 @@ def ans_render_integrity_examples_table(
         ".ans-integrity-examples-table th,.ans-integrity-examples-table td {"
         "text-align: left !important; vertical-align: top !important;"
         "}"
+        ".ans-integrity-examples-table {table-layout: fixed; width: 100%;}"
+        ".ans-integrity-examples-table th:nth-child(1),.ans-integrity-examples-table td:nth-child(1) {width: 13%;}"
+        ".ans-integrity-examples-table th:nth-child(2),.ans-integrity-examples-table td:nth-child(2),"
+        ".ans-integrity-examples-table th:nth-child(3),.ans-integrity-examples-table td:nth-child(3) {width: 14%;}"
+        ".ans-integrity-examples-table th:nth-child(4),.ans-integrity-examples-table td:nth-child(4) {width: 8%;}"
+        ".ans-integrity-examples-table th:nth-child(5),.ans-integrity-examples-table td:nth-child(5) {width: 22%;}"
+        ".ans-integrity-examples-table th:nth-child(6),.ans-integrity-examples-table td:nth-child(6) {width: 13%;}"
+        ".ans-integrity-examples-table th:nth-child(7),.ans-integrity-examples-table td:nth-child(7) {width: 16%;}"
+        ".ans-integrity-examples-table code {white-space: normal; overflow-wrap: anywhere; word-break: break-word;}"
         "</style>"
         "<table class='ans-integrity-examples-table'><thead><tr>"
         "<th>Agent</th><th>Live DNS badge</th><th>TL-sealed DNS badge</th>"
