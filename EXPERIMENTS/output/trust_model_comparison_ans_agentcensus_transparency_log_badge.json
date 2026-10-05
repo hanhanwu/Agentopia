@@ -1,0 +1,84 @@
+{
+  "merkleProof": {
+    "leafHash": "950e183642b6c0fb0aaeaea214f68899bb5f37da0fe639fb5e7eba5482c72a1a",
+    "leafIndex": 348146,
+    "path": [
+      "MlTyO1qo1Ax0345+3n12MR2xJihJmDAQNGNf4d/jyaA=",
+      "dp60Xj/e87b6P00PjbA8Qf2z9TauoYGk03Cvh7GH2lY=",
+      "0mslDZFsJMzgvIHEjfUsRJaPhXVLTcOneb4yqoZdFSE=",
+      "fL7Ex8YvPfpvwhXzaJpf42kX6GGJRZN+OOTue8lgNfc=",
+      "IhlSk8EqjqAzHhEzpUY0zlK/j1SHp7ceUiHvwDJbRrI=",
+      "ukJKz8NbmOiO65ZKj2aUfrirJCXDKJsGMRCP9JY8W90=",
+      "zSRMNMrn8EZ3pkkOnIDCwxEt8PxEjvqoLj5wnA2pAW4=",
+      "WwYsGlFRD9/WlCf4tFRckN59+0CVb/G9wwQ2s+Sb8X0=",
+      "ZBI10gLZGZUUmTOQ0cMCgR4TkWirK2INpG1GdIK88zA=",
+      "opida4qvxia+SRcLvO5n554efiMzCIOc/T3fE26p58s=",
+      "yvLJqErTy4Lv2EUkD39F7N33Gl8F5AKcMWn3mbS1plo=",
+      "KTxTL9edI0pQTiozPKSJskQ0eR0gipK/GWxYf4hQbK8=",
+      "2tTVMDNLGsEzbd21j3BRPgVA3XlMgB4XyzxrKDPmqdE=",
+      "+6DDFeawguI7nNDAII2NNHLXTMplOOROszR0lL3u78M=",
+      "8Luk7x1b8HlJJ4szl/c0gKaka8An+sZNcOOZA7EYFME=",
+      "Isq0vuCx23hiA5O1AaWf8jyL1V1CXXW6hSC4vpi2EeQ=",
+      "0+pILIYJuvaTdGZSFI9fmHDz6EJmA0wghrugjBIsRUA="
+    ],
+    "rootHash": "9A/cF29YalXAp1O9gsyPuM9t5Am4vaVpOqQl+HPFHDg=",
+    "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTg5YWNmZTQ4ZmMxNTg4MzQyNWRmMzgxMDVkMmI5ZjE3ZWMxNTBkY2JmMThjMTdhMjc5ODc2NzdkYTZiMmUwNWMiLCJ0aW1lc3RhbXAiOjE3OTExNjQ2MTUsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6IjlBX2NGMjlZYWxYQXAxTzlnc3lQdU05dDVBbTR2YVZwT3FRbC1IUEZIRGc9IiwidGltZXN0YW1wIjoxNzkxMTY0NjE1LCJ0cmVlc2l6ZSI6MzYwMjEwfQ.HBehr23gI1OyhGy5_MKzIgX_bZOhZGOMpcKBiL69LyVGthaKlo-5XWHdyxj_hZ91fdcnsIVF1MjV-rhDupnyXg",
+    "treeSize": 360210,
+    "treeVersion": 1
+  },
+  "payload": {
+    "logId": "01a0b75b-dba2-7607-bd17-a15041c0bb8b",
+    "producer": {
+      "event": {
+        "ansId": "1f7f32b8-2689-49e4-b0dd-f4b0999545ca",
+        "ansName": "ans://v2.0.0.agentcensus.io",
+        "eventType": "AGENT_REGISTERED",
+        "agent": {
+          "host": "agentcensus.io",
+          "name": "census",
+          "version": "v2.0.0"
+        },
+        "attestations": {
+          "dnsRecordsProvisioned": {
+            "_443._tcp.agentcensus.io": "3 0 1 f447f2d0cabc7fe62956af1ce90925b7d7eaad5576f20dc57bf26a2d3b652a3b",
+            "_ans-badge.agentcensus.io": "v=ans-badge1; version=v2.0.0; url=https://transparency.ans.godaddy.com/v1/agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca",
+            "_ans.agentcensus.io": "v=ans1; version=v2.0.0; p=mcp; mode=direct; url=https://agentcensus.io/mcp",
+            "agentcensus.io": "0 . alpn=h2"
+          },
+          "domainValidation": "ACME-DNS-01",
+          "identityCert": {
+            "fingerprint": "SHA256:0b38f48bc30eb7b3a122e51a989bd3976bcaa022f64402d158f5056d7e5c72fb",
+            "type": "X509-DV-CLIENT"
+          },
+          "serverCert": {
+            "fingerprint": "SHA256:f447f2d0cabc7fe62956af1ce90925b7d7eaad5576f20dc57bf26a2d3b652a3b",
+            "type": "X509-DV-SERVER"
+          },
+          "validIdentityCerts": [
+            {
+              "fingerprint": "SHA256:0b38f48bc30eb7b3a122e51a989bd3976bcaa022f64402d158f5056d7e5c72fb",
+              "type": "X509-DV-CLIENT",
+              "notAfter": "2027-09-15T13:53:45.000000Z"
+            }
+          ],
+          "validServerCerts": [
+            {
+              "fingerprint": "SHA256:f447f2d0cabc7fe62956af1ce90925b7d7eaad5576f20dc57bf26a2d3b652a3b",
+              "type": "X509-DV-SERVER",
+              "notAfter": "2027-03-18T23:59:59.000000Z"
+            }
+          ]
+        },
+        "expiresAt": "2027-03-18T23:59:59.000000Z",
+        "issuedAt": "2026-09-15T13:53:45.620119Z",
+        "raId": "raid-cf4c0ca666714c6a6931a7e182548110d1f7de47ac17538116edb10cd17ff6ac",
+        "timestamp": "2026-09-19T01:50:45.460947Z"
+      },
+      "keyId": "46c877af",
+      "signature": "eyJhbGciOiJFUzI1NiIsImtpZCI6IjQ2Yzg3N2FmIiwicmFpZCI6InJhaWQtY2Y0YzBjYTY2NjcxNGM2YTY5MzFhN2UxODI1NDgxMTBkMWY3ZGU0N2FjMTc1MzgxMTZlZGIxMGNkMTdmZjZhYyIsInRpbWVzdGFtcCI6MTc4OTc4MjY0NSwidHlwIjoiSldUIn0..xDKJ_CEGOfW8bR0sUQrTqIE_kqk3IbZYxvP1tWlXfH6n3WXy1O0-82q1TnMhSZuYZAINR-UTh8XwwFJrGlO8ug"
+    }
+  },
+  "schemaVersion": "V1",
+  "signature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLWIxY2E1YzczZTgyN2QzODIzY2IxMjIzYzRhMmYyNzVmN2JiYzVmNjVhOWQ2MzYxY2I5YTk0YWNhZTQ2YjMyZTkiLCJ0aW1lc3RhbXAiOjE3ODk3ODI2NDUsInR5cCI6IkpXVCJ9..ZRQsAWDS2dRRWvnPzoz-DV8LWXXkKRo1_SIsbwgKIyAngODSolPe1tPrSabb2giKFBbkkxEtYaI2CoC4C65KVg",
+  "status": "ACTIVE"
+}

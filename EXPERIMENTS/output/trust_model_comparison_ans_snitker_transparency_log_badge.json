@@ -1,0 +1,88 @@
+{
+  "merkleProof": {
+    "leafHash": "a6c4668143505cc360a598b1f8fcfa1714d895f685e3037285b29af96bb5b644",
+    "leafIndex": 357545,
+    "path": [
+      "K/854rX0dsrSFSjFdP41iPf4N9u/4RQShWv6ko+jwvQ=",
+      "U94h0Bu/dg5Vxj/ZpaMmTJM3cR5laeGiQtOQkfgLd/I=",
+      "xGV0NdF3/ut9yNi/sa/n8B/JFywWFSL9x7bnMUmdfN0=",
+      "PdHlRHzfy9wE9jJuHUGWoVZIp8q3SMMMplJhW8Mm8Xs=",
+      "2WKTDb6YLIQ0pWWzE2wKsFkl4MeM3fzZogGQucHYFSs=",
+      "8XKy9nY5G+Yk02Y59+tcOzrZ+oM7L9fTR14q8jLxUw4=",
+      "96DoYf1oTfsNacaDtepySLZETxaQfulfyGF5cQIG7do=",
+      "K6qwZYBEJ5SzMWrJO54Oue3KzuzBRBlMFuN1L9EpCJc=",
+      "bfJ7D5S9tOW7C/rw/MBiWHfG4wjWxjaQWAbOYCK24jA=",
+      "wUl+WclZIHClGHv+Z/liEmIRuv+YGIbufEmoV6TflOE=",
+      "vcdtIzjT4rJznFJl+olCxyEXjWyh9KZRWNQegTlh7A0=",
+      "Gz9kzYLj3c4f6hlVjWsn21U+Yghfo1wVHxgvpJ6UoPM=",
+      "b1p2b7gRhAnmSqPrMsX8kTFpm5hM9cbpaWcGNguwxNY=",
+      "JqGK9Mj7w368EoiH6cAglNmFxhubwy1g+49uVLuwR+g=",
+      "8Luk7x1b8HlJJ4szl/c0gKaka8An+sZNcOOZA7EYFME=",
+      "Isq0vuCx23hiA5O1AaWf8jyL1V1CXXW6hSC4vpi2EeQ=",
+      "0+pILIYJuvaTdGZSFI9fmHDz6EJmA0wghrugjBIsRUA="
+    ],
+    "rootHash": "9A/cF29YalXAp1O9gsyPuM9t5Am4vaVpOqQl+HPFHDg=",
+    "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTg5YWNmZTQ4ZmMxNTg4MzQyNWRmMzgxMDVkMmI5ZjE3ZWMxNTBkY2JmMThjMTdhMjc5ODc2NzdkYTZiMmUwNWMiLCJ0aW1lc3RhbXAiOjE3OTExNjQ2MTUsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6IjlBX2NGMjlZYWxYQXAxTzlnc3lQdU05dDVBbTR2YVZwT3FRbC1IUEZIRGc9IiwidGltZXN0YW1wIjoxNzkxMTY0NjE1LCJ0cmVlc2l6ZSI6MzYwMjEwfQ.HBehr23gI1OyhGy5_MKzIgX_bZOhZGOMpcKBiL69LyVGthaKlo-5XWHdyxj_hZ91fdcnsIVF1MjV-rhDupnyXg",
+    "treeSize": 360210,
+    "treeVersion": 1
+  },
+  "payload": {
+    "logId": "01a0f490-1c26-7bed-967e-93f6dd013321",
+    "producer": {
+      "event": {
+        "ansId": "7d54a8d6-89d7-4d53-93ee-802e410ab1b3",
+        "ansName": "ans://v1.2.0.godaddy.demo.ans.snitker.dev",
+        "eventType": "AGENT_REGISTERED",
+        "agent": {
+          "host": "godaddy.demo.ans.snitker.dev",
+          "name": "Snitker ANS Interoperability Demo",
+          "version": "v1.2.0"
+        },
+        "attestations": {
+          "dnsRecordsProvisioned": {
+            "_443._tcp.godaddy.demo.ans.snitker.dev": "3 0 1 fbc1816828b944bf60a1f052fdcf27e35c62faa7cb8f34a76bc3e69ccf074de2",
+            "_ans-badge.godaddy.demo.ans.snitker.dev": "v=ans-badge1; version=v1.2.0; url=https://transparency.ans.godaddy.com/v1/agents/7d54a8d6-89d7-4d53-93ee-802e410ab1b3",
+            "_ans.godaddy.demo.ans.snitker.dev": "v=ans1; version=v1.2.0; p=mcp; mode=direct; url=https://godaddy.demo.ans.snitker.dev/mcp",
+            "godaddy.demo.ans.snitker.dev": "0 . alpn=h2"
+          },
+          "domainValidation": "ACME-DNS-01",
+          "identityCert": {
+            "fingerprint": "SHA256:5050593e0370a23a6aa16ff96d2e7e1c22d121e110a143494319c9ac6676eee6",
+            "type": "X509-DV-CLIENT"
+          },
+          "serverCert": {
+            "fingerprint": "SHA256:fbc1816828b944bf60a1f052fdcf27e35c62faa7cb8f34a76bc3e69ccf074de2",
+            "type": "X509-DV-SERVER"
+          },
+          "validIdentityCerts": [
+            {
+              "fingerprint": "SHA256:5050593e0370a23a6aa16ff96d2e7e1c22d121e110a143494319c9ac6676eee6",
+              "type": "X509-DV-CLIENT",
+              "notAfter": "2027-09-30T22:39:46.000000Z"
+            }
+          ],
+          "validServerCerts": [
+            {
+              "fingerprint": "SHA256:fbc1816828b944bf60a1f052fdcf27e35c62faa7cb8f34a76bc3e69ccf074de2",
+              "type": "X509-DV-SERVER",
+              "notAfter": "2027-04-16T22:39:51.000000Z"
+            }
+          ],
+          "metadataHashes": {
+            "A2A": "SHA256:22290c19690bb8d0f8f88610ac579197b0e45eb86a83b1e531dfec6dda5e8042",
+            "MCP": "SHA256:927700323317c64cef022230537e155a525a605e5b641595b8b1ddf892c4ebac"
+          }
+        },
+        "expiresAt": "2027-04-16T22:39:51.000000Z",
+        "issuedAt": "2026-09-30T22:39:46.604881Z",
+        "raId": "raid-849e6ed42a5398913c7743697252e2a1969d84dce1eed6e7143b2c770b197c0d",
+        "timestamp": "2026-09-30T23:04:39.983207Z"
+      },
+      "keyId": "d859e797",
+      "signature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImQ4NTllNzk3IiwicmFpZCI6InJhaWQtODQ5ZTZlZDQyYTUzOTg5MTNjNzc0MzY5NzI1MmUyYTE5NjlkODRkY2UxZWVkNmU3MTQzYjJjNzcwYjE5N2MwZCIsInRpbWVzdGFtcCI6MTc5MDgwOTQ3OSwidHlwIjoiSldUIn0..eaJnMvpoHxY4VLlRWmNOGSM8p3z2p36yCX2lidGkLzz8AwHCoHy_sXtqN-wB_o7Zw8ylt7qq04gjrljYMjhqvw"
+    }
+  },
+  "schemaVersion": "V1",
+  "signature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTk0Zjk4ZDY0ODFmODU4MTVmZGJjODJmOWNmYTQ0YTI4YjlmNzM2ZTUxZjAxNGI2MjU0ZmU5YTdlNjA0MGVmZTAiLCJ0aW1lc3RhbXAiOjE3OTA4MDk0ODAsInR5cCI6IkpXVCJ9..fzBljh5A4PqAKfAhuHlJjQJsWbsQ6ONADSdN0dhGcFeFxrtoW_4ihH134B1SjTf__Pz1bhRmvo8Q9OCaoKdL7Q",
+  "status": "ACTIVE"
+}

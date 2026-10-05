@@ -1,0 +1,119 @@
+{
+  "capabilities": {
+    "extendedAgentCard": false,
+    "extensions": [
+      {
+        "description": "ANS-6 profile and signed request-content binding support; echo includes diagnostics.",
+        "params": {
+          "contentBinding": "supported",
+          "diagnostics": true,
+          "profiles": [
+            1.0
+          ]
+        },
+        "uri": "urn:ans-a2a-demo:ans6"
+      }
+    ],
+    "pushNotifications": false,
+    "streaming": false
+  },
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "description": "Inspects ANS agent configuration and compliance, reports evidence and fixes, and provides non-blocking request diagnostics.",
+  "name": "Snitker ANS Interoperability Demo",
+  "securityRequirements": [
+    {
+      "schemes": {
+        "ansDpop": {},
+        "ansReceipt": {},
+        "ansStatus": {}
+      }
+    }
+  ],
+  "securitySchemes": {
+    "ansDpop": {
+      "apiKeySecurityScheme": {
+        "description": "Fresh ES256 DPoP proof bound to the HTTP method, public URL, and exact request content, including empty content.",
+        "location": "header",
+        "name": "DPoP"
+      }
+    },
+    "ansReceipt": {
+      "apiKeySecurityScheme": {
+        "description": "Base64 SCITT inclusion receipt for the same ANS identity.",
+        "location": "header",
+        "name": "X-SCITT-Receipt"
+      }
+    },
+    "ansStatus": {
+      "apiKeySecurityScheme": {
+        "description": "Base64 SCITT status token binding the registered ANS identity and key.",
+        "location": "header",
+        "name": "X-ANS-Status-Token"
+      }
+    }
+  },
+  "skills": [
+    {
+      "description": "Send a JSON data part with operation check_agent and request.target kind fqdn, agentId, or verified caller. Returns a versioned report with pass/fail/incomplete, signed evidence, and actionable fixes. Public inspection does not require valid incoming ANS proofs.",
+      "examples": [
+        "{\"operation\":\"check_agent\",\"request\":{\"target\":{\"kind\":\"fqdn\",\"fqdn\":\"agent.example.com\"}}}"
+      ],
+      "id": "ans-compliance-check",
+      "inputModes": [
+        "application/json"
+      ],
+      "name": "Inspect agent configuration",
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "tags": [
+        "ans",
+        "compliance",
+        "diagnostics"
+      ]
+    },
+    {
+      "description": "Send operation call_agent with an explicit request.target and confirm true. Requires verified caller identity; sends one fixed bounded diagnostic message as this checker.",
+      "id": "ans-outbound-probe",
+      "inputModes": [
+        "application/json"
+      ],
+      "name": "Explicit outbound ANS probe",
+      "outputModes": [
+        "application/json"
+      ],
+      "tags": [
+        "ans",
+        "interop"
+      ]
+    },
+    {
+      "description": "Send text to test an authenticated A2A exchange with an ANS agent.",
+      "examples": [
+        "Hello from my agent"
+      ],
+      "id": "echo",
+      "name": "Verified identity echo",
+      "tags": [
+        "ans",
+        "interop"
+      ]
+    }
+  ],
+  "supportedInterfaces": [
+    {
+      "protocolBinding": "JSONRPC",
+      "protocolVersion": "1.0",
+      "url": "https://godaddy.demo.ans.snitker.dev/a2a"
+    }
+  ],
+  "version": "1.2.0"
+}

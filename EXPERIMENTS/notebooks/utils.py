@@ -1,11 +1,13 @@
 """Read-only helper functions for agent discovery experiments.
 
-Public functions are grouped by service and prefixed with ``agentcensus_`` or
-``a2a_registry_`` so evidence from different sources remains distinguishable.
+Public functions are grouped by service and prefixed with ``agentcensus_``,
+``a2a_registry_``, or ``ans_`` so evidence from different sources remains
+distinguishable.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import ssl
@@ -1229,6 +1231,192 @@ def a2a_registry_render_integrity_table(
         "<table class='a2a-integrity-table'><thead><tr>"
         "<th>Agent</th><th>Agent Card URL</th><th>Card JWS</th>"
         "<th>Signature-related validator finding</th><th>Reading</th>"
+        "</tr></thead><tbody>"
+        + "".join(rows)
+        + "</tbody></table>"
+    )
+
+
+def ans_render_integrity_table(
+    agents: Sequence[Mapping[str, Any]],
+    discovery_responses: Sequence[Mapping[str, Any]],
+) -> str:
+    """Render ANS integrity coverage from previously captured badge discovery."""
+    agent_markers = ("🟣", "🟢", "🟠")
+    rows = []
+
+    for agent_index, agent in enumerate(agents):
+        marker = agent_markers[agent_index % len(agent_markers)]
+        output_label = str(agent["output_label"])
+        observations = [
+            item
+            for item in discovery_responses
+            if item.get("outputLabel") == output_label
+        ]
+        badge_answers = [
+            answer
+            for item in observations
+            for answer in (item.get("data", {}).get("Answer") or [])
+        ]
+
+        if badge_answers:
+            discovery = f"{len(badge_answers)} TXT answer(s) returned"
+            artifacts = "Badge discovered; Transparency Log checks required"
+            comparison = "Not performed by this discovery capture"
+            reading = "ANS integrity evidence requires downstream verification"
+        elif observations:
+            result_lines = []
+            for item in observations:
+                record_name = str(item.get("recordName", ""))
+                status = item.get("data", {}).get("Status")
+                result = "NXDOMAIN" if status == 3 else "NOERROR, no Answer"
+                result_lines.append(
+                    f"<code>{escape(record_name)}</code>: {result}"
+                )
+            discovery = "<br>".join(result_lines)
+            artifacts = "Not available; no badge supplied an ANS agent ID or log"
+            comparison = "Not possible without authenticated sealed values"
+            reading = "Not assessed; no ANS integrity evidence. Missing badge is not failure"
+        else:
+            discovery = "Not checked"
+            artifacts = "Not available"
+            comparison = "Not assessed"
+            reading = "Not assessed"
+
+        rows.append(
+            "<tr>"
+            f"<th>{marker} {escape(str(agent['name']))}</th>"
+            f"<td>{discovery}</td>"
+            f"<td>{marker} {artifacts}</td>"
+            f"<td>{marker} {comparison}</td>"
+            f"<td>{marker} {reading}</td>"
+            "</tr>"
+        )
+
+    return (
+        "<style>"
+        ".ans-integrity-table th,.ans-integrity-table td {"
+        "text-align: left !important; vertical-align: top !important;"
+        "}"
+        "</style>"
+        "<table class='ans-integrity-table'><thead><tr>"
+        "<th>Agent</th><th>Badge discovery reused from Identity</th>"
+        "<th>ANS integrity artifacts</th><th>Sealed-to-live comparison</th>"
+        "<th>Reading</th>"
+        "</tr></thead><tbody>"
+        + "".join(rows)
+        + "</tbody></table>"
+    )
+
+
+def ans_render_integrity_examples_table(
+    examples: Sequence[Mapping[str, Any]],
+    output_dir: str | Path,
+) -> str:
+    """Compare live ANS artifacts with values sealed in Transparency Log badges."""
+    output_path = Path(output_dir)
+    markers = ("🔵", "🟡")
+    rows = []
+
+    for example_index, example in enumerate(examples):
+        marker = markers[example_index % len(markers)]
+        dns_response = json.loads(
+            (output_path / str(example["dns_file"])).read_text(encoding="utf-8")
+        )
+        badge = json.loads(
+            (output_path / str(example["badge_file"])).read_text(encoding="utf-8")
+        )
+        event = badge["payload"]["producer"]["event"]
+        attestations = event["attestations"]
+        record_name = str(example["record_name"])
+        live_answers = dns_response.get("Answer") or []
+        live_badge = next(
+            (
+                str(answer.get("data"))
+                for answer in live_answers
+                if answer.get("type") == 16
+                and str(answer.get("data", "")).startswith("v=ans-badge1;")
+            ),
+            None,
+        )
+        sealed_records = attestations.get("dnsRecordsProvisioned") or {}
+        sealed_badge = (
+            sealed_records.get(record_name)
+            if isinstance(sealed_records, Mapping)
+            else next(
+                (
+                    record.get("data")
+                    for record in sealed_records
+                    if record.get("name") == record_name
+                ),
+                None,
+            )
+        )
+        badge_match = live_badge is not None and live_badge == sealed_badge
+
+        metadata_results = []
+        metadata_match_values = []
+        sealed_hashes = attestations.get("metadataHashes") or {}
+        for protocol, metadata in example.get("metadata", {}).items():
+            filename = metadata["file"]
+            observed_hash = "SHA256:" + hashlib.sha256(
+                (output_path / str(filename)).read_bytes()
+            ).hexdigest()
+            expected_hash = sealed_hashes.get(protocol)
+            metadata_match_values.append(expected_hash == observed_hash)
+            metadata_results.append(
+                f"<code>{escape(str(protocol))}</code>: "
+                f"{'Match' if expected_hash == observed_hash else 'Mismatch'}<br>"
+                f"observed <code>{escape(observed_hash)}</code><br>"
+                f"sealed <code>{escape(str(expected_hash))}</code>"
+            )
+
+        if metadata_results:
+            metadata_text = "<br><br>".join(metadata_results)
+            metadata_matches = all(metadata_match_values)
+            metadata_count = len(metadata_results)
+        else:
+            metadata_text = "No metadata hashes sealed for this registration"
+            metadata_matches = True
+            metadata_count = 0
+
+        if badge_match and metadata_matches and metadata_count:
+            reading = (
+                f"Observed badge and {metadata_count}/{metadata_count} metadata "
+                "hashes align with sealed baselines"
+            )
+        elif not badge_match:
+            reading = (
+                "Potential integrity drift: live DNS badge differs from the "
+                "sealed baseline"
+            )
+        else:
+            reading = "No mismatch observed in the available comparison"
+
+        rows.append(
+            "<tr>"
+            f"<th>{marker} {escape(str(example['name']))}</th>"
+            f"<td><code>{escape(str(live_badge))}</code><br>"
+            f"Resolver AD=<code>{str(bool(dns_response.get('AD'))).lower()}</code></td>"
+            f"<td><code>{escape(str(sealed_badge))}</code></td>"
+            f"<td>{marker} {'Match' if badge_match else 'Mismatch'}</td>"
+            f"<td>{marker} {metadata_text}</td>"
+            f"<td>{marker} Not performed: signatures and Merkle proof retained "
+            "but not cryptographically checked</td>"
+            f"<td>{marker} {reading}</td>"
+            "</tr>"
+        )
+
+    return (
+        "<style>"
+        ".ans-integrity-examples-table th,.ans-integrity-examples-table td {"
+        "text-align: left !important; vertical-align: top !important;"
+        "}"
+        "</style>"
+        "<table class='ans-integrity-examples-table'><thead><tr>"
+        "<th>Agent</th><th>Live DNS badge</th><th>TL-sealed DNS badge</th>"
+        "<th>Badge comparison</th><th>Metadata hash comparison</th>"
+        "<th>Cryptographic verification</th><th>Reading</th>"
         "</tr></thead><tbody>"
         + "".join(rows)
         + "</tbody></table>"

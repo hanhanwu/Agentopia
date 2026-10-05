@@ -1,0 +1,22 @@
+{
+  "Status": 0,
+  "TC": false,
+  "RD": true,
+  "RA": true,
+  "AD": true,
+  "CD": false,
+  "Question": [
+    {
+      "name": "_ans-badge.godaddy.demo.ans.snitker.dev.",
+      "type": 16
+    }
+  ],
+  "Answer": [
+    {
+      "name": "_ans-badge.godaddy.demo.ans.snitker.dev.",
+      "type": 16,
+      "TTL": 3442,
+      "data": "v=ans-badge1; version=v1.2.0; url=https://transparency.ans.godaddy.com/v1/agents/7d54a8d6-89d7-4d53-93ee-802e410ab1b3"
+    }
+  ]
+}
