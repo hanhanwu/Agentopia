@@ -1101,7 +1101,7 @@ def ans_render_agentcensus_audit_live_table(
             "MATCH": "🟢 MATCH",
             "DRIFT": "🟡 DRIFT",
             "PARTIAL": "🔵 PARTIAL",
-            "NOT_ASSESSED": "⚪ NOT ASSESSED",
+            "NOT_ASSESSED": "🔴 MISSING EVIDENCE",
         }[status]
 
     rows: list[tuple[str, str, str, str, str]] = []
