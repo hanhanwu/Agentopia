@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "status": 200,
+  "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded/documents/a2a_alt",
+  "elapsedMs": 184.6,
+  "headers": {
+    "content-type": "application/json",
+    "x-request-id": "__gzzlAuQtboc6zF9e9_dMlUj0B8PVSo6qSNA-vw0NhDyfntC8LeHQ==",
+    "x-ratelimit-limit": "50000",
+    "x-ratelimit-remaining": "49981",
+    "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+  },
+  "data": {
+    "agentKey": "ag_c449a3237ded",
+    "contentHash": "186feba0564e462d564ae26953fb4211dd32f816af7c393fe0a710fe1d4af331",
+    "observedAt": "2026-10-04T04:09:39Z",
+    "snapshot": "{\n  \"event_id\": \"01a1051a-5d12-7c66-a668-c49b04b2f1dc\",\n  \"run_id\": \"01a104db-4955-7820-8f74-4ef6485c0b0d\",\n  \"observed_at\": \"2026-10-04T04:09:36.238996354Z\",\n  \"source\": \"a2a_alt\",\n  \"source_identifier\": \"a2a://https://agentcensus.io/mcp\",\n  \"domain\": \"agentcensus.io\",\n  \"registrable_domain\": \"agentcensus.io\",\n  \"publishing_zone\": \"agentcensus.io\",\n  \"display_name\": \"agentcensus\",\n  \"description\": \"Read-only access to the agentcensus adoption census. · Current adoption figures with their denominator. · Adoption of each discovery mechanism over a window, with errors reported separately from misses. · Which discovery label publishers actually use - the drafts disagree, so this is the split. The variants overlap and do not sum. · What the census has observed for one registrable domain. · Search every agent and MCP server the census has discovered, ranked by relevance. What each agent publishes goes to anyone; what the census observed needs a key. · Your own organisation's API usage against its daily quota - what the console's usage page shows. Needs your signed-in session's bearer token; exactly what that session already sees, and nothing without one. · Your own organisation's domain claims and their verification state - what the console's domains page shows. Needs your signed-in session's bearer token; what that session already sees, less who made each claim (member identities are withheld, ADR-052 §6), and nothing without one. · Your own organisation's alert rules and when each last fired - the rule list on the console's alerts page. Needs your signed-in session's bearer token; what that session already sees, less who created each rule (member identities are withheld, ADR-052 §6), and nothing without one.\",\n  \"protocols\": [],\n  \"capabilities\": [\n    \"census-headline\",\n    \"mechanism-adoption\",\n    \"discovery-labels\",\n    \"domain-lookup\",\n    \"agent-search\",\n    \"org-usage\",\n    \"org-domains\",\n    \"org-alerts\",\n    \"census\",\n    \"statistics\",\n    \"read-only\",\n    \"dns\",\n    \"discovery\",\n    \"search\",\n    \"account\",\n    \"usage\",\n    \"domains\",\n    \"alerts\"\n  ],\n  \"card_url\": \"https://agentcensus.io/.well-known/agent-card.json\",\n  \"status\": \"ACTIVE\",\n  \"version\": \"v1.3\",\n  \"content_hash\": \"186feba0564e462d564ae26953fb4211dd32f816af7c393fe0a710fe1d4af331\",\n  \"declared_version\": \"0.3.0\",\n  \"inferred_version\": \"1.0\",\n  \"version_evidence\": [\n    \"supportedInterfaces (1.0; replaced url/preferredTransport/additionalInterfaces)\",\n    \"protocolVersion field (0.3+, removed from the card in 1.0)\",\n    \"securitySchemes (0.3 spelling)\",\n    \"capabilities object\",\n    \"skills array\"\n  ],\n  \"auth_declared\": true,\n  \"auth_schemes\": [\n    \"http/bearer\"\n  ],\n  \"endpoint_same_origin\": true,\n  \"endpoint_host\": \"agentcensus.io\",\n  \"transport\": \"h2\",\n  \"tls_version\": \"TLS 1.3\",\n  \"field_completeness\": 0.8571428571428571,\n  \"fields_present\": 12,\n  \"fields_defined\": 14\n}",
+    "snapshotType": "parsed",
+    "source": "a2a_alt",
+    "sourceUrl": "https://agentcensus.io/.well-known/agent-card.json"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "status": 200,
+  "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded/documents/ans",
+  "elapsedMs": 183.8,
+  "headers": {
+    "content-type": "application/json",
+    "x-request-id": "rljEK7qIPqhIxoixh3wA_iHL4gFitPOfrNZNkw4PBTZfF_QpTq1AIg==",
+    "x-ratelimit-limit": "50000",
+    "x-ratelimit-remaining": "49983",
+    "x-ratelimit-reset": "2026-10-06T00:00:00Z"
+  },
+  "data": {
+    "agentKey": "ag_c449a3237ded",
+    "contentHash": "e9777f174e06349cb5336f8ac99dda0b2495f258160902f785352a99cb06f62c",
+    "observedAt": "2026-10-04T04:09:42Z",
+    "snapshot": "{\n  \"event_id\": \"01a1051a-5e5a-75c5-989e-cf0fad472949\",\n  \"run_id\": \"01a104db-4955-7820-8f74-4ef6485c0b0d\",\n  \"observed_at\": \"2026-10-04T04:09:36.556069602Z\",\n  \"source\": \"ans\",\n  \"source_identifier\": \"ans://https://agentcensus.io/mcp\",\n  \"domain\": \"agentcensus.io\",\n  \"registrable_domain\": \"agentcensus.io\",\n  \"publishing_zone\": \"agentcensus.io\",\n  \"display_name\": \"agentcensus\",\n  \"description\": \"Read-only access to the agentcensus adoption census.\",\n  \"protocols\": [\n    \"mcp\"\n  ],\n  \"capabilities\": [\n    \"census-headline\",\n    \"mechanism-adoption\",\n    \"domain-lookup\",\n    \"discovery-labels\",\n    \"agent-search\",\n    \"org-usage\",\n    \"org-domains\",\n    \"org-alerts\"\n  ],\n  \"card_url\": \"https://agentcensus.io/.well-known/agents-index.json\",\n  \"status\": \"ACTIVE\",\n  \"version\": \"v1.0.0\",\n  \"content_hash\": \"e9777f174e06349cb5336f8ac99dda0b2495f258160902f785352a99cb06f62c\",\n  \"declared_version\": \"v1.0.0\",\n  \"auth_declared\": false,\n  \"transport\": \"h2\",\n  \"tls_version\": \"TLS 1.3\"\n}",
+    "snapshotType": "parsed",
+    "source": "ans",
+    "sourceUrl": "https://agentcensus.io/.well-known/agents-index.json"
+  }
+}

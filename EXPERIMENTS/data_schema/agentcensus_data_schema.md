@@ -131,6 +131,10 @@ These fields occur under the agent-detail `data.observed` and `data.posture`. Fi
 | `agentObserved.provenance[].lastSeen` | Most recent date this provenance source contributed. | `2026-09-19` | `GET /api/v1/agents/{agentKey}` |
 | `agentObserved.provenance[].resolutionConfidence` | Confidence assigned to the record-resolution merge. | `0.949999988079071` | `GET /api/v1/agents/{agentKey}` |
 | `agentObserved.provenance[].resolutionRule` | Rule used to merge this source into the agent record. | `identical normalized endpoint URL` | `GET /api/v1/agents/{agentKey}` |
+| `agent.activeVerification.unauthenticated.detail` | Evidence detail for an unauthenticated active-verification attempt. | `matched usage 2 selector 1...` | `GET /api/v1/agents/{agentKey}` |
+| `agent.activeVerification.unauthenticated.lastCheckedAt` | Date of the latest unauthenticated active-verification attempt. | `2026-10-05` | `GET /api/v1/agents/{agentKey}` |
+| `agent.activeVerification.unauthenticated.method` | Active-verification method. | `tls/dane` | `GET /api/v1/agents/{agentKey}` |
+| `agent.activeVerification.unauthenticated.outcome` | Active-verification outcome. | `ok` | `GET /api/v1/agents/{agentKey}` |
 | `posture.authDeclared` | Whether the published metadata declares authentication. Values: `true`, `false`. | `false` | `GET /api/v1/agents/{agentKey}` |
 | `posture.authSchemes` | Published authentication-scheme identifiers. | `[]` | `GET /api/v1/agents/{agentKey}` |
 | `posture.deprecated` | Whether the agent is marked deprecated. Values: `true`, `false`. | `false` | `GET /api/v1/agents/{agentKey}` |

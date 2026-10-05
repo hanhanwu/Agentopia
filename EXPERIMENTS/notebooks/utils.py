@@ -684,6 +684,184 @@ def agentcensus_render_integrity_table(
     )
 
 
+def agentcensus_render_ans_corroboration_table(
+    examples: Sequence[Mapping[str, Any]],
+    output_dir: str | Path,
+) -> str:
+    """Compare AgentCensus snapshots with live and sealed ANS versions."""
+    output_path = Path(output_dir)
+    markers = ("🔵", "🟡")
+    table_rows = []
+
+    def badge_version(value: str | None) -> str | None:
+        if not value:
+            return None
+        for part in value.split(";"):
+            key, separator, item = part.strip().partition("=")
+            if separator and key == "version":
+                return item
+        return None
+
+    def versions_match(left: Any, right: Any) -> bool:
+        return bool(
+            left
+            and right
+            and str(left).removeprefix("v") == str(right).removeprefix("v")
+        )
+
+    for example_index, example in enumerate(examples):
+        marker = markers[example_index % len(markers)]
+        agent_response = json.loads(
+            (output_path / str(example["agent_file"])).read_text(encoding="utf-8")
+        )
+        agent = agent_response["data"]
+        dns_response = json.loads(
+            (output_path / str(example["ans_dns_file"])).read_text(encoding="utf-8")
+        )
+        badge = json.loads(
+            (output_path / str(example["ans_badge_file"])).read_text(encoding="utf-8")
+        )
+        live_badge_value = next(
+            (
+                str(answer.get("data"))
+                for answer in dns_response.get("Answer") or []
+                if answer.get("type") == 16
+            ),
+            None,
+        )
+        live_version = badge_version(live_badge_value)
+        sealed_version = badge["payload"]["producer"]["event"]["agent"]["version"]
+
+        grouped_documents: dict[str, dict[str, Any]] = {}
+        for source, filename in example["documents"].items():
+            document_response = json.loads(
+                (output_path / str(filename)).read_text(encoding="utf-8")
+            )
+            document = document_response["data"]
+            content_hash = str(document["contentHash"])
+            group = grouped_documents.setdefault(
+                content_hash,
+                {
+                    "sources": [],
+                    "snapshot": json.loads(document["snapshot"]),
+                    "observed_at": [],
+                },
+            )
+            group["sources"].append(source)
+            group["observed_at"].append(
+                f"{escape(str(source))}: {escape(str(document.get('observedAt')))}"
+            )
+
+        endpoint = agent.get("posture", {}).get("endpointHost")
+        observed = agent.get("observed", {})
+        endpoint_evidence = (
+            f"Endpoint <code>{escape(str(endpoint))}</code><br>"
+            f"same origin: <code>{str(bool(observed.get('endpointSameOrigin'))).lower()}</code><br>"
+            f"{escape(str(observed.get('tlsVersion')))} / "
+            f"{escape(str(observed.get('transport')))}"
+        )
+        active_verification = agent.get("activeVerification") or {}
+        unauthenticated = active_verification.get("unauthenticated") or {}
+        if unauthenticated:
+            endpoint_evidence += (
+                f"<br>Active {escape(str(unauthenticated.get('method')))}: "
+                f"<code>{escape(str(unauthenticated.get('outcome')))}</code>"
+            )
+        else:
+            endpoint_evidence += "<br>Active verification: not available"
+
+        ans_snapshot_version = next(
+            (
+                group["snapshot"].get("version")
+                for group in grouped_documents.values()
+                if "ans" in group["sources"]
+            ),
+            None,
+        )
+        if (
+            not versions_match(live_version, sealed_version)
+            and versions_match(ans_snapshot_version, live_version)
+        ):
+            reading = (
+                f"AgentCensus captured ANS version {escape(str(ans_snapshot_version))}, "
+                f"matching the live badge and differing from the TL-sealed "
+                f"{escape(str(sealed_version))}. This supports stale or lagging live "
+                "ANS publication as the issue to investigate; it does not establish why. "
+                "Successful TLS/DANE verification applies to the endpoint certificate, "
+                "not badge freshness."
+            )
+        else:
+            reading = (
+                "AgentCensus independently observed the same agent version as the "
+                "live and sealed ANS records, adding cross-source continuity evidence."
+            )
+
+        groups = list(grouped_documents.values())
+        for row_index, group in enumerate(groups):
+            snapshot = group["snapshot"]
+            version = snapshot.get("version")
+            if versions_match(version, sealed_version):
+                relation = (
+                    f"Matches live <code>{escape(str(live_version))}</code> and "
+                    f"TL-sealed <code>{escape(str(sealed_version))}</code>"
+                )
+            elif versions_match(version, live_version):
+                relation = (
+                    f"Matches live <code>{escape(str(live_version))}</code>; differs "
+                    f"from TL-sealed <code>{escape(str(sealed_version))}</code>"
+                )
+            else:
+                relation = (
+                    f"Source publishes <code>{escape(str(version))}</code>; differs from "
+                    f"live <code>{escape(str(live_version))}</code> and TL-sealed "
+                    f"<code>{escape(str(sealed_version))}</code>. Version semantics may "
+                    "be source-specific."
+                )
+
+            cells = []
+            if row_index == 0:
+                cells.append(
+                    f"<th rowspan='{len(groups)}'>{marker} "
+                    f"{escape(str(example['name']))}</th>"
+                )
+            cells.extend(
+                [
+                    "<td>"
+                    + ", ".join(
+                        f"<code>{escape(str(source))}</code>"
+                        for source in group["sources"]
+                    )
+                    + "</td>",
+                    f"<td>{marker} <code>{escape(str(version))}</code><br>"
+                    "observed:<br>" + "<br>".join(group["observed_at"]) + "</td>",
+                    f"<td>{marker} {relation}</td>",
+                ]
+            )
+            if row_index == 0:
+                cells.extend(
+                    [
+                        f"<td rowspan='{len(groups)}'>{marker} {endpoint_evidence}</td>",
+                        f"<td rowspan='{len(groups)}'>{marker} {reading}</td>",
+                    ]
+                )
+            table_rows.append("<tr>" + "".join(cells) + "</tr>")
+
+    return (
+        "<style>"
+        ".agentcensus-ans-table th,.agentcensus-ans-table td {"
+        "text-align: left !important; vertical-align: top !important;"
+        "}"
+        "</style>"
+        "<table class='agentcensus-ans-table'><thead><tr>"
+        "<th>Agent</th><th>AgentCensus mechanism</th><th>Observed version</th>"
+        "<th>Relation to ANS versions</th><th>Endpoint evidence</th>"
+        "<th>Integrity insight</th>"
+        "</tr></thead><tbody>"
+        + "".join(table_rows)
+        + "</tbody></table>"
+    )
+
+
 # ---------------------------------------------------------------------------
 # A2A Registry
 # ---------------------------------------------------------------------------

@@ -134,6 +134,18 @@ comparison set:
   downloaded log badge seals `v2.0.0`. Report this as potential drift requiring
   confirmation, not as a proven failure.
 
+For the second example, reuse a narrow AgentCensus corroboration capture. Its
+`ans` snapshot also observed `v1.0.0`, matching the live badge rather than the
+log's sealed `v2.0.0`; its A2A and alternate-A2A snapshots share a content hash
+and publish `v1.3`. This supports a stale or lagging live ANS publication as the
+specific issue to investigate, while preserving the possibility that version
+semantics differ by discovery source. AgentCensus also reports successful
+TLS/DANE active verification for the endpoint, but that validates certificate
+binding rather than badge freshness. Keep this supplemental table separate
+from the original three-agent comparison. Do not add A2A Registry Integrity
+artifacts for these examples unless signature evidence becomes available: the
+current public validation returned unsigned cards and no positive JWS evidence.
+
 These are value-comparison results only. The capture retains the producer and
 Transparency Log signatures and Merkle proof, but the notebook does not yet
 verify those signatures, the inclusion proof and checkpoint, or the DNSSEC
