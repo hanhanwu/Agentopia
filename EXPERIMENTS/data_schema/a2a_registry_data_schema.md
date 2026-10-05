@@ -69,6 +69,127 @@ These fields occur under `data` in the raw validator response. The complete fetc
 | `validator.metadata.dnsTxtFound` | Whether the validator found its expected DNS TXT discovery evidence; excluded from Integrity. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
 | `validator.metadata.godaddyAnsFound` | Whether the validator found its GoDaddy ANS integration evidence; excluded from Integrity. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
 
+## Fetched Agent Card fields
+
+These fields occur inside `validator.cardData`. They are publisher-supplied claims returned by the validator. Except for the JWS fields cataloged above, they are preserved as raw context and are not used in the Integrity interpretation.
+
+| Name | Description | Example value | Found in API endpoint(s) |
+|---|---|---|---|
+| `validator.cardData.name` | Published Agent Card name. | `Council of AI — Measurement Agent` | `POST /public/tools/validate-url` |
+| `validator.cardData.description` | Published Agent Card description. | `Independent AI-governance MEASUREMENT body...` | `POST /public/tools/validate-url` |
+| `validator.cardData.version` | Published agent release version. | `1.4.0` | `POST /public/tools/validate-url` |
+| `validator.cardData.protocolVersion` | Published A2A protocol version. | `0.3.0` | `POST /public/tools/validate-url` |
+| `validator.cardData.url` | Legacy or preferred interaction URL when published. | `https://a2a402.market/a2a` | `POST /public/tools/validate-url` |
+| `validator.cardData.preferredTransport` | Published preferred transport token. | `JSONRPC` | `POST /public/tools/validate-url` |
+| `validator.cardData.provider.organization` | Published provider organization. | `CSOAI Ltd` | `POST /public/tools/validate-url` |
+| `validator.cardData.provider.url` | Published provider URL. | `https://councilof.ai` | `POST /public/tools/validate-url` |
+| `validator.cardData.supportedInterfaces[].url` | Published interaction URL for one supported interface. | `https://councilof.ai/api/a2a` | `POST /public/tools/validate-url` |
+| `validator.cardData.supportedInterfaces[].protocolBinding` | Protocol binding for one supported interface. | `JSONRPC` | `POST /public/tools/validate-url` |
+| `validator.cardData.supportedInterfaces[].protocolVersion` | Protocol version for one supported interface. | `1.0` | `POST /public/tools/validate-url` |
+| `validator.cardData.documentationUrl` | Published documentation URL. | `https://councilof.ai/llms.txt` | `POST /public/tools/validate-url` |
+| `validator.cardData.iconUrl` | Published agent icon URL. | `https://councilof.ai/og-image.png` | `POST /public/tools/validate-url` |
+| `validator.cardData.catalogUrl` | Published catalog URL. | `https://councilof.ai/interop/surface-catalog.json` | `POST /public/tools/validate-url` |
+| `validator.cardData.doi` | Published digital object identifier. | `10.5281/zenodo.21991104` | `POST /public/tools/validate-url` |
+| `validator.cardData.explicitly_not[]` | Publisher-declared exclusions or non-claims. | `certification` | `POST /public/tools/validate-url` |
+| `validator.cardData.defaultInputModes[]` | Published default input media types. | `text/plain` | `POST /public/tools/validate-url` |
+| `validator.cardData.defaultOutputModes[]` | Published default output media types. | `application/json` | `POST /public/tools/validate-url` |
+| `validator.cardData.capabilities.streaming` | Whether streaming is declared. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
+| `validator.cardData.capabilities.pushNotifications` | Whether push notifications are declared. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
+| `validator.cardData.capabilities.extendedAgentCard` | Whether an extended Agent Card is declared. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
+| `validator.cardData.capabilities.stateTransitionHistory` | Legacy state-transition-history capability declaration. Values observed: `true`. | `true` | `POST /public/tools/validate-url` |
+| `validator.cardData.capabilities.extensions[].uri` | URI identifying a declared capability extension. | `https://councilof.ai/a2a/extensions/signed-receipts/v1/` | `POST /public/tools/validate-url` |
+| `validator.cardData.capabilities.extensions[].required` | Whether the capability extension is required. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
+| `validator.cardData.capabilities.extensions[].description` | Publisher description of a capability extension. | `A DRAFT WE PUBLISH AND DO NOT YET EMIT...` | `POST /public/tools/validate-url` |
+| `validator.cardData.skills[].id` | Published skill identifier. | `gspc-board` | `POST /public/tools/validate-url` |
+| `validator.cardData.skills[].name` | Published skill name. | `Signed GSPC Board` | `POST /public/tools/validate-url` |
+| `validator.cardData.skills[].description` | Published skill description. | `SendMessage answers with the live board...` | `POST /public/tools/validate-url` |
+| `validator.cardData.skills[].tags[]` | Published skill tag. | `measurement` | `POST /public/tools/validate-url` |
+| `validator.cardData.skills[].examples[]` | Published example invocation or usage text. | `SendMessage with Part.data...` | `POST /public/tools/validate-url` |
+
+## Publisher-defined `a2a402` extension fields
+
+These fields occur under `validator.cardData.extensions.a2a402` in the A2A402 Agent Card. They are retained verbatim as publisher-defined claims and are not A2A Registry findings or Integrity evidence.
+
+| Name | Description | Example value | Found in API endpoint(s) |
+|---|---|---|---|
+| `a2a402.platform` | Publisher-declared platform name. | `A2A402` | `POST /public/tools/validate-url` |
+| `a2a402.platformType` | Publisher-declared platform classification. | `autonomous-agent platform, protocol, marketplace, and economic network` | `POST /public/tools/validate-url` |
+| `a2a402.environment` | Publisher-declared deployment environment. | `production` | `POST /public/tools/validate-url` |
+| `a2a402.realMoney` | Whether the publisher says real money is used. Values observed: `true`. | `true` | `POST /public/tools/validate-url` |
+| `a2a402.walletRequiredForRegistration` | Whether registration is declared to require a wallet. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
+| `a2a402.walletRequiredForA2ASettlement` | Whether A2A settlement is declared to require a wallet. Values observed: `true`. | `true` | `POST /public/tools/validate-url` |
+| `a2a402.canonicalLifecycle[]` | Ordered publisher-defined marketplace lifecycle stage. | `need` | `POST /public/tools/validate-url` |
+| `a2a402.openapiUrl` | Published OpenAPI URL. | `https://a2a402.market/openapi.json` | `POST /public/tools/validate-url` |
+| `a2a402.llmsUrl` | Published `llms.txt` URL. | `https://a2a402.market/llms.txt` | `POST /public/tools/validate-url` |
+| `a2a402.humanDocsUrl` | Human-facing documentation URL. | `https://a2a402.market/docs/` | `POST /public/tools/validate-url` |
+| `a2a402.recruitmentUrl` | Machine-facing recruitment URL. | `https://a2a402.market/recruit.json` | `POST /public/tools/validate-url` |
+| `a2a402.humanRecruitmentUrl` | Human-facing recruitment URL. | `https://a2a402.market/beta/` | `POST /public/tools/validate-url` |
+| `a2a402.needUrl` | Published marketplace need URL. | `https://a2a402.market/need` | `POST /public/tools/validate-url` |
+| `a2a402.jobsUrl` | Machine-facing jobs URL. | `https://a2a402.market/jobs` | `POST /public/tools/validate-url` |
+| `a2a402.humanJobsUrl` | Human-facing jobs URL. | `https://a2a402.market/jobs-ui/` | `POST /public/tools/validate-url` |
+| `a2a402.tokenUrl` | Published token metadata URL. | `https://a2a402.market/token.json` | `POST /public/tools/validate-url` |
+| `a2a402.tokenListingUrl` | Published token-listing URL. | `https://a2a402.market/token-listing.json` | `POST /public/tools/validate-url` |
+| `a2a402.humanTokenUrl` | Human-facing token URL. | `https://a2a402.market/token/` | `POST /public/tools/validate-url` |
+| `a2a402.humanPlatformUrl` | Human-facing platform URL. | `https://a2a402.market/` | `POST /public/tools/validate-url` |
+| `a2a402.humanAgentsUrl` | Human-facing agents URL. | `https://a2a402.market/agents/` | `POST /public/tools/validate-url` |
+| `a2a402.humanStatsUrl` | Human-facing statistics URL. | `https://a2a402.market/stats/` | `POST /public/tools/validate-url` |
+| `a2a402.humanSocialUrl` | Human-facing social URL. | `https://a2a402.market/social/` | `POST /public/tools/validate-url` |
+| `a2a402.humanEconomicGraphUrl` | Human-facing economic-graph URL. | `https://a2a402.market/graph/` | `POST /public/tools/validate-url` |
+| `a2a402.humanAgentGlobeUrl` | Human-facing agent-globe URL. | `https://a2a402.market/agentglobe/` | `POST /public/tools/validate-url` |
+| `a2a402.humanGrowthDashboardUrl` | Human-facing growth-dashboard URL. | `https://a2a402.market/growth/` | `POST /public/tools/validate-url` |
+| `a2a402.founderProgramUrl` | Published founder-program URL. | `https://a2a402.market/founders/` | `POST /public/tools/validate-url` |
+| `a2a402.socialFeedUrl` | Machine-facing social-feed URL. | `https://a2a402.market/social/feed` | `POST /public/tools/validate-url` |
+| `a2a402.socialAgentsUrl` | Machine-facing social-agents URL. | `https://a2a402.market/social/agents` | `POST /public/tools/validate-url` |
+| `a2a402.loungeMessagesUrl` | Published lounge-messages URL. | `https://a2a402.market/lounge/messages` | `POST /public/tools/validate-url` |
+| `a2a402.acceptedAssets[]` | Publisher-declared accepted settlement asset. | `USDC` | `POST /public/tools/validate-url` |
+| `a2a402.primarySettlementAsset` | Publisher-declared primary settlement asset. | `USDC` | `POST /public/tools/validate-url` |
+| `a2a402.secondarySettlementAsset` | Publisher-declared secondary settlement asset. | `A2A` | `POST /public/tools/validate-url` |
+| `a2a402.supportedUSDCNetworks[]` | Publisher-declared USDC settlement network. | `base` | `POST /public/tools/validate-url` |
+| `a2a402.a2aNetwork` | Publisher-declared A2A token network. | `base` | `POST /public/tools/validate-url` |
+| `a2a402.caipChainId` | CAIP-formatted chain identifier. | `eip155:8453` | `POST /public/tools/validate-url` |
+| `a2a402.chainId` | Numeric chain identifier. | `8453` | `POST /public/tools/validate-url` |
+| `a2a402.tokenContract` | Published token contract address. | `0xf9e891696c022f9fe4a143a92255371253c5567a` | `POST /public/tools/validate-url` |
+| `a2a402.marketplaceTreasury` | Published marketplace treasury address. | `0xD08eA67ef730fc336a9B6fB89A4B66dF67Fbb69c` | `POST /public/tools/validate-url` |
+| `a2a402.marketplaceFeeBps` | Publisher-declared marketplace fee in basis points. | `500` | `POST /public/tools/validate-url` |
+| `a2a402.workerShareBps` | Publisher-declared worker share in basis points. | `9500` | `POST /public/tools/validate-url` |
+| `a2a402.humanTradingEnabled` | Whether human trading is declared enabled. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
+| `a2a402.custody` | Whether the marketplace declares custody. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
+| `a2a402.nativeToken.name` | Published native-token name. | `A2A` | `POST /public/tools/validate-url` |
+| `a2a402.nativeToken.symbol` | Published native-token symbol. | `A2A` | `POST /public/tools/validate-url` |
+| `a2a402.nativeToken.network` | Published native-token network. | `base` | `POST /public/tools/validate-url` |
+| `a2a402.nativeToken.chainId` | Published native-token chain identifier. | `8453` | `POST /public/tools/validate-url` |
+| `a2a402.nativeToken.contract` | Published native-token contract address. | `0xf9e891696c022f9fe4a143a92255371253c5567a` | `POST /public/tools/validate-url` |
+| `a2a402.nativeToken.decimals` | Published native-token decimal precision. | `18` | `POST /public/tools/validate-url` |
+| `a2a402.nativeToken.role` | Publisher-declared role of the native token. | `secondary` | `POST /public/tools/validate-url` |
+| `a2a402.authentication.type` | Publisher-declared authentication type. | `bearer-token` | `POST /public/tools/validate-url` |
+| `a2a402.authentication.agentHeader` | HTTP header declared to carry the agent identifier. | `X-Agent-Id` | `POST /public/tools/validate-url` |
+| `a2a402.authentication.registrationUrl` | Published registration URL. | `https://a2a402.market/agents/register` | `POST /public/tools/validate-url` |
+| `a2a402.authentication.rotationUrlTemplate` | Published token-rotation URL template. | `https://a2a402.market/agents/{agentId}/auth/rotate` | `POST /public/tools/validate-url` |
+| `a2a402.authentication.rotationInvalidatesPreviousToken` | Whether rotation is declared to invalidate the prior token. Values observed: `true`. | `true` | `POST /public/tools/validate-url` |
+| `a2a402.jobFeed.transport` | Publisher-declared job-feed transport. | `http-polling` | `POST /public/tools/validate-url` |
+| `a2a402.jobFeed.recommendedPollingSeconds[]` | Publisher-recommended polling interval in seconds. | `15` | `POST /public/tools/validate-url` |
+| `a2a402.jobFeed.structuredRequirementsVersion` | Published structured-requirements version. | `1` | `POST /public/tools/validate-url` |
+| `a2a402.jobFeed.defaultScope` | Publisher-declared default job-feed scope. | `public-production` | `POST /public/tools/validate-url` |
+| `a2a402.jobFeed.internalHistoryExcluded` | Whether internal history is declared excluded. Values observed: `true`. | `true` | `POST /public/tools/validate-url` |
+| `a2a402.jobFeed.promotionalGenesisIncluded` | Whether promotional genesis jobs are declared included. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
+| `a2a402.paymentExecution.protocol` | Publisher-declared payment-execution protocol. | `a2a402-payment-intent-v1` | `POST /public/tools/validate-url` |
+| `a2a402.paymentExecution.mode` | Publisher-declared payment-execution mode. | `authenticated-pull` | `POST /public/tools/validate-url` |
+| `a2a402.paymentExecution.pendingIntentsUrl` | Published pending payment-intents URL. | `https://a2a402.market/payments/execution/intents` | `POST /public/tools/validate-url` |
+| `a2a402.paymentExecution.authenticationRequired` | Whether payment execution declares authentication required. Values observed: `true`. | `true` | `POST /public/tools/validate-url` |
+| `a2a402.paymentExecution.signer` | Publisher-declared payment signer. | `payer-agent-controlled` | `POST /public/tools/validate-url` |
+| `a2a402.paymentExecution.referenceRunner` | Published reference-runner command. | `npm run payments:watch` | `POST /public/tools/validate-url` |
+| `a2a402.paymentExecution.privateKeyRequiredByMarketplace` | Whether the marketplace declares that it requires the payer private key. Values observed: `false`. | `false` | `POST /public/tools/validate-url` |
+| `a2a402.openWork.canonicalJobsUrl` | Published canonical open-work jobs URL. | `https://a2a402.market/jobs` | `POST /public/tools/validate-url` |
+| `a2a402.openWork.constructionReviewFeed` | Published construction-review feed URL. | `https://a2a402.market/jobs?status=OPEN&capability=construction.project.review` | `POST /public/tools/validate-url` |
+| `a2a402.openWork.trustRoomCoordinatorAgentId` | Publisher-declared trust-room coordinator agent identifier. | `agent_trustroom_project_coordinator` | `POST /public/tools/validate-url` |
+| `a2a402.openWork.capability` | Publisher-declared open-work capability. | `construction.project.review` | `POST /public/tools/validate-url` |
+| `a2a402.openWork.preferredAsset` | Publisher-declared preferred open-work asset. | `USDC` | `POST /public/tools/validate-url` |
+| `a2a402.openWork.supportedUSDCNetworks[]` | Publisher-declared open-work USDC network. | `base` | `POST /public/tools/validate-url` |
+| `a2a402.openWork.secondaryAsset` | Publisher-declared secondary open-work asset. | `A2A` | `POST /public/tools/validate-url` |
+| `a2a402.openWork.marketplaceFeeBps` | Publisher-declared open-work marketplace fee in basis points. | `500` | `POST /public/tools/validate-url` |
+| `a2a402.openWork.workerShareBps` | Publisher-declared open-work worker share in basis points. | `9500` | `POST /public/tools/validate-url` |
+| `a2a402.openWork.note` | Publisher note about open-work availability. | `Job availability is live and may change...` | `POST /public/tools/validate-url` |
+
 ## Registry agent record
 
 These fields occur at `data.agents[]` in the search response and at the root of the selected identity-record outputs.
