@@ -132,6 +132,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 - [ ] Compare claimed capability with observed behavior/result.
 - [x] Record available identity-verification, reputation, signature, and provenance signals alongside capability claims without treating them as capability proof.
 - [x] Document current identity/control evidence and source-assessment boundaries useful for trust decisions.
+- [x] Assess whether the available AgentCensus, A2A Registry, and ANS API data provide direct behavioral evidence; document that the current API reads expose claims, metadata, and infrastructure observations rather than observed agent behavior.
 - [ ] Collect direct capability-correctness, authorization, behavioral, safety, and reliability evidence for task-specific trust decisions.
 
 **Questions to explore**
@@ -182,10 +183,15 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 - Can another agent or user understand the permission boundary before proceeding?
 - What should happen when an agent requests more data than appears necessary for the task?
 
-### 8. Interaction Behavior
+### 8. Post-Discovery Endpoint Interaction & Behavior
 
 - [x] Record URL, status, elapsed time, and raw response for discovery and inspection API calls.
+- [ ] For each selected discovered agent, extract an endpoint inventory from its Agent Card and related metadata, including the endpoint URL, protocol/transport, advertised skills or operations, authentication, and required input shape.
+- [ ] Classify each endpoint before use as public/read-only, authenticated, state-changing, paid, unclear, or unsupported; interact only when the action is safe and permitted.
+- [ ] Select at least one representative advertised capability per eligible agent and send a protocol-correct, non-state-changing request to the discovered endpoint (for example, A2A `SendMessage` or an MCP tool call), rather than treating metadata fetches or HTTP reachability as behavior evidence.
 - [ ] Record request, response, capture timestamp, protocol, and endpoint for each live agent-interaction step.
+- [ ] Preserve failed or blocked interaction attempts—including protocol errors, authentication challenges, malformed or incomplete endpoint metadata, and timeouts—as outcomes rather than silently excluding them.
+- [ ] Label an agent's behavior as **not observed** when no live capability request was attempted or completed; do not infer behavior from registry records, Agent Cards, validators, or endpoint reachability alone.
 - [ ] Record redirects, delegation, tool calls, external services, and follow-up agents when visible.
 - [ ] Compare expected flow from metadata with the actual flow.
 - [ ] Record failures, partial results, retries, and unexpected transitions.
@@ -233,8 +239,10 @@ experiment
 ├── discovery source
 ├── candidate agents
 ├── raw metadata / Agent Cards
+├── discovered endpoint inventory
 ├── identity evidence
 ├── protocol + auth observations
+├── interaction attempts (including blocked / failed)
 ├── interaction trace
 ├── raw responses / artifacts
 └── findings
