@@ -1798,6 +1798,226 @@ def a2a_registry_validation_data(
     return outer if isinstance(outer, Mapping) else None
 
 
+def a2a_registry_print_security_authorization_evidence(
+    agents: Sequence[Mapping[str, Any]],
+    validation_responses: Mapping[str, Mapping[str, Any]],
+) -> None:
+    """Print transport and declared-auth fields from validator responses.
+
+    The validator fetches the published card and reports HTTPS plus schema
+    observations. These rows intentionally exclude its aggregate readiness
+    score because neither card readiness nor an authentication declaration
+    demonstrates authorization enforcement.
+    """
+    declaration_rows: list[dict[str, Any]] = []
+    oauth_rows: list[dict[str, Any]] = []
+
+    for agent in agents:
+        response = validation_responses.get(str(agent["output_label"]))
+        result = (
+            a2a_registry_validation_data(response)
+            if isinstance(response, Mapping)
+            else None
+        )
+        if not response or not response.get("ok") or result is None:
+            declaration_rows.append(
+                {
+                    "agent": agent["name"],
+                    "cardFetched": False,
+                    "https": "Unknown",
+                    "schemes": "Unknown",
+                    "requiredScopes": "Unknown",
+                    "schemeValidation": "Not assessed",
+                }
+            )
+            continue
+
+        card = result.get("cardData")
+        card = card if isinstance(card, Mapping) else {}
+        findings = [
+            finding
+            for finding in result.get("findings") or []
+            if isinstance(finding, Mapping)
+        ]
+        https_findings = [
+            finding for finding in findings
+            if finding.get("code") == "HTTPS_ENFORCED"
+        ]
+        https_result = (
+            https_findings[0].get("severity") if https_findings else "not checked"
+        )
+
+        schemes = card.get("securitySchemes")
+        schemes = schemes if isinstance(schemes, Mapping) else {}
+        scheme_labels = []
+        for name, scheme in schemes.items():
+            scheme_type = scheme.get("type") if isinstance(scheme, Mapping) else None
+            scheme_labels.append(f"{name}:{scheme_type or 'type missing'}")
+
+        security = card.get("security")
+        required_scopes = sorted(
+            {
+                str(scope)
+                for requirement in security or []
+                if isinstance(requirement, Mapping)
+                for scopes in requirement.values()
+                if isinstance(scopes, list)
+                for scope in scopes
+            }
+        )
+        scheme_validation_codes = sorted(
+            {
+                str(finding.get("code"))
+                for finding in findings
+                if str(finding.get("field", "")).startswith("/securitySchemes")
+            }
+        )
+        declaration_rows.append(
+            {
+                "agent": agent["name"],
+                "cardFetched": bool(card),
+                "https": https_result,
+                "schemes": ", ".join(scheme_labels) or "None declared",
+                "requiredScopes": ", ".join(required_scopes) or "None declared",
+                "schemeValidation": (
+                    ", ".join(scheme_validation_codes) or "No scheme-specific finding"
+                ),
+            }
+        )
+
+        for name, scheme in schemes.items():
+            if not isinstance(scheme, Mapping) or scheme.get("type") != "oauth2":
+                continue
+            flows = scheme.get("flows")
+            flows = flows if isinstance(flows, Mapping) else {}
+            for flow_name, flow in flows.items():
+                flow = flow if isinstance(flow, Mapping) else {}
+                scopes = flow.get("scopes")
+                scopes = scopes if isinstance(scopes, Mapping) else {}
+                oauth_rows.append(
+                    {
+                        "agent": agent["name"],
+                        "scheme": name,
+                        "flow": flow_name,
+                        "authorizationUrl": flow.get("authorizationUrl"),
+                        "tokenUrl": flow.get("tokenUrl"),
+                        "declaredScopes": ", ".join(map(str, scopes)) or "None",
+                    }
+                )
+
+    a2a_registry_print_table(
+        declaration_rows,
+        [
+            "agent",
+            "cardFetched",
+            "https",
+            "schemes",
+            "requiredScopes",
+            "schemeValidation",
+        ],
+        limit=20,
+    )
+    if oauth_rows:
+        print()
+        a2a_registry_print_table(
+            oauth_rows,
+            [
+                "agent",
+                "scheme",
+                "flow",
+                "authorizationUrl",
+                "tokenUrl",
+                "declaredScopes",
+            ],
+            limit=20,
+        )
+
+
+def render_security_integration_observability_findings(
+    agents: Sequence[Mapping[str, Any]],
+    agentcensus_responses: Mapping[str, Mapping[str, Any]],
+    registry_validation_responses: Mapping[str, Mapping[str, Any]],
+) -> str:
+    """Render wrapped metadata findings without asserting vulnerabilities."""
+    rows: list[dict[str, Any]] = []
+    for agent in agents:
+        agent_key = str(agent["agentcensus_agent_key"])
+        census_source = f"AgentCensus GET /agents/{agent_key}"
+        registry_source = "A2A Registry POST /public/tools/validate-url"
+        agent_data = (
+            agentcensus_responses[agent_key].get("data") or {}
+        )
+        mechanisms = set(agent_data.get("mechanisms") or [])
+        response = registry_validation_responses.get(str(agent["output_label"]))
+        result = (
+            a2a_registry_validation_data(response)
+            if isinstance(response, Mapping)
+            else None
+        ) or {}
+        card = result.get("cardData")
+        card = card if isinstance(card, Mapping) else {}
+        schemes = card.get("securitySchemes")
+        schemes = schemes if isinstance(schemes, Mapping) else {}
+        if "oauth_protected_resource" in mechanisms and not schemes:
+            rows.append(
+                {
+                    "agent": agent["name"],
+                    "status": "Warning",
+                    "source": [census_source, registry_source],
+                    "finding": "Authentication discovery is split",
+                    "evidence": [
+                        (
+                            f"AgentCensus GET /agents/{agent_key} reports "
+                            "oauth_protected_resource in mechanisms"
+                        ),
+                        (
+                            "A2A Registry POST /public/tools/validate-url fetched "
+                            "the Agent Card; returned cardData has no securitySchemes"
+                        ),
+                    ],
+                    "builderImpact": (
+                        "Card-only clients cannot discover how to authenticate"
+                    ),
+                }
+            )
+
+    columns = [
+        ("agent", "Agent", "15%"),
+        ("status", "Status", "8%"),
+        ("source", "Data source / API", "21%"),
+        ("finding", "Finding", "18%"),
+        ("evidence", "Evidence", "21%"),
+        ("builderImpact", "Builder impact", "17%"),
+    ]
+    header = "".join(
+        f'<th style="width:{width}; text-align:left; padding:6px; '
+        f'border:1px solid #bbb; white-space:normal">{escape(label)}</th>'
+        for _, label, width in columns
+    )
+
+    def render_cell(key: str, value: Any) -> str:
+        if key in {"source", "evidence"} and isinstance(value, list):
+            items = "".join(f"<li>{escape(str(item))}</li>" for item in value)
+            return f'<ul style="margin:0; padding-left:18px">{items}</ul>'
+        return escape(str(value))
+
+    body = "".join(
+        "<tr>"
+        + "".join(
+            '<td style="text-align:left; vertical-align:top; padding:6px; border:1px solid #bbb; '
+            'white-space:normal; overflow-wrap:anywhere; word-break:normal">'
+            f"{render_cell(key, row.get(key, ''))}</td>"
+            for key, _, _ in columns
+        )
+        + "</tr>"
+        for row in rows
+    )
+    return (
+        '<table style="border-collapse:collapse; table-layout:fixed; width:100%">'
+        f"<thead><tr>{header}</tr></thead><tbody>{body}</tbody></table>"
+    )
+
+
 def a2a_registry_render_integrity_table(
     agents: Sequence[Mapping[str, Any]],
     validation_responses: Mapping[str, Mapping[str, Any]],

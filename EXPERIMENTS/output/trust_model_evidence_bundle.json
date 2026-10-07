@@ -1,8 +1,8 @@
 {
   "schemaVersion": "1.0",
-  "capturedAt": "2026-10-07T04:47:31.096448+00:00",
+  "capturedAt": "2026-10-07T05:14:16.622019+00:00",
   "searchBundle": "trust_model_search_bundle.json",
-  "searchCapturedAt": "2026-10-07T04:47:19.808122+00:00",
+  "searchCapturedAt": "2026-10-07T05:14:06.386482+00:00",
   "analysisConfigurations": {
     "ansIntegrityExamples": [
       {
@@ -98,18 +98,18 @@
     "trust_model_comparison_agentcensus_shared_council_of_ai_agent.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "e590e9b9ee3387d1ceab9f11db71b0864ad4a0f5ec65aad8ec8b7191f747c3f9",
+      "sha256": "b0ab26e5771e8557b65016b444e92840b50aef0bdecb2136a65c0c1e9328cf71",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_0257be5ab061",
-        "elapsedMs": 403.5,
+        "elapsedMs": 391.2,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "_x2d0Jro3mojQfxK3lOfAvSsUZDB51xAI9m0bkXV-1WwiugyWk99fw==",
+          "x-request-id": "LE4jGiFJSWfD3FdQEP9X93bxRnXIzSVW2CK_pxlNObH6lLFS0kJJuA==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49935",
+          "x-ratelimit-remaining": "49869",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -210,18 +210,18 @@
     "trust_model_comparison_agentcensus_shared_council_of_ai_domain.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "d58a6d27265fd321344085fe2a180b0954682e377cdb3c9f6fcfc5e4f198f661",
+      "sha256": "7ce2e3de7cfe889a48b5ac97dabc489289fa397ef70ab6099cfc5ecb9449fdd5",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/domains/councilof.ai",
-        "elapsedMs": 189.0,
+        "elapsedMs": 154.2,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "MbTpZ1iHeuAGOxQe0Ca56lwrnvEuOGblvBoQOnO__9O2r77qxNeA-g==",
+          "x-request-id": "PovHel64PJtr3MYJzHXkBTjhQAuwhhIf47-6CAZbfRXgcnGggTSGhg==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49934",
+          "x-ratelimit-remaining": "49868",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -242,18 +242,18 @@
     "trust_model_comparison_agentcensus_only_selnoviktech_agent.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "819e610e049f674f543e28b458a67e1fd14cfafaa546249463b76b83d4900ae0",
+      "sha256": "37da06d5bf7a37d0880bebae16105f01bfd1193d84013474efaa4cedb7d1e9f0",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea",
-        "elapsedMs": 174.1,
+        "elapsedMs": 206.6,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "lpaFKaLcheyfbuphWV6vIYdDAXBHh241xwHJizl9eBQcM84FQaLtVg==",
+          "x-request-id": "vfTXmTTG2Se4A2bKGWVwNjipIh2BTYoOZch6QEjg8QhL81cE93AUdg==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49933",
+          "x-ratelimit-remaining": "49867",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -366,18 +366,18 @@
     "trust_model_comparison_agentcensus_only_selnoviktech_domain.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "a085b26c701e95942a5119743f930a936c6437ea7cc261c977bf3852e79a0ddf",
+      "sha256": "1658b321e06d9141b3c0bb2852eac3466f69b2ed0f8e062625dca32edb6a2650",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/domains/selnoviktech.com",
-        "elapsedMs": 196.7,
+        "elapsedMs": 141.0,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "Z3t6giSAXOlSWAW5-3nCxLBegbaYhVXY0D_sN__63X0RUpifq8DrUA==",
+          "x-request-id": "mouQPXihTF420oNsHNF3tHVQDku37gqNP7ifHc0BYkbqYwN2KVSXQg==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49932",
+          "x-ratelimit-remaining": "49866",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -447,18 +447,18 @@
     "trust_model_comparison_agentcensus_missing_a2a402_domain.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "c53fc2f4b29abdeed52ba5471393f10e404ab0ebb8c117ab395beaed926c2d77",
+      "sha256": "8abd4dc03a31bba03772e017d5658e38ad43585568bab7b349a6819a3e5e8e99",
       "hashScope": "canonical-json",
       "payload": {
         "ok": false,
         "status": 404,
         "url": "https://agentcensus.io/api/v1/domains/a2a402.market",
-        "elapsedMs": 154.8,
+        "elapsedMs": 149.2,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "v0MLnZc1Roma83CIDq2dlskC6bwvXCXtVuvR_Udd9THS8302k-2wgw==",
+          "x-request-id": "GAKQc5FGAHleIfSVIXOoO3Bijikw0gVdTfx8F1msru6a6ox1ck5ZLA==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49931",
+          "x-ratelimit-remaining": "49865",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -470,18 +470,18 @@
     "trust_model_comparison_agentcensus_security_sean_guillermo_agent.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "9d6d100e9b4c8cea16f63c3cbec470d91a09a10fe440408da4781d3fbfa1027e",
+      "sha256": "d8237961f4142e4efac81a8bb1a9563337413ff35d4bc2fae8892bb76a7131e6",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_b56658d9968f",
-        "elapsedMs": 177.5,
+        "elapsedMs": 151.3,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "Uk34u3YkmG1-BDWI9AbhClGEHzt8Mcuw-yW3wSYShwTot_44W0AYTA==",
+          "x-request-id": "zo8I1kdrnlAP5WvQXJ0g1crTF07oV9c5fiP8LS5ObwIcqpOTgD28Jw==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49930",
+          "x-ratelimit-remaining": "49864",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -609,18 +609,18 @@
     "trust_model_comparison_agentcensus_security_sean_guillermo_domain.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "7af6bb076bdbdc2ed8e0fa1a5544e8e97481f71a49b5252fba3a0f17322afedc",
+      "sha256": "b3d5461f098ad8a5d508d6645e4dd167f19313977dc0fd54b36614d60434c67f",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/domains/seanguillermo.com",
-        "elapsedMs": 160.2,
+        "elapsedMs": 170.3,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "Vo-gKwNJMKtOEbvB1IkYBz8ZPDxgDdbP50f2I64kGm_YR_zUlkiavQ==",
+          "x-request-id": "iJm6fPE4PbeKZVGxSESYlAIPRmBqb-UI03iSII6DTK1lvZyzocrhjg==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49929",
+          "x-ratelimit-remaining": "49863",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -641,18 +641,18 @@
     "trust_model_comparison_agentcensus_security_serql_agent.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "4f0172a63f2655b318d31f8b37b1aa62245e9197fda27c17bef5d2b48a22b06b",
+      "sha256": "4f8c32d1bbff6f599b6e5fb9ec51229d9a9d14f7a032ec6e8c3959037b2b4535",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_1469b9669a7b",
-        "elapsedMs": 176.2,
+        "elapsedMs": 155.9,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "msG58RbDCZW-wYzNuYA2b_QsOINy-K3qZvTfdfKI89gfJyynHWvWmA==",
+          "x-request-id": "BIgD1H0wlTn-_tQigoNlcCJ950ALlFaNgKwROoqAA4trFgCkzv_8uA==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49928",
+          "x-ratelimit-remaining": "49862",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -727,18 +727,18 @@
     "trust_model_comparison_agentcensus_security_serql_domain.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "9547a14286a9d7b14945e673062f7000f63d4ce2b1aa367b1e36e6bc58f0acf0",
+      "sha256": "68c5811dc5da65655abf49042f109050fd6d4896ad5011f91c12e418eecc757c",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/domains/serql.io",
-        "elapsedMs": 181.7,
+        "elapsedMs": 146.1,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "7yKkVXCLs9EVsH7cq_EcPLT_M5wUieWrS9AoNZRozXMwPezkGdd9tQ==",
+          "x-request-id": "J9CU0QCe7s3evumNYTwYbDq6bcFrVe3zJJ-aGHXU5OjFcHHIlEet8g==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49927",
+          "x-ratelimit-remaining": "49861",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -759,18 +759,18 @@
     "trust_model_comparison_agentcensus_shared_council_of_ai_a2a_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "cb920700c32be864252dba0255428875d0656b5797e4aa09585e50085b8f19b9",
+      "sha256": "1c30ff77c314182c64a13221a37d4d347e9552ae64310f7bbfd793a8350107ef",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_0257be5ab061/documents/a2a",
-        "elapsedMs": 176.9,
+        "elapsedMs": 137.7,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "tVrxFpWRLoNgZpdD9kKlzZ-RVQPtDRum3bBzESo_RbDZl4bpAd1O2g==",
+          "x-request-id": "YXmDuq7qce_Js6cxUvrDLejtMctfspH356ClunoGqBVPKalTH5N00g==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49926",
+          "x-ratelimit-remaining": "49860",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -787,18 +787,18 @@
     "trust_model_comparison_agentcensus_shared_council_of_ai_a2a_alt_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "cc1630e8c6276246d96bc2728f5f11c1425e81e16850fe3189a9d6648266de8c",
+      "sha256": "d180f9f0d27c81a1dd998a42f15611dbba0819952122dc64ba4f2345052f6c07",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_0257be5ab061/documents/a2a_alt",
-        "elapsedMs": 165.8,
+        "elapsedMs": 143.6,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "KKb7ho8FrV8BdbCzKIc7TxOrkTtvLjV66rDvGGMz2uNmnVtRXDrG9A==",
+          "x-request-id": "3XmCcGGqKRrtP-XkB3VBITJhiGxcP0brLPQQ1BQ1LpGU2lrCS8E9SQ==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49925",
+          "x-ratelimit-remaining": "49859",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -815,18 +815,18 @@
     "trust_model_comparison_agentcensus_only_selnoviktech_a2a_alt_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "b273d319a32dbc137baed8dd11e78eecaa9e480445f175fda967e6d85dce858a",
+      "sha256": "190511a4e8504fd5518e80b9b27cc35dff41e61967dba1304651f612f570b60a",
       "hashScope": "canonical-json",
       "payload": {
         "ok": false,
         "status": 404,
         "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/a2a_alt",
-        "elapsedMs": 160.7,
+        "elapsedMs": 151.6,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "3fm1YFgbUUGqVUj848-4IeXTw9U4oSGuZ5oGICg_YTqorIu-JF3j0Q==",
+          "x-request-id": "zAFuDBjPPxTx51orL0DU2I3DdyPEdlA85oaU6WSSYPrLJ9tQLX0zIA==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49924",
+          "x-ratelimit-remaining": "49858",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -838,18 +838,18 @@
     "trust_model_comparison_agentcensus_only_selnoviktech_oauth_protected_resource_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "241426460352c65a7e8df4aeead181160b74c318409acc019efb50cb775c30f9",
+      "sha256": "245cf28a1ae0a63fc043e626e0807f32e7cea999f6229f797c1004a4013bb475",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/oauth_protected_resource",
-        "elapsedMs": 164.1,
+        "elapsedMs": 138.9,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "o8OANdAKdD5zsmV-HqeKu5J3fIs11yCu-OWTq6djbWgDj3PHgoMNbw==",
+          "x-request-id": "U8n_5kY49du53DurcCV9JM5VXNKTlyBpukLpzE16GyCQd3fEfAKFCg==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49923",
+          "x-ratelimit-remaining": "49857",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -866,18 +866,18 @@
     "trust_model_comparison_agentcensus_only_selnoviktech_a2a_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "307b0b48ea61c1e50062d33b9936d6805e146586e47cf38eaf4f03b20a880708",
+      "sha256": "55f4143d14cb2aab7e933fc2c292de47d49c67ff3d3516d96c15e1e43683618c",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/a2a",
-        "elapsedMs": 162.5,
+        "elapsedMs": 141.9,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "QoEG27ybD8R0OeIyuH0OJdRsplCUF6l5nnXkFXjqczw3Cc1iER8rhQ==",
+          "x-request-id": "k9LGoT0LGs4qbkvoGejzkEe7VwWGss7xfCUNGzxssqf1T53dHi0lew==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49922",
+          "x-ratelimit-remaining": "49856",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -894,18 +894,18 @@
     "trust_model_comparison_agentcensus_only_selnoviktech_ard_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "cb3594daf187d1570e7f9f58b269a9f29963297fa90e1c346e57037418c72e38",
+      "sha256": "fd15d2385ed464a269f59ea8d0a045934b848f3bd30b584e5e8a60a6a9f13c08",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_050fb7a9ceea/documents/ard",
-        "elapsedMs": 159.0,
+        "elapsedMs": 140.7,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "0GTAS2agGnv-TzuXiZ1KX_S-oSZS7Xahwa2PXwgoYcqW6W5OiGnEPQ==",
+          "x-request-id": "_DGvhxTAhnWN2ukPsaODE5rQc-4nsnhfwTprs1boo9qLHrbfKe7tVw==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49921",
+          "x-ratelimit-remaining": "49855",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -922,18 +922,18 @@
     "trust_model_comparison_agentcensus_security_sean_guillermo_ard_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "f50532490db8afef49d8c33c702325f6ae6dfc23a275b105fb7e734f0508a9fb",
+      "sha256": "467bb6c7baa7b5d7d742eae05849d5f3e321e779311a81d8b3d20d762259e0b1",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_b56658d9968f/documents/ard",
-        "elapsedMs": 165.0,
+        "elapsedMs": 147.9,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "Fhc2hcWK5Ksn1SvpBGpsYjho_RStiqDG2oshhLCswiKSrETgnYT52A==",
+          "x-request-id": "wB8hT9gMJwA44dknXtU7oYX0iHKbJjBGMses2T5YC-ycIfIROCL7wQ==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49920",
+          "x-ratelimit-remaining": "49854",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -950,18 +950,18 @@
     "trust_model_comparison_agentcensus_security_sean_guillermo_a2a_alt_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "99f590cc5f0f53e5d5b6ece69c75a169d97cabaa83871c85704fa530bccd6b65",
+      "sha256": "ecdad893fce35ae26f64da1381cd758063b75905a0722c7760a6f1f7b644bf7a",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_b56658d9968f/documents/a2a_alt",
-        "elapsedMs": 164.9,
+        "elapsedMs": 145.8,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "cenAzglApAV_xcuy9534tnLd2br90CfGO6pdRudLvXQD7ut6zLI0Bg==",
+          "x-request-id": "-HA-Zs6KYYFZwAc6zBrqgQg6FYDAm_CAU8-LMKptjuq5fa6_pvBbNA==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49919",
+          "x-ratelimit-remaining": "49853",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -978,18 +978,18 @@
     "trust_model_comparison_agentcensus_security_sean_guillermo_a2a_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "2e2608b6d603d01077dc939f79377832fddcecc8e9e1c93c48a10a92a34da987",
+      "sha256": "9db3e2e893197877be60f7c18291dfe28d883e2c3f56e8b1dc2b57a3f7d4eb51",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_b56658d9968f/documents/a2a",
-        "elapsedMs": 165.7,
+        "elapsedMs": 171.1,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "pOIvYhGewWahkSUtlslETZuvrfUxAKa_KG4QuI-6sWsEFT7kbhcMxg==",
+          "x-request-id": "PF2iGEr7yTJzG-NY-W8PN7L8hkfgK_SKet6vwXhaoKxvznRUESoBJA==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49918",
+          "x-ratelimit-remaining": "49852",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -1006,18 +1006,18 @@
     "trust_model_comparison_agentcensus_security_sean_guillermo_oauth_protected_resource_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "7f71b2b6683f5fa00ab4c486abccdae2140c97a271bcf4c7e9cec41b143b339d",
+      "sha256": "6631cb1c0d3aa37ceae5b1658c8db08e70c090506b8eefd176db293a19bf1396",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_b56658d9968f/documents/oauth_protected_resource",
-        "elapsedMs": 162.6,
+        "elapsedMs": 140.6,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "_03CUbhvdZ2pbuF-LijXYmLLcdWEUEim0aOZ2snlLXeSkHhmhIvFHg==",
+          "x-request-id": "3A_eGpoeI75KolsTiAnaTP3hqTffG58yH2rcpHfrDGmnoWkfNxfFeQ==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49917",
+          "x-ratelimit-remaining": "49851",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -1034,18 +1034,18 @@
     "trust_model_comparison_agentcensus_security_serql_a2a_alt_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "86e060eecb9e9329f2eae22a33ea9764eb02f76d7d932b9dc8563bbf58064c34",
+      "sha256": "f3a16e29fd12d8194fd10ca9cfb367d26057129048819a4d23a01bc4907187f7",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_1469b9669a7b/documents/a2a_alt",
-        "elapsedMs": 166.9,
+        "elapsedMs": 138.5,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "xS5WavB9C-pugX_moVYlucH1Ebjrm2mg57Z4lCTb7R6KwFGCkENQ_g==",
+          "x-request-id": "ecl3WGOe7-QTm9LW92po6mrwGZJcJA5h1BA664L56_gLvepDIRWLvQ==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49916",
+          "x-ratelimit-remaining": "49850",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -1062,18 +1062,18 @@
     "trust_model_comparison_agentcensus_security_serql_ard_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "b7180aa5ecdeaac867a9536d480c2fbe57a1717fcae0cc8138a898bbddeaf67c",
+      "sha256": "43ddc8c915decffbcef0aa84ebf7dd3e23ca55f5811ea8d7642095765a7a837d",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_1469b9669a7b/documents/ard",
-        "elapsedMs": 162.0,
+        "elapsedMs": 145.3,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "KTuladzlBW3lYh_jTeg6KTB1rDXnhZomlD3uFs4vyGJxXHcrzjRBrw==",
+          "x-request-id": "-HZ_TOR2obs38DsJzwkvNyii_AuScQxjVCPMzQHWA8W6nNlMeiZ6zw==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49915",
+          "x-ratelimit-remaining": "49849",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -1087,16 +1087,16 @@
         }
       }
     },
-    "trust_model_comparison_a2a_registry_shared_council_of_ai_integrity_validation.json": {
+    "trust_model_comparison_a2a_registry_shared_council_of_ai_validation.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "594ccaf0ab0807bc9848fa1264e198ac96cdfc2ed79f9857ff7a7a9addc2aa71",
+      "sha256": "2eca78eaf3e97e05139f31b41ddb0f70fb783d0596e863d3b4803dc14bd06d44",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://api.a2a-registry.org/public/tools/validate-url",
-        "elapsedMs": 1015.3,
+        "elapsedMs": 393.1,
         "headers": {
           "content-type": "application/json"
         },
@@ -1370,7 +1370,7 @@
                 "severity": "pass",
                 "code": "HTTP_200_OK",
                 "title": "HTTP Status 200 OK",
-                "message": "Manifest endpoint successfully responded with HTTP 200 in 538ms."
+                "message": "Manifest endpoint successfully responded with HTTP 200 in 232ms."
               },
               {
                 "tier": "tier2_network",
@@ -1520,7 +1520,7 @@
             "metadata": {
               "isOffline": false,
               "targetUrl": "https://councilof.ai/.well-known/agent.json",
-              "responseTimeMs": 538,
+              "responseTimeMs": 232,
               "contentLengthBytes": 18668,
               "contentType": "application/json",
               "dnsTxtFound": false,
@@ -1530,16 +1530,189 @@
         }
       }
     },
-    "trust_model_comparison_a2a_registry_missing_a2a402_integrity_validation.json": {
+    "trust_model_comparison_a2a_registry_only_selnoviktech_validation.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "f68f0c7fd24c21759c4fa60a40d69a64cd79103502580722db4ef16dff6ca93f",
+      "sha256": "2e36835986a0e411dd661b262df99c5cb1055ca7ea51017f1bf30714b351bfb8",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://api.a2a-registry.org/public/tools/validate-url",
-        "elapsedMs": 1227.6,
+        "elapsedMs": 885.0,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "data": {
+          "success": true,
+          "data": {
+            "isValid": false,
+            "readinessScore": 40,
+            "grade": "Needs Work",
+            "specVersionDetected": "v1.0",
+            "cardData": {
+              "schema": "https://schema.a2a.org/v1/agent-card.json",
+              "name": "Selnoviktech Agent",
+              "description": "Selnoviktech AI agent surface — lets agents search and read Selnoviktech public articles and pages.",
+              "version": "1.0.0",
+              "supportedInterfaces": [
+                {
+                  "url": "https://selnoviktech.com",
+                  "protocolBinding": "HTTP+JSON",
+                  "protocolVersion": "1.0"
+                }
+              ],
+              "provider": {
+                "organization": "Selnoviktech",
+                "url": "https://selnoviktech.com"
+              },
+              "capabilities": {
+                "streaming": false,
+                "pushNotifications": false,
+                "extendedAgentCard": false
+              },
+              "defaultInputModes": [
+                "text/plain",
+                "application/json"
+              ],
+              "defaultOutputModes": [
+                "text/plain",
+                "application/json"
+              ],
+              "skills": [
+                {
+                  "id": "selnoviktech_search",
+                  "name": "Search Selnoviktech",
+                  "description": "Search Selnoviktech articles, pages, and tutorials by keyword.",
+                  "tags": [
+                    "search",
+                    "articles",
+                    "tutorials"
+                  ],
+                  "examples": [
+                    "Find articles about Kubernetes",
+                    "Search crypto news"
+                  ]
+                },
+                {
+                  "id": "selnoviktech_read",
+                  "name": "Read article",
+                  "description": "Fetch the full text of a Selnoviktech article by URL or wp-json post id.",
+                  "tags": [
+                    "read",
+                    "article"
+                  ],
+                  "examples": [
+                    "Read https://selnoviktech.com/example-post"
+                  ]
+                }
+              ]
+            },
+            "targetUrl": "https://selnoviktech.com/.well-known/agent.json",
+            "isOffline": false,
+            "findings": [
+              {
+                "tier": "tier2_network",
+                "severity": "pass",
+                "code": "HTTP_200_OK",
+                "title": "HTTP Status 200 OK",
+                "message": "Manifest endpoint successfully responded with HTTP 200 in 749ms."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "pass",
+                "code": "HTTPS_ENFORCED",
+                "title": "HTTPS Encryption Valid",
+                "message": "Endpoint is served over secure TLS/HTTPS."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "warning",
+                "code": "MIME_TYPE_JSON_ADVISORY",
+                "title": "Standard JSON MIME Header",
+                "message": "Content-Type is 'application/json'. The recommended canonical header is 'application/a2a+json'.",
+                "suggestion": "Serve with header 'Content-Type: application/a2a+json; charset=utf-8'."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "warning",
+                "code": "CORS_MISSING",
+                "title": "Missing CORS Headers",
+                "message": "No 'Access-Control-Allow-Origin: *' header found. Web browser agents may fail to fetch this card directly.",
+                "suggestion": "Add 'Access-Control-Allow-Origin: *' to your agent card endpoint."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: root",
+                "message": "root must NOT have additional properties",
+                "field": "root",
+                "suggestion": "Refer to the A2A v1.0 specification for field 'root'."
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "info",
+                "code": "SKILL_EXAMPLES_FEW",
+                "title": "Skill [Search Selnoviktech] Has Only 2 Example(s)",
+                "message": "Recommended minimum is 3 diverse prompt variations.",
+                "field": "skills[0].examples"
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "info",
+                "code": "SKILL_EXAMPLES_FEW",
+                "title": "Skill [Read article] Has Only 1 Example(s)",
+                "message": "Recommended minimum is 3 diverse prompt variations.",
+                "field": "skills[1].examples"
+              },
+              {
+                "tier": "tier4_trust",
+                "severity": "info",
+                "code": "SIGNATURES_ABSENT",
+                "title": "No JWS Signatures Attached",
+                "message": "Card is unsigned. Attaching a RFC 7515/8785 JWS signature provides tamper-evident trust verification."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "pass",
+                "code": "PAYLOAD_SIZE_OK",
+                "title": "Payload Size OK",
+                "message": "Card payload is 1.3KB (well under 10KB)."
+              }
+            ],
+            "summary": {
+              "totalErrors": 1,
+              "totalWarnings": 2,
+              "totalPasses": 3,
+              "tier1Status": "fail",
+              "tier2Status": "warn",
+              "tier3Status": "pass",
+              "tier4Status": "pass"
+            },
+            "metadata": {
+              "isOffline": false,
+              "targetUrl": "https://selnoviktech.com/.well-known/agent.json",
+              "responseTimeMs": 749,
+              "contentLengthBytes": 1303,
+              "contentType": "application/json",
+              "dnsTxtFound": false,
+              "godaddyAnsFound": false
+            }
+          }
+        }
+      }
+    },
+    "trust_model_comparison_a2a_registry_missing_a2a402_validation.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "9d1786c11f9bef769cf327fb3e23fd15c7ad556d1ae70ec0f45d17e5391803e8",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://api.a2a-registry.org/public/tools/validate-url",
+        "elapsedMs": 282.4,
         "headers": {
           "content-type": "application/json"
         },
@@ -1763,7 +1936,7 @@
                 "severity": "pass",
                 "code": "HTTP_200_OK",
                 "title": "HTTP Status 200 OK",
-                "message": "Manifest endpoint successfully responded with HTTP 200 in 453ms."
+                "message": "Manifest endpoint successfully responded with HTTP 200 in 157ms."
               },
               {
                 "tier": "tier2_network",
@@ -1894,7 +2067,7 @@
             "metadata": {
               "isOffline": false,
               "targetUrl": "https://a2a402.market/.well-known/agent-card.json",
-              "responseTimeMs": 453,
+              "responseTimeMs": 157,
               "contentLengthBytes": 7139,
               "contentType": "application/json",
               "dnsTxtFound": false,
@@ -1904,10 +2077,735 @@
         }
       }
     },
+    "trust_model_comparison_a2a_registry_security_sean_guillermo_validation.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "3f81eee68332cb48a24940da9a9e19f5dc1ee2cf9b7bd6de6cfe3470a9fd670d",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://api.a2a-registry.org/public/tools/validate-url",
+        "elapsedMs": 260.0,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "data": {
+          "success": true,
+          "data": {
+            "isValid": false,
+            "readinessScore": 40,
+            "grade": "Needs Work",
+            "specVersionDetected": "v1.0",
+            "cardData": {
+              "name": "Sean Guillermo Site Agent",
+              "version": "1.0.0",
+              "description": "Agent-facing interface for seanguillermo.com — SEO, AEO, GEO services, insights, and contact routing.",
+              "url": "https://www.seanguillermo.com",
+              "capabilities": {
+                "streaming": false,
+                "pushNotifications": false
+              },
+              "supportedInterfaces": [
+                {
+                  "url": "https://www.seanguillermo.com/api/mcp",
+                  "protocolBinding": "HTTP+JSON",
+                  "protocolVersion": "0.3.0"
+                }
+              ],
+              "skills": [
+                {
+                  "id": "contact-inquiry",
+                  "name": "Contact Inquiry",
+                  "description": "Route project inquiries to Sean Guillermo Digital via the public contact API.",
+                  "tags": [
+                    "contact",
+                    "lead"
+                  ]
+                },
+                {
+                  "id": "seo-insights",
+                  "name": "SEO Insights",
+                  "description": "Surface published articles on technical SEO, AEO, and GEO from the insights blog.",
+                  "tags": [
+                    "seo",
+                    "content"
+                  ]
+                },
+                {
+                  "id": "service-discovery",
+                  "name": "Service Discovery",
+                  "description": "Describe agency services, industries served, and Philippine city landing pages.",
+                  "tags": [
+                    "services",
+                    "discovery"
+                  ]
+                }
+              ],
+              "defaultInputModes": [
+                "text/plain",
+                "application/json"
+              ],
+              "defaultOutputModes": [
+                "text/plain",
+                "text/markdown",
+                "application/json"
+              ]
+            },
+            "targetUrl": "https://seanguillermo.com/.well-known/agent-card.json",
+            "isOffline": false,
+            "findings": [
+              {
+                "tier": "tier2_network",
+                "severity": "pass",
+                "code": "HTTP_200_OK",
+                "title": "HTTP Status 200 OK",
+                "message": "Manifest endpoint successfully responded with HTTP 200 in 154ms."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "pass",
+                "code": "HTTPS_ENFORCED",
+                "title": "HTTPS Encryption Valid",
+                "message": "Endpoint is served over secure TLS/HTTPS."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "warning",
+                "code": "MIME_TYPE_JSON_ADVISORY",
+                "title": "Standard JSON MIME Header",
+                "message": "Content-Type is 'application/json'. The recommended canonical header is 'application/a2a+json'.",
+                "suggestion": "Serve with header 'Content-Type: application/a2a+json; charset=utf-8'."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "pass",
+                "code": "CORS_ENABLED",
+                "title": "CORS Cross-Origin Allowed",
+                "message": "Access-Control-Allow-Origin header is present ('*')."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: root",
+                "message": "root must NOT have additional properties",
+                "field": "root",
+                "suggestion": "Refer to the A2A v1.0 specification for field 'root'."
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "warning",
+                "code": "SKILL_EXAMPLES_MISSING",
+                "title": "Skill [Contact Inquiry] Has No Examples",
+                "message": "Skill 'Contact Inquiry' has 0 prompt examples. Adding 3–5 diverse variations helps clients and agents understand when to invoke this skill.",
+                "field": "skills[0].examples",
+                "suggestion": "Add natural-language queries that users would send to trigger this skill."
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "warning",
+                "code": "SKILL_EXAMPLES_MISSING",
+                "title": "Skill [SEO Insights] Has No Examples",
+                "message": "Skill 'SEO Insights' has 0 prompt examples. Adding 3–5 diverse variations helps clients and agents understand when to invoke this skill.",
+                "field": "skills[1].examples",
+                "suggestion": "Add natural-language queries that users would send to trigger this skill."
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "warning",
+                "code": "SKILL_EXAMPLES_MISSING",
+                "title": "Skill [Service Discovery] Has No Examples",
+                "message": "Skill 'Service Discovery' has 0 prompt examples. Adding 3–5 diverse variations helps clients and agents understand when to invoke this skill.",
+                "field": "skills[2].examples",
+                "suggestion": "Add natural-language queries that users would send to trigger this skill."
+              },
+              {
+                "tier": "tier4_trust",
+                "severity": "info",
+                "code": "SIGNATURES_ABSENT",
+                "title": "No JWS Signatures Attached",
+                "message": "Card is unsigned. Attaching a RFC 7515/8785 JWS signature provides tamper-evident trust verification."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "pass",
+                "code": "PAYLOAD_SIZE_OK",
+                "title": "Payload Size OK",
+                "message": "Card payload is 1.0KB (well under 10KB)."
+              }
+            ],
+            "summary": {
+              "totalErrors": 1,
+              "totalWarnings": 4,
+              "totalPasses": 4,
+              "tier1Status": "fail",
+              "tier2Status": "warn",
+              "tier3Status": "warn",
+              "tier4Status": "pass"
+            },
+            "metadata": {
+              "isOffline": false,
+              "targetUrl": "https://seanguillermo.com/.well-known/agent-card.json",
+              "responseTimeMs": 154,
+              "contentLengthBytes": 1054,
+              "contentType": "application/json",
+              "dnsTxtFound": false,
+              "godaddyAnsFound": false
+            }
+          }
+        }
+      }
+    },
+    "trust_model_comparison_a2a_registry_security_serql_validation.json": {
+      "mediaType": "application/json",
+      "url": null,
+      "sha256": "3210d869e9dea051ee558c398d3962a08ed75eb5d1c628330b2f4ab5b334b726",
+      "hashScope": "canonical-json",
+      "payload": {
+        "ok": true,
+        "status": 200,
+        "url": "https://api.a2a-registry.org/public/tools/validate-url",
+        "elapsedMs": 483.9,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "data": {
+          "success": true,
+          "data": {
+            "isValid": false,
+            "readinessScore": 0,
+            "grade": "Needs Work",
+            "specVersionDetected": "v0.3",
+            "cardData": {
+              "protocolVersion": "0.3.0",
+              "name": "Serql Search Console analyst",
+              "description": "Answers questions about a website's Google Search Console performance and produces SEO analyses (branded vs. non-branded, cannibalization, growth opportunities, trend insights) for properties the authorizing user can access. Exposed as an MCP server; the A2A card describes the same capabilities for discovery.",
+              "url": "https://www.serql.io/mcp",
+              "preferredTransport": "JSONRPC",
+              "additionalInterfaces": [
+                {
+                  "url": "https://www.serql.io/mcp",
+                  "transport": "MCP"
+                },
+                {
+                  "url": "https://app.serql.io/api",
+                  "transport": "HTTP+JSON"
+                }
+              ],
+              "supportedInterfaces": [
+                {
+                  "url": "https://www.serql.io/mcp",
+                  "protocolBinding": "MCP",
+                  "protocolVersion": "2025-06-18"
+                },
+                {
+                  "url": "https://app.serql.io/api",
+                  "protocolBinding": "HTTP+JSON",
+                  "protocolVersion": "1.0"
+                }
+              ],
+              "provider": {
+                "organization": "Serql",
+                "url": "https://www.serql.io/"
+              },
+              "iconUrl": "https://www.serql.io/web-app-manifest-512x512.png",
+              "version": "dev",
+              "documentationUrl": "https://www.serql.io/docs/agents",
+              "capabilities": {
+                "streaming": true,
+                "pushNotifications": false,
+                "stateTransitionHistory": false
+              },
+              "securitySchemes": {
+                "oauth2": {
+                  "type": "oauth2",
+                  "description": "OAuth 2.0 authorization code with PKCE (S256) issued by https://clerk.serql.io. Protected resource metadata: https://app.serql.io/.well-known/oauth-protected-resource/api/mcp.",
+                  "flows": {
+                    "authorizationCode": {
+                      "authorizationUrl": "https://clerk.serql.io/oauth/authorize",
+                      "tokenUrl": "https://clerk.serql.io/oauth/token",
+                      "scopes": {
+                        "openid": "Identity",
+                        "profile": "Profile",
+                        "email": "Email"
+                      }
+                    }
+                  }
+                }
+              },
+              "security": [
+                {
+                  "oauth2": [
+                    "openid",
+                    "profile",
+                    "email"
+                  ]
+                }
+              ],
+              "defaultInputModes": [
+                "text/plain",
+                "application/json"
+              ],
+              "defaultOutputModes": [
+                "application/json",
+                "text/markdown"
+              ],
+              "skills": [
+                {
+                  "id": "portfolio-monitoring",
+                  "name": "Portfolio monitoring",
+                  "description": "Every Google Search Console property from every connected Google account on one dashboard with clicks, impressions, CTR, position, period-over-period deltas, tags, favorites, and sparklines.",
+                  "tags": [
+                    "seo",
+                    "google-search-console",
+                    "analytics",
+                    "portfolio-monitoring"
+                  ],
+                  "examples": [
+                    "Which of my sites lost the most clicks in the last 14 days?",
+                    "List all the Search Console properties I manage with this week's KPIs."
+                  ],
+                  "inputModes": [
+                    "text/plain"
+                  ],
+                  "outputModes": [
+                    "application/json",
+                    "text/markdown"
+                  ]
+                },
+                {
+                  "id": "performance-explorer",
+                  "name": "Performance explorer",
+                  "description": "Query, page, country, device, and search-appearance breakdowns beyond the Search Console UI's 1,000-row limit, with five-dimension filtering, comparison date ranges, daily/weekly/monthly aggregation, and CSV export.",
+                  "tags": [
+                    "seo",
+                    "google-search-console",
+                    "analytics",
+                    "performance-explorer"
+                  ],
+                  "examples": [
+                    "Show the top 50 queries for example.com over the last 28 days compared with the previous period.",
+                    "Export all pages with more than 100 impressions and CTR under 2%."
+                  ],
+                  "inputModes": [
+                    "text/plain"
+                  ],
+                  "outputModes": [
+                    "application/json",
+                    "text/markdown"
+                  ]
+                },
+                {
+                  "id": "classifications",
+                  "name": "Classifications (segments and topic clusters)",
+                  "description": "Rule-based query and page groups such as branded vs. non-branded, product lines, or content types, evaluated live over the full dataset without regex.",
+                  "tags": [
+                    "seo",
+                    "google-search-console",
+                    "analytics",
+                    "classifications"
+                  ],
+                  "examples": [
+                    "How much of my traffic is branded vs. non-branded?",
+                    "Compare the 'blog' segment against the 'product pages' segment this month."
+                  ],
+                  "inputModes": [
+                    "text/plain"
+                  ],
+                  "outputModes": [
+                    "application/json",
+                    "text/markdown"
+                  ]
+                },
+                {
+                  "id": "cannibalization",
+                  "name": "Cannibalization detection",
+                  "description": "Finds pages on the same property competing for the same queries so teams can consolidate or differentiate them.",
+                  "tags": [
+                    "seo",
+                    "google-search-console",
+                    "analytics",
+                    "cannibalization"
+                  ],
+                  "examples": [
+                    "Which pages on my site are cannibalizing each other?"
+                  ],
+                  "inputModes": [
+                    "text/plain"
+                  ],
+                  "outputModes": [
+                    "application/json",
+                    "text/markdown"
+                  ]
+                },
+                {
+                  "id": "growth-opportunities",
+                  "name": "Growth opportunities",
+                  "description": "Surfaces queries with high impressions but poor CTR or position that are ready to convert with on-page work.",
+                  "tags": [
+                    "seo",
+                    "google-search-console",
+                    "analytics",
+                    "growth-opportunities"
+                  ],
+                  "examples": [
+                    "Find striking-distance keywords on positions 5-15 with high impressions."
+                  ],
+                  "inputModes": [
+                    "text/plain"
+                  ],
+                  "outputModes": [
+                    "application/json",
+                    "text/markdown"
+                  ]
+                },
+                {
+                  "id": "trend-detection",
+                  "name": "Trend detection and query insights",
+                  "description": "Rising and decaying queries and pages, with Google's confirmed core updates overlaid on every chart.",
+                  "tags": [
+                    "seo",
+                    "google-search-console",
+                    "analytics",
+                    "trend-detection"
+                  ],
+                  "examples": [
+                    "Which queries are growing fastest this month?",
+                    "Did the last Google core update hurt my rankings?"
+                  ],
+                  "inputModes": [
+                    "text/plain"
+                  ],
+                  "outputModes": [
+                    "application/json",
+                    "text/markdown"
+                  ]
+                },
+                {
+                  "id": "annotations",
+                  "name": "Annotations",
+                  "description": "Custom notes for site changes and campaigns, plus automatic Google algorithm-update annotations on performance charts.",
+                  "tags": [
+                    "seo",
+                    "google-search-console",
+                    "analytics",
+                    "annotations"
+                  ],
+                  "examples": [
+                    "Add an annotation for the site migration on 2026-08-01."
+                  ],
+                  "inputModes": [
+                    "text/plain"
+                  ],
+                  "outputModes": [
+                    "application/json",
+                    "text/markdown"
+                  ]
+                },
+                {
+                  "id": "sharing",
+                  "name": "Teams and shareable reports",
+                  "description": "Per-property collaborator roles and white-label, read-only share links that anyone can view without an account.",
+                  "tags": [
+                    "seo",
+                    "google-search-console",
+                    "analytics",
+                    "sharing"
+                  ],
+                  "examples": [
+                    "Create a read-only share link for the client report."
+                  ],
+                  "inputModes": [
+                    "text/plain"
+                  ],
+                  "outputModes": [
+                    "application/json",
+                    "text/markdown"
+                  ]
+                }
+              ],
+              "contact": {
+                "email": "support@serql.io"
+              }
+            },
+            "targetUrl": "https://serql.io/.well-known/agent-card.json",
+            "isOffline": false,
+            "findings": [
+              {
+                "tier": "tier2_network",
+                "severity": "pass",
+                "code": "HTTP_200_OK",
+                "title": "HTTP Status 200 OK",
+                "message": "Manifest endpoint successfully responded with HTTP 200 in 302ms."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "pass",
+                "code": "HTTPS_ENFORCED",
+                "title": "HTTPS Encryption Valid",
+                "message": "Endpoint is served over secure TLS/HTTPS."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "warning",
+                "code": "MIME_TYPE_JSON_ADVISORY",
+                "title": "Standard JSON MIME Header",
+                "message": "Content-Type is 'application/json; charset=utf-8'. The recommended canonical header is 'application/a2a+json'.",
+                "suggestion": "Serve with header 'Content-Type: application/a2a+json; charset=utf-8'."
+              },
+              {
+                "tier": "tier2_network",
+                "severity": "pass",
+                "code": "CORS_ENABLED",
+                "title": "CORS Cross-Origin Allowed",
+                "message": "Access-Control-Allow-Origin header is present ('*')."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "V03_LEGACY_TRANSPORT_FIELD",
+                "title": "Legacy v0.3 preferredTransport Field",
+                "message": "'preferredTransport' is removed in v1.0.",
+                "field": "preferredTransport",
+                "suggestion": "Declare transport via 'protocolBinding' inside 'supportedInterfaces[]'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "V03_PHANTOM_CAPABILITY",
+                "title": "Non-Spec Capability: stateTransitionHistory",
+                "message": "'capabilities.stateTransitionHistory' does not exist in the v1.0 spec.",
+                "field": "capabilities.stateTransitionHistory",
+                "suggestion": "Remove this field. Valid capability booleans: streaming, pushNotifications, extendedAgentCard."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: root",
+                "message": "root must NOT have additional properties",
+                "field": "root",
+                "suggestion": "Refer to the A2A v1.0 specification for field 'root'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: root",
+                "message": "root must NOT have additional properties",
+                "field": "root",
+                "suggestion": "Refer to the A2A v1.0 specification for field 'root'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: root",
+                "message": "root must NOT have additional properties",
+                "field": "root",
+                "suggestion": "Refer to the A2A v1.0 specification for field 'root'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: root",
+                "message": "root must NOT have additional properties",
+                "field": "root",
+                "suggestion": "Refer to the A2A v1.0 specification for field 'root'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: root",
+                "message": "root must NOT have additional properties",
+                "field": "root",
+                "suggestion": "Refer to the A2A v1.0 specification for field 'root'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: root",
+                "message": "root must NOT have additional properties",
+                "field": "root",
+                "suggestion": "Refer to the A2A v1.0 specification for field 'root'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_PATTERN",
+                "title": "Schema Error: /version",
+                "message": "/version must match pattern \"^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?$\"",
+                "field": "/version",
+                "suggestion": "Refer to the A2A v1.0 specification for field '/version'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: /capabilities",
+                "message": "/capabilities must NOT have additional properties",
+                "field": "/capabilities",
+                "suggestion": "Refer to the A2A v1.0 specification for field '/capabilities'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_MAXPROPERTIES",
+                "title": "Schema Error: /securitySchemes/oauth2",
+                "message": "/securitySchemes/oauth2 must NOT have more than 1 properties",
+                "field": "/securitySchemes/oauth2",
+                "suggestion": "Refer to the A2A v1.0 specification for field '/securitySchemes/oauth2'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: /securitySchemes/oauth2",
+                "message": "/securitySchemes/oauth2 must NOT have additional properties",
+                "field": "/securitySchemes/oauth2",
+                "suggestion": "Refer to the A2A v1.0 specification for field '/securitySchemes/oauth2'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: /securitySchemes/oauth2",
+                "message": "/securitySchemes/oauth2 must NOT have additional properties",
+                "field": "/securitySchemes/oauth2",
+                "suggestion": "Refer to the A2A v1.0 specification for field '/securitySchemes/oauth2'."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "error",
+                "code": "SCHEMA_ADDITIONALPROPERTIES",
+                "title": "Schema Error: /securitySchemes/oauth2",
+                "message": "/securitySchemes/oauth2 must NOT have additional properties",
+                "field": "/securitySchemes/oauth2",
+                "suggestion": "Refer to the A2A v1.0 specification for field '/securitySchemes/oauth2'."
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "info",
+                "code": "SKILL_EXAMPLES_FEW",
+                "title": "Skill [Portfolio monitoring] Has Only 2 Example(s)",
+                "message": "Recommended minimum is 3 diverse prompt variations.",
+                "field": "skills[0].examples"
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "info",
+                "code": "SKILL_EXAMPLES_FEW",
+                "title": "Skill [Performance explorer] Has Only 2 Example(s)",
+                "message": "Recommended minimum is 3 diverse prompt variations.",
+                "field": "skills[1].examples"
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "info",
+                "code": "SKILL_EXAMPLES_FEW",
+                "title": "Skill [Classifications (segments and topic clusters)] Has Only 2 Example(s)",
+                "message": "Recommended minimum is 3 diverse prompt variations.",
+                "field": "skills[2].examples"
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "info",
+                "code": "SKILL_EXAMPLES_FEW",
+                "title": "Skill [Cannibalization detection] Has Only 1 Example(s)",
+                "message": "Recommended minimum is 3 diverse prompt variations.",
+                "field": "skills[3].examples"
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "info",
+                "code": "SKILL_EXAMPLES_FEW",
+                "title": "Skill [Growth opportunities] Has Only 1 Example(s)",
+                "message": "Recommended minimum is 3 diverse prompt variations.",
+                "field": "skills[4].examples"
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "info",
+                "code": "SKILL_EXAMPLES_FEW",
+                "title": "Skill [Trend detection and query insights] Has Only 2 Example(s)",
+                "message": "Recommended minimum is 3 diverse prompt variations.",
+                "field": "skills[5].examples"
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "info",
+                "code": "SKILL_EXAMPLES_FEW",
+                "title": "Skill [Annotations] Has Only 1 Example(s)",
+                "message": "Recommended minimum is 3 diverse prompt variations.",
+                "field": "skills[6].examples"
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "info",
+                "code": "SKILL_EXAMPLES_FEW",
+                "title": "Skill [Teams and shareable reports] Has Only 1 Example(s)",
+                "message": "Recommended minimum is 3 diverse prompt variations.",
+                "field": "skills[7].examples"
+              },
+              {
+                "tier": "tier3_discovery",
+                "severity": "pass",
+                "code": "DOCUMENTATION_URL_VALID",
+                "title": "Documentation URL Present",
+                "message": "Agent references public documentation: https://www.serql.io/docs/agents"
+              },
+              {
+                "tier": "tier4_trust",
+                "severity": "info",
+                "code": "SIGNATURES_ABSENT",
+                "title": "No JWS Signatures Attached",
+                "message": "Card is unsigned. Attaching a RFC 7515/8785 JWS signature provides tamper-evident trust verification."
+              },
+              {
+                "tier": "tier1_schema",
+                "severity": "pass",
+                "code": "PAYLOAD_SIZE_OK",
+                "title": "Payload Size OK",
+                "message": "Card payload is 7.2KB (well under 10KB)."
+              },
+              {
+                "tier": "tier4_trust",
+                "severity": "pass",
+                "code": "DNS_TXT_VERIFIED",
+                "title": "DNS TXT Record Verified",
+                "message": "Found valid '_a2a.serql.io' DNS verification record."
+              }
+            ],
+            "summary": {
+              "totalErrors": 14,
+              "totalWarnings": 1,
+              "totalPasses": 6,
+              "tier1Status": "fail",
+              "tier2Status": "warn",
+              "tier3Status": "pass",
+              "tier4Status": "pass"
+            },
+            "metadata": {
+              "isOffline": false,
+              "targetUrl": "https://serql.io/.well-known/agent-card.json",
+              "responseTimeMs": 302,
+              "contentLengthBytes": 7382,
+              "contentType": "application/json; charset=utf-8",
+              "dnsTxtFound": true,
+              "godaddyAnsFound": false
+            }
+          }
+        }
+      }
+    },
     "trust_model_comparison_ans_identity_discovery.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "3a18d59200939ece21ef2e433f6d35274d94c43070672dfce1af1f8d835f03ce",
+      "sha256": "d2e54c37b7a699b2c9e95d5088d9a7934a2f743a5ead99612c7ab5440ead1415",
       "hashScope": "canonical-json",
       "payload": [
         {
@@ -1933,11 +2831,10 @@
               {
                 "name": "councilof.ai.",
                 "type": 6,
-                "TTL": 1800,
+                "TTL": 1736,
                 "data": "elliot.ns.cloudflare.com. dns.cloudflare.com. 2416219770 10000 2400 604800 1800"
               }
-            ],
-            "Comment": "Response from 172.64.32.234."
+            ]
           }
         },
         {
@@ -1963,11 +2860,10 @@
               {
                 "name": "councilof.ai.",
                 "type": 6,
-                "TTL": 1800,
+                "TTL": 1736,
                 "data": "elliot.ns.cloudflare.com. dns.cloudflare.com. 2416219770 10000 2400 604800 1800"
               }
-            ],
-            "Comment": "Response from 108.162.193.162."
+            ]
           }
         },
         {
@@ -2027,7 +2923,7 @@
                 "data": "julian.ns.cloudflare.com. dns.cloudflare.com. 2416653147 10000 2400 604800 1800"
               }
             ],
-            "Comment": "Response from 162.159.44.94."
+            "Comment": "Response from 108.162.194.35."
           }
         },
         {
@@ -2053,11 +2949,10 @@
               {
                 "name": "a2a402.market.",
                 "type": 6,
-                "TTL": 1800,
+                "TTL": 1736,
                 "data": "dns1.p01.nsone.net. domains+netlify.netlify.com. 1786236711 43200 7200 1209600 3600"
               }
-            ],
-            "Comment": "Response from 198.51.45.8."
+            ]
           }
         },
         {
@@ -2087,7 +2982,7 @@
                 "data": "dns1.p01.nsone.net. domains+netlify.netlify.com. 1786236711 43200 7200 1209600 3600"
               }
             ],
-            "Comment": "Response from 198.51.45.8."
+            "Comment": "Response from 198.51.44.8."
           }
         },
         {
@@ -2113,11 +3008,10 @@
               {
                 "name": "seanguillermo.com.",
                 "type": 6,
-                "TTL": 1800,
+                "TTL": 1736,
                 "data": "huxley.ns.cloudflare.com. dns.cloudflare.com. 2416397794 10000 2400 604800 1800"
               }
-            ],
-            "Comment": "Response from 162.159.44.188."
+            ]
           }
         },
         {
@@ -2147,7 +3041,7 @@
                 "data": "huxley.ns.cloudflare.com. dns.cloudflare.com. 2416397794 10000 2400 604800 1800"
               }
             ],
-            "Comment": "Response from 172.64.35.188."
+            "Comment": "Response from 172.64.32.189."
           }
         },
         {
@@ -2185,7 +3079,7 @@
                 "data": "ns-199.awsdns-24.com. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400"
               }
             ],
-            "Comment": "Response from 205.251.192.199."
+            "Comment": "Response from 205.251.199.190."
           }
         },
         {
@@ -2223,7 +3117,7 @@
                 "data": "ns-199.awsdns-24.com. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400"
               }
             ],
-            "Comment": "Response from 205.251.192.199."
+            "Comment": "Response from 205.251.199.190."
           }
         }
       ]
@@ -2231,7 +3125,7 @@
     "trust_model_comparison_ans_snitker_dns_badge.json": {
       "mediaType": "application/json",
       "url": "https://dns.google/resolve?name=_ans-badge.godaddy.demo.ans.snitker.dev&type=TXT",
-      "sha256": "7ba1717d12823b1b343b3c75fe53e923ef66dbb2d283e3e5cc830c9c222d7ad0",
+      "sha256": "8d5c0dd3d6399e193011bf0cf3812644c916ad04c13a71152b8e1ff73d76aa07",
       "hashScope": "response-bytes",
       "payload": {
         "Status": 0,
@@ -2250,17 +3144,16 @@
           {
             "name": "_ans-badge.godaddy.demo.ans.snitker.dev.",
             "type": 16,
-            "TTL": 3600,
+            "TTL": 1994,
             "data": "v=ans-badge1; version=v1.2.0; url=https://transparency.ans.godaddy.com/v1/agents/7d54a8d6-89d7-4d53-93ee-802e410ab1b3"
           }
-        ],
-        "Comment": "Response from 162.159.38.62."
+        ]
       }
     },
     "trust_model_comparison_ans_snitker_transparency_log_badge.json": {
       "mediaType": "application/json",
       "url": "https://transparency.ans.godaddy.com/v1/agents/7d54a8d6-89d7-4d53-93ee-802e410ab1b3",
-      "sha256": "e328f0ce64c9ad2afd516850cd794b421047d8d74090169297fee97ed9445fae",
+      "sha256": "e7ecfb8f6d6b0991469bf20ce8b1c37b35e714438b7d3c8a563d375025dce37f",
       "hashScope": "response-bytes",
       "payload": {
         "merkleProof": {
@@ -2282,13 +3175,13 @@
             "b1p2b7gRhAnmSqPrMsX8kTFpm5hM9cbpaWcGNguwxNY=",
             "JqGK9Mj7w368EoiH6cAglNmFxhubwy1g+49uVLuwR+g=",
             "8Luk7x1b8HlJJ4szl/c0gKaka8An+sZNcOOZA7EYFME=",
-            "e7S7QG6IzLZAlvO5wltV3EsUSZNiGJiyEpNUA/sb0Dk=",
+            "CXH1v8bC2yDTdrt6i0r9/jq6AM9sW8xac6zzAmKMEI8=",
             "Isq0vuCx23hiA5O1AaWf8jyL1V1CXXW6hSC4vpi2EeQ=",
             "0+pILIYJuvaTdGZSFI9fmHDz6EJmA0wghrugjBIsRUA="
           ],
-          "rootHash": "tfiY07xDoJ/v1zfEBarR+8Ruhp+xTRIwSmR8sbU+fmY=",
-          "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTZjNWY1MWFjNzZjNzc2NjA4YzgwYmFiYWQ5N2Y0NGIzMWE2NmMyMDRhOGQxODFmZWI1MTEyYTUzOWIxNTAwYmMiLCJ0aW1lc3RhbXAiOjE3OTEzNDgwODUsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6InRmaVkwN3hEb0pfdjF6ZkVCYXJSLThSdWhwLXhUUkl3U21SOHNiVS1mbVk9IiwidGltZXN0YW1wIjoxNzkxMzQ4MDg1LCJ0cmVlc2l6ZSI6MzYxODY4fQ.MZnniV9wG0OaYoU5uUwttQ-lsjiokZc_CbZrMmajg7I1RQXxAfAJvT88hSXNMRveL5JKFXbpeKKtDyfkqlwQrw",
-          "treeSize": 361868,
+          "rootHash": "nlBwhqmpIV9jWLfj0G/Gr+YiDjq1VYChQKzYtEwtaqI=",
+          "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLWI2NmYxMDc1MGFlMWYwOTgwNGM4MGE1YTQzOWU5YjhmZmQyODIxOWQ0ZWM3OGMxNTk3YTYxYTYxZWE1OWU4NjEiLCJ0aW1lc3RhbXAiOjE3OTEzNDk3MDUsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6Im5sQndocW1wSVY5aldMZmowR19Hci1ZaURqcTFWWUNoUUt6WXRFd3RhcUk9IiwidGltZXN0YW1wIjoxNzkxMzQ5NzA1LCJ0cmVlc2l6ZSI6MzYxODc1fQ.zRYSrQiL4Tgw5TQZaI5yOBoGgFPc2M3rxknUqS4Zjl9NfhKNowF8ragYGl7u_OqOvxc9qdmmlUPv16vGgUAerQ",
+          "treeSize": 361875,
           "treeVersion": 1
         },
         "payload": {
@@ -2355,7 +3248,7 @@
     "trust_model_comparison_ans_snitker_transparency_log_audit.json": {
       "mediaType": "application/json",
       "url": "https://transparency.ans.godaddy.com/v1/agents/7d54a8d6-89d7-4d53-93ee-802e410ab1b3/audit",
-      "sha256": "72e2bccec94212602977dee1d89851f9a6af572cf8a9367a8c0253c7896f35a1",
+      "sha256": "19a81b7bbe8b6f08694008d4a7ac450303db92d39d99e1880913cc79ef329c91",
       "hashScope": "response-bytes",
       "payload": {
         "records": [
@@ -2379,13 +3272,13 @@
                 "b1p2b7gRhAnmSqPrMsX8kTFpm5hM9cbpaWcGNguwxNY=",
                 "JqGK9Mj7w368EoiH6cAglNmFxhubwy1g+49uVLuwR+g=",
                 "8Luk7x1b8HlJJ4szl/c0gKaka8An+sZNcOOZA7EYFME=",
-                "e7S7QG6IzLZAlvO5wltV3EsUSZNiGJiyEpNUA/sb0Dk=",
+                "CXH1v8bC2yDTdrt6i0r9/jq6AM9sW8xac6zzAmKMEI8=",
                 "Isq0vuCx23hiA5O1AaWf8jyL1V1CXXW6hSC4vpi2EeQ=",
                 "0+pILIYJuvaTdGZSFI9fmHDz6EJmA0wghrugjBIsRUA="
               ],
-              "rootHash": "tfiY07xDoJ/v1zfEBarR+8Ruhp+xTRIwSmR8sbU+fmY=",
-              "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTZjNWY1MWFjNzZjNzc2NjA4YzgwYmFiYWQ5N2Y0NGIzMWE2NmMyMDRhOGQxODFmZWI1MTEyYTUzOWIxNTAwYmMiLCJ0aW1lc3RhbXAiOjE3OTEzNDgwODUsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6InRmaVkwN3hEb0pfdjF6ZkVCYXJSLThSdWhwLXhUUkl3U21SOHNiVS1mbVk9IiwidGltZXN0YW1wIjoxNzkxMzQ4MDg1LCJ0cmVlc2l6ZSI6MzYxODY4fQ.MZnniV9wG0OaYoU5uUwttQ-lsjiokZc_CbZrMmajg7I1RQXxAfAJvT88hSXNMRveL5JKFXbpeKKtDyfkqlwQrw",
-              "treeSize": 361868,
+              "rootHash": "nlBwhqmpIV9jWLfj0G/Gr+YiDjq1VYChQKzYtEwtaqI=",
+              "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLWI2NmYxMDc1MGFlMWYwOTgwNGM4MGE1YTQzOWU5YjhmZmQyODIxOWQ0ZWM3OGMxNTk3YTYxYTYxZWE1OWU4NjEiLCJ0aW1lc3RhbXAiOjE3OTEzNDk3MDUsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6Im5sQndocW1wSVY5aldMZmowR19Hci1ZaURqcTFWWUNoUUt6WXRFd3RhcUk9IiwidGltZXN0YW1wIjoxNzkxMzQ5NzA1LCJ0cmVlc2l6ZSI6MzYxODc1fQ.zRYSrQiL4Tgw5TQZaI5yOBoGgFPc2M3rxknUqS4Zjl9NfhKNowF8ragYGl7u_OqOvxc9qdmmlUPv16vGgUAerQ",
+              "treeSize": 361875,
               "treeVersion": 1
             },
             "payload": {
@@ -2639,7 +3532,7 @@
     "trust_model_comparison_ans_agentcensus_dns_badge.json": {
       "mediaType": "application/json",
       "url": "https://dns.google/resolve?name=_ans-badge.agentcensus.io&type=TXT",
-      "sha256": "42d56539e082c7b5c267076b149e3db5524a9bc64726394214b23a3dbbc964d1",
+      "sha256": "4c674305c309e438ce64856961efa2455abbfa230690477229c9e321ec00532d",
       "hashScope": "response-bytes",
       "payload": {
         "Status": 0,
@@ -2662,13 +3555,13 @@
             "data": "v=ans-badge1; version=v1.0.0; url=https://transparency.ans.godaddy.com/v1/agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca"
           }
         ],
-        "Comment": "Response from 205.251.194.243."
+        "Comment": "Response from 205.251.199.149."
       }
     },
     "trust_model_comparison_ans_agentcensus_transparency_log_badge.json": {
       "mediaType": "application/json",
       "url": "https://transparency.ans.godaddy.com/v1/agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca",
-      "sha256": "b6bfc9761827b70bd48730d5c969860211dfdb0d645306e4d754c89ac75fd7b1",
+      "sha256": "474417a5735edcaafa63502826751d4ecd055cd0803c2bc9603f2acc380ca45b",
       "hashScope": "response-bytes",
       "payload": {
         "merkleProof": {
@@ -2690,13 +3583,13 @@
             "2tTVMDNLGsEzbd21j3BRPgVA3XlMgB4XyzxrKDPmqdE=",
             "sAH8flxdYejGIoOpQfHOz6/VBGMoXcfcTDNU4KZhhtc=",
             "8Luk7x1b8HlJJ4szl/c0gKaka8An+sZNcOOZA7EYFME=",
-            "e7S7QG6IzLZAlvO5wltV3EsUSZNiGJiyEpNUA/sb0Dk=",
+            "CXH1v8bC2yDTdrt6i0r9/jq6AM9sW8xac6zzAmKMEI8=",
             "Isq0vuCx23hiA5O1AaWf8jyL1V1CXXW6hSC4vpi2EeQ=",
             "0+pILIYJuvaTdGZSFI9fmHDz6EJmA0wghrugjBIsRUA="
           ],
-          "rootHash": "tfiY07xDoJ/v1zfEBarR+8Ruhp+xTRIwSmR8sbU+fmY=",
-          "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTZjNWY1MWFjNzZjNzc2NjA4YzgwYmFiYWQ5N2Y0NGIzMWE2NmMyMDRhOGQxODFmZWI1MTEyYTUzOWIxNTAwYmMiLCJ0aW1lc3RhbXAiOjE3OTEzNDgwODUsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6InRmaVkwN3hEb0pfdjF6ZkVCYXJSLThSdWhwLXhUUkl3U21SOHNiVS1mbVk9IiwidGltZXN0YW1wIjoxNzkxMzQ4MDg1LCJ0cmVlc2l6ZSI6MzYxODY4fQ.MZnniV9wG0OaYoU5uUwttQ-lsjiokZc_CbZrMmajg7I1RQXxAfAJvT88hSXNMRveL5JKFXbpeKKtDyfkqlwQrw",
-          "treeSize": 361868,
+          "rootHash": "nlBwhqmpIV9jWLfj0G/Gr+YiDjq1VYChQKzYtEwtaqI=",
+          "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLWI2NmYxMDc1MGFlMWYwOTgwNGM4MGE1YTQzOWU5YjhmZmQyODIxOWQ0ZWM3OGMxNTk3YTYxYTYxZWE1OWU4NjEiLCJ0aW1lc3RhbXAiOjE3OTEzNDk3MDUsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6Im5sQndocW1wSVY5aldMZmowR19Hci1ZaURqcTFWWUNoUUt6WXRFd3RhcUk9IiwidGltZXN0YW1wIjoxNzkxMzQ5NzA1LCJ0cmVlc2l6ZSI6MzYxODc1fQ.zRYSrQiL4Tgw5TQZaI5yOBoGgFPc2M3rxknUqS4Zjl9NfhKNowF8ragYGl7u_OqOvxc9qdmmlUPv16vGgUAerQ",
+          "treeSize": 361875,
           "treeVersion": 1
         },
         "payload": {
@@ -2759,7 +3652,7 @@
     "trust_model_comparison_ans_agentcensus_transparency_log_audit.json": {
       "mediaType": "application/json",
       "url": "https://transparency.ans.godaddy.com/v1/agents/1f7f32b8-2689-49e4-b0dd-f4b0999545ca/audit",
-      "sha256": "9abc6563d1aa110bae2a9b6826950fa4d9d64dd946faa12482367d3c00072eae",
+      "sha256": "16656061d2847f9f9866902bd4edc83d59abe3c4be31ef21fd941b23288ba201",
       "hashScope": "response-bytes",
       "payload": {
         "records": [
@@ -2783,13 +3676,13 @@
                 "2tTVMDNLGsEzbd21j3BRPgVA3XlMgB4XyzxrKDPmqdE=",
                 "sAH8flxdYejGIoOpQfHOz6/VBGMoXcfcTDNU4KZhhtc=",
                 "8Luk7x1b8HlJJ4szl/c0gKaka8An+sZNcOOZA7EYFME=",
-                "e7S7QG6IzLZAlvO5wltV3EsUSZNiGJiyEpNUA/sb0Dk=",
+                "CXH1v8bC2yDTdrt6i0r9/jq6AM9sW8xac6zzAmKMEI8=",
                 "Isq0vuCx23hiA5O1AaWf8jyL1V1CXXW6hSC4vpi2EeQ=",
                 "0+pILIYJuvaTdGZSFI9fmHDz6EJmA0wghrugjBIsRUA="
               ],
-              "rootHash": "tfiY07xDoJ/v1zfEBarR+8Ruhp+xTRIwSmR8sbU+fmY=",
-              "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLTZjNWY1MWFjNzZjNzc2NjA4YzgwYmFiYWQ5N2Y0NGIzMWE2NmMyMDRhOGQxODFmZWI1MTEyYTUzOWIxNTAwYmMiLCJ0aW1lc3RhbXAiOjE3OTEzNDgwODUsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6InRmaVkwN3hEb0pfdjF6ZkVCYXJSLThSdWhwLXhUUkl3U21SOHNiVS1mbVk9IiwidGltZXN0YW1wIjoxNzkxMzQ4MDg1LCJ0cmVlc2l6ZSI6MzYxODY4fQ.MZnniV9wG0OaYoU5uUwttQ-lsjiokZc_CbZrMmajg7I1RQXxAfAJvT88hSXNMRveL5JKFXbpeKKtDyfkqlwQrw",
-              "treeSize": 361868,
+              "rootHash": "nlBwhqmpIV9jWLfj0G/Gr+YiDjq1VYChQKzYtEwtaqI=",
+              "rootSignature": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImM5ZTJmNTg0IiwicmFpZCI6IlJBLVRMLWI2NmYxMDc1MGFlMWYwOTgwNGM4MGE1YTQzOWU5YjhmZmQyODIxOWQ0ZWM3OGMxNTk3YTYxYTYxZWE1OWU4NjEiLCJ0aW1lc3RhbXAiOjE3OTEzNDk3MDUsInR5cCI6IkpXVCJ9.eyJjaGVja3BvaW50Rm9ybWF0IjoiYzJzcC92MSIsIm9yaWdpbiI6InRyYW5zcGFyZW5jeS5hbnMuZ29kYWRkeS5jb20iLCJyb290SGFzaCI6Im5sQndocW1wSVY5aldMZmowR19Hci1ZaURqcTFWWUNoUUt6WXRFd3RhcUk9IiwidGltZXN0YW1wIjoxNzkxMzQ5NzA1LCJ0cmVlc2l6ZSI6MzYxODc1fQ.zRYSrQiL4Tgw5TQZaI5yOBoGgFPc2M3rxknUqS4Zjl9NfhKNowF8ragYGl7u_OqOvxc9qdmmlUPv16vGgUAerQ",
+              "treeSize": 361875,
               "treeVersion": 1
             },
             "payload": {
@@ -2854,7 +3747,7 @@
     "trust_model_comparison_ans_agentcensus_dns_ans.json": {
       "mediaType": "application/json",
       "url": "https://dns.google/resolve?name=_ans.agentcensus.io&type=TXT",
-      "sha256": "f02b84c640120f04ecc91b9bd10b42d7e997c9a3e612191d1e4a22bef7b2e7a2",
+      "sha256": "9f7884a7f940db3251c5e651a9659faeda6f0005a6902990678d553d6393fc64",
       "hashScope": "response-bytes",
       "payload": {
         "Status": 0,
@@ -2873,17 +3766,16 @@
           {
             "name": "_ans.agentcensus.io.",
             "type": 16,
-            "TTL": 3600,
+            "TTL": 3536,
             "data": "v=ans1; version=v1.0.0; p=mcp; mode=direct; url=https://agentcensus.io/mcp"
           }
-        ],
-        "Comment": "Response from 205.251.199.149."
+        ]
       }
     },
     "trust_model_comparison_ans_agentcensus_dns_https.json": {
       "mediaType": "application/json",
       "url": "https://dns.google/resolve?name=agentcensus.io&type=HTTPS",
-      "sha256": "d1834297683b8d4f5685ba53c444ff54cf6a1e870260bc688573eefe41fa413b",
+      "sha256": "fa5ea93ed7e263e9ccc6db39b1050b5d718832f51c3294805395bf40114e59c8",
       "hashScope": "response-bytes",
       "payload": {
         "Status": 0,
@@ -2906,13 +3798,13 @@
             "data": "1 . alpn=h2"
           }
         ],
-        "Comment": "Response from 205.251.199.149."
+        "Comment": "Response from 205.251.193.140."
       }
     },
     "trust_model_comparison_ans_agentcensus_dns_tlsa.json": {
       "mediaType": "application/json",
       "url": "https://dns.google/resolve?name=_443._tcp.agentcensus.io&type=TLSA",
-      "sha256": "7110b73b6853d5c1434a1f05aaaa40185b60e2cdf50fbd34f9824599dea4ef13",
+      "sha256": "02c4b83a53b415b11ccc1926a44c3a0325b551f545560044aa35389a4db88fd7",
       "hashScope": "response-bytes",
       "payload": {
         "Status": 0,
@@ -2932,37 +3824,7 @@
             "name": "_443._tcp.agentcensus.io.",
             "type": 52,
             "TTL": 300,
-            "data": "2 1 1 9725d02c6ffcd6d1e436ae80b2931bf73323daf85edbdc7993f8aec491e9b26b"
-          },
-          {
-            "name": "_443._tcp.agentcensus.io.",
-            "type": 52,
-            "TTL": 300,
-            "data": "2 1 1 11e6a7320dd8ab2e9a3762e10b6f300038470c1fdccd9f64e1171ea6fa06c118"
-          },
-          {
-            "name": "_443._tcp.agentcensus.io.",
-            "type": 52,
-            "TTL": 300,
-            "data": "2 1 1 f1d71264818e9242405d5ef5307da5b0526e1bc4f61a4900ab7a06c1d0b8b07a"
-          },
-          {
-            "name": "_443._tcp.agentcensus.io.",
-            "type": 52,
-            "TTL": 300,
-            "data": "2 1 1 1bd2cd340aa5f3dede818b1a6dab219335024c4264581ce0a04b64f17ffaefc7"
-          },
-          {
-            "name": "_443._tcp.agentcensus.io.",
-            "type": 52,
-            "TTL": 300,
             "data": "2 1 1 427dab55bc82df04137b8aca241f5753559a0adc2d04da6eb0cedfe5e1e38fd3"
-          },
-          {
-            "name": "_443._tcp.agentcensus.io.",
-            "type": 52,
-            "TTL": 300,
-            "data": "2 1 1 d7cb643f2af69dc92fe1f828d1d84091a52d27686edbcdf5c653b648a86af1d8"
           },
           {
             "name": "_443._tcp.agentcensus.io.",
@@ -2974,16 +3836,46 @@
             "name": "_443._tcp.agentcensus.io.",
             "type": 52,
             "TTL": 300,
+            "data": "2 1 1 f1d71264818e9242405d5ef5307da5b0526e1bc4f61a4900ab7a06c1d0b8b07a"
+          },
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
+            "data": "2 1 1 d7cb643f2af69dc92fe1f828d1d84091a52d27686edbcdf5c653b648a86af1d8"
+          },
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
+            "data": "2 1 1 9725d02c6ffcd6d1e436ae80b2931bf73323daf85edbdc7993f8aec491e9b26b"
+          },
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
             "data": "2 1 1 bf14689ff125e4ab88e2fc797b2d43826b189916349c37790a0e067c9f12f9b8"
           },
           {
             "name": "_443._tcp.agentcensus.io.",
             "type": 52,
             "TTL": 300,
+            "data": "2 1 1 1bd2cd340aa5f3dede818b1a6dab219335024c4264581ce0a04b64f17ffaefc7"
+          },
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
             "data": "2 1 1 0f11f8b6de342fe79db85eacce963a4ce365c6166105dfa927dc1b1e54367eec"
+          },
+          {
+            "name": "_443._tcp.agentcensus.io.",
+            "type": 52,
+            "TTL": 300,
+            "data": "2 1 1 11e6a7320dd8ab2e9a3762e10b6f300038470c1fdccd9f64e1171ea6fa06c118"
           }
         ],
-        "Comment": "Response from 205.251.193.140."
+        "Comment": "Response from 205.251.199.149."
       }
     },
     "trust_model_comparison_ans_agentcensus_live_a2a_card.json": {
@@ -3420,18 +4312,18 @@
     "trust_model_comparison_agentcensus_ans_example_snitker_agent.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "ca8d8f9e8552e0d82bcbd561ed2e50a70a8789c33e10fd64427f31fee81c8492",
+      "sha256": "002cf1c0200c1741e9408dcc280f4ea6ec344ea9cf6250e408d96e5c277a8d96",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_62fad4c8c1d1",
-        "elapsedMs": 201.1,
+        "elapsedMs": 156.2,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "j9DGbm2rosx0HZnguEn5BuW4zd25WQsZeEW70B_i860lNUGAOzHDXA==",
+          "x-request-id": "nCNfqRZ5gm_RLjvjXGkXJvoZTvogkq1T6V2vp-wRSj98GZkIligEhg==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49914",
+          "x-ratelimit-remaining": "49848",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -3500,18 +4392,18 @@
     "trust_model_comparison_agentcensus_ans_example_snitker_a2a_alt_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "53b64b9dfedf04acb847e5e570909d70c054bafe5a419cae70abb6540e012cf9",
+      "sha256": "f30ecfc4129c98faecf3be76f9e1cf8f46cb2d7bde7b9d4f3e3a10e3493dcfed",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_62fad4c8c1d1/documents/a2a_alt",
-        "elapsedMs": 167.7,
+        "elapsedMs": 156.6,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "5jjzRKVtD4X78Ie9y9F9sWu194v_6iwZW4kz5ZyJxvbv9LlN6v4vNw==",
+          "x-request-id": "7kyagf5wAjaJ_rUx55VTJUBNnq6IXPY1OVQ9M_zYz8zkgc80tWOZEg==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49913",
+          "x-ratelimit-remaining": "49847",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -3528,18 +4420,18 @@
     "trust_model_comparison_agentcensus_ans_example_agentcensus_agent.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "e49734c28d1816f96f7685989beac83c4872702a1b49c1d705430fb81bdfcfc5",
+      "sha256": "bcc52df41dcb8606251d690b72fda3fdfcd2d6b355a9706949929e769826f114",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded",
-        "elapsedMs": 189.4,
+        "elapsedMs": 149.4,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "MD5BlouIl67XJS5lzu9s6quXlJLJG8ZPvtLNe1bF11saMDolmBRiBw==",
+          "x-request-id": "PdUo4XepGuQOTysEhJybTTwqZCCDgnjq6sC_VEknlh3Mt3HOvpNn5A==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49912",
+          "x-ratelimit-remaining": "49846",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -3778,18 +4670,18 @@
     "trust_model_comparison_agentcensus_ans_example_agentcensus_ans_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "f08633881f315b5fc0ae56384e36bd2dfa5586559f73a92c8343eb4b79fbff9e",
+      "sha256": "be6b237ad8d947fbb8aec32a04b37ae8b66fd3af5fb43732f362cd83d3ef7a67",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded/documents/ans",
-        "elapsedMs": 166.3,
+        "elapsedMs": 141.4,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "MALmFgkkVbCQMj_WbkEkEzgCA8ckjQNKBWunn7dVdGj5VGplShIZ1g==",
+          "x-request-id": "sEaCYXGJoDMo3odut_O3PYM4NmX0XWoIc6u2JC42I_1yY0B1gxCouA==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49911",
+          "x-ratelimit-remaining": "49845",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -3806,18 +4698,18 @@
     "trust_model_comparison_agentcensus_ans_example_agentcensus_a2a_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "b16d00eb4b033f60dc241d894504f3ae8c64b1225530c9f3243af4ca3fc410ce",
+      "sha256": "a0f64e2031988a7811206764a2e6394675ddc6aa43582d80017d4b7e24e9251b",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded/documents/a2a",
-        "elapsedMs": 165.1,
+        "elapsedMs": 137.9,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "QyiV8ZFG-qhrsoL07Zww8RiAVR_UChTzjHfXYR4L6H7nCV0WiBygOA==",
+          "x-request-id": "3JMPp8C8haMuploOV3XDe4CMzaKkXHnUm6uBTVWVlCDWAhKMZLzz-g==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49910",
+          "x-ratelimit-remaining": "49844",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
@@ -3834,18 +4726,18 @@
     "trust_model_comparison_agentcensus_ans_example_agentcensus_a2a_alt_document.json": {
       "mediaType": "application/json",
       "url": null,
-      "sha256": "2b13b5c02f7360e7cbb3bc0c5a6f3257e39382df0f07dfaec9acbcc48a81319c",
+      "sha256": "346caee815cc3d837c932f40d0653d16c52d4043884b19061cc8638dbd32ba0f",
       "hashScope": "canonical-json",
       "payload": {
         "ok": true,
         "status": 200,
         "url": "https://agentcensus.io/api/v1/agents/ag_c449a3237ded/documents/a2a_alt",
-        "elapsedMs": 160.3,
+        "elapsedMs": 137.8,
         "headers": {
           "content-type": "application/json",
-          "x-request-id": "1EYCArpKIN472b7LPa8c8UcSXRtl1siCJfbD_ihKA4rl17UnwzP74w==",
+          "x-request-id": "O3kF2WWA9OcveauZP074XTcSFsB_rg9VjJZ1UZXhxl8otQkY340joA==",
           "x-ratelimit-limit": "50000",
-          "x-ratelimit-remaining": "49909",
+          "x-ratelimit-remaining": "49843",
           "x-ratelimit-reset": "2026-10-08T00:00:00Z"
         },
         "data": {
