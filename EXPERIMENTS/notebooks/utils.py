@@ -508,6 +508,86 @@ def agentcensus_summarize_domain_agents(response: Mapping[str, Any]) -> None:
     )
 
 
+def agentcensus_print_security_authorization_evidence(
+    agents: Sequence[Mapping[str, Any]],
+    agent_responses: Mapping[str, Mapping[str, Any]],
+    artifacts: Mapping[str, Any] | str | Path,
+) -> None:
+    """Print declared-auth posture and its per-discovery-source evidence.
+
+    This intentionally reports passive AgentCensus observations only. It does
+    not interpret a declaration as proof of token validation, scope
+    enforcement, least privilege, or destructive-action boundaries.
+    """
+    agent_rows: list[dict[str, Any]] = []
+    document_rows: list[dict[str, Any]] = []
+
+    for agent in agents:
+        agent_key = agent["agentcensus_agent_key"]
+        response = agent_responses[agent_key]
+        data = response.get("data") or {}
+        posture = data.get("posture") or {}
+        agent_rows.append(
+            {
+                "agent": agent["name"],
+                "mechanisms": ", ".join(data.get("mechanisms") or []),
+                "authDeclared": posture.get("authDeclared"),
+                "authSchemes": ", ".join(posture.get("authSchemes") or []),
+                "gate": data.get("gate"),
+                "activeVerification": data.get("activeVerification"),
+            }
+        )
+
+        for source in data.get("mechanisms") or []:
+            filename = (
+                "trust_model_comparison_agentcensus_"
+                f"{agent['output_label']}_{source}_document.json"
+            )
+            document = _artifact_json(artifacts, filename)
+            document_data = document.get("data") or {}
+            snapshot: Mapping[str, Any] = {}
+            if document.get("ok") and document_data.get("snapshot"):
+                snapshot = json.loads(document_data["snapshot"])
+            document_rows.append(
+                {
+                    "agent": agent["name"],
+                    "source": source,
+                    "available": document.get("ok"),
+                    "observedAt": document_data.get("observedAt"),
+                    "authDeclared": snapshot.get("auth_declared"),
+                    "authSchemes": ", ".join(snapshot.get("auth_schemes") or []),
+                    "status": snapshot.get("status"),
+                }
+            )
+
+    agentcensus_print_table(
+        agent_rows,
+        [
+            "agent",
+            "mechanisms",
+            "authDeclared",
+            "authSchemes",
+            "gate",
+            "activeVerification",
+        ],
+        limit=20,
+    )
+    print()
+    agentcensus_print_table(
+        document_rows,
+        [
+            "agent",
+            "source",
+            "available",
+            "observedAt",
+            "authDeclared",
+            "authSchemes",
+            "status",
+        ],
+        limit=50,
+    )
+
+
 def agentcensus_render_integrity_table(
     agents: Sequence[Mapping[str, Any]],
     agent_responses: Mapping[str, Mapping[str, Any]],
