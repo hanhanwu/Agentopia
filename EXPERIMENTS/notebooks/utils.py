@@ -588,6 +588,149 @@ def agentcensus_print_security_authorization_evidence(
     )
 
 
+def agentcensus_render_safety_infrastructure_observation(
+    safety_search: Mapping[str, Any],
+    agent: Mapping[str, Any],
+    domain_response: Mapping[str, Any],
+) -> str:
+    """Render a bounded DNS-AID observation from already retained evidence.
+
+    The compact overlay comes from the raw AgentCensus response stored in the
+    Safety search entry. Detailed checks come from the existing domain-detail
+    capture. Neither is treated as a controlled behavioral safety test, and
+    this helper deliberately does not calculate a Safety score.
+    """
+    agent_key = agent.get("agentcensus_agent_key")
+    search_response = (safety_search.get("raw") or {}).get("agentcensus") or {}
+    search_data = search_response.get("data") or {}
+    search_results = search_data.get("results") or []
+    matching_result = next(
+        (
+            item
+            for item in search_results
+            if (item.get("agent") or {}).get("agentKey") == agent_key
+        ),
+        None,
+    )
+    if matching_result is None:
+        raise ValueError(
+            f"Agent {agent_key!r} is not present in the retained Safety search"
+        )
+
+    observed = matching_result.get("observed") or {}
+    overlay = (observed.get("overlay") or {}).get("safety")
+    if not isinstance(overlay, Mapping):
+        raise ValueError(
+            f"Agent {agent_key!r} has no Safety overlay in the retained search"
+        )
+
+    domain_data = agentcensus_response_data(domain_response)
+    if domain_data is None:
+        return (
+            '<p><strong>Detailed DNS-AID evidence unavailable.</strong> '
+            "See the printed API response above.</p>"
+        )
+    domain_observed = domain_data.get("observed") or {}
+    checks = domain_observed.get("dnsAidChecks") or []
+    status_counts = Counter(
+        str(check.get("status") or "unknown") for check in checks
+    )
+    status_summary = ", ".join(
+        f"{count} {status}" for status, count in sorted(status_counts.items())
+    ) or "No detailed checks retained"
+    safety_overlay_count = sum(
+        isinstance(
+            ((item.get("observed") or {}).get("overlay") or {}).get("safety"),
+            Mapping,
+        )
+        for item in search_results
+    )
+    behavior_overlay_count = sum(
+        isinstance(
+            ((item.get("observed") or {}).get("overlay") or {}).get("behavior"),
+            Mapping,
+        )
+        for item in search_results
+    )
+
+    summary_rows = [
+        ("AgentCensus results searched", len(search_results)),
+        (
+            "Results with Safety overlay",
+            f"{safety_overlay_count}/{len(search_results)}",
+        ),
+        (
+            "Results with behavior overlay",
+            f"{behavior_overlay_count}/{len(search_results)}",
+        ),
+        (
+            "Selected evidence example",
+            agent.get("name")
+            or (matching_result.get("agent") or {}).get("displayName"),
+        ),
+        ("AgentCensus agent key", agent_key),
+        ("Observation class", "DNS-AID infrastructure conformance"),
+        ("Compact source", overlay.get("source")),
+        (
+            "Compact result",
+            f"{overlay.get('flaggedCount')} flagged heuristic families out of "
+            f"{overlay.get('familiesTotal')}",
+        ),
+        ("Compact observation time", overlay.get("lastObservedAt")),
+        ("Detailed domain checks", f"{len(checks)} retained ({status_summary})"),
+        ("Domain check time", domain_observed.get("dnsAidCheckedAt")),
+        ("Behavioral Safety", "Not tested"),
+        ("Safety score", "Not calculated"),
+    ]
+    summary_body = "".join(
+        "<tr>"
+        f"<th>{escape(str(label))}</th>"
+        f"<td>{escape(str(value if value is not None else 'Unavailable'))}</td>"
+        "</tr>"
+        for label, value in summary_rows
+    )
+
+    check_body = "".join(
+        "<tr>"
+        f"<td><code>{escape(str(check.get('check') or 'unknown'))}</code></td>"
+        f"<td>{escape(str(check.get('status') or 'unknown'))}</td>"
+        f"<td><code>{escape(str(check.get('recordName') or ''))}</code></td>"
+        f"<td>{escape(str(check.get('detail') or ''))}</td>"
+        f"<td><code>{escape(str(check.get('draftVersion') or ''))}</code></td>"
+        f"<td>{escape(str(check.get('observedAt') or ''))}</td>"
+        "</tr>"
+        for check in checks
+    )
+    if not check_body:
+        check_body = '<tr><td colspan="6">No detailed checks retained</td></tr>'
+
+    return (
+        '<style>'
+        '.safety-infrastructure-summary th,.safety-infrastructure-summary td,'
+        '.safety-infrastructure-checks th,.safety-infrastructure-checks td {'
+        'text-align:left!important;vertical-align:top!important;padding:6px;'
+        'border:1px solid #bbb;white-space:normal;overflow-wrap:anywhere}'
+        '.safety-infrastructure-summary,.safety-infrastructure-checks {'
+        'border-collapse:collapse;table-layout:fixed;width:100%}'
+        '.safety-boundary {padding:10px;border-left:4px solid #d97706;'
+        'background:#fff7ed;margin:10px 0}'
+        '</style>'
+        '<div class="safety-boundary"><strong>Interpretation boundary:</strong> '
+        'zero flagged DNS-AID heuristic families is not a behavioral Safety pass. '
+        'This observation describes discovery infrastructure only; no harmful-content, '
+        'prompt-injection, data-handling, or side-effect behavior was tested.</div>'
+        '<table class="safety-infrastructure-summary"><tbody>'
+        f'{summary_body}</tbody></table>'
+        '<h4>Retained DNS-AID domain checks</h4>'
+        '<table class="safety-infrastructure-checks"><thead><tr>'
+        '<th style="width:11%">Check</th><th style="width:8%">Status</th>'
+        '<th style="width:18%">Record</th><th style="width:35%">Detail</th>'
+        '<th style="width:16%">Draft</th><th style="width:12%">Observed</th>'
+        '</tr></thead><tbody>'
+        f'{check_body}</tbody></table>'
+    )
+
+
 def agentcensus_render_integrity_table(
     agents: Sequence[Mapping[str, Any]],
     agent_responses: Mapping[str, Mapping[str, Any]],
