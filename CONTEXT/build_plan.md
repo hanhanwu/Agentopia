@@ -110,7 +110,7 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 
 - [x] Add the AgentCensus identity-and-control section to `EXPERIMENTS/notebooks/trust_model_comparison.ipynb`.
 - [x] Set up both AgentCensus and A2A Registry before the trust dimensions, send the same natural-language query to both, and preserve both raw search responses.
-- [x] Retain one shared example, one AgentCensus-only example, and one A2A Registry-only example in a canonical `AGENTS` list reused by later dimensions.
+- [x] Retain one shared example, one AgentCensus-only example, and one A2A Registry-only example as the base comparison set for Identity and Integrity; keep later dimension selections purpose-specific.
 - [x] Write complete API responses to clearly named JSON files in `EXPERIMENTS/output/`; print their locations in the notebook and render the selected-agent comparison directly as a table.
 - [x] Maintain one source-specific field catalog per API represented in `EXPERIMENTS/output/`, with one non-duplicated name, description, and observed example for every field currently present in the JSON outputs.
 - [x] Preserve complete raw responses from `GET /agents/{agentKey}` and `GET /domains/{domain}` without a derived summary or score.
@@ -134,6 +134,23 @@ Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each e
 - [x] Document current identity/control evidence and source-assessment boundaries useful for trust decisions.
 - [x] Assess whether the available AgentCensus, A2A Registry, and ANS API data provide direct behavioral evidence; document that the current API reads expose claims, metadata, and infrastructure observations rather than observed agent behavior.
 - [ ] Collect direct capability-correctness, authorization, behavioral, safety, and reliability evidence for task-specific trust decisions.
+
+**Safety measurement progress**
+
+- [x] Run a dedicated Safety search in `EXPERIMENTS/notebooks/trust_dimension_agent_search.ipynb` and preserve its complete AgentCensus and A2A Registry responses in `EXPERIMENTS/output/trust_model_search_bundle.json`.
+- [x] Add a read-only Safety section to `EXPERIMENTS/notebooks/trust_model_comparison.ipynb` without creating dimension-specific copies of existing evidence.
+- [x] Measure the currently retained AgentCensus coverage: 12 search results, one non-null Safety overlay, and no behavior overlays.
+- [x] Reuse Selnoviktech as the sole current AgentCensus Safety-adjacent example. Read its compact `dnsaid_conformance` overlay from the existing Safety search response and its six detailed DNS-AID checks from the existing domain capture.
+- [x] Keep the compact `0/8` flagged-family result separate from the six detailed checks because they represent different API layers.
+- [x] Label the AgentCensus result as **Safety-adjacent infrastructure evidence**, not behavioral Safety evidence. Keep behavioral Safety as **not tested**, do not calculate a Safety score, and leave `dimensionSelections["safety"]` empty.
+- [x] Define the proposed behavioral Safety areas, non-destructive test families, outcome vocabulary, runtime evidence record, and experiment constraints in `EXPERIMENTS/scores_plan/safety_measurement.md`.
+- [ ] Screen the existing Safety-search candidates for public, free, non-state-changing, protocol-correct interaction endpoints. Search for additional agents only if the current candidates do not provide enough eligible runtime subjects.
+- [ ] Map each eligible agent's advertised capabilities and risk surfaces to applicable Safety tests; keep `not_applicable`, `not_tested`, and `passed` distinct.
+- [ ] Collect controlled runtime requests and responses for the initial Safety tests using synthetic data only, without credentials, payments, real personal data, or authorized state changes.
+- [ ] Store every raw runtime request and response once in the shared evidence bundle, and reference those captures from test records rather than duplicating evidence by dimension.
+- [ ] Record protocol, endpoint, timestamps, expected behavior, observed behavior, outcome, reason, and review status for every test, including blocked and inconclusive attempts.
+- [ ] Require human review before classifying an observation as a Safety failure, and report categorical coverage before considering a numeric Safety score.
+- [ ] Render the runtime Safety observations in the comparison notebook while keeping remote collection outside that read-only notebook.
 
 **Questions to explore**
 
