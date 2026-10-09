@@ -2398,6 +2398,259 @@ def a2a_registry_validation_data(
     return outer if isinstance(outer, Mapping) else None
 
 
+def a2a_registry_analyze_claim_accuracy_outputs(
+    claim_dimension: Mapping[str, Any],
+    captures: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Compare retained registry claims with already-fetched Agent Cards.
+
+    Exact registry/card agreement is publisher consistency. Validator findings
+    can independently establish fetch and schema observations, but neither the
+    catalog nor validator executes advertised skills or checks task answers.
+    """
+    raw = claim_dimension.get("raw") or {}
+    registry_response = (
+        raw.get("a2a_registry") if isinstance(raw, Mapping) else {}
+    ) or {}
+    response_data = (
+        registry_response.get("data")
+        if isinstance(registry_response, Mapping)
+        else {}
+    ) or {}
+    candidates = (
+        response_data.get("agents")
+        if isinstance(response_data, Mapping)
+        else []
+    ) or []
+
+    validations_by_name: dict[str, dict[str, Any]] = {}
+    for filename in captures:
+        if "a2a_registry" not in filename or "validation" not in filename:
+            continue
+        response = _artifact_json(captures, filename)
+        if not isinstance(response, Mapping) or not response.get("ok"):
+            continue
+        result = a2a_registry_validation_data(response)
+        card = result.get("cardData") if isinstance(result, Mapping) else None
+        if not isinstance(card, Mapping) or not card.get("name"):
+            continue
+        validations_by_name[str(card["name"])] = {
+            "filename": filename,
+            "result": result,
+            "card": card,
+        }
+
+    overlaps: list[dict[str, Any]] = []
+    for rank, candidate in enumerate(candidates, start=1):
+        if not isinstance(candidate, Mapping):
+            continue
+        validation = validations_by_name.get(str(candidate.get("displayName")))
+        if validation:
+            overlaps.append(
+                {
+                    "rank": rank,
+                    "registry": candidate,
+                    **validation,
+                }
+            )
+
+    rows: list[dict[str, Any]] = []
+    for overlap in overlaps:
+        registry = overlap["registry"]
+        result = overlap["result"]
+        card = overlap["card"]
+        findings = [
+            finding
+            for finding in result.get("findings") or []
+            if isinstance(finding, Mapping)
+        ]
+        findings_by_code = {
+            str(finding.get("code")): finding for finding in findings
+        }
+        name_match = registry.get("displayName") == card.get("name")
+        description_match = registry.get("description") == card.get(
+            "description"
+        )
+        rows.append(
+            {
+                "observation": "Registry claim ↔ fetched card",
+                "registry evidence": [
+                    f"name: {registry.get('displayName')}",
+                    f"description: {registry.get('description')}",
+                ],
+                "validator/card evidence": [
+                    f"name: {card.get('name')}",
+                    f"description: {card.get('description')}",
+                ],
+                "reading": (
+                    "Name and description match exactly."
+                    if name_match and description_match
+                    else "Registry and fetched card differ."
+                ),
+                "claim accuracy value": (
+                    "Publisher consistency only; no independent capability proof."
+                ),
+            }
+        )
+
+        fetch_codes = [
+            code
+            for code in ("HTTP_200_OK", "HTTPS_ENFORCED")
+            if code in findings_by_code
+        ]
+        rows.append(
+            {
+                "observation": "Manifest availability",
+                "registry evidence": [
+                    f"manifestUrl: {registry.get('manifestUrl')}",
+                    f"lastCheckStatus: {registry.get('lastCheckStatus')}",
+                ],
+                "validator/card evidence": fetch_codes or ["Not checked"],
+                "reading": (
+                    "The retained validator independently fetched the HTTPS card."
+                ),
+                "claim accuracy value": (
+                    "Confirms card availability at capture time, not skill correctness."
+                ),
+            }
+        )
+
+        interfaces = card.get("supportedInterfaces") or []
+        interface_versions = [
+            f"{item.get('protocolBinding')} {item.get('protocolVersion')}"
+            for item in interfaces
+            if isinstance(item, Mapping)
+        ]
+        version_codes = [
+            code
+            for code in (
+                "V03_LEGACY_TRANSPORT_FIELD",
+                "V03_PHANTOM_CAPABILITY",
+            )
+            if code in findings_by_code
+        ]
+        rows.append(
+            {
+                "observation": "A2A version consistency",
+                "registry evidence": [
+                    f"protocolStd: {registry.get('protocolStd')}",
+                ],
+                "validator/card evidence": [
+                    f"protocolVersion: {card.get('protocolVersion')}",
+                    "supportedInterfaces: "
+                    + (", ".join(interface_versions) or "none"),
+                    *version_codes,
+                ],
+                "reading": (
+                    "The card mixes legacy 0.3 fields with a 1.0 interface; "
+                    "the validator reports concrete version/schema drift."
+                ),
+                "claim accuracy value": (
+                    "Useful metadata-accuracy and interoperability finding."
+                ),
+            }
+        )
+
+        rows.append(
+            {
+                "observation": "Registry verification ↔ card conformance",
+                "registry evidence": [
+                    f"verification_level: {registry.get('verification_level')}",
+                    f"isVerified: {registry.get('isVerified')}",
+                ],
+                "validator/card evidence": [
+                    f"isValid: {result.get('isValid')}",
+                    f"readinessScore: {result.get('readinessScore')}",
+                    f"grade: {result.get('grade')}",
+                ],
+                "reading": (
+                    "Registry verification and Agent Card conformance are "
+                    "different axes: verified does not mean schema-valid."
+                ),
+                "claim accuracy value": (
+                    "Valuable trust-model boundary; not a capability verdict."
+                ),
+            }
+        )
+
+        skill_names = [
+            str(skill.get("name") or skill.get("id"))
+            for skill in card.get("skills") or []
+            if isinstance(skill, Mapping)
+        ]
+        rows.append(
+            {
+                "observation": "Advertised capability correctness",
+                "registry evidence": [str(registry.get("description") or "")],
+                "validator/card evidence": [
+                    "Fetched card skills: " + (", ".join(skill_names) or "none"),
+                    "No skill request or task result in validator response",
+                ],
+                "reading": (
+                    "The validator confirms that skill claims are published, "
+                    "but does not execute or independently check them."
+                ),
+                "claim accuracy value": "Not measured.",
+            }
+        )
+
+    return {
+        "candidate_count": len(candidates),
+        "validated_overlap_count": len(overlaps),
+        "validated_overlaps": overlaps,
+        "rows": rows,
+        "search_new_agents": False,
+        "write_new_output": False,
+    }
+
+
+def a2a_registry_render_claim_accuracy_table(
+    rows: Sequence[Mapping[str, Any]],
+) -> str:
+    """Render wrapped A2A Registry Claim accuracy observations."""
+    columns = [
+        ("observation", "Observation", "14%"),
+        ("registry evidence", "Registry evidence", "21%"),
+        ("validator/card evidence", "Validator / card evidence", "24%"),
+        ("reading", "Reading", "25%"),
+        ("claim accuracy value", "Claim accuracy value", "16%"),
+    ]
+
+    def render_value(value: Any) -> str:
+        if isinstance(value, list):
+            items = "".join(
+                f"<li>{escape(str(item))}</li>" for item in value
+            )
+            return f"<ul>{items}</ul>"
+        return escape(str(value))
+
+    header = "".join(
+        f"<th style='width:{width}'>{escape(label)}</th>"
+        for _, label, width in columns
+    )
+    body = "".join(
+        "<tr>"
+        + "".join(
+            f"<td>{render_value(row.get(key, ''))}</td>"
+            for key, _, _ in columns
+        )
+        + "</tr>"
+        for row in rows
+    )
+    return (
+        "<style>"
+        ".a2a-claim-table {table-layout: fixed; width: 100%;}"
+        ".a2a-claim-table th,.a2a-claim-table td {"
+        "text-align:left !important; vertical-align:top !important; "
+        "white-space:normal !important; overflow-wrap:anywhere;}"
+        ".a2a-claim-table ul {margin:0; padding-left:1.1rem;}"
+        ".a2a-claim-table li {margin-bottom:.3rem;}"
+        "</style>"
+        f"<table class='a2a-claim-table'><thead><tr>{header}</tr></thead>"
+        f"<tbody>{body}</tbody></table>"
+    )
+
+
 def a2a_registry_print_security_authorization_evidence(
     agents: Sequence[Mapping[str, Any]],
     validation_responses: Mapping[str, Mapping[str, Any]],
