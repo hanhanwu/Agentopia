@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import ssl
 import time
 from collections import Counter
@@ -1491,6 +1492,462 @@ def ans_render_agentcensus_audit_live_table(
         "<table class='ans-audit-live-table'><thead><tr>"
         "<th>Signal</th><th>Audit/TL baseline</th><th>Fresh live observation</th>"
         "<th>Result</th><th>Interpretation</th>"
+        "</tr></thead><tbody>"
+        + body
+        + "</tbody></table>"
+    )
+
+
+_AGENTCENSUS_CLAIM_ACCURACY_FIELDS = (
+    "capabilities",
+    "endpoint_host",
+    "auth_schemes",
+    "auth_declared",
+    "protocols",
+    "version",
+    "description",
+    "display_name",
+)
+
+_AGENTCENSUS_CLAIM_SOURCE_PRIORITY = {
+    "a2a": 0,
+    "a2a_alt": 1,
+    "ard": 2,
+    "oauth_protected_resource": 3,
+}
+
+
+def _agentcensus_capture_data(
+    captures: Mapping[str, Any],
+    filename: str,
+) -> Mapping[str, Any] | None:
+    payload = _artifact_json(captures, filename)
+    if not isinstance(payload, Mapping):
+        return None
+    data = payload.get("data")
+    return data if isinstance(data, Mapping) else None
+
+
+def _agentcensus_parsed_snapshot(
+    captures: Mapping[str, Any],
+    filename: str,
+) -> Mapping[str, Any] | None:
+    data = _agentcensus_capture_data(captures, filename) or {}
+    snapshot = data.get("snapshot")
+    if not isinstance(snapshot, str):
+        return None
+    try:
+        parsed = json.loads(snapshot)
+    except json.JSONDecodeError:
+        return None
+    return parsed if isinstance(parsed, Mapping) else None
+
+
+def _agentcensus_claim_value_populated(value: Any) -> bool:
+    return value is not None and value != "" and value != [] and value != {}
+
+
+def _agentcensus_comparable_claim_value(value: Any) -> Any:
+    if isinstance(value, list):
+        return tuple(sorted(str(item) for item in value))
+    if isinstance(value, Mapping):
+        return json.dumps(value, sort_keys=True, ensure_ascii=False)
+    return value
+
+
+def _agentcensus_display_claim_value(value: Any) -> str:
+    if isinstance(value, list):
+        return ", ".join(str(item) for item in value)
+    if isinstance(value, Mapping):
+        return json.dumps(value, sort_keys=True, ensure_ascii=False)
+    if isinstance(value, bool):
+        return str(value).lower()
+    return str(value)
+
+
+def _agentcensus_description_expansion_interpretation(
+    present: Sequence[tuple[str, Any]],
+) -> str | None:
+    """Recognize a detailed alternate description that preserves the core."""
+    values = {source: value for source, value in present}
+    primary = values.get("a2a")
+    alternate = values.get("a2a_alt")
+    if not isinstance(primary, str) or not isinstance(alternate, str):
+        return None
+    primary_tokens = set(re.findall(r"[a-z0-9]+", primary.casefold()))
+    alternate_tokens = set(re.findall(r"[a-z0-9]+", alternate.casefold()))
+    if not primary_tokens:
+        return None
+    core_overlap = len(primary_tokens & alternate_tokens) / len(primary_tokens)
+    if len(alternate) > len(primary) and core_overlap >= 0.8:
+        return (
+            "Compatible descriptions with different levels of detail; "
+            "`a2a_alt` is an expanded version"
+        )
+    return None
+
+
+def _agentcensus_oauth_display_name_interpretation(
+    present: Sequence[tuple[str, Any]],
+) -> str | None:
+    """Separate agent display names from an OAuth resource URL fallback."""
+    values = {source: value for source, value in present}
+    oauth_value = values.get("oauth_protected_resource")
+    agent_values = {
+        source: value
+        for source, value in values.items()
+        if source != "oauth_protected_resource"
+    }
+    if (
+        len(agent_values) < 2
+        or not isinstance(oauth_value, str)
+        or not oauth_value.startswith(("https://", "http://"))
+        or len(
+            {
+                _agentcensus_comparable_claim_value(value)
+                for value in agent_values.values()
+            }
+        )
+        != 1
+    ):
+        return None
+
+    source_labels = {
+        "a2a": "A2A",
+        "a2a_alt": "alternate A2A",
+        "ard": "ARD",
+    }
+    labels = [
+        source_labels.get(source, source)
+        for source in agent_values
+    ]
+    if len(labels) == 2:
+        agreement = f"{labels[0]} and {labels[1]}"
+    else:
+        agreement = ", ".join(labels[:-1]) + f", and {labels[-1]}"
+    return (
+        f"{agreement} display names agree. The OAuth protected-resource "
+        "value represents the resource URL and is not comparable as an "
+        "agent display name."
+    )
+
+
+def agentcensus_analyze_claim_accuracy_outputs(
+    claim_dimension: Mapping[str, Any],
+    captures: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Audit retained AgentCensus outputs for Claim accuracy evidence.
+
+    The analysis is deliberately read-only. It intersects the complete
+    AgentCensus Claim accuracy search with already-retained agent detail and
+    document captures, then compares populated normalized document fields.
+    Missing or empty fields are coverage gaps, not contradictions.
+
+    Returned consistency findings establish only publisher/source agreement.
+    They do not establish that an advertised capability returns correct task
+    results; that requires separately captured runtime evidence.
+    """
+    raw = claim_dimension.get("raw") or {}
+    agentcensus_response = (
+        raw.get("agentcensus") if isinstance(raw, Mapping) else {}
+    ) or {}
+    response_data = (
+        agentcensus_response.get("data")
+        if isinstance(agentcensus_response, Mapping)
+        else {}
+    ) or {}
+    search_results = (
+        response_data.get("results")
+        if isinstance(response_data, Mapping)
+        else []
+    ) or []
+
+    candidates: dict[str, dict[str, Any]] = {}
+    for rank, result in enumerate(search_results, start=1):
+        if not isinstance(result, Mapping):
+            continue
+        agent = result.get("agent") or {}
+        if not isinstance(agent, Mapping) or not agent.get("agentKey"):
+            continue
+        agent_key = str(agent["agentKey"])
+        candidates[agent_key] = {
+            "rank": rank,
+            "name": agent.get("displayName"),
+            "domain": agent.get("domain"),
+        }
+
+    capture_index = {
+        agent_key: {"agent_file": None, "document_files": []}
+        for agent_key in candidates
+    }
+    for filename in captures:
+        data = _agentcensus_capture_data(captures, filename)
+        if not data or data.get("agentKey") not in capture_index:
+            continue
+        agent_key = str(data["agentKey"])
+        if data.get("source") and "snapshot" in data:
+            capture_index[agent_key]["document_files"].append(filename)
+        elif "observed" in data and "mechanisms" in data:
+            capture_index[agent_key]["agent_file"] = filename
+
+    reuse_rows: list[dict[str, Any]] = []
+    reusable_agent_keys: list[str] = []
+    for agent_key, candidate in candidates.items():
+        retained = capture_index[agent_key]
+        sources = sorted(
+            str(data.get("source"))
+            for filename in retained["document_files"]
+            if (data := _agentcensus_capture_data(captures, filename))
+            and data.get("source")
+        )
+        reusable = bool(retained["agent_file"] and sources)
+        if reusable:
+            reusable_agent_keys.append(agent_key)
+        reuse_rows.append(
+            {
+                "rank": candidate["rank"],
+                "name": candidate["name"],
+                "agentKey": agent_key,
+                "agent detail": "yes" if retained["agent_file"] else "no",
+                "document sources": ", ".join(sources) or "none",
+                "reusable now": "yes" if reusable else "no",
+            }
+        )
+
+    consistency_rows: list[dict[str, Any]] = []
+    for agent_key in reusable_agent_keys:
+        snapshots: list[tuple[str, Mapping[str, Any]]] = []
+        for filename in capture_index[agent_key]["document_files"]:
+            data = _agentcensus_capture_data(captures, filename) or {}
+            snapshot = _agentcensus_parsed_snapshot(captures, filename)
+            if snapshot is not None:
+                snapshots.append((str(data.get("source")), snapshot))
+        for field in _AGENTCENSUS_CLAIM_ACCURACY_FIELDS:
+            present = [
+                (source, snapshot.get(field))
+                for source, snapshot in snapshots
+                if _agentcensus_claim_value_populated(snapshot.get(field))
+            ]
+            distinct = {
+                _agentcensus_comparable_claim_value(value)
+                for _, value in present
+            }
+            missing_sources = [
+                source
+                for source, snapshot in snapshots
+                if not _agentcensus_claim_value_populated(snapshot.get(field))
+            ]
+            present.sort(
+                key=lambda item: (
+                    _AGENTCENSUS_CLAIM_SOURCE_PRIORITY.get(item[0], 99),
+                    item[0],
+                )
+            )
+            missing_sources.sort(
+                key=lambda source: (
+                    _AGENTCENSUS_CLAIM_SOURCE_PRIORITY.get(source, 99),
+                    source,
+                )
+            )
+            differences: list[dict[str, str]] = []
+            difference_interpretation = None
+            if len(present) <= 1:
+                reading = "--"
+            elif len(distinct) == 1:
+                reading = (
+                    f"consistent across {len(present)} populated sources"
+                )
+            else:
+                reading = f"{len(distinct)} different published values"
+                differences = [
+                    {
+                        "source": source,
+                        "value": _agentcensus_display_claim_value(value),
+                    }
+                    for source, value in present
+                ]
+                if field == "description":
+                    difference_interpretation = (
+                        _agentcensus_description_expansion_interpretation(
+                            present
+                        )
+                    )
+                elif field == "display_name":
+                    difference_interpretation = (
+                        _agentcensus_oauth_display_name_interpretation(
+                            present
+                        )
+                    )
+            consistency_rows.append(
+                {
+                    "agent": candidates[agent_key]["name"],
+                    "field": field,
+                    "populated sources": (
+                        ", ".join(source for source, _ in present) or "none"
+                    ),
+                    "missing/empty sources": (
+                        ", ".join(missing_sources) or "none"
+                    ),
+                    "reading": reading,
+                    "differences": differences,
+                    "difference interpretation": difference_interpretation,
+                    "_importance": (
+                        len(_AGENTCENSUS_CLAIM_ACCURACY_FIELDS)
+                        - _AGENTCENSUS_CLAIM_ACCURACY_FIELDS.index(field)
+                    ),
+                    "_agent_rank": candidates[agent_key]["rank"],
+                }
+            )
+
+    consistency_rows.sort(
+        key=lambda row: (-row["_importance"], row["_agent_rank"])
+    )
+    for row in consistency_rows:
+        row.pop("_importance")
+        row.pop("_agent_rank")
+
+    evidence_rows = [
+        {
+            "question": "What does the agent publish?",
+            "existing AgentCensus data": (
+                "name, description, capabilities, protocols, version, "
+                "endpoint and auth declarations"
+            ),
+            "usable for Claim accuracy?": "claim baseline: yes",
+        },
+        {
+            "question": "Do its discovery documents agree?",
+            "existing AgentCensus data": (
+                "per-mechanism parsed snapshots, content hashes and "
+                "observation times"
+            ),
+            "usable for Claim accuracy?": "consistency only: yes",
+        },
+        {
+            "question": "Does passive infrastructure match metadata?",
+            "existing AgentCensus data": (
+                "status, endpoint host/same-origin, TLS, transport and "
+                "normalized auth posture"
+            ),
+            "usable for Claim accuracy?": "narrow corroboration: yes",
+        },
+        {
+            "question": (
+                "Does the advertised capability produce a correct result?"
+            ),
+            "existing AgentCensus data": (
+                "no protocol request/response or independently checked "
+                "task outcome"
+            ),
+            "usable for Claim accuracy?": "no — not tested",
+        },
+    ]
+    return {
+        "candidate_count": len(candidates),
+        "candidates": candidates,
+        "capture_index": capture_index,
+        "reuse_rows": reuse_rows,
+        "reusable_agent_keys": reusable_agent_keys,
+        "consistency_rows": consistency_rows,
+        "evidence_rows": evidence_rows,
+        "search_new_agents": False,
+        "write_new_output": False,
+    }
+
+
+def agentcensus_render_claim_accuracy_consistency_table(
+    rows: Sequence[Mapping[str, Any]],
+) -> str:
+    """Render Claim accuracy consistency rows with detailed differences."""
+    body: list[str] = []
+    for row in rows:
+        differences = row.get("differences") or []
+        if differences:
+            difference_items = "".join(
+                "<li><strong>"
+                + escape(str(item.get("source") or "unknown"))
+                + ":</strong> "
+                + escape(str(item.get("value") or ""))
+                + "</li>"
+                for item in differences
+                if isinstance(item, Mapping)
+            )
+            interpretation = row.get("difference interpretation")
+            if interpretation:
+                heading = escape(str(interpretation)).replace(
+                    "`a2a_alt`", "<code>a2a_alt</code>"
+                )
+            else:
+                heading = "Different published values:"
+            reading = f"<strong>{heading}</strong><ul>{difference_items}</ul>"
+        else:
+            reading = escape(str(row.get("reading") or "--"))
+        body.append(
+            "<tr>"
+            f"<td>{escape(str(row.get('agent') or ''))}</td>"
+            f"<td><code>{escape(str(row.get('field') or ''))}</code></td>"
+            f"<td>{escape(str(row.get('populated sources') or 'none'))}</td>"
+            f"<td>{escape(str(row.get('missing/empty sources') or 'none'))}</td>"
+            f"<td>{reading}</td>"
+            "</tr>"
+        )
+    return (
+        "<style>"
+        ".agentcensus-claim-table {table-layout: fixed; width: 100%;}"
+        ".agentcensus-claim-table th,.agentcensus-claim-table td {"
+        "text-align: left !important; vertical-align: top !important;}"
+        ".agentcensus-claim-table th:nth-child(1),"
+        ".agentcensus-claim-table td:nth-child(1) {width: 17%;}"
+        ".agentcensus-claim-table th:nth-child(2),"
+        ".agentcensus-claim-table td:nth-child(2) {width: 11%;}"
+        ".agentcensus-claim-table th:nth-child(3),"
+        ".agentcensus-claim-table td:nth-child(3) {width: 17%;}"
+        ".agentcensus-claim-table th:nth-child(4),"
+        ".agentcensus-claim-table td:nth-child(4) {width: 17%;}"
+        ".agentcensus-claim-table th:nth-child(5),"
+        ".agentcensus-claim-table td:nth-child(5) {width: 38%;}"
+        ".agentcensus-claim-table ul {margin: .35rem 0 0 1.1rem; padding: 0;}"
+        ".agentcensus-claim-table li {margin-bottom: .35rem; overflow-wrap: anywhere;}"
+        "</style>"
+        "<table class='agentcensus-claim-table'><thead><tr>"
+        "<th>Agent</th><th>Field</th><th>Populated sources</th>"
+        "<th>Missing/empty sources</th><th>Reading</th>"
+        "</tr></thead><tbody>"
+        + "".join(body)
+        + "</tbody></table>"
+    )
+
+
+def agentcensus_render_claim_accuracy_evidence_table(
+    rows: Sequence[Mapping[str, Any]],
+) -> str:
+    """Render the Claim accuracy evidence boundary without truncating text."""
+    body = "".join(
+        "<tr>"
+        f"<td>{escape(str(row.get('question') or ''))}</td>"
+        f"<td>{escape(str(row.get('existing AgentCensus data') or ''))}</td>"
+        f"<td>{escape(str(row.get('usable for Claim accuracy?') or ''))}</td>"
+        "</tr>"
+        for row in rows
+    )
+    return (
+        "<style>"
+        ".agentcensus-claim-evidence-table {table-layout: fixed; width: 100%;}"
+        ".agentcensus-claim-evidence-table th,"
+        ".agentcensus-claim-evidence-table td {"
+        "text-align: left !important; vertical-align: top !important; "
+        "white-space: normal !important; overflow-wrap: anywhere; "
+        "word-break: normal;}"
+        ".agentcensus-claim-evidence-table th:nth-child(1),"
+        ".agentcensus-claim-evidence-table td:nth-child(1) {width: 34%;}"
+        ".agentcensus-claim-evidence-table th:nth-child(2),"
+        ".agentcensus-claim-evidence-table td:nth-child(2) {width: 44%;}"
+        ".agentcensus-claim-evidence-table th:nth-child(3),"
+        ".agentcensus-claim-evidence-table td:nth-child(3) {width: 22%;}"
+        "</style>"
+        "<table class='agentcensus-claim-evidence-table'><thead><tr>"
+        "<th>Question</th><th>Existing AgentCensus data</th>"
+        "<th>Usable for Claim accuracy?</th>"
         "</tr></thead><tbody>"
         + body
         + "</tbody></table>"
