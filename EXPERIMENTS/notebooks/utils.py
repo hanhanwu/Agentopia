@@ -3170,6 +3170,232 @@ def ans_render_integrity_examples_table(
     )
 
 
+def ans_analyze_claim_accuracy_outputs(
+    examples: Sequence[Mapping[str, Any]],
+    artifacts: Mapping[str, Any] | str | Path,
+) -> dict[str, Any]:
+    """Compare ANS registered metadata claims with retained live observations."""
+
+    def txt_parts(value: str | None) -> dict[str, str]:
+        if not value:
+            return {}
+        parts: dict[str, str] = {}
+        for part in value.split(";"):
+            key, separator, item = part.strip().partition("=")
+            if separator:
+                parts[key] = item
+        return parts
+
+    def dns_values(filename: str, record_type: int) -> list[str]:
+        response = _artifact_json(artifacts, filename)
+        return [
+            str(answer.get("data"))
+            for answer in response.get("Answer") or []
+            if answer.get("type") == record_type
+        ]
+
+    rows: list[dict[str, Any]] = []
+    for example in examples:
+        badge = _artifact_json(artifacts, str(example["badge_file"]))
+        event = badge["payload"]["producer"]["event"]
+        attestations = event.get("attestations") or {}
+        sealed_records = attestations.get("dnsRecordsProvisioned") or {}
+        sealed_records = (
+            sealed_records if isinstance(sealed_records, Mapping) else {}
+        )
+        live_badges = dns_values(str(example["dns_file"]), 16)
+        live_badge = next(
+            (
+                value
+                for value in live_badges
+                if value.startswith("v=ans-badge1;")
+            ),
+            None,
+        )
+        sealed_badge = sealed_records.get(str(example["record_name"]))
+        live_version = txt_parts(live_badge).get("version")
+        sealed_version = event.get("agent", {}).get("version")
+
+        metadata_details: list[str] = []
+        metadata_matches = 0
+        metadata_total = 0
+        sealed_hashes = attestations.get("metadataHashes") or {}
+        for protocol, metadata in example.get("metadata", {}).items():
+            observed_hash = "SHA256:" + _artifact_sha256(
+                artifacts, str(metadata["file"])
+            )
+            expected_hash = sealed_hashes.get(protocol)
+            matched = bool(expected_hash and expected_hash == observed_hash)
+            metadata_total += 1
+            metadata_matches += int(matched)
+            metadata_details.append(
+                f"{protocol}: {'match' if matched else 'mismatch'}"
+            )
+
+        baseline = [
+            f"TL status: {badge.get('status')}",
+            f"sealed version: {sealed_version}",
+            f"sealed badge: {sealed_badge}",
+        ]
+        live = [
+            f"live badge version: {live_version}",
+            f"live badge: {live_badge}",
+        ]
+
+        if metadata_total:
+            baseline.append(
+                f"sealed metadata hashes: {', '.join(sorted(sealed_hashes))}"
+            )
+            live.extend(metadata_details)
+            if live_badge == sealed_badge and metadata_matches == metadata_total:
+                result = "Match"
+                insight = (
+                    f"The live badge and {metadata_matches}/{metadata_total} "
+                    "captured metadata documents match the registered baseline."
+                )
+                value = (
+                    "Strong deployment-metadata consistency evidence at capture "
+                    "time; not capability-result evidence."
+                )
+            else:
+                result = "Drift"
+                insight = "One or more registered metadata claims differ live."
+                value = "Useful deployment-metadata accuracy finding."
+        else:
+            live_dns = example.get("live_dns") or {}
+            ans_config = live_dns.get("ans") or {}
+            https_config = live_dns.get("https") or {}
+            tlsa_config = live_dns.get("tlsa") or {}
+            live_ans_values = (
+                dns_values(str(ans_config["file"]), 16)
+                if ans_config.get("file")
+                else []
+            )
+            live_https_values = (
+                dns_values(str(https_config["file"]), 65)
+                if https_config.get("file")
+                else []
+            )
+            live_tlsa_values = (
+                dns_values(str(tlsa_config["file"]), 52)
+                if tlsa_config.get("file")
+                else []
+            )
+            host = str(event.get("agent", {}).get("host") or "")
+            sealed_ans = sealed_records.get(f"_ans.{host}")
+            sealed_https = sealed_records.get(host)
+            sealed_tlsa = sealed_records.get(f"_443._tcp.{host}")
+            live_ans = live_ans_values[0] if live_ans_values else None
+            live_https = live_https_values[0] if live_https_values else None
+            baseline.extend(
+                [
+                    f"sealed _ans: {sealed_ans}",
+                    f"sealed HTTPS/SVCB: {sealed_https}",
+                    f"sealed TLSA: {sealed_tlsa}",
+                ]
+            )
+            live.extend(
+                [
+                    f"live _ans: {live_ans}",
+                    f"live HTTPS/SVCB: {live_https}",
+                    (
+                        "sealed TLSA present live: "
+                        f"{str(sealed_tlsa in live_tlsa_values).lower()}"
+                    ),
+                ]
+            )
+            badge_match = live_badge == sealed_badge
+            ans_match = live_ans == sealed_ans
+            https_match = live_https == sealed_https
+            tlsa_match = sealed_tlsa in live_tlsa_values
+            if badge_match and ans_match and https_match and tlsa_match:
+                result = "Match"
+                insight = "All retained registered-to-live DNS values match."
+            else:
+                result = "Partial drift"
+                insight = (
+                    "The live badge and _ans record publish v1.0.0 while the "
+                    "registered baseline seals v2.0.0; HTTPS/SVCB also differs, "
+                    "while the sealed TLSA remains present."
+                )
+            value = (
+                "Valuable version/deployment claim drift; capability correctness "
+                "remains untested."
+            )
+
+        rows.append(
+            {
+                "agent": example.get("name"),
+                "registered baseline": baseline,
+                "live observation": live,
+                "result": result,
+                "insight": insight,
+                "claim accuracy value": value,
+                "verification boundary": (
+                    "Value comparison only. Producer/TL signatures, Merkle proof, "
+                    "checkpoint, and DNSSEC chain were retained but not locally "
+                    "verified."
+                ),
+            }
+        )
+
+    return {
+        "example_count": len(rows),
+        "rows": rows,
+        "capability_accuracy_measured": False,
+        "search_new_agents": False,
+        "write_new_output": False,
+    }
+
+
+def ans_render_claim_accuracy_table(
+    rows: Sequence[Mapping[str, Any]],
+) -> str:
+    """Render ANS registered-to-live Claim accuracy comparisons."""
+    columns = [
+        ("agent", "Agent", "11%"),
+        ("registered baseline", "Registered baseline", "18%"),
+        ("live observation", "Live observation", "18%"),
+        ("result", "Result", "9%"),
+        ("insight", "Insight", "17%"),
+        ("claim accuracy value", "Claim accuracy value", "14%"),
+        ("verification boundary", "Verification boundary", "13%"),
+    ]
+
+    def render_value(value: Any) -> str:
+        if isinstance(value, list):
+            return "<ul>" + "".join(
+                f"<li>{escape(str(item))}</li>" for item in value
+            ) + "</ul>"
+        return escape(str(value))
+
+    header = "".join(
+        f"<th style='width:{width}'>{escape(label)}</th>"
+        for _, label, width in columns
+    )
+    body = "".join(
+        "<tr>"
+        + "".join(
+            f"<td>{render_value(row.get(key, ''))}</td>"
+            for key, _, _ in columns
+        )
+        + "</tr>"
+        for row in rows
+    )
+    return (
+        "<style>"
+        ".ans-claim-table {table-layout:fixed; width:100%;}"
+        ".ans-claim-table th,.ans-claim-table td {"
+        "text-align:left !important; vertical-align:top !important; "
+        "white-space:normal !important; overflow-wrap:anywhere;}"
+        ".ans-claim-table ul {margin:0; padding-left:1.1rem;}"
+        ".ans-claim-table li {margin-bottom:.3rem;}"
+        "</style>"
+        f"<table class='ans-claim-table'><thead><tr>{header}</tr></thead>"
+        f"<tbody>{body}</tbody></table>"
+    )
+
+
 def a2a_registry_summarize_validation(
     response: Mapping[str, Any],
 ) -> Mapping[str, Any] | None:
