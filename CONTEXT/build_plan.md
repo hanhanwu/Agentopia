@@ -2,342 +2,148 @@
 
 ## Goal
 
-Build toward a small observable world of AI agents.
+Build a small observable world of AI agents.
 
-- **Agentopia** — eventually becomes a controlled agent world for reproducing and testing real behaviors.
-- **Skynet** — observes, records, visualizes, and analyzes what happens during agent discovery and interaction.
+- **Skynet** collects, analyzes, and visualizes agent discovery and interaction.
+- **Agentopia** later provides controlled agents for reproducing important
+  behaviors that cannot be tested safely or reliably on public agents.
 
-**Current priority:** learn from real agents already on the Internet before spending time and money building many agents ourselves.
-
----
-
-# Phase 1 — OBSERVE
-
-## Objective
-
-Observe real published agents and understand what actually happens across:
+The working loop is:
 
 ```text
-discover → inspect → connect → interact
+collect evidence → analyze what is useful → visualize valuable insight
 ```
 
-Skynet should record every observable step and keep the underlying evidence.
+Do not design scores or visualizations before the evidence supports them.
 
-Do **not** invent failure scenarios first.
+## What the current sources provide
 
-> Observe the ecosystem → identify real gaps → later reproduce the important ones with controlled agents.
+AgentCensus, A2A Registry, and ANS primarily provide **static discovery data**:
 
-## Initial workflow
+- Agent identity and published metadata
+- Endpoints, protocols, versions, and authentication declarations
+- Capability claims
+- Registry, DNS, TLS, signature, and provenance artifacts
+- Retained observations and validation findings
 
-```text
-Personal Agent / User Intent
-        ↓
-Search
-        ↓
-Candidate Agents
-        ↓
-Agent Card / Metadata
-        ↓
-Identity Verification
-        ↓
-Capability Selection
-        ↓
-Protocol / Connection Setup
-        ↓
-Authentication
-        ↓
-Interaction
-        ↓
-Tool / Action / Result
-        ↓
-Trace + Findings
-```
+This data can support discovery coverage, cross-source comparison, provenance,
+and source-specific consistency analysis. It does not directly show whether an
+agent completes tasks correctly, enforces authorization, behaves safely, or
+works reliably.
 
-Possible discovery sources include:
-
-- Web search
-- A2A registries / directories
-- MCP registries / directories
-- ARD or other discovery mechanisms
-- Known public agent domains/endpoints
+Those questions require **dynamic data** collected through safe user-agent or
+agent-agent interactions after discovery.
 
 ---
 
-## Phase 1 To-Dos
+# Stage 1 — Static discovery data
 
-Start with small Python experiments under [`EXPERIMENTS/`](EXPERIMENTS/). Each experiment should save the raw evidence before adding interpretation or visualization.
+## Collect
 
-### 1. Search & Discovery
+- [x] Complete the initial static-source exploration and retain raw responses,
+  Agent Cards, validation results, identity evidence, optional ANS artifacts,
+  capture times, and provenance.
+- [ ] Prepare the minimum normalized dataset needed by the first static views,
+  including a successful replacement for the current AgentCensus HTTP 500
+  search artifact when the API permits it.
 
-- [ ] Run the same natural-language request through AgentCensus and A2A Registry and preserve successful raw responses from both sources.
-- [ ] Compare agent search with MCP service search for the same request: what each returns, which better matches the task, and whether the personal agent should contact another agent or use an MCP service directly.
-- [ ] Compare result overlap between AgentCensus and A2A Registry for one shared natural-language query.
-- [ ] Record sampled shared, AgentCensus-only, and A2A Registry-only results.
-- [ ] Record ranking/order differences across sources.
-- [ ] Measure duplicate and stale results across sources.
-- [x] Record current reachability and Agent Card validity for sampled A2A Registry results.
-- [x] Record what searchable metadata each source exposes.
+Keep collection states distinct: `not attempted`, `missing`, `fetch failed`,
+`not checked`, `not applicable`, and an observed value are not equivalent.
 
-**Questions to explore**
+## Analyze
 
-- Can an agent exist in an A2A registry but remain undiscoverable through web search?
+- [ ] Decide which static comparisons produce useful insights for agent
+  discovery, selection, or understanding.
 
-### 2. Agent Metadata / Agent Card Inspection
+Analyze discovery coverage, cross-source fields, missing or conflicting
+metadata, staleness, and source-specific drift. Keep useful findings and
+discard comparisons that do not improve a user decision.
 
-- [x] Fetch and preserve Agent Cards and equivalent validation artifacts for sampled A2A Registry results.
-- [x] Normalize useful source-specific fields into comparison tables and summaries.
-- [ ] Define one canonical cross-source metadata comparison structure.
-- [ ] Compare capability claims across registry metadata, Agent Cards, websites, and observed behavior.
-- [x] Detect missing or invalid Agent Card fields through the A2A Registry validator.
-- [ ] Detect conflicting, ambiguous, or outdated metadata across sources.
-- [x] Record protocol, endpoint, declared authentication, ownership, and capability declarations when available.
+Cross-source agreement shows consistency, not capability correctness. Keep
+static discovery evidence out of behavioral, safety, and general trust scores.
 
-**Questions to explore**
+## Visualize
 
-- Does the discovery source describe the agent consistently with its own metadata?
-- Are capability claims specific enough for another agent to make a selection?
-- What happens when a registry describes an agent's capability as "travel booking," but its Agent Card describes something different?
+- [ ] Build the valuable static-data views identified by analysis, starting
+  with **Discovery Evidence Coverage** and **Cross-Source Agent Evidence**;
+  add **Drift and Consistency** only where the retained data supports it.
 
-### 3. Identity & Ownership
-
-- [x] Record claimed agent identity, domain, organization, endpoint, and identifiers separately.
-- [x] Check what evidence links an agent endpoint to the organization it claims to represent.
-- [x] Compare identity information exposed across discovery mechanisms.
-- [x] Record cases where ownership can be claimed but not independently verified.
-- [x] Record sampled cases where one agent appears under multiple source-specific identifiers or endpoints.
-
-**Trust-model comparison progress**
-
-- [x] Add the AgentCensus identity-and-control section to `EXPERIMENTS/notebooks/trust_model_comparison.ipynb`.
-- [x] Set up both AgentCensus and A2A Registry before the trust dimensions, send the same natural-language query to both, and preserve both raw search responses.
-- [x] Retain one shared example, one AgentCensus-only example, and one A2A Registry-only example as the base comparison set for Identity and Integrity; keep later dimension selections purpose-specific.
-- [x] Write complete API responses to clearly named JSON files in `EXPERIMENTS/output/`; print their locations in the notebook and render the selected-agent comparison directly as a table.
-- [x] Maintain one source-specific field catalog per API represented in `EXPERIMENTS/output/`, with one non-duplicated name, description, and observed example for every field currently present in the JSON outputs.
-- [x] Preserve complete raw responses from `GET /agents/{agentKey}` and `GET /domains/{domain}` without a derived summary or score.
-- [x] Limit the AgentCensus comparison to available public reads; exclude organization-scoped claims, assertions, credentials, recrawls, active verification, and synthetic checks.
-- [x] Preserve the selected A2A Registry records from `GET /public/agents` as raw identity-and-control evidence alongside the AgentCensus outputs.
-- [x] Check ANS `_ans-badge` and legacy `_ra-badge` discovery for the same selected domains; preserve the raw DNS responses and distinguish missing discovery from failed verification.
-- [ ] Re-run the shared AgentCensus search successfully and replace the current HTTP 500 artifact before marking the cross-source discovery comparison complete.
-
-**Questions to explore**
-
-- How does another agent know who it is actually talking to?
-- What identity evidence is verifiable versus self-reported?
-- After finding an agent endpoint, how can we verify that it belongs to the organization it claims to represent?
-
-### 4. Capability & Trust
-
-- [x] Record the capabilities an agent claims.
-- [ ] Test a small set of safe capabilities where public interaction is allowed.
-- [ ] Compare claimed capability with observed behavior/result.
-- [x] Record available identity-verification, reputation, signature, and provenance signals alongside capability claims without treating them as capability proof.
-- [x] Document current identity/control evidence and source-assessment boundaries useful for trust decisions.
-- [x] Assess whether the available AgentCensus, A2A Registry, and ANS API data provide direct behavioral evidence; document that the current API reads expose claims, metadata, and infrastructure observations rather than observed agent behavior.
-- [ ] Collect direct capability-correctness, authorization, behavioral, safety, and reliability evidence for task-specific trust decisions.
-
-**Safety measurement progress**
-
-- [x] Run a dedicated Safety search in `EXPERIMENTS/notebooks/trust_dimension_agent_search.ipynb` and preserve its complete AgentCensus and A2A Registry responses in `EXPERIMENTS/output/trust_model_search_bundle.json`.
-- [x] Add a read-only Safety section to `EXPERIMENTS/notebooks/trust_model_comparison.ipynb` without creating dimension-specific copies of existing evidence.
-- [x] Measure the currently retained AgentCensus coverage: 12 search results, one non-null Safety overlay, and no behavior overlays.
-- [x] Reuse Selnoviktech as the sole current AgentCensus Safety-adjacent example. Read its compact `dnsaid_conformance` overlay from the existing Safety search response and its six detailed DNS-AID checks from the existing domain capture.
-- [x] Keep the compact `0/8` flagged-family result separate from the six detailed checks because they represent different API layers.
-- [x] Label the AgentCensus result as **Safety-adjacent infrastructure evidence**, not behavioral Safety evidence. Keep behavioral Safety as **not tested**, do not calculate a Safety score, and leave `dimensionSelections["safety"]` empty.
-- [x] Define the proposed behavioral Safety areas, non-destructive test families, outcome vocabulary, runtime evidence record, and experiment constraints in `EXPERIMENTS/scores_plan/safety_measurement.md`.
-- [ ] Screen the existing Safety-search candidates for public, free, non-state-changing, protocol-correct interaction endpoints. Search for additional agents only if the current candidates do not provide enough eligible runtime subjects.
-- [ ] Map each eligible agent's advertised capabilities and risk surfaces to applicable Safety tests; keep `not_applicable`, `not_tested`, and `passed` distinct.
-- [ ] Collect controlled runtime requests and responses for the initial Safety tests using synthetic data only, without credentials, payments, real personal data, or authorized state changes.
-- [ ] Store every raw runtime request and response once in the shared evidence bundle, and reference those captures from test records rather than duplicating evidence by dimension.
-- [ ] Record protocol, endpoint, timestamps, expected behavior, observed behavior, outcome, reason, and review status for every test, including blocked and inconclusive attempts.
-- [ ] Require human review before classifying an observation as a Safety failure, and report categorical coverage before considering a numeric Safety score.
-- [ ] Render the runtime Safety observations in the comparison notebook while keeping remote collection outside that read-only notebook.
-
-**Questions to explore**
-
-- Who verifies capability claims?
-- Can capability claims be meaningfully compared across agents?
-- If an Agent Card says the agent can perform capability X, who has verified that claim?
-
-### 5. Protocol & Connectivity
-
-- [x] Detect which interaction protocols each agent advertises.
-- [ ] Attempt safe connection/handshake flows where permitted.
-- [x] Record advertised protocol/specification versions and validator errors for sampled Agent Cards.
-- [ ] Record runtime handshake fields, errors, redirects, and unsupported flows.
-- [ ] Compare agents that advertise similar capabilities but expose incompatible interfaces.
-- [ ] Record fallback paths such as A2A → MCP → HTTPS when applicable.
-
-**Questions to explore**
-
-- Can two discovered agents actually communicate?
-- Where do protocol incompatibilities appear?
-
-### 6. Authentication
-
-- [x] Record authentication mechanisms declared by each endpoint's metadata.
-- [ ] Compare advertised authentication requirements with actual connection behavior.
-- [ ] Identify incompatible authentication expectations between agents/services.
-- [ ] Record when authentication requirements are missing or unclear from metadata.
-- [x] Keep credentials and secrets out of experiment logs.
-
-**Questions to explore**
-
-- Can authentication requirements be discovered before attempting interaction?
-- What prevents two otherwise compatible agents from connecting?
-- What happens when Agent A wants to communicate with Agent B, but their authentication mechanisms do not match?
-
-### 7. Permissions & Data Requests
-
-- [ ] Record what data, scopes, permissions, or credentials an agent requests.
-- [ ] Compare requested access with the task being attempted.
-- [ ] Record whether permission requirements are visible before interaction.
-- [ ] Record unexpected requests for additional information or broader access.
-- [x] Avoid granting sensitive or state-changing permissions during Phase 1 experiments.
-
-**Questions to explore**
-
-- Does the requested access appear necessary for the task?
-- Can another agent or user understand the permission boundary before proceeding?
-- What should happen when an agent requests more data than appears necessary for the task?
-
-### 8. Post-Discovery Endpoint Interaction & Behavior
-
-- [x] Record URL, status, elapsed time, and raw response for discovery and inspection API calls.
-- [ ] For each selected discovered agent, extract an endpoint inventory from its Agent Card and related metadata, including the endpoint URL, protocol/transport, advertised skills or operations, authentication, and required input shape.
-- [ ] Classify each endpoint before use as public/read-only, authenticated, state-changing, paid, unclear, or unsupported; interact only when the action is safe and permitted.
-- [ ] Select at least one representative advertised capability per eligible agent and send a protocol-correct, non-state-changing request to the discovered endpoint (for example, A2A `SendMessage` or an MCP tool call), rather than treating metadata fetches or HTTP reachability as behavior evidence.
-- [ ] Record request, response, capture timestamp, protocol, and endpoint for each live agent-interaction step.
-- [ ] Preserve failed or blocked interaction attempts—including protocol errors, authentication challenges, malformed or incomplete endpoint metadata, and timeouts—as outcomes rather than silently excluding them.
-- [ ] Label an agent's behavior as **not observed** when no live capability request was attempted or completed; do not infer behavior from registry records, Agent Cards, validators, or endpoint reachability alone.
-- [ ] Record redirects, delegation, tool calls, external services, and follow-up agents when visible.
-- [ ] Compare expected flow from metadata with the actual flow.
-- [ ] Record failures, partial results, retries, and unexpected transitions.
-- [x] Keep observed facts separate from inferred explanations.
-
-**Questions to explore**
-
-- Does the interaction follow the path the user or calling agent expected?
-- Are important transitions hidden from the original requester?
-- If an agent redirects to another agent or service, can the original user see and understand that transition?
-
-### 9. Traceability & Provenance
-
-- [ ] Create a trace for each experiment from discovery through final observable result.
-- [x] Preserve source URLs/endpoints, artifacts, and raw responses where safe.
-- [ ] Add explicit experiment capture timestamps and an artifact manifest.
-- [ ] Track agent/service/tool transitions such as `A → B → C → tool`.
-- [x] Define and apply **reported**, **observed**, and **derived** distinctions in notebook interpretation and supporting notes.
-- [ ] Attach an explicit evidence classification to each stored observation and finding.
-- [ ] Identify where responsibility or provenance becomes unclear.
-
-**Questions to explore**
-
-- Can we reconstruct how the final result was produced?
-- When multiple agents/services participate, who performed each action?
-- In a chain such as `A → B → C → tool`, who is responsible for the final action?
-
-### 10. Cross-Agent / Cross-Source Analysis
-
-- [ ] Compare multiple agents attempting the same or similar task.
-- [x] Compare the same agent discovered through different sources.
-- [ ] Look for repeated failure patterns across agents.
-- [ ] Group findings into recurring categories rather than one-off anecdotes.
-- [ ] Identify which findings are important enough to reproduce later in Agentopia.
+Start with the smallest view that produces a useful insight. Do not wait for
+interaction data before building these static-data views.
 
 ---
 
-## Experiment Output
+# Stage 2 — Dynamic interaction data
 
-Each experiment in `EXPERIMENTS/` should produce a small, inspectable record such as:
+Begin this stage gradually after discovering public agents with safe,
+non-state-changing interaction paths.
 
-```text
-experiment
-├── input / user intent
-├── discovery source
-├── candidate agents
-├── raw metadata / Agent Cards
-├── discovered endpoint inventory
-├── identity evidence
-├── protocol + auth observations
-├── interaction attempts (including blocked / failed)
-├── interaction trace
-├── raw responses / artifacts
-└── findings
-```
+## Collect
 
-Minimum finding format:
+- [ ] Build a small dynamic dataset from safe interactions with eligible
+  discovered agents.
 
-```text
-Observation:
-Evidence:
-Why it matters:
-Open question:
-```
+For each attempt, retain the discovery claim, endpoint, protocol, request,
+response, timestamps, expected and observed results, outcome, and any visible
+delegation or tool use. Preserve blocked and inconclusive attempts too.
 
-Avoid labeling something a security or trust failure unless the evidence supports that conclusion.
+Do not use credentials, payments, personal data, or state-changing actions in
+the initial experiments.
 
----
+## Analyze
 
-## Skynet Phase 1 Requirements
+- [ ] Decide which interaction observations and recurring patterns provide
+  useful insights without generalizing beyond the tested tasks.
 
-Skynet should gradually make the experiments easier to inspect rather than replacing the experiments too early.
+Compare claims with outcomes and advertised protocol or authentication with
+actual connection behavior. Consider reliability, authorization, safety, and
+behavior only when they were directly exercised.
 
-- [ ] Capture structured observations from Python experiments.
-- [x] Preserve raw evidence alongside normalized fields.
-- [ ] Visualize the discovery and interaction path.
-- [ ] Compare agents, discovery sources, metadata, protocols, and outcomes.
-- [ ] Surface inconsistencies, missing information, and observable gaps.
-- [ ] Distinguish **reported**, **observed**, and **derived** information.
-- [ ] Make every finding traceable back to evidence.
+An agent without a completed capability attempt remains **behavior not
+observed**. Metadata fetches and endpoint reachability are not behavior tests.
+
+## Visualize
+
+- [ ] Build the valuable dynamic-data views identified by analysis:
+  **Discovery to Interaction** and, when multi-actor evidence exists,
+  **Interaction Trace**.
+
+Every displayed observation should link to its retained request, response, or
+artifact.
 
 ---
 
-# Phase 2 — REPRODUCE
+# Stage 3 — Controlled reproduction
 
-Take important gaps observed in Phase 1 and build controlled Agentopia agents/scenarios that reproduce them.
+After static and dynamic observations reveal recurring, important gaps:
 
-```text
-real observed gap
-      ↓
-controlled agents + scenarios
-      ↓
-reproduce / manipulate behavior
-      ↓
-Agentopia becomes an agent-world testbed
-```
+- [ ] Build controlled Agentopia scenarios only for valuable behaviors that
+  cannot be tested safely or reliably on public agents, then use the results
+  to improve Skynet's analysis and visualizations.
 
-This phase enables experiments that cannot safely or reliably be performed on third-party agents, including adversarial and controlled A/B scenarios.
-
-Detailed scope will be defined from Phase 1 findings.
+Do not build controlled scenarios for hypothetical problems that have not yet
+produced a valuable research question.
 
 ---
 
-# Phase 3 — MONITOR
+## Evidence rules
 
-Use what was learned from observation and controlled reproduction to continuously inspect real agent ecosystems and detect meaningful abnormal, unsafe, or inconsistent behavior.
+- Preserve raw evidence before deriving findings or visualizations.
+- Label information as **reported**, **observed**, or **derived**.
+- Keep observations from different capture times visibly separate.
+- Do not count the same underlying fact multiple times because several APIs
+  repeat it.
+- Do not label something a security or trust failure unless the evidence
+  supports that conclusion.
+- Prefer categorical findings and visible evidence gaps over unsupported
+  numeric scores.
 
-```text
-observe + reproduce knowledge
-          ↓
-continuous ecosystem observation
-          ↓
-detection + evidence
-          ↓
-agent monitoring / security infrastructure
-```
+## Immediate focus
 
-Detailed scope will be defined after Phases 1 and 2.
+1. Choose the minimum normalized data needed for the first static views.
+2. Build Discovery Evidence Coverage and Cross-Source Agent Evidence.
+3. Use those views to decide which static comparisons are genuinely useful.
+4. Begin a small safe-interaction dataset for the first dynamic view.
 
----
-
-## Current Build Principle
-
-**Do not build complexity before the observations justify it.**
-
-For now:
-
-1. Run Python experiments.
-2. Collect real evidence.
-3. Identify recurring gaps.
-4. Build Skynet views that make those gaps understandable.
-5. Only then decide which Agentopia agents and controlled scenarios are worth building.
+Detailed experiment history and scoring rules belong in `EXPERIMENTS/`, not in
+this build plan.
