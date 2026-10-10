@@ -105,7 +105,7 @@ button { color: inherit; }
   inset: 0;
   opacity: 0;
   transform-origin: 20% 50%;
-  animation: introWorldIn .35s 1s ease forwards, introWorldExit .6s 9.4s cubic-bezier(.4,0,.2,1) forwards;
+  animation: introWorldIn .35s 1s ease forwards, introWorldExit .8s 17.2s cubic-bezier(.4,0,.2,1) forwards;
 }
 .intro-map { width: 100%; height: 100%; display: block; }
 .intro-routes, .intro-packets, .intro-field-tags, .intro-agents--early, .intro-outposts {
@@ -148,29 +148,29 @@ button { color: inherit; }
 .intro-field-tags text { fill: #709079; font: 700 9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1.4px; }
 .intro-field-tags .intro-field-tag--missing { fill: #8e6f52; opacity: .68; }
 .intro-mochi-stage > * { opacity: 0; }
-.intro-mochi { color: #fff; filter: drop-shadow(0 0 12px rgba(255,255,255,.6)); animation: introMochiArrives .75s 6.75s cubic-bezier(.2,.8,.2,1) forwards; }
+.intro-mochi { color: #fff; filter: drop-shadow(0 0 12px rgba(255,255,255,.6)); animation: introMochiArrives 1s 8s cubic-bezier(.2,.8,.2,1) forwards; }
 .intro-mochi use { fill: #18222c; stroke-width: 2.7; }
 .intro-mochi text, .intro-peer text { fill: currentColor; text-anchor: middle; font: 800 12px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1.5px; }
 .intro-mochi .intro-mochi__role { fill: #a9b8ae; font-size: 8px; letter-spacing: 1.2px; }
-.intro-you { animation: introReveal .4s 6.85s ease forwards; }
-.intro-you circle { fill: #1b180c; stroke: #ffe16a; stroke-width: 1.5; }
-.intro-you text { fill: #ffe16a; text-anchor: middle; font: 800 9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; }
-.intro-you-link { fill: none; stroke: #ffe16a; stroke-width: 2; stroke-dasharray: 5 9; animation: introReveal .4s 7s ease forwards; }
-.intro-peer { filter: url(#intro-glow); transform-box: fill-box; transform-origin: center; animation: introPeerArrives .65s cubic-bezier(.2,.8,.2,1) forwards; }
-.intro-peer--orange { color: var(--orange); animation-delay: 7.8s; }
-.intro-peer--violet { color: var(--violet); animation-delay: 8s; }
-.intro-peer--lime { color: #9be477; animation-delay: 8.2s; }
+.intro-you { animation: introReveal .3s 6.5s ease forwards; }
+.intro-you circle { fill: #1b180c; stroke: #ffe16a; stroke-width: 1.5; transform-box: fill-box; transform-origin: center; animation: introYouBeacon 3s 6.5s ease both; }
+.intro-you text { fill: #ffe16a; text-anchor: middle; font: 900 12px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1.5px; transform-box: fill-box; transform-origin: center; animation: introYouText 3s 6.5s ease both; }
+.intro-you-link { fill: none; stroke: #ffe16a; stroke-width: 2; stroke-dasharray: 5 9; filter: drop-shadow(0 0 4px rgba(255,225,106,.7)); animation: introReveal .8s 9.1s ease forwards; }
+.intro-peer { filter: url(#intro-glow); transform-box: fill-box; transform-origin: center; animation: introPeerArrives 1.2s cubic-bezier(.2,.8,.2,1) forwards; }
+.intro-peer--orange { color: var(--orange); animation-delay: 10.8s; }
+.intro-peer--violet { color: var(--violet); animation-delay: 12s; }
+.intro-peer--lime { color: #9be477; animation-delay: 13.2s; }
 .intro-peer use { fill: #172018; stroke-width: 2.5; }
-.intro-possible-route { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-dasharray: 5 10; vector-effect: non-scaling-stroke; animation: introPossibleRoute .7s 8.05s ease forwards; }
+.intro-possible-route { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-dasharray: 5 10; vector-effect: non-scaling-stroke; animation: introPossibleRoute 1.2s 11.4s ease forwards; }
 .intro-possible-route--one { color: var(--orange); }
-.intro-possible-route--two { color: var(--violet); animation-delay: 8.2s; }
-.intro-possible-route--three { color: #9be477; animation-delay: 8.35s; }
+.intro-possible-route--two { color: var(--violet); animation-delay: 12.6s; }
+.intro-possible-route--three { color: #9be477; animation-delay: 13.8s; }
 .world-intro__captions { position: absolute; z-index: 30; left: 24px; right: 24px; bottom: clamp(34px, 7vh, 72px); height: 44px; text-align: center; pointer-events: none; }
 .intro-caption { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; opacity: 0; color: #dfffe7; font: 750 clamp(14px, 2vw, 22px)/1.35 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: -.025em; text-shadow: 0 0 18px rgba(69,255,138,.22); }
 .intro-caption--online { animation: introCaption 2.3s 1.05s ease both; }
 .intro-caption--pieces { animation: introCaption 3.2s 3.25s ease both; }
-.intro-caption--mochi { animation: introCaption 1.25s 6.7s ease both; }
-.intro-caption--connect { color: #fff; animation: introFinalCaption 1.3s 8s ease forwards; }
+.intro-caption--mochi { animation: introCaption 3.2s 7.3s ease both; }
+.intro-caption--connect { color: #fff; animation: introFinalCaption 1.5s 10.8s ease forwards; }
 
 .app-shell { min-height: 100vh; opacity: 1; transform: none; transition: opacity .4s ease, transform .4s ease; }
 .app-shell.is-intro-pending { opacity: 0; transform: scale(.992); }
@@ -372,6 +372,18 @@ button { color: inherit; }
 @keyframes introMochiArrives {
   from { opacity: 0; filter: blur(8px) drop-shadow(0 0 20px rgba(255,255,255,.8)); }
   to { opacity: 1; filter: blur(0) drop-shadow(0 0 12px rgba(255,255,255,.6)); }
+}
+@keyframes introYouBeacon {
+  0% { filter: brightness(.7); transform: scale(.82); }
+  35% { fill: #4b3d08; stroke-width: 2.8; filter: brightness(1.65) drop-shadow(0 0 15px #ffe16a); transform: scale(1.35); }
+  70% { fill: #2e270c; stroke-width: 2.2; filter: brightness(1.3) drop-shadow(0 0 10px rgba(255,225,106,.9)); transform: scale(1.18); }
+  100% { fill: #241f0d; stroke-width: 2; filter: brightness(1.18) drop-shadow(0 0 7px rgba(255,225,106,.72)); transform: scale(1.12); }
+}
+@keyframes introYouText {
+  0% { filter: brightness(.7); font-size: 10px; transform: scale(.82); }
+  35% { filter: brightness(1.8) drop-shadow(0 0 8px #ffe16a); font-size: 17px; transform: scale(1.08); }
+  70% { filter: brightness(1.45) drop-shadow(0 0 6px rgba(255,225,106,.9)); font-size: 15px; transform: scale(1); }
+  100% { filter: brightness(1.3) drop-shadow(0 0 4px rgba(255,225,106,.75)); font-size: 14px; transform: scale(1); }
 }
 @keyframes introPeerArrives {
   from { opacity: 0; filter: brightness(.4); }

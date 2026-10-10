@@ -328,7 +328,7 @@ const finishIntro = () => {
   window.setTimeout(() => worldIntro?.remove(), prefersReducedMotion ? 20 : 420);
 };
 
-const introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 10000);
+const introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 18000);
 introSkip?.addEventListener('click', () => {
   window.clearTimeout(introTimer);
   finishIntro();
