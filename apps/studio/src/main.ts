@@ -60,7 +60,123 @@ const agentButton = (agent: Agent, placement: string) => `
 `;
 
 app.innerHTML = `
-  <div class="app-shell">
+  <section
+    class="world-intro"
+    data-world-intro
+    aria-label="Agentopia introduction. Agents come online, publish information through AgentCensus, A2A Registry, and MCP Registry, then Mochi connects with other agents on your behalf."
+  >
+    <button class="world-intro__skip" type="button" data-intro-skip>Skip intro</button>
+    <span class="world-intro__mode" aria-hidden="true">Conceptual ecosystem map</span>
+
+    <div class="world-intro__logo" aria-hidden="true" data-text="AGENTOPIA">AGENTOPIA</div>
+
+    <div class="intro-world" aria-hidden="true">
+      <svg class="intro-map" viewBox="0 0 1200 680" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <pattern id="intro-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+            <path d="M48 0H0V48" fill="none" stroke="#31523a" stroke-width="1" opacity=".32" />
+          </pattern>
+          <symbol id="intro-agent" viewBox="0 0 60 60">
+            <path d="M8 49V28C8 13 18 5 30 5s22 8 22 23v21c0 5-4 8-8 8-5 0-7-3-8-7-1 4-3 7-7 7s-7-3-8-7c-1 4-3 7-7 7-4 0-6-3-6-8z" />
+            <path d="M18 30h24" fill="none" />
+            <circle cx="24" cy="37" r="2" />
+            <circle cx="36" cy="37" r="2" />
+          </symbol>
+          <filter id="intro-glow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
+
+        <rect width="1200" height="680" fill="#06100a" />
+        <rect width="1200" height="680" fill="url(#intro-grid)" />
+        <circle cx="220" cy="520" r="280" fill="#45ff8a" opacity=".035" />
+        <circle cx="980" cy="120" r="320" fill="#aa8cff" opacity=".035" />
+
+        <g class="intro-routes">
+          <path id="route-census" d="M105 540C125 430 155 355 230 300" />
+          <path id="route-a2a" d="M475 565C505 430 545 325 600 250" />
+          <path id="route-mcp" d="M1090 535C1062 435 1025 360 970 310" />
+        </g>
+
+        <g class="intro-packets">
+          <circle class="intro-packet intro-packet--green" r="5"><animateMotion begin=".75s" dur="1.15s" fill="freeze"><mpath href="#route-census" /></animateMotion></circle>
+          <circle class="intro-packet intro-packet--violet" r="5"><animateMotion begin=".9s" dur="1.15s" fill="freeze"><mpath href="#route-a2a" /></animateMotion></circle>
+          <circle class="intro-packet intro-packet--orange" r="5"><animateMotion begin="1.05s" dur="1.15s" fill="freeze"><mpath href="#route-mcp" /></animateMotion></circle>
+        </g>
+
+        <g class="intro-agents intro-agents--early">
+          <g class="intro-agent intro-agent--green" transform="translate(72 517)"><use href="#intro-agent" width="66" height="66" /></g>
+          <g class="intro-agent intro-agent--violet" transform="translate(440 540)"><use href="#intro-agent" width="66" height="66" /></g>
+          <g class="intro-agent intro-agent--orange" transform="translate(1053 510)"><use href="#intro-agent" width="66" height="66" /></g>
+          <g class="intro-agent intro-agent--cyan" transform="translate(820 540)"><use href="#intro-agent" width="54" height="54" /></g>
+          <g class="intro-agent intro-agent--lime" transform="translate(300 530)"><use href="#intro-agent" width="52" height="52" /></g>
+        </g>
+
+        <g class="intro-outposts">
+          <g class="intro-outpost intro-outpost--census" transform="translate(230 260)">
+            <circle class="intro-outpost__halo" r="73" />
+            <circle class="intro-outpost__shell" r="48" />
+            <path class="intro-outpost__icon" d="M-24 7A25 25 0 0124 7M-15 7a16 16 0 0130 0M0-28V23M-12 26h24" />
+            <circle class="intro-outpost__signal" cy="-4" r="4" />
+            <text class="intro-outpost__name" y="88">AGENTCENSUS</text>
+            <text class="intro-outpost__type" y="106">OBSERVATION POINT</text>
+          </g>
+          <g class="intro-outpost intro-outpost--a2a" transform="translate(600 210)">
+            <circle class="intro-outpost__halo" r="73" />
+            <rect class="intro-outpost__shell" x="-48" y="-48" width="96" height="96" rx="18" />
+            <path class="intro-outpost__icon" d="M-24 24V-22H24V24M-10 24V4H10V24M-13-8h26" />
+            <text class="intro-outpost__name" y="88">A2A REGISTRY</text>
+            <text class="intro-outpost__type" y="106">AGENT CARD DIRECTORY</text>
+          </g>
+          <g class="intro-outpost intro-outpost--mcp" transform="translate(970 270)">
+            <circle class="intro-outpost__halo" r="73" />
+            <path class="intro-outpost__shell" d="M0-52L45-26V26L0 52-45 26V-26Z" />
+            <path class="intro-outpost__icon" d="M-20 0H20M-10-15V15M10-15V15M-26-20V20M26-20V20" />
+            <text class="intro-outpost__name" y="88">MCP REGISTRY</text>
+            <text class="intro-outpost__type" y="106">SERVER DIRECTORY</text>
+          </g>
+        </g>
+
+        <g class="intro-field-tags">
+          <text x="150" y="405">IDENTITY</text>
+          <text x="517" y="405">ENDPOINT</text>
+          <text x="972" y="423">CAPABILITIES</text>
+          <text class="intro-field-tag--missing" x="730" y="310">PERMISSIONS —</text>
+        </g>
+
+        <g class="intro-mochi-stage">
+          <path class="intro-possible-route intro-possible-route--one" d="M600 370C485 340 390 338 288 385" />
+          <path class="intro-possible-route intro-possible-route--two" d="M600 370C715 330 820 340 920 395" />
+          <path class="intro-possible-route intro-possible-route--three" d="M600 370C705 438 770 485 835 530" />
+
+          <g class="intro-you" transform="translate(600 550)">
+            <circle r="31" />
+            <text y="4">YOU</text>
+          </g>
+          <path class="intro-you-link" d="M600 518V462" />
+          <g class="intro-mochi" transform="translate(545 320)">
+            <use href="#intro-agent" width="110" height="110" />
+            <text x="55" y="129">MOCHI</text>
+            <text class="intro-mochi__role" x="55" y="148">YOUR PERSONAL AGENT</text>
+          </g>
+
+          <g class="intro-peer intro-peer--orange" transform="translate(240 345)"><use href="#intro-agent" width="80" height="80" /><text x="40" y="97">SERVICE</text></g>
+          <g class="intro-peer intro-peer--violet" transform="translate(880 350)"><use href="#intro-agent" width="80" height="80" /><text x="40" y="97">SPECIALIST</text></g>
+          <g class="intro-peer intro-peer--lime" transform="translate(795 500)"><use href="#intro-agent" width="70" height="70" /><text x="35" y="87">NETWORK</text></g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="world-intro__captions" aria-hidden="true">
+      <p class="intro-caption intro-caption--online">Agents are coming online…</p>
+      <p class="intro-caption intro-caption--pieces">Each network sees a different piece.</p>
+      <p class="intro-caption intro-caption--mochi">Meet Mochi — your personal agent.</p>
+      <p class="intro-caption intro-caption--connect">Mochi can discover and work with agents across the network.</p>
+    </div>
+  </section>
+
+  <div class="app-shell is-intro-pending" data-app-shell inert aria-hidden="true">
     <main class="studio" aria-label="Agentopia Studio preview">
       <section class="world-panel" aria-label="Agentopia world">
         <div class="panel-heading">
@@ -195,6 +311,33 @@ app.innerHTML = `
     </main>
   </div>
 `;
+
+const worldIntro = document.querySelector<HTMLElement>('[data-world-intro]');
+const appShell = document.querySelector<HTMLElement>('[data-app-shell]');
+const introSkip = document.querySelector<HTMLButtonElement>('[data-intro-skip]');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let introFinished = false;
+
+const finishIntro = () => {
+  if (introFinished) return;
+  introFinished = true;
+  worldIntro?.classList.add('is-finished');
+  appShell?.classList.remove('is-intro-pending');
+  appShell?.removeAttribute('inert');
+  appShell?.removeAttribute('aria-hidden');
+  window.setTimeout(() => worldIntro?.remove(), prefersReducedMotion ? 20 : 420);
+};
+
+const introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 4500);
+introSkip?.addEventListener('click', () => {
+  window.clearTimeout(introTimer);
+  finishIntro();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape' || introFinished) return;
+  window.clearTimeout(introTimer);
+  finishIntro();
+});
 
 const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-agent-id]'));
 const inspectorContext = document.querySelector<HTMLElement>('[data-inspector-context]');
