@@ -2,19 +2,35 @@
 
 ## Goal
 
-Build a small observable world of AI agents.
+Build an open-source, observable world of AI agents that makes the emerging
+agent ecosystem visible, explorable, and easier to improve.
 
-- **Skynet** collects, analyzes, and visualizes agent discovery and interaction.
-- **Agentopia** later provides controlled agents for reproducing important
-  behaviors that cannot be tested safely or reliably on public agents.
+- **Skynet** is the evidence and observability layer. It collects data across
+  agent **discovery, identity, permissions, behavior, safety, and security**;
+  connects claims to observed interactions; and reveals where agent-to-agent
+  infrastructure is incomplete, inconsistent, or breaking.
+- **Agentopia** turns that evidence into a lively game-like world. Agents,
+  relationships, interactions, and failures should feel active and fun to
+  explore while remaining grounded in inspectable data. It later provides
+  controlled agents for reproducing important behaviors that cannot be tested
+  safely or reliably on public agents.
+- **The community** should be able to investigate the data, discover patterns,
+  contribute experiments, and turn missing evidence into concrete research and
+  engineering questions.
+
+Success means more than cataloging agents. A builder should be able to see what
+an agent claims, what the evidence actually shows, how agents interact, and
+where reliability or trust breaks down—then follow that finding back to the raw
+artifact and help close the gap.
 
 The working loop is:
 
 ```text
-collect evidence → analyze what is useful → visualize valuable insight
+discover → collect evidence → analyze patterns → visualize gaps → reproduce
 ```
 
-Do not design scores or visualizations before the evidence supports them.
+Keep the experience playful, but the conclusions rigorous. Do not design scores
+or visualizations before the evidence supports them.
 
 ## What the current sources provide
 
