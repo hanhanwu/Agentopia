@@ -165,14 +165,18 @@ button { color: inherit; }
 .intro-you text { fill: #ffe16a; text-anchor: middle; font: 900 12px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1.5px; transform-box: fill-box; transform-origin: center; animation: introYouText 3s 8s ease both; }
 .intro-you-link { fill: none; stroke: #ffe16a; stroke-width: 2; stroke-dasharray: 5 9; filter: drop-shadow(0 0 4px rgba(255,225,106,.7)); animation: introReveal .8s 10.6s ease forwards; }
 .intro-peer { filter: url(#intro-glow); transform-box: fill-box; transform-origin: center; animation: introPeerArrives 1.2s cubic-bezier(.2,.8,.2,1) forwards; }
-.intro-peer--orange { color: var(--orange); animation-delay: 12.3s; }
-.intro-peer--violet { color: var(--violet); animation-delay: 13.5s; }
-.intro-peer--lime { color: #9be477; animation-delay: 14.7s; }
+.intro-peer--cyan { color: var(--cyan-bright); animation-delay: 12s; }
+.intro-peer--pink { color: #ff6fae; animation-delay: 12.7s; }
+.intro-peer--orange { color: var(--orange); animation-delay: 13.4s; }
+.intro-peer--violet { color: var(--violet); animation-delay: 14.1s; }
+.intro-peer--lime { color: #9be477; animation-delay: 14.8s; }
 .intro-peer use { fill: #172018; stroke-width: 2.5; }
-.intro-possible-route { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-dasharray: 5 10; vector-effect: non-scaling-stroke; animation: introPossibleRoute 1.2s 12.9s ease forwards; }
+.intro-possible-route { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-dasharray: 5 10; vector-effect: non-scaling-stroke; animation: introPossibleRoute 1.2s 13.9s ease forwards; }
 .intro-possible-route--one { color: var(--orange); }
-.intro-possible-route--two { color: var(--violet); animation-delay: 14.1s; }
+.intro-possible-route--two { color: var(--violet); animation-delay: 14.6s; }
 .intro-possible-route--three { color: #9be477; animation-delay: 15.3s; }
+.intro-possible-route--four { color: var(--cyan-bright); animation-delay: 12.5s; }
+.intro-possible-route--five { color: #ff6fae; animation-delay: 13.2s; }
 .world-intro__captions { position: absolute; z-index: 30; left: 24px; right: 24px; bottom: clamp(34px, 7vh, 72px); height: 44px; text-align: center; pointer-events: none; }
 .intro-caption { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; opacity: 0; color: #dfffe7; font: 750 clamp(14px, 2vw, 22px)/1.35 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: -.025em; text-shadow: 0 0 18px rgba(69,255,138,.22); }
 .intro-caption--online { animation: introCaption 2.3s 1.05s ease both; }

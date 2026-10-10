@@ -156,6 +156,8 @@ app.innerHTML = `
         </g>
 
         <g class="intro-mochi-stage">
+          <path class="intro-possible-route intro-possible-route--four" d="M600 370C550 315 520 290 460 270" />
+          <path class="intro-possible-route intro-possible-route--five" d="M600 370C650 315 690 290 740 265" />
           <path class="intro-possible-route intro-possible-route--one" d="M600 370C485 340 390 338 288 385" />
           <path class="intro-possible-route intro-possible-route--two" d="M600 370C715 330 820 340 920 395" />
           <path class="intro-possible-route intro-possible-route--three" d="M600 370C705 438 770 485 835 530" />
@@ -171,6 +173,8 @@ app.innerHTML = `
             <text class="intro-mochi__role" x="55" y="148">YOUR PERSONAL AGENT</text>
           </g>
 
+          <g class="intro-peer intro-peer--cyan" transform="translate(420 205)"><use href="#intro-agent" width="80" height="80" /><text x="40" y="97">IDENTITY</text></g>
+          <g class="intro-peer intro-peer--pink" transform="translate(700 200)"><use href="#intro-agent" width="80" height="80" /><text x="40" y="97">SECURITY</text></g>
           <g class="intro-peer intro-peer--orange" transform="translate(240 345)"><use href="#intro-agent" width="80" height="80" /><text x="40" y="97">SERVICE</text></g>
           <g class="intro-peer intro-peer--violet" transform="translate(880 350)"><use href="#intro-agent" width="80" height="80" /><text x="40" y="97">SPECIALIST</text></g>
           <g class="intro-peer intro-peer--lime" transform="translate(795 500)"><use href="#intro-agent" width="70" height="70" /><text x="35" y="87">NETWORK</text></g>
