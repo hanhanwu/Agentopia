@@ -2,7 +2,7 @@
 
 Skynet should show **what is claimed, what evidence exists, where sources disagree, and what remains untested**. Do not turn incomplete discovery metadata into an overall trust score.
 
-## P0 — Discovery Evidence Coverage
+## Discovery Evidence Coverage
 
 Show how far each source was inspected:
 
@@ -15,7 +15,7 @@ search results → unique agents → fetch attempted → document retained → f
 - Explain the practical impact of missing fields.
 - Label this as **experiment collection coverage**, not source quality.
 
-## P0 — Cross-Source Agent Evidence
+## Cross-Source Agent Evidence
 
 For one agent, show normalized values side by side:
 
@@ -27,7 +27,7 @@ For one agent, show normalized values side by side:
 
 Label each item as `reported`, `observed`, or `derived`. Keep `missing`, `not applicable`, `not checked`, and `failed` distinct.
 
-## P1 — Drift and Consistency
+## Drift and Consistency
 
 Use one source-specific panel at a time. Do not combine AgentCensus, A2A Registry, and ANS observations into one drift result.
 
@@ -47,7 +47,7 @@ Show the exact API, URL, artifact, and capture time beside every value. Cross-so
 
 Only compare fields with equivalent meanings; source-specific differences are not automatically problems.
 
-## P2 — Discovery to Interaction
+## Discovery to Interaction
 
 Add runtime evidence when safe agent interactions are available:
 
@@ -60,7 +60,7 @@ published claim → passive corroboration → connection → capability call →
 - Keep request, response, expected outcome, timestamps, and review status.
 - Show the remaining gap instead of assigning a score when evidence is incomplete.
 
-## P3 — Interaction Trace
+## Interaction Trace
 
 Visualize agent and tool transitions such as:
 
@@ -69,3 +69,9 @@ user → agent A → agent B → tool → result
 ```
 
 Show who performed each action, where responsibility becomes unclear, and which evidence supports the final result.
+
+## Protocols
+
+* Show where to use which protocols, and how do they work, show it in a fun way
+
+* Protocols: PAP, A2A, MCP, ANS, ATD

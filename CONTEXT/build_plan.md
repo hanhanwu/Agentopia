@@ -163,3 +163,12 @@ produced a valuable research question.
 
 Detailed experiment history and scoring rules belong in `EXPERIMENTS/`, not in
 this build plan.
+
+## Reminders — priority TBD
+
+- [ ] Check the MCP Registry and compare it with other registry data points.
+- [ ] Try the [Personal Agent Protocol (PAP)](https://personalagentprotocol.org/docs/spec)
+  to understand how to use it and what data, capabilities, or insights it can
+  provide.
+
+The priority and timing of these items are still to be determined.
