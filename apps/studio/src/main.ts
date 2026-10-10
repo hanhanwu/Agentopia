@@ -97,12 +97,18 @@ app.innerHTML = `
           <path id="route-census" d="M105 540C125 430 155 355 230 300" />
           <path id="route-a2a" d="M475 565C505 430 545 325 600 250" />
           <path id="route-mcp" d="M1090 535C1062 435 1025 360 970 310" />
+          <path class="intro-route-extra intro-route-extra--census" d="M326 558C310 450 275 360 235 305" />
+          <path class="intro-route-extra intro-route-extra--census" d="M167 590C175 470 200 380 230 305" />
+          <path class="intro-route-extra intro-route-extra--a2a" d="M544 530C560 430 575 330 600 255" />
+          <path class="intro-route-extra intro-route-extra--a2a" d="M723 560C695 450 650 340 605 255" />
+          <path class="intro-route-extra intro-route-extra--mcp" d="M845 565C890 470 935 390 968 315" />
+          <path class="intro-route-extra intro-route-extra--mcp" d="M978 575C985 480 982 390 972 315" />
         </g>
 
         <g class="intro-packets">
-          <circle class="intro-packet intro-packet--green" r="5"><animateMotion begin="1.7s" dur="2.3s" fill="freeze"><mpath href="#route-census" /></animateMotion></circle>
-          <circle class="intro-packet intro-packet--violet" r="5"><animateMotion begin="2s" dur="2.3s" fill="freeze"><mpath href="#route-a2a" /></animateMotion></circle>
-          <circle class="intro-packet intro-packet--orange" r="5"><animateMotion begin="2.3s" dur="2.3s" fill="freeze"><mpath href="#route-mcp" /></animateMotion></circle>
+          <circle class="intro-packet intro-packet--green" r="5"><animateMotion begin="2.1s" dur="2s" fill="freeze"><mpath href="#route-census" /></animateMotion></circle>
+          <circle class="intro-packet intro-packet--violet" r="5"><animateMotion begin="4.1s" dur="2s" fill="freeze"><mpath href="#route-a2a" /></animateMotion></circle>
+          <circle class="intro-packet intro-packet--orange" r="5"><animateMotion begin="6.1s" dur="2s" fill="freeze"><mpath href="#route-mcp" /></animateMotion></circle>
         </g>
 
         <g class="intro-agents intro-agents--early">
@@ -111,6 +117,10 @@ app.innerHTML = `
           <g class="intro-agent intro-agent--orange" transform="translate(1053 510)"><use href="#intro-agent" width="66" height="66" /></g>
           <g class="intro-agent intro-agent--cyan" transform="translate(820 540)"><use href="#intro-agent" width="54" height="54" /></g>
           <g class="intro-agent intro-agent--lime" transform="translate(300 530)"><use href="#intro-agent" width="52" height="52" /></g>
+          <g class="intro-agent intro-agent--cyan" transform="translate(145 565)"><use href="#intro-agent" width="44" height="44" /></g>
+          <g class="intro-agent intro-agent--orange" transform="translate(520 505)"><use href="#intro-agent" width="48" height="48" /></g>
+          <g class="intro-agent intro-agent--green" transform="translate(700 535)"><use href="#intro-agent" width="46" height="46" /></g>
+          <g class="intro-agent intro-agent--violet" transform="translate(955 550)"><use href="#intro-agent" width="46" height="46" /></g>
         </g>
 
         <g class="intro-outposts">
@@ -139,9 +149,9 @@ app.innerHTML = `
         </g>
 
         <g class="intro-field-tags">
-          <text x="150" y="405">IDENTITY</text>
-          <text x="517" y="405">ENDPOINT</text>
-          <text x="972" y="423">CAPABILITIES</text>
+          <text class="intro-field-tag--identity" x="150" y="405">IDENTITY</text>
+          <text class="intro-field-tag--endpoint" x="517" y="405">ENDPOINT</text>
+          <text class="intro-field-tag--capabilities" x="972" y="423">CAPABILITIES</text>
           <text class="intro-field-tag--missing" x="730" y="310">PERMISSIONS —</text>
         </g>
 
@@ -328,7 +338,7 @@ const finishIntro = () => {
   window.setTimeout(() => worldIntro?.remove(), prefersReducedMotion ? 20 : 420);
 };
 
-const introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 18000);
+const introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 20000);
 introSkip?.addEventListener('click', () => {
   window.clearTimeout(introTimer);
   finishIntro();
