@@ -100,9 +100,9 @@ app.innerHTML = `
         </g>
 
         <g class="intro-packets">
-          <circle class="intro-packet intro-packet--green" r="5"><animateMotion begin=".75s" dur="1.15s" fill="freeze"><mpath href="#route-census" /></animateMotion></circle>
-          <circle class="intro-packet intro-packet--violet" r="5"><animateMotion begin=".9s" dur="1.15s" fill="freeze"><mpath href="#route-a2a" /></animateMotion></circle>
-          <circle class="intro-packet intro-packet--orange" r="5"><animateMotion begin="1.05s" dur="1.15s" fill="freeze"><mpath href="#route-mcp" /></animateMotion></circle>
+          <circle class="intro-packet intro-packet--green" r="5"><animateMotion begin="1.7s" dur="2.3s" fill="freeze"><mpath href="#route-census" /></animateMotion></circle>
+          <circle class="intro-packet intro-packet--violet" r="5"><animateMotion begin="2s" dur="2.3s" fill="freeze"><mpath href="#route-a2a" /></animateMotion></circle>
+          <circle class="intro-packet intro-packet--orange" r="5"><animateMotion begin="2.3s" dur="2.3s" fill="freeze"><mpath href="#route-mcp" /></animateMotion></circle>
         </g>
 
         <g class="intro-agents intro-agents--early">
@@ -328,7 +328,7 @@ const finishIntro = () => {
   window.setTimeout(() => worldIntro?.remove(), prefersReducedMotion ? 20 : 420);
 };
 
-const introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 4500);
+const introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 10000);
 introSkip?.addEventListener('click', () => {
   window.clearTimeout(introTimer);
   finishIntro();

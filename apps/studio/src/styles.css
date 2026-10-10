@@ -88,7 +88,7 @@ button { color: inherit; }
   letter-spacing: .075em;
   text-shadow: 3px 5px 0 #17502a, 0 0 50px rgba(69,255,138,.4);
   transform: skewX(-10deg) scaleX(.94);
-  animation: introLogo .6s ease both;
+  animation: introLogo 1.3s ease both;
 }
 .world-intro__logo::after {
   content: attr(data-text);
@@ -105,11 +105,11 @@ button { color: inherit; }
   inset: 0;
   opacity: 0;
   transform-origin: 20% 50%;
-  animation: introWorldIn .18s .45s ease forwards, introWorldExit .3s 4.2s cubic-bezier(.4,0,.2,1) forwards;
+  animation: introWorldIn .35s 1s ease forwards, introWorldExit .6s 9.4s cubic-bezier(.4,0,.2,1) forwards;
 }
 .intro-map { width: 100%; height: 100%; display: block; }
 .intro-routes, .intro-packets, .intro-field-tags, .intro-agents--early, .intro-outposts {
-  animation: introDim .28s 3.02s ease forwards;
+  animation: introDim .55s 6.65s ease forwards;
 }
 .intro-routes path {
   fill: none;
@@ -119,22 +119,22 @@ button { color: inherit; }
   vector-effect: non-scaling-stroke;
   opacity: .78;
 }
-.intro-routes path:nth-child(1) { stroke-dashoffset: 95; animation: introRoute .8s .63s linear both; }
-.intro-routes path:nth-child(2) { stroke: #7662b5; stroke-dashoffset: 95; animation: introRoute .8s .76s linear both; }
-.intro-routes path:nth-child(3) { stroke: #9d7043; stroke-dashoffset: 95; animation: introRoute .8s .89s linear both; }
-.intro-packet { opacity: 0; filter: url(#intro-glow); animation: introPacket 1.4s .62s ease both; }
+.intro-routes path:nth-child(1) { stroke-dashoffset: 95; animation: introRoute 1.8s 1.4s linear both; }
+.intro-routes path:nth-child(2) { stroke: #7662b5; stroke-dashoffset: 95; animation: introRoute 1.8s 1.7s linear both; }
+.intro-routes path:nth-child(3) { stroke: #9d7043; stroke-dashoffset: 95; animation: introRoute 1.8s 2s linear both; }
+.intro-packet { opacity: 0; filter: url(#intro-glow); animation: introPacket 3s 1.4s ease both; }
 .intro-packet--green { fill: var(--green); }
 .intro-packet--violet { fill: var(--violet); }
 .intro-packet--orange { fill: var(--orange); }
 .intro-agent { opacity: 0; filter: url(#intro-glow); }
 .intro-agent use, .intro-peer use, .intro-mochi use { fill: #13221a; stroke: currentColor; stroke-width: 3; stroke-linejoin: round; }
 .intro-agent circle, .intro-peer circle, .intro-mochi circle { fill: #f2fff5; stroke: none; }
-.intro-agent--green { color: var(--green); animation: introAgentWake .34s .5s ease forwards; }
-.intro-agent--violet { color: var(--violet); animation: introAgentWake .34s .57s ease forwards; }
-.intro-agent--orange { color: var(--orange); animation: introAgentWake .34s .64s ease forwards; }
-.intro-agent--cyan { color: var(--cyan-bright); animation: introAgentWake .34s .71s ease forwards; }
-.intro-agent--lime { color: #9be477; animation: introAgentWake .34s .78s ease forwards; }
-.intro-outposts { opacity: 0; animation: introReveal .3s .62s ease forwards, introDim .28s 3.02s ease forwards; }
+.intro-agent--green { color: var(--green); animation: introAgentWake .7s 1.1s ease forwards; }
+.intro-agent--violet { color: var(--violet); animation: introAgentWake .7s 1.25s ease forwards; }
+.intro-agent--orange { color: var(--orange); animation: introAgentWake .7s 1.4s ease forwards; }
+.intro-agent--cyan { color: var(--cyan-bright); animation: introAgentWake .7s 1.55s ease forwards; }
+.intro-agent--lime { color: #9be477; animation: introAgentWake .7s 1.7s ease forwards; }
+.intro-outposts { opacity: 0; animation: introReveal .65s 1.35s ease forwards, introDim .55s 6.65s ease forwards; }
 .intro-outpost { color: var(--green); text-anchor: middle; }
 .intro-outpost--a2a { color: var(--violet); }
 .intro-outpost--mcp { color: var(--orange); }
@@ -144,33 +144,33 @@ button { color: inherit; }
 .intro-outpost__signal { fill: currentColor; filter: url(#intro-glow); }
 .intro-outpost__name { fill: currentColor; font: 800 14px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1.5px; }
 .intro-outpost__type { fill: #587160; font: 600 8px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1.1px; }
-.intro-field-tags { opacity: 0; animation: introReveal .25s 1.25s ease forwards, introDim .28s 3.02s ease forwards; }
+.intro-field-tags { opacity: 0; animation: introReveal .5s 2.75s ease forwards, introDim .55s 6.65s ease forwards; }
 .intro-field-tags text { fill: #709079; font: 700 9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1.4px; }
 .intro-field-tags .intro-field-tag--missing { fill: #8e6f52; opacity: .68; }
 .intro-mochi-stage > * { opacity: 0; }
-.intro-mochi { color: #fff; filter: drop-shadow(0 0 12px rgba(255,255,255,.6)); animation: introMochiArrives .35s 3.08s cubic-bezier(.2,.8,.2,1) forwards; }
+.intro-mochi { color: #fff; filter: drop-shadow(0 0 12px rgba(255,255,255,.6)); animation: introMochiArrives .75s 6.75s cubic-bezier(.2,.8,.2,1) forwards; }
 .intro-mochi use { fill: #18222c; stroke-width: 2.7; }
 .intro-mochi text, .intro-peer text { fill: currentColor; text-anchor: middle; font: 800 12px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1.5px; }
 .intro-mochi .intro-mochi__role { fill: #a9b8ae; font-size: 8px; letter-spacing: 1.2px; }
-.intro-you { animation: introReveal .2s 3.12s ease forwards; }
+.intro-you { animation: introReveal .4s 6.85s ease forwards; }
 .intro-you circle { fill: #1b180c; stroke: #ffe16a; stroke-width: 1.5; }
 .intro-you text { fill: #ffe16a; text-anchor: middle; font: 800 9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; }
-.intro-you-link { fill: none; stroke: #ffe16a; stroke-width: 2; stroke-dasharray: 5 9; animation: introReveal .18s 3.18s ease forwards; }
-.intro-peer { filter: url(#intro-glow); transform-box: fill-box; transform-origin: center; animation: introPeerArrives .3s cubic-bezier(.2,.8,.2,1) forwards; }
-.intro-peer--orange { color: var(--orange); animation-delay: 3.52s; }
-.intro-peer--violet { color: var(--violet); animation-delay: 3.6s; }
-.intro-peer--lime { color: #9be477; animation-delay: 3.68s; }
+.intro-you-link { fill: none; stroke: #ffe16a; stroke-width: 2; stroke-dasharray: 5 9; animation: introReveal .4s 7s ease forwards; }
+.intro-peer { filter: url(#intro-glow); transform-box: fill-box; transform-origin: center; animation: introPeerArrives .65s cubic-bezier(.2,.8,.2,1) forwards; }
+.intro-peer--orange { color: var(--orange); animation-delay: 7.8s; }
+.intro-peer--violet { color: var(--violet); animation-delay: 8s; }
+.intro-peer--lime { color: #9be477; animation-delay: 8.2s; }
 .intro-peer use { fill: #172018; stroke-width: 2.5; }
-.intro-possible-route { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-dasharray: 5 10; vector-effect: non-scaling-stroke; animation: introPossibleRoute .35s 3.62s ease forwards; }
+.intro-possible-route { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-dasharray: 5 10; vector-effect: non-scaling-stroke; animation: introPossibleRoute .7s 8.05s ease forwards; }
 .intro-possible-route--one { color: var(--orange); }
-.intro-possible-route--two { color: var(--violet); animation-delay: 3.69s; }
-.intro-possible-route--three { color: #9be477; animation-delay: 3.76s; }
+.intro-possible-route--two { color: var(--violet); animation-delay: 8.2s; }
+.intro-possible-route--three { color: #9be477; animation-delay: 8.35s; }
 .world-intro__captions { position: absolute; z-index: 30; left: 24px; right: 24px; bottom: clamp(34px, 7vh, 72px); height: 44px; text-align: center; pointer-events: none; }
 .intro-caption { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; opacity: 0; color: #dfffe7; font: 750 clamp(14px, 2vw, 22px)/1.35 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: -.025em; text-shadow: 0 0 18px rgba(69,255,138,.22); }
-.intro-caption--online { animation: introCaption 1.05s .47s ease both; }
-.intro-caption--pieces { animation: introCaption 1.48s 1.48s ease both; }
-.intro-caption--mochi { animation: introCaption .62s 3.05s ease both; }
-.intro-caption--connect { color: #fff; animation: introFinalCaption .72s 3.68s ease forwards; }
+.intro-caption--online { animation: introCaption 2.3s 1.05s ease both; }
+.intro-caption--pieces { animation: introCaption 3.2s 3.25s ease both; }
+.intro-caption--mochi { animation: introCaption 1.25s 6.7s ease both; }
+.intro-caption--connect { color: #fff; animation: introFinalCaption 1.3s 8s ease forwards; }
 
 .app-shell { min-height: 100vh; opacity: 1; transform: none; transition: opacity .4s ease, transform .4s ease; }
 .app-shell.is-intro-pending { opacity: 0; transform: scale(.992); }
