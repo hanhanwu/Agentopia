@@ -15,31 +15,53 @@ if (!app) {
   throw new Error('Studio root was not found.');
 }
 
+type ServiceVariant = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+const mochiArtwork = () => `
+  <path class="squid-body" d="M48 205V140C48 65 91 25 132 25s84 40 84 115v65c0 21-15 37-34 37s-34-16-34-37c0 21-15 37-34 37s-34-16-34-37c0 21-14 37-32 37s-32-16-32-37z" />
+  <path class="squid-line" d="M85 130q47-28 95 0" />
+  <circle class="squid-eye" cx="108" cy="153" r="7" />
+  <circle class="squid-eye" cx="155" cy="153" r="7" />
+  <ellipse class="squid-blush" cx="88" cy="176" rx="15" ry="9" />
+  <ellipse class="squid-blush" cx="176" cy="176" rx="15" ry="9" />
+  <path class="squid-mark" d="M126 177l7 7 7-7-7-7z" />
+`;
+
+const serviceAgentArtwork = (variant: ServiceVariant) => {
+  const artwork: Record<ServiceVariant, string> = {
+    1: `<path class="squid-body" d="M38 196V149C38 71 87 31 138 31s100 40 100 118v47c0 25-18 43-40 43-18 0-32-11-38-28-6 17-20 28-38 28s-32-11-38-28c-6 17-20 28-38 28-22 0-40-18-40-43z" />
+        <path class="squid-line" d="M61 126h154" /><circle class="squid-eye" cx="111" cy="153" r="7" /><circle class="squid-eye" cx="166" cy="153" r="7" /><path class="squid-line" d="M126 181q12 9 24 0" /><path class="squid-mark squid-mark--line" d="M118 86h40l11 20h-62z" />`,
+    2: `<path class="squid-body" d="M54 210V133C54 65 88 35 138 35s84 30 84 98v77c0 20-14 35-31 35-18 0-31-15-31-35 0 20-10 35-22 35s-22-15-22-35c0 20-13 35-31 35-17 0-31-15-31-35z" />
+        <path class="squid-line" d="M138 29V10M121 16l17 13 18-13M91 137h94M106 159h18M152 159h18" /><circle class="squid-mark squid-mark--line" cx="138" cy="190" r="13" /><circle class="squid-eye" cx="138" cy="190" r="4" />`,
+    3: `<path class="squid-body" d="M45 188V139C45 73 83 38 138 38s93 35 93 101v49c0 20-13 35-30 35-18 0-30-15-30-35 0 20-15 35-33 35s-33-15-33-35c0 20-12 35-30 35-17 0-30-15-30-35z" />
+        <path class="squid-line" d="M45 151l-19 19M231 151l19 19M92 132l22 13-22 13M184 132l-22 13 22 13" /><path class="squid-mark squid-mark--line" d="M119 171h38v24h-38z" />`,
+    4: `<path class="squid-body" d="M19 198V142C19 72 64 35 126 35s107 37 107 107v56c0 24-17 42-38 42-20 0-35-14-39-33-4 19-18 33-38 33s-35-14-39-33c-4 19-18 33-39 33-21 0-38-18-38-42z" />
+        <path class="squid-line" d="M49 112q77-66 154 0M66 91q60-44 120 0" /><circle class="squid-eye" cx="95" cy="146" r="9" /><circle class="squid-eye" cx="157" cy="146" r="9" /><path class="squid-line" d="M105 178q21 14 42 0" />`,
+    5: `<path class="squid-body" d="M48 210V132C48 68 84 32 138 32s90 36 90 100v78c0 21-15 37-34 37-18 0-32-13-36-30-4 17-17 30-36 30s-32-13-36-30c-4 17-18 30-36 30-19 0-34-16-34-37z" />
+        <path class="squid-line" d="M69 63Q48 41 34 65M207 63q21-22 35 2M88 126q22-18 44 0M144 126q22-18 44 0M97 151l17 10-17 10M179 151l-17 10 17 10M126 190q12 7 24 0" />`,
+    6: `<path class="squid-body" d="M66 216V116C66 55 96 23 140 23s74 32 74 93v100c0 19-13 34-30 34-16 0-28-12-30-29-2 17-7 29-14 29s-12-12-14-29c-2 17-14 29-30 29-17 0-30-15-30-34z" />
+        <path class="squid-line" d="M89 121q51-28 102 0M106 145h17M157 145h17M127 181q13 9 26 0M109 69h62" />`,
+    7: `<path class="squid-body" d="M23 204V147C23 78 69 42 132 42s109 36 109 105v57c0 23-17 40-38 40-19 0-34-13-39-31-5 18-17 31-32 31s-27-13-32-31c-5 18-20 31-39 31-21 0-38-17-38-40z" />
+        <path class="squid-line" d="M44 124q88-82 176 0M67 89q65-55 130 0M23 166H5M241 166h18" /><circle class="squid-eye" cx="101" cy="151" r="8" /><circle class="squid-eye" cx="163" cy="151" r="8" /><path class="squid-line" d="M113 181q19 16 38 0" />`,
+  };
+  return artwork[variant];
+};
+
 const avatar = (agent: Agent) => {
   const isMochi = agent.id === 'personal-assistant';
-  const body = isMochi
-    ? 'M48 205V140C48 65 91 25 132 25s84 40 84 115v65c0 21-15 37-34 37s-34-16-34-37c0 21-15 37-34 37s-34-16-34-37c0 21-14 37-32 37s-32-16-32-37z'
-    : 'M38 196V149C38 71 87 31 138 31s100 40 100 118v47c0 25-18 43-40 43-18 0-32-11-38-28-6 17-20 28-38 28s-32-11-38-28c-6 17-20 28-38 28-22 0-40-18-40-43z';
 
   return `
     <svg class="avatar avatar--${agent.accent}" viewBox="0 0 276 270" aria-hidden="true">
-      <path class="avatar__glow" d="${body}" />
-      <path class="avatar__body" d="${body}" />
-      ${isMochi
-        ? `<path class="avatar__visor" d="M85 130q47-28 95 0" />
-           <circle class="avatar__eye" cx="108" cy="153" r="7" />
-           <circle class="avatar__eye" cx="155" cy="153" r="7" />
-           <ellipse class="avatar__blush" cx="88" cy="176" rx="15" ry="9" />
-           <ellipse class="avatar__blush" cx="176" cy="176" rx="15" ry="9" />
-           <path class="avatar__mark" d="M126 177l7 7 7-7-7-7z" />`
-        : `<path class="avatar__visor" d="M61 126h154" />
-           <circle class="avatar__eye" cx="111" cy="153" r="7" />
-           <circle class="avatar__eye" cx="166" cy="153" r="7" />
-           <path class="avatar__smile" d="M126 181q12 9 24 0" />
-           <path class="avatar__mark" d="M118 86h40l11 20h-62z" />`}
+      ${isMochi ? mochiArtwork() : serviceAgentArtwork(1)}
     </svg>
   `;
 };
+
+const serviceScout = (variant: ServiceVariant, accent: string) => `
+  <span class="service-scout service-scout--${accent}" aria-hidden="true">
+    <svg viewBox="0 0 276 270">${serviceAgentArtwork(variant)}</svg>
+  </span>
+`;
 
 const agentButton = (agent: Agent, placement: string) => `
   <button
@@ -75,12 +97,10 @@ app.innerHTML = `
           <pattern id="intro-grid" width="48" height="48" patternUnits="userSpaceOnUse">
             <path d="M48 0H0V48" fill="none" stroke="#31523a" stroke-width="1" opacity=".32" />
           </pattern>
-          <symbol id="intro-agent" viewBox="0 0 60 60">
-            <path d="M8 49V28C8 13 18 5 30 5s22 8 22 23v21c0 5-4 8-8 8-5 0-7-3-8-7-1 4-3 7-7 7s-7-3-8-7c-1 4-3 7-7 7-4 0-6-3-6-8z" />
-            <path d="M18 30h24" fill="none" />
-            <circle cx="24" cy="37" r="2" />
-            <circle cx="36" cy="37" r="2" />
-          </symbol>
+          <symbol id="intro-mochi" viewBox="0 0 276 270">${mochiArtwork()}</symbol>
+          ${([1, 2, 3, 4, 5, 6, 7] as ServiceVariant[])
+            .map((variant) => `<symbol id="intro-service-${variant}" viewBox="0 0 276 270">${serviceAgentArtwork(variant)}</symbol>`)
+            .join('')}
           <filter id="intro-glow" x="-100%" y="-100%" width="300%" height="300%">
             <feGaussianBlur stdDeviation="4" result="blur" />
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
@@ -111,15 +131,15 @@ app.innerHTML = `
         </g>
 
         <g class="intro-agents intro-agents--early">
-          <g class="intro-agent intro-agent--green" transform="translate(72 517)"><use href="#intro-agent" width="66" height="66" /></g>
-          <g class="intro-agent intro-agent--violet" transform="translate(440 540)"><use href="#intro-agent" width="66" height="66" /></g>
-          <g class="intro-agent intro-agent--orange" transform="translate(1053 510)"><use href="#intro-agent" width="66" height="66" /></g>
-          <g class="intro-agent intro-agent--cyan" transform="translate(820 540)"><use href="#intro-agent" width="54" height="54" /></g>
-          <g class="intro-agent intro-agent--lime" transform="translate(300 530)"><use href="#intro-agent" width="52" height="52" /></g>
-          <g class="intro-agent intro-agent--cyan" transform="translate(145 565)"><use href="#intro-agent" width="44" height="44" /></g>
-          <g class="intro-agent intro-agent--orange" transform="translate(520 505)"><use href="#intro-agent" width="48" height="48" /></g>
-          <g class="intro-agent intro-agent--green" transform="translate(700 535)"><use href="#intro-agent" width="46" height="46" /></g>
-          <g class="intro-agent intro-agent--violet" transform="translate(955 550)"><use href="#intro-agent" width="46" height="46" /></g>
+          <g class="intro-agent intro-agent--orange" transform="translate(72 505)"><use href="#intro-service-1" width="76" height="76" /></g>
+          <g class="intro-agent intro-agent--violet" transform="translate(435 525)"><use href="#intro-service-2" width="76" height="76" /></g>
+          <g class="intro-agent intro-agent--lime" transform="translate(1045 500)"><use href="#intro-service-3" width="76" height="76" /></g>
+          <g class="intro-agent intro-agent--cyan" transform="translate(810 525)"><use href="#intro-service-4" width="66" height="66" /></g>
+          <g class="intro-agent intro-agent--pink" transform="translate(290 520)"><use href="#intro-service-5" width="64" height="64" /></g>
+          <g class="intro-agent intro-agent--blue" transform="translate(140 555)"><use href="#intro-service-6" width="54" height="54" /></g>
+          <g class="intro-agent intro-agent--gold" transform="translate(510 495)"><use href="#intro-service-7" width="60" height="60" /></g>
+          <g class="intro-agent intro-agent--orange" transform="translate(690 525)"><use href="#intro-service-1" width="58" height="58" /></g>
+          <g class="intro-agent intro-agent--violet" transform="translate(945 540)"><use href="#intro-service-2" width="58" height="58" /></g>
         </g>
 
         <g class="intro-outposts">
@@ -167,16 +187,16 @@ app.innerHTML = `
           </g>
           <path class="intro-you-link" d="M600 518V462" />
           <g class="intro-mochi" transform="translate(545 320)">
-            <use href="#intro-agent" width="110" height="110" />
+            <use href="#intro-mochi" width="110" height="110" />
             <text x="55" y="129">MOCHI</text>
             <text class="intro-mochi__role" x="55" y="148">YOUR PERSONAL AGENT</text>
           </g>
 
-          <g class="intro-peer intro-peer--cyan" transform="translate(420 205)"><use href="#intro-agent" width="80" height="80" /><text x="40" y="97">IDENTITY</text></g>
-          <g class="intro-peer intro-peer--pink" transform="translate(700 200)"><use href="#intro-agent" width="80" height="80" /><text x="40" y="97">SECURITY</text></g>
-          <g class="intro-peer intro-peer--orange" transform="translate(240 345)"><use href="#intro-agent" width="80" height="80" /><text x="40" y="97">SERVICE</text></g>
-          <g class="intro-peer intro-peer--violet" transform="translate(880 350)"><use href="#intro-agent" width="80" height="80" /><text x="40" y="97">SPECIALIST</text></g>
-          <g class="intro-peer intro-peer--lime" transform="translate(795 500)"><use href="#intro-agent" width="70" height="70" /><text x="35" y="87">NETWORK</text></g>
+          <g class="intro-peer intro-peer--cyan" transform="translate(420 205)"><use href="#intro-service-4" width="80" height="80" /><text x="40" y="97">RESEARCH</text></g>
+          <g class="intro-peer intro-peer--pink" transform="translate(700 200)"><use href="#intro-service-5" width="80" height="80" /><text x="40" y="97">SECURITY</text></g>
+          <g class="intro-peer intro-peer--orange" transform="translate(240 345)"><use href="#intro-service-1" width="80" height="80" /><text x="40" y="97">COMMERCE</text></g>
+          <g class="intro-peer intro-peer--violet" transform="translate(880 350)"><use href="#intro-service-2" width="80" height="80" /><text x="40" y="97">SCHEDULING</text></g>
+          <g class="intro-peer intro-peer--lime" transform="translate(795 500)"><use href="#intro-service-3" width="70" height="70" /><text x="35" y="87">TRAVEL</text></g>
         </g>
       </svg>
     </div>
@@ -219,11 +239,13 @@ app.innerHTML = `
             <div class="world-zone world-zone--service"></div>
 
             <div class="service-agent-field" aria-hidden="true">
-              <span class="service-scout service-scout--cyan"><i>✦</i></span>
-              <span class="service-scout service-scout--orange"><i>●</i></span>
-              <span class="service-scout service-scout--violet"><i>◆</i></span>
-              <span class="service-scout service-scout--pink"><i>▲</i></span>
-              <span class="service-scout service-scout--lime"><i>⬟</i></span>
+              ${serviceScout(1, 'orange')}
+              ${serviceScout(2, 'violet')}
+              ${serviceScout(3, 'lime')}
+              ${serviceScout(4, 'cyan')}
+              ${serviceScout(5, 'pink')}
+              ${serviceScout(6, 'blue')}
+              ${serviceScout(7, 'gold')}
             </div>
 
             <div class="world-onboarding" data-world-onboarding>
