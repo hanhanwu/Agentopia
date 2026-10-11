@@ -21,6 +21,13 @@ labels, or motion instead of changing that identity. Reuse or extend the shared
 artwork functions whenever an agent appears in C1, C2, the world, composer, or
 inspector so Mochi and service agents remain consistent throughout the UI.
 
+Treat `UI_elements_design/agents/registry-concepts-v1.svg` as the visual source
+of truth for registry outposts. Reuse its stable symbol geometry and colors:
+AgentCensus is a green circular observation point, A2A Registry is a violet
+rounded-square directory, and MCP Registry is an orange hexagonal directory.
+Show state by adding motion, paths, or rings rather than changing registry
+identity geometry or color.
+
 | Component ID | UI piece | Markup / content | Animation / behavior |
 |---|---|---|---|
 | C1 | Opening intro animation (full sequence, `0–20s`) | `main.ts`: search for `[data-world-intro]` to find the full intro markup (`.world-intro` through `.world-intro__captions`); `[data-intro-skip]` is the skip button | `styles.css`: search for `introLogo` / `.intro-world` / `.intro-caption--*`; timeline: logo `0–1.3s`, ecosystem `1–8s`, YOU + Mochi `8–11s`, peer network `12–15.3s`, exit starts `19.2s`. `main.ts`: search for `introTimer`; it calls `finishIntro` at `20s` (`80ms` with reduced motion), while Skip or `Escape` ends it immediately. |
