@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2050" viewBox="0 0 1600 2050" role="img" aria-labelledby="title description">
   <title id="title">Agentopia agent concepts version one</title>
-  <desc id="description">Four dark-interface cartoon agent concepts built from a large upper arch and smaller lower arches, followed by a state language strip.</desc>
+  <desc id="description">Mochi, the personal agent, followed by seven colorful service-agent silhouettes and a shared state language strip.</desc>
   <defs>
     <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#071019"/>
@@ -44,6 +44,24 @@
       <feComposite in2="blur" operator="in"/>
       <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
+    <filter id="pinkGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feFlood flood-color="#ff6fae" flood-opacity="0.5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="blueGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feFlood flood-color="#5f8dff" flood-opacity="0.5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="goldGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feFlood flood-color="#ffd166" flood-opacity="0.5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
     <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
       <path d="M40 0H0V40" fill="none" stroke="#1b2b3b" stroke-width="1" opacity="0.28"/>
     </pattern>
@@ -66,8 +84,8 @@
 
   <g transform="translate(60 58)">
     <text class="eyebrow" x="0" y="0">AGENTOPIA · VISUAL EXPLORATION 01</text>
-    <text class="title" x="0" y="61">Arch creatures for an observable agent world</text>
-    <text class="subtitle" x="0" y="101">Mochi alone uses bright white linework · all other agents use color · motion is reserved for real activity</text>
+    <text class="title" x="0" y="61">One personal agent · seven service-agent identities</text>
+    <text class="subtitle" x="0" y="101">Mochi alone uses bright white linework · service agents vary through colorful arch-and-line squid silhouettes</text>
   </g>
 
   <!-- Concept A -->
@@ -107,10 +125,10 @@
       <path d="M126 181q12 9 24 0" fill="none" stroke="#ffcf9e" stroke-width="4" stroke-linecap="round"/>
       <path d="M118 86h40l11 20h-62z" fill="none" stroke="#ffad5c" stroke-width="5" stroke-linejoin="round"/>
     </g>
-    <text class="tag" x="24" y="326" fill="#ffad5c">B · WIDE CANOPY</text>
-    <text class="card-label" x="24" y="365">Service specialist</text>
-    <text class="card-copy" x="24" y="395">Broader stance and task badge create</text>
-    <text class="card-copy" x="24" y="420">a dependable, grounded personality.</text>
+    <text class="tag" x="24" y="326" fill="#ffad5c">B · SERVICE VARIANT 01</text>
+    <text class="card-label" x="24" y="365">Service agent</text>
+    <text class="card-copy" x="24" y="395">A broad orange canopy and task badge</text>
+    <text class="card-copy" x="24" y="420">create one distinct service identity.</text>
   </g>
 
   <!-- Concept C -->
@@ -129,10 +147,10 @@
       <circle cx="123" cy="190" r="13" fill="none" stroke="#a98bff" stroke-width="4"/>
       <circle cx="123" cy="190" r="4" fill="#d8ceff"/>
     </g>
-    <text class="tag" x="24" y="326" fill="#a98bff">C · SIGNAL CROWN</text>
-    <text class="card-label" x="24" y="365">Network observer</text>
-    <text class="card-copy" x="24" y="395">Taller dome and antenna suggest an</text>
-    <text class="card-copy" x="24" y="420">agent specialized in finding signals.</text>
+    <text class="tag" x="24" y="326" fill="#a98bff">C · SERVICE VARIANT 02</text>
+    <text class="card-label" x="24" y="365">Service agent</text>
+    <text class="card-copy" x="24" y="395">A tall violet dome and crown distinguish</text>
+    <text class="card-copy" x="24" y="420">this agent without defining its role.</text>
   </g>
 
   <!-- Concept D -->
@@ -149,16 +167,102 @@
       <path d="M78 132l22 13-22 13M170 132l-22 13 22 13" fill="none" stroke="#e8ffdf" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
       <rect x="105" y="171" width="38" height="24" rx="12" fill="none" stroke="#9be477" stroke-width="4"/>
     </g>
-    <text class="tag" x="24" y="326" fill="#9be477">D · COMPACT SCOUT</text>
-    <text class="card-label" x="24" y="365">Fast challenger</text>
-    <text class="card-copy" x="24" y="395">Compact body and side feelers create</text>
-    <text class="card-copy" x="24" y="420">a sharper, more energetic silhouette.</text>
+    <text class="tag" x="24" y="326" fill="#9be477">D · SERVICE VARIANT 03</text>
+    <text class="card-label" x="24" y="365">Service agent</text>
+    <text class="card-copy" x="24" y="395">A compact lime body and side fins make</text>
+    <text class="card-copy" x="24" y="420">this service identity easy to recognize.</text>
+  </g>
+
+  <!-- Concept E -->
+  <g transform="translate(55 690)">
+    <rect width="345" height="455" rx="28" fill="#0b141f" stroke="#223447" stroke-width="2"/>
+    <rect width="345" height="455" rx="28" fill="url(#panelGlow)"/>
+    <g transform="translate(40 48)" filter="url(#cyanGlow)">
+      <path d="M25 198V142C25 72 70 35 132 35s107 37 107 107v56
+               c0 24-17 42-38 42-20 0-35-14-39-33
+               c-4 19-18 33-38 33s-35-14-39-33
+               c-4 19-18 33-39 33-21 0-38-18-38-42z"
+            fill="#102b35" stroke="#52e6ff" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M55 112q77-66 154 0M72 91q60-44 120 0" fill="none" stroke="#52e6ff" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+      <circle cx="101" cy="146" r="9" fill="#e6fbff"/>
+      <circle cx="163" cy="146" r="9" fill="#e6fbff"/>
+      <path d="M111 178q21 14 42 0" fill="none" stroke="#bdf6ff" stroke-width="5" stroke-linecap="round"/>
+    </g>
+    <text class="tag" x="24" y="326" fill="#52e6ff">E · SERVICE VARIANT 04</text>
+    <text class="card-label" x="24" y="365">Service agent</text>
+    <text class="card-copy" x="24" y="395">A low cyan arch, four soft feet, and two</text>
+    <text class="card-copy" x="24" y="420">signal arcs keep the squid family playful.</text>
+  </g>
+
+  <!-- Concept F -->
+  <g transform="translate(435 690)">
+    <rect width="345" height="455" rx="28" fill="#0b141f" stroke="#223447" stroke-width="2"/>
+    <rect width="345" height="455" rx="28" fill="url(#panelGlow)"/>
+    <g transform="translate(39 48)" filter="url(#pinkGlow)">
+      <path d="M42 210V132C42 68 78 32 132 32s90 36 90 100v78
+               c0 21-15 37-34 37-18 0-32-13-36-30
+               c-4 17-17 30-36 30s-32-13-36-30
+               c-4 17-18 30-36 30-19 0-34-16-34-37z"
+            fill="#351827" stroke="#ff6fae" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M63 63Q42 41 28 65M201 63q21-22 35 2" fill="none" stroke="#ff6fae" stroke-width="6" stroke-linecap="round"/>
+      <path d="M82 126q22-18 44 0M138 126q22-18 44 0" fill="none" stroke="#ff9cc7" stroke-width="5" stroke-linecap="round"/>
+      <path d="M91 151l17 10-17 10M173 151l-17 10 17 10" fill="none" stroke="#fff0f7" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M120 190q12 7 24 0" fill="none" stroke="#ff9cc7" stroke-width="5" stroke-linecap="round"/>
+    </g>
+    <text class="tag" x="24" y="326" fill="#ff6fae">F · SERVICE VARIANT 05</text>
+    <text class="card-label" x="24" y="365">Service agent</text>
+    <text class="card-copy" x="24" y="395">A pink arch, curled feelers, and smiling</text>
+    <text class="card-copy" x="24" y="420">eyes create an expressive squid variant.</text>
+  </g>
+
+  <!-- Concept G -->
+  <g transform="translate(815 690)">
+    <rect width="345" height="455" rx="28" fill="#0b141f" stroke="#223447" stroke-width="2"/>
+    <rect width="345" height="455" rx="28" fill="url(#panelGlow)"/>
+    <g transform="translate(50 42)" filter="url(#blueGlow)">
+      <path d="M48 216V116C48 55 78 23 122 23s74 32 74 93v100
+               c0 19-13 34-30 34-16 0-28-12-30-29
+               c-2 17-7 29-14 29s-12-12-14-29
+               c-2 17-14 29-30 29-17 0-30-15-30-34z"
+            fill="#172343" stroke="#5f8dff" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M71 121q51-28 102 0" fill="none" stroke="#88a8ff" stroke-width="5" stroke-linecap="round"/>
+      <path d="M88 145h17M139 145h17" stroke="#f0f4ff" stroke-width="8" stroke-linecap="round"/>
+      <path d="M109 181q13 9 26 0" fill="none" stroke="#b5c6ff" stroke-width="5" stroke-linecap="round"/>
+      <path d="M91 69h62" stroke="#b5c6ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="3 13"/>
+    </g>
+    <text class="tag" x="24" y="326" fill="#5f8dff">G · SERVICE VARIANT 06</text>
+    <text class="card-label" x="24" y="365">Service agent</text>
+    <text class="card-copy" x="24" y="395">A narrow blue arch and tiny center feet</text>
+    <text class="card-copy" x="24" y="420">make a shy, vertically stretched squid.</text>
+  </g>
+
+  <!-- Concept H -->
+  <g transform="translate(1195 690)">
+    <rect width="345" height="455" rx="28" fill="#0b141f" stroke="#223447" stroke-width="2"/>
+    <rect width="345" height="455" rx="28" fill="url(#panelGlow)"/>
+    <g transform="translate(39 48)" filter="url(#goldGlow)">
+      <path d="M23 204V147C23 78 69 42 132 42s109 36 109 105v57
+               c0 23-17 40-38 40-19 0-34-13-39-31
+               c-5 18-17 31-32 31s-27-13-32-31
+               c-5 18-20 31-39 31-21 0-38-17-38-40z"
+            fill="#342a14" stroke="#ffd166" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M44 124q88-82 176 0" fill="none" stroke="#ffd166" stroke-width="5" stroke-linecap="round" opacity="0.75"/>
+      <path d="M67 89q65-55 130 0" fill="none" stroke="#ffe39a" stroke-width="4" stroke-linecap="round" opacity="0.65"/>
+      <circle cx="101" cy="151" r="8" fill="#fff8df"/>
+      <circle cx="163" cy="151" r="8" fill="#fff8df"/>
+      <path d="M113 181q19 16 38 0" fill="none" stroke="#fff0bd" stroke-width="5" stroke-linecap="round"/>
+      <path d="M23 166H5M241 166h18" stroke="#ffd166" stroke-width="7" stroke-linecap="round"/>
+    </g>
+    <text class="tag" x="24" y="326" fill="#ffd166">H · SERVICE VARIANT 07</text>
+    <text class="card-label" x="24" y="365">Service agent</text>
+    <text class="card-copy" x="24" y="395">A wide gold arch, layered crown lines,</text>
+    <text class="card-copy" x="24" y="420">and tiny arms make a cheerful squid.</text>
   </g>
 
   <!-- State language -->
-  <g transform="translate(55 710)">
+  <g transform="translate(55 1195)">
     <text class="eyebrow" x="0" y="0">SHARED STATE LANGUAGE</text>
-    <text class="subtitle" x="0" y="38">Mochi keeps white linework across states; surrounding semantic color carries system meaning.</text>
+    <text class="subtitle" x="0" y="38">Agent identity stays fixed; surrounding rings, paths, icons, and motion carry state.</text>
 
     <g transform="translate(0 75)">
       <rect width="280" height="235" rx="24" fill="#0a131d" stroke="#203246" stroke-width="2"/>
@@ -216,7 +320,7 @@
   </g>
 
   <!-- Scale and approval checks -->
-  <g transform="translate(55 1090)">
+  <g transform="translate(55 1575)">
     <path d="M0 0h1490" stroke="#24374a" stroke-width="2"/>
     <text class="eyebrow" x="0" y="58">MAP-SCALE CHECK</text>
     <text class="subtitle" x="0" y="96">Silhouette and identity must survive before facial detail does.</text>
@@ -234,19 +338,19 @@
         <path d="M38 196V149C38 71 87 31 138 31s100 40 100 118v47c0 25-18 43-40 43-18 0-32-11-38-28-6 17-20 28-38 28s-32-11-38-28c-6 17-20 28-38 28-22 0-40-18-40-43z" fill="#322015" stroke="#ffad5c" stroke-width="7"/>
         <path d="M118 86h40l11 20h-62z" fill="none" stroke="#ffad5c" stroke-width="5"/>
       </g>
-      <text class="tag" x="309" y="250" fill="#ffad5c">LUCA</text>
+      <text class="tag" x="293" y="250" fill="#ffad5c">SERVICE 01</text>
 
       <g transform="translate(495 63) scale(.52)" filter="url(#violetGlow)">
         <path d="M123 29v-19M106 16l17 13 18-13" fill="none" stroke="#a98bff" stroke-width="5" stroke-linecap="round"/>
         <path d="M39 210V133C39 65 73 35 123 35s84 30 84 98v77c0 20-14 35-31 35-18 0-31-15-31-35c0 20-10 35-22 35s-22-15-22-35c0 20-13 35-31 35-17 0-31-15-31-35z" fill="#211b3a" stroke="#a98bff" stroke-width="7"/>
       </g>
-      <text class="tag" x="521" y="250" fill="#a98bff">SIGNAL</text>
+      <text class="tag" x="505" y="250" fill="#a98bff">SERVICE 02</text>
 
       <g transform="translate(647 83) scale(.44)" filter="url(#limeGlow)">
         <path d="M31 188V139C31 73 69 38 124 38s93 35 93 101v49c0 20-13 35-30 35-18 0-30-15-30-35c0 20-15 35-33 35s-33-15-33-35c0 20-12 35-30 35-17 0-30-15-30-35z" fill="#1a2d1c" stroke="#9be477" stroke-width="7"/>
         <path d="M31 151L12 170M217 151l19 19" stroke="#9be477" stroke-width="7" stroke-linecap="round"/>
       </g>
-      <text class="tag" x="663" y="250" fill="#9be477">SCOUT</text>
+      <text class="tag" x="645" y="250" fill="#9be477">SERVICE 03</text>
     </g>
 
     <g transform="translate(835 135)">
@@ -254,8 +358,8 @@
       <text class="eyebrow" x="30" y="52">APPROVAL CHECK</text>
       <g transform="translate(30 85)">
         <rect width="24" height="24" rx="6" fill="#0d1c28" stroke="#52e6ff" stroke-width="2"/>
-        <text class="state-title" x="42" y="20">Choose the shared silhouette family</text>
-        <text class="state-copy" x="42" y="44">soft, wide, signal, compact—or a combination</text>
+        <text class="state-title" x="42" y="20">Confirm the shared squid silhouette family</text>
+        <text class="state-copy" x="42" y="44">wide, tall, compact, round, curled, layered, crowned</text>
       </g>
       <g transform="translate(30 157)">
         <rect width="24" height="24" rx="6" fill="#0d1c28" stroke="#ffad5c" stroke-width="2"/>
