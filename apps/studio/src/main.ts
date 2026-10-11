@@ -329,18 +329,16 @@ app.innerHTML = `
         <div class="inspector-heading">
           <div>
             <h2 id="skynet-title" data-text="SKYNET">SKYNET</h2>
-            <p class="inspector-context" data-inspector-context hidden></p>
+            <div class="provenance-key provenance-key--header" aria-label="Provenance key">
+              <span><i class="legend-dot legend-dot--observed"></i>Observed</span>
+              <span><i class="legend-dot legend-dot--reported"></i>Reported</span>
+              <span><i class="legend-dot legend-dot--derived"></i>Derived</span>
+              <span><i class="legend-dot legend-dot--simulated"></i>Simulated</span>
+            </div>
           </div>
           <div class="inspector-controls">
             <span class="inspector-badge"><i></i> <span data-skynet-mode>Live</span></span>
           </div>
-        </div>
-
-        <div class="provenance-key" aria-label="Provenance key">
-          <span><i class="legend-dot legend-dot--observed"></i>Observed</span>
-          <span><i class="legend-dot legend-dot--reported"></i>Reported</span>
-          <span><i class="legend-dot legend-dot--derived"></i>Derived</span>
-          <span><i class="legend-dot legend-dot--simulated"></i>Simulated</span>
         </div>
 
         <div class="empty-inspector" data-empty-inspector>
@@ -366,52 +364,42 @@ app.innerHTML = `
           </section>
 
           <div class="search-evidence-grid">
-            <section class="query-card">
-              <p>Search interpretation</p>
-              <dl>
-                <div><dt>Original request</dt><dd data-query-text>—</dd></div>
-                <div><dt>Derived intent</dt><dd data-query-intent>Waiting for Mochi</dd></div>
-                <div><dt>Candidate type</dt><dd data-candidate-type>—</dd></div>
-              </dl>
+            <section class="event-history timeline-card" data-event-history-section hidden>
+              <div class="event-history__heading">
+                <div><span>Timeline</span><small data-event-count>0 steps</small></div>
+                <button type="button" data-return-live hidden>Return to live</button>
+              </div>
+              <div class="event-history__list" data-event-history-list></div>
             </section>
 
             <section class="registry-ledger">
               <div class="section-heading"><p>Registry activity</p><span>2 sources</span></div>
               <article class="registry-row" data-skynet-registry="agentcensus" data-status="waiting">
-                <i></i><div><strong>AgentCensus</strong><small>Agent observation network</small></div><span data-registry-skynet-status="agentcensus">Waiting</span>
+                <svg class="registry-row__mark" viewBox="-55 -55 110 110" aria-hidden="true">
+                  <circle class="registry-row__halo" r="45" /><circle class="registry-row__shell" r="30" />
+                  <path class="registry-row__icon" d="M-16 5A17 17 0 0116 5M-10 5a10 10 0 0120 0M0-18V15M-8 18h16" /><circle class="registry-row__signal" cy="-2" r="3" />
+                </svg>
+                <div><strong>AgentCensus</strong><small>Agent observation network</small></div><span data-registry-skynet-status="agentcensus">Waiting</span>
               </article>
               <article class="registry-row" data-skynet-registry="a2a-registry" data-status="waiting">
-                <i></i><div><strong>A2A Registry</strong><small>Agent card directory</small></div><span data-registry-skynet-status="a2a-registry">Waiting</span>
+                <svg class="registry-row__mark" viewBox="-55 -55 110 110" aria-hidden="true">
+                  <circle class="registry-row__halo" r="45" /><rect class="registry-row__shell" x="-30" y="-30" width="60" height="60" rx="11" />
+                  <path class="registry-row__icon" d="M-15 16V-14H15V16M-6 16V3H6V16M-8-6h16" />
+                </svg>
+                <div><strong>A2A Registry</strong><small>Agent card directory</small></div><span data-registry-skynet-status="a2a-registry">Waiting</span>
               </article>
             </section>
           </div>
 
           <section class="result-board">
-            <div class="section-heading">
-              <div><p>Search relevance</p><small>Reported metadata only · capability not tested</small></div>
-              <span data-result-count>0 candidates</span>
+            <div class="section-heading"><p>Behind the Scene</p></div>
+            <div class="behind-scene-current">
+              <span>Current operation</span>
+              <strong data-behind-title>Ready to search</strong>
+              <p data-behind-detail>Waiting for Mochi to receive a task.</p>
             </div>
-            <div class="result-empty" data-result-empty>Results will appear as registries reply.</div>
             <div class="candidate-results" data-candidate-results></div>
           </section>
-
-          <div class="inspector-footer-grid">
-            <section class="evidence-envelope">
-              <p>Current evidence</p>
-              <dl>
-                <div><dt>Provenance</dt><dd data-activity-source>—</dd></div>
-                <div><dt>Event</dt><dd data-activity-event>—</dd></div>
-                <div><dt>Parent</dt><dd data-activity-parent>—</dd></div>
-              </dl>
-            </section>
-            <section class="event-history" data-event-history-section hidden>
-              <div class="event-history__heading">
-                <div><span>Synchronized timeline</span><small data-event-count>0 steps</small></div>
-                <button type="button" data-return-live hidden>Return to live</button>
-              </div>
-              <div class="event-history__list" data-event-history-list></div>
-            </section>
-          </div>
         </div>
       </aside>
     </main>
@@ -455,7 +443,6 @@ buttons.forEach((button) => {
   button.tabIndex = -1;
   button.setAttribute('aria-disabled', 'true');
 });
-const inspectorContext = document.querySelector<HTMLElement>('[data-inspector-context]');
 const emptyInspector = document.querySelector<HTMLElement>('[data-empty-inspector]');
 const agentInspector = document.querySelector<HTMLElement>('[data-agent-inspector]');
 const chatForm = document.querySelector<HTMLFormElement>('[data-chat-form]');
@@ -536,7 +523,6 @@ const renderActivity = () => {
   const displayedEvents = eventsAtCursor(activityEvents, eventCursor);
   const projection = projectDiscovery(displayedEvents);
   const mochiProjection = projectMochi(displayedEvents);
-  const skynetProjection = projectSkynet(displayedEvents);
   const mochiButton = buttons.find((button) => button.dataset.agentId === 'personal-assistant');
   const bookingsButton = buttons.find((button) => button.dataset.agentId === 'bookings-service');
 
@@ -551,6 +537,10 @@ const renderActivity = () => {
   setText('[data-skynet-step]', `STEP ${String(projection.step).padStart(2, '0')} / 07`);
   setText('[data-activity-title]', projection.title);
   setText('[data-activity-detail]', projection.detail);
+  setText('[data-behind-title]', projection.title);
+  setText('[data-behind-detail]', projection.detail);
+  const syncPhase = document.querySelector<HTMLElement>('.sync-phase');
+  if (syncPhase) syncPhase.dataset.step = String(projection.step);
 
   const intentChip = document.querySelector<HTMLElement>('[data-intent-chip]');
   if (intentChip) intentChip.hidden = projection.step < 2;
@@ -596,22 +586,9 @@ const renderActivity = () => {
   if (projection.step > 0) {
     if (emptyInspector) emptyInspector.hidden = true;
     if (agentInspector) agentInspector.hidden = false;
-    if (inspectorContext) {
-      inspectorContext.hidden = false;
-      inspectorContext.textContent = 'C3 · synchronized discovery trace';
-    }
   }
 
-  setText('[data-query-text]', projection.query ?? '—');
-  setText('[data-query-intent]', projection.intent ?? 'Waiting for Mochi');
-  setText('[data-candidate-type]', projection.candidateType ?? '—');
   renderCandidates(projection);
-
-  if (skynetProjection) {
-    setText('[data-activity-source]', skynetProjection.source);
-    setText('[data-activity-event]', skynetProjection.eventId);
-    setText('[data-activity-parent]', skynetProjection.causalParentId ?? 'Root event');
-  }
 
   if (eventHistorySection) eventHistorySection.hidden = activityEvents.length === 0;
   if (eventCount) eventCount.textContent = `${activityEvents.length} / 7 steps`;

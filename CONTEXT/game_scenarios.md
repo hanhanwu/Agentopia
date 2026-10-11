@@ -92,9 +92,10 @@ assistant`:
   meeting-scheduling intent, sends parallel search signals to AgentCensus and
   A2A Registry, and receives candidate agents back. Each registry visibly ends
   as `results returned`, `no results`, or `failed`.
-- **Skynet (right):** Show the original request, Mochi's interpreted intent,
-  live status for both registries, and the combined candidate list. Merge
-  duplicate agents reported by both sources before ordering the results.
+- **Skynet (right):** Show the synchronized timeline, live status for both
+  registries, and a persistent **Behind the Scene** panel containing the current
+  operation and returned candidate data. Merge duplicate agents reported by
+  both sources before ordering the results.
 - **Each result:** Show agent name, domain, matching reported capability,
   source badge(s), and a short reason for its position.
 - **Ranking boundary:** Label the order **Search relevance**, based only on
