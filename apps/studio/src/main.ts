@@ -262,7 +262,7 @@ app.innerHTML = `
             </div>
 
             <div class="world-phase" data-world-phase hidden aria-live="polite">
-              <span data-world-step>STEP 01 / 07</span>
+              <span data-world-step>STEP 1</span>
               <strong data-world-phase-title>Request received</strong>
             </div>
 
@@ -329,12 +329,6 @@ app.innerHTML = `
         <div class="inspector-heading">
           <div>
             <h2 id="skynet-title" data-text="SKYNET">SKYNET</h2>
-            <div class="provenance-key provenance-key--header" aria-label="Provenance key">
-              <span><i class="legend-dot legend-dot--observed"></i>Observed</span>
-              <span><i class="legend-dot legend-dot--reported"></i>Reported</span>
-              <span><i class="legend-dot legend-dot--derived"></i>Derived</span>
-              <span><i class="legend-dot legend-dot--simulated"></i>Simulated</span>
-            </div>
           </div>
           <div class="inspector-controls">
             <span class="inspector-badge"><i></i> <span data-skynet-mode>Live</span></span>
@@ -359,14 +353,14 @@ app.innerHTML = `
 
         <div class="discovery-inspector" data-agent-inspector hidden>
           <section class="sync-phase" aria-live="polite">
-            <span data-skynet-step>STEP 01 / 07</span>
+            <span data-skynet-step>STEP 1</span>
             <div><h3 data-activity-title>Request received</h3><p data-activity-detail></p></div>
           </section>
 
           <div class="search-evidence-grid">
             <section class="event-history timeline-card" data-event-history-section hidden>
               <div class="event-history__heading">
-                <div><span>Timeline</span><small data-event-count>0 steps</small></div>
+                <div><span>Timeline</span><small data-event-count>Step 1</small></div>
                 <button type="button" data-return-live hidden>Return to live</button>
               </div>
               <div class="event-history__list" data-event-history-list></div>
@@ -427,7 +421,7 @@ const finishIntro = () => {
   }, prefersReducedMotion ? 30 : 450);
 };
 
-const introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 20000);
+const introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 17300);
 introSkip?.addEventListener('click', () => {
   window.clearTimeout(introTimer);
   finishIntro();
@@ -532,9 +526,9 @@ const renderActivity = () => {
 
   const worldPhase = document.querySelector<HTMLElement>('[data-world-phase]');
   if (worldPhase) worldPhase.hidden = projection.step === 0;
-  setText('[data-world-step]', `STEP ${String(projection.step).padStart(2, '0')} / 07`);
+  setText('[data-world-step]', `STEP ${projection.step}`);
   setText('[data-world-phase-title]', projection.title);
-  setText('[data-skynet-step]', `STEP ${String(projection.step).padStart(2, '0')} / 07`);
+  setText('[data-skynet-step]', `STEP ${projection.step}`);
   setText('[data-activity-title]', projection.title);
   setText('[data-activity-detail]', projection.detail);
   setText('[data-behind-title]', projection.title);
@@ -591,7 +585,7 @@ const renderActivity = () => {
   renderCandidates(projection);
 
   if (eventHistorySection) eventHistorySection.hidden = activityEvents.length === 0;
-  if (eventCount) eventCount.textContent = `${activityEvents.length} / 7 steps`;
+  if (eventCount) eventCount.textContent = `Step ${projection.step}`;
   if (eventHistoryList) {
     eventHistoryList.replaceChildren();
     activityEvents.forEach((event, index) => {

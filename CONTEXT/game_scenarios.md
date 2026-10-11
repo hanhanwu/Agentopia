@@ -82,29 +82,4 @@ Its discovery mechanisms currently advertise different paths:
 * Mochi interact with the agent, making jusdement then send satisfying response to the suer
 * We can show how does Mochi interact, make decisions behind the scene
 
-<details>
-<summary><strong>C3 design — Search registries and rank results</strong></summary>
 
-After the user submits a request such as `search for meeting schedule
-assistant`:
-
-- **Agentopia (left):** The request travels to Mochi. Mochi identifies the
-  meeting-scheduling intent, sends parallel search signals to AgentCensus and
-  A2A Registry, and receives candidate agents back. Each registry visibly ends
-  as `results returned`, `no results`, or `failed`.
-- **Skynet (right):** Show the synchronized timeline, live status for both
-  registries, and a persistent **Behind the Scene** panel containing the current
-  operation and returned candidate data. Merge duplicate agents reported by
-  both sources before ordering the results.
-- **Each result:** Show agent name, domain, matching reported capability,
-  source badge(s), and a short reason for its position.
-- **Ranking boundary:** Label the order **Search relevance**, based only on
-  reported registry metadata. Do not present it as quality, trust, or proven
-  capability, and do not use an unexplained numeric score.
-- **End state:** Show the completed shortlist without selecting an agent. The
-  Bookings selection begins in C4 / Scenario Step 3.
-
-Suggested event flow:
-`task requested → intent derived → both registries searched → results normalized → duplicates merged → results ordered → search complete`.
-
-</details>
