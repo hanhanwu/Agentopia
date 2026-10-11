@@ -25,6 +25,7 @@ inspector so Mochi and service agents remain consistent throughout the UI.
 |---|---|---|---|
 | C1 | Opening intro animation (full sequence, `0–20s`) | `main.ts`: search for `[data-world-intro]` to find the full intro markup (`.world-intro` through `.world-intro__captions`); `[data-intro-skip]` is the skip button | `styles.css`: search for `introLogo` / `.intro-world` / `.intro-caption--*`; timeline: logo `0–1.3s`, ecosystem `1–8s`, YOU + Mochi `8–11s`, peer network `12–15.3s`, exit starts `19.2s`. `main.ts`: search for `introTimer`; it calls `finishIntro` at `20s` (`80ms` with reduced motion), while Skip or `Escape` ends it immediately. |
 | C2 | Service-agent search onboarding after the intro | `main.ts`: search for `.world-scene`, `.world-onboarding`, `.service-agent-field`, `serviceScout()`, and `[data-chat-form]`; the composer starts with `search for ` | `styles.css`: search for `.service-scout`, `serviceScoutDrop`, `serviceScoutHop`, and `searchPromptBeacon`. C2 starts with the canonical Mochi artwork and all seven colored squid service variants; submitting a completed search adds `.is-searching`, fades the prompt, and reveals the matched service agent. |
+| C3 | Synchronized registry search and relevance results | `main.ts`: search for `[data-world-phase]`, `.registry-node`, `.sync-phase`, `.registry-ledger`, `.result-board`, and `sendTaskToMochi()`; `activity.ts`: search for `projectDiscovery()` | One shared seven-event projection drives both panels: request, intent, parallel AgentCensus/A2A search, each response, normalization, and completion. Timeline review rewinds Agentopia and Skynet together. |
 
 
 ## Game Scenario 1 — One Agent, Different Doors
@@ -55,8 +56,8 @@ Its discovery mechanisms currently advertise different paths:
    The user asks Mochi to find an agent that can schedule a meeting.
 
 2. **Mochi searches agent registries**  
-   Agentopia shows Mochi searching sources such as AgentCensus, A2A Registry,
-   and MCP Registry. Skynet shows which sources returned results or no result.
+   Agentopia shows Mochi searching AgentCensus and A2A Registry. Skynet shows
+   which source returned results or no result.
 
 3. **One agent is selected**  
    Mochi selects the Bookings agent. The game shows its domain, claimed
@@ -80,3 +81,29 @@ Its discovery mechanisms currently advertise different paths:
 
 * Mochi interact with the agent, making jusdement then send satisfying response to the suer
 * We can show how does Mochi interact, make decisions behind the scene
+
+<details>
+<summary><strong>C3 design — Search registries and rank results</strong></summary>
+
+After the user submits a request such as `search for meeting schedule
+assistant`:
+
+- **Agentopia (left):** The request travels to Mochi. Mochi identifies the
+  meeting-scheduling intent, sends parallel search signals to AgentCensus and
+  A2A Registry, and receives candidate agents back. Each registry visibly ends
+  as `results returned`, `no results`, or `failed`.
+- **Skynet (right):** Show the original request, Mochi's interpreted intent,
+  live status for both registries, and the combined candidate list. Merge
+  duplicate agents reported by both sources before ordering the results.
+- **Each result:** Show agent name, domain, matching reported capability,
+  source badge(s), and a short reason for its position.
+- **Ranking boundary:** Label the order **Search relevance**, based only on
+  reported registry metadata. Do not present it as quality, trust, or proven
+  capability, and do not use an unexplained numeric score.
+- **End state:** Show the completed shortlist without selecting an agent. The
+  Bookings selection begins in C4 / Scenario Step 3.
+
+Suggested event flow:
+`task requested → intent derived → both registries searched → results normalized → duplicates merged → results ordered → search complete`.
+
+</details>

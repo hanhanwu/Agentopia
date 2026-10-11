@@ -1,4 +1,4 @@
-export type AgentId = 'personal-assistant' | 'cafe-service';
+export type AgentId = 'personal-assistant' | 'bookings-service';
 export type AgentAccent = 'user-white' | 'orange';
 
 export type Agent = {
@@ -23,17 +23,17 @@ export const agents: Record<AgentId, Agent> = {
     location: 'Town square',
     accent: 'user-white',
   },
-  'cafe-service': {
-    id: 'cafe-service',
-    name: 'Luca',
-    role: 'Café service agent',
+  'bookings-service': {
+    id: 'bookings-service',
+    name: 'Bookings',
+    role: 'Meeting scheduling agent',
     shortRole: 'Service Agent',
-    status: 'Open · 4 items available',
-    description: 'Publishes a small menu, prepares orders, and reports fulfillment state.',
-    location: "Luca's Cafe",
+    status: 'Reported by AgentCensus',
+    description: 'Publishes meeting-scheduling capabilities through discovery metadata.',
+    location: 'bookings.darknetian.com',
     accent: 'orange',
   },
 };
 
 export const isAgentId = (value: string | undefined): value is AgentId =>
-  value === 'personal-assistant' || value === 'cafe-service';
+  value === 'personal-assistant' || value === 'bookings-service';
