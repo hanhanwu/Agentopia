@@ -1,5 +1,19 @@
 # Game Scenarios
 
+## Studio UI Locator
+
+Use this map when changing the opening animation or the interactive Studio UI.
+The UI is written as markup in `apps/studio/src/main.ts` and animated in
+`apps/studio/src/styles.css`; the CSS animation delays are seconds from the
+page's initial render. Search by the selectors below rather than relying on
+line numbers, which change as the scene is edited.
+
+| Component ID | UI piece | Markup / content | Animation / behavior |
+|---|---|---|---|
+| C1 | Opening intro animation (full sequence, `0–20s`) | `main.ts`: search for `[data-world-intro]` to find the full intro markup (`.world-intro` through `.world-intro__captions`); `[data-intro-skip]` is the skip button | `styles.css`: search for `introLogo` / `.intro-world` / `.intro-caption--*`; timeline: logo `0–1.3s`, ecosystem `1–8s`, YOU + Mochi `8–11s`, peer network `12–15.3s`, exit starts `19.2s`. `main.ts`: search for `introTimer`; it calls `finishIntro` at `20s` (`80ms` with reduced motion), while Skip or `Escape` ends it immediately. |
+| C2 | Service-agent search onboarding after the intro | `main.ts`: search for `.world-scene`, `.world-onboarding`, `.service-agent-field`, and `[data-chat-form]`; the composer starts with `search for ` | `styles.css`: search for `.service-scout`, `serviceScoutDrop`, `serviceScoutHop`, and `searchPromptBeacon`. C2 starts with Mochi and animated candidate shapes; submitting a completed search adds `.is-searching`, fades the prompt, and reveals the matched service agent. |
+
+
 ## Game Scenario 1 — One Agent, Different Doors
 
 ### Story goal

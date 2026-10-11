@@ -66,7 +66,6 @@ app.innerHTML = `
     aria-label="Agentopia introduction. Agents come online, publish information through AgentCensus, A2A Registry, and MCP Registry, then Mochi connects with other agents on your behalf."
   >
     <button class="world-intro__skip" type="button" data-intro-skip>Skip intro</button>
-    <span class="world-intro__mode" aria-hidden="true">Conceptual ecosystem map</span>
 
     <div class="world-intro__logo" aria-hidden="true" data-text="AGENTOPIA">AGENTOPIA</div>
 
@@ -219,6 +218,18 @@ app.innerHTML = `
             <div class="world-zone world-zone--local"></div>
             <div class="world-zone world-zone--service"></div>
 
+            <div class="service-agent-field" aria-hidden="true">
+              <span class="service-scout service-scout--cyan"><i>✦</i></span>
+              <span class="service-scout service-scout--orange"><i>●</i></span>
+              <span class="service-scout service-scout--violet"><i>◆</i></span>
+              <span class="service-scout service-scout--pink"><i>▲</i></span>
+              <span class="service-scout service-scout--lime"><i>⬟</i></span>
+            </div>
+
+            <div class="world-onboarding" data-world-onboarding>
+              <strong>Search for service agents</strong>
+            </div>
+
             <div class="user-node" aria-label="You, task requester">
               <span class="user-node__pulse"></span>
               <span class="user-node__core">YOU</span>
@@ -233,18 +244,22 @@ app.innerHTML = `
         <form class="chat-composer" data-chat-form>
           <div class="composer-agent">${avatar(agents['personal-assistant'])}</div>
           <label class="chat-composer__field">
+            <span>What should Mochi find?</span>
             <input
               name="message"
               type="text"
               maxlength="240"
               autocomplete="off"
-              placeholder="Message Mochi…"
-              aria-label="Message Mochi"
+              value="search for "
+              placeholder="search for a café, scheduler, researcher…"
+              aria-label="Search request for Mochi"
+              aria-describedby="search-prompt-hint"
               data-chat-input
             />
+            <small id="search-prompt-hint">Try: coffee nearby, a meeting scheduler, or a research agent</small>
           </label>
-          <button type="submit" data-chat-send>
-            <span>Send</span><i aria-hidden="true">↗</i>
+          <button type="submit" data-chat-send disabled>
+            <span>Search</span><i aria-hidden="true">↗</i>
           </button>
         </form>
       </section>
@@ -340,6 +355,11 @@ const finishIntro = () => {
   appShell?.removeAttribute('inert');
   appShell?.removeAttribute('aria-hidden');
   window.setTimeout(() => worldIntro?.remove(), prefersReducedMotion ? 20 : 420);
+  window.setTimeout(() => {
+    chatInput?.focus();
+    const end = chatInput?.value.length ?? 0;
+    chatInput?.setSelectionRange(end, end);
+  }, prefersReducedMotion ? 30 : 450);
 };
 
 const introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 20000);
@@ -359,6 +379,8 @@ const emptyInspector = document.querySelector<HTMLElement>('[data-empty-inspecto
 const agentInspector = document.querySelector<HTMLElement>('[data-agent-inspector]');
 const chatForm = document.querySelector<HTMLFormElement>('[data-chat-form]');
 const chatInput = document.querySelector<HTMLInputElement>('[data-chat-input]');
+const chatSend = document.querySelector<HTMLButtonElement>('[data-chat-send]');
+const worldScene = document.querySelector<HTMLElement>('.world-scene');
 const mochiBubble = document.querySelector<HTMLElement>('[data-mochi-bubble]');
 const lucaBubble = document.querySelector<HTMLElement>('[data-luca-bubble]');
 const userLink = document.querySelector<SVGPathElement>('[data-user-link]');
@@ -546,6 +568,7 @@ const schedule = (delay: number, callback: () => void) => {
 };
 
 const sendTaskToMochi = (message: string) => {
+  worldScene?.classList.add('is-searching');
   scheduledTimers.forEach((timer) => window.clearTimeout(timer));
   scheduledTimers = [];
   eventCursor = null;
@@ -668,16 +691,30 @@ buttons.forEach((button) => {
 
 returnLiveButton?.addEventListener('click', returnToLive);
 
+const syncSearchComposer = () => {
+  const query = chatInput?.value.trim() ?? '';
+  const hasSearchSubject = query.length > 0 && query.toLowerCase() !== 'search for';
+  if (chatSend) chatSend.disabled = !hasSearchSubject;
+  chatForm?.classList.toggle('is-ready', hasSearchSubject);
+};
+
+chatInput?.addEventListener('input', syncSearchComposer);
+
 chatForm?.addEventListener('submit', (event) => {
   event.preventDefault();
   const message = chatInput?.value.trim() ?? '';
-  if (!message) return;
+  if (!message || message.toLowerCase() === 'search for') {
+    chatInput?.focus();
+    return;
+  }
 
   sendTaskToMochi(message);
   if (chatInput) {
-    chatInput.value = '';
+    chatInput.value = 'search for ';
     chatInput.focus();
   }
+  syncSearchComposer();
 });
 
+syncSearchComposer();
 renderActivity();
