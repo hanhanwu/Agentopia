@@ -98,7 +98,7 @@ export const projectDiscovery = (events: readonly ActivityEvent[]): DiscoveryPro
         Object.assign(projection, {
           step: 2, title: 'Intent understood', detail: `Mochi interpreted the task as ${event.payload.intent}.`,
           intent: event.payload.intent, candidateType: event.payload.candidateType,
-          mochiState: 'intent-derived', mochiStatus: 'Intent understood', mochiBubble: 'You need help scheduling a meeting.',
+          mochiState: 'intent-derived', mochiStatus: 'Intent understood', mochiBubble: 'Understood!',
         });
         break;
       case 'registries.search-started':

@@ -17,6 +17,9 @@ if (!app) {
 }
 
 type ServiceVariant = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+const INTENT_DERIVATION_DELAY = 5500;
+const UNDERSTOOD_HOLD_DELAY = 4000;
+const REGISTRY_SEARCH_DELAY = INTENT_DERIVATION_DELAY + UNDERSTOOD_HOLD_DELAY;
 
 const mochiArtwork = () => `
   <path class="squid-body" d="M48 205V140C48 65 91 25 132 25s84 40 84 115v65c0 21-15 37-34 37s-34-16-34-37c0 21-15 37-34 37s-34-16-34-37c0 21-14 37-32 37s-32-16-32-37z" />
@@ -352,48 +355,90 @@ app.innerHTML = `
         </div>
 
         <div class="discovery-inspector" data-agent-inspector hidden>
-          <section class="sync-phase" aria-live="polite">
-            <span data-skynet-step>STEP 1</span>
-            <div><h3 data-activity-title>Request received</h3><p data-activity-detail></p></div>
+          <section
+            class="request-flight"
+            data-intake-evidence
+            hidden
+            role="img"
+            aria-label="Your request is traveling to Mochi"
+          >
+            <svg class="request-flight__journey" viewBox="0 0 600 300" aria-hidden="true">
+              <path
+                id="request-flight-path"
+                class="request-flight__route"
+                d="M108 160 C175 66 248 70 290 137 C331 203 391 184 379 127 C367 72 304 79 290 128 C272 191 385 226 505 150"
+              />
+              <g class="request-flight__moving-plane">
+                <path class="request-flight__plane-body" d="M-21-14 22 0-21 14-10 0-21-14Z" />
+                <path class="request-flight__plane-fold" d="M-10 0 22 0" />
+                <animateMotion data-request-flight-animation begin="indefinite" dur="${INTENT_DERIVATION_DELAY / 1000}s" repeatCount="1" fill="freeze" rotate="auto">
+                  <mpath href="#request-flight-path" />
+                </animateMotion>
+              </g>
+              <g class="request-flight__static-plane" transform="translate(290 128) rotate(-88)">
+                <path class="request-flight__plane-body" d="M-21-14 22 0-21 14-10 0-21-14Z" />
+                <path class="request-flight__plane-fold" d="M-10 0 22 0" />
+              </g>
+            </svg>
+            <div class="request-flight__user" aria-hidden="true">
+              <i></i><span>YOU</span>
+            </div>
+            <div class="request-flight__mochi" aria-hidden="true">
+              <svg viewBox="0 0 276 270">${mochiArtwork()}</svg>
+              <strong>Mochi</strong>
+            </div>
+            <span class="request-flight__idea" aria-hidden="true">
+              <svg viewBox="0 0 64 64">
+                <path d="M21 39c-5-4-8-10-8-17C13 11 21 3 32 3s19 8 19 19c0 7-3 13-8 17-3 2-4 5-4 8H25c0-3-1-6-4-8Z" />
+                <path d="M25 52h14M28 59h8M7 22H1M63 22h-6M11 8 6 3M53 8l5-5" />
+              </svg>
+            </span>
           </section>
 
-          <div class="search-evidence-grid">
-            <section class="event-history timeline-card" data-event-history-section hidden>
-              <div class="event-history__heading">
-                <div><span>Timeline</span><small data-event-count>Step 1</small></div>
-                <button type="button" data-return-live hidden>Return to live</button>
-              </div>
-              <div class="event-history__list" data-event-history-list></div>
+          <div data-discovery-analysis hidden>
+            <section class="sync-phase" aria-live="polite">
+              <span data-skynet-step>STEP 2</span>
+              <div><h3 data-activity-title>Searching both registries</h3><p data-activity-detail></p></div>
             </section>
 
-            <section class="registry-ledger">
-              <div class="section-heading"><p>Registry activity</p><span>2 sources</span></div>
-              <article class="registry-row" data-skynet-registry="agentcensus" data-status="waiting">
-                <svg class="registry-row__mark" viewBox="-55 -55 110 110" aria-hidden="true">
-                  <circle class="registry-row__halo" r="45" /><circle class="registry-row__shell" r="30" />
-                  <path class="registry-row__icon" d="M-16 5A17 17 0 0116 5M-10 5a10 10 0 0120 0M0-18V15M-8 18h16" /><circle class="registry-row__signal" cy="-2" r="3" />
-                </svg>
-                <div><strong>AgentCensus</strong><small>Agent observation network</small></div><span data-registry-skynet-status="agentcensus">Waiting</span>
-              </article>
-              <article class="registry-row" data-skynet-registry="a2a-registry" data-status="waiting">
-                <svg class="registry-row__mark" viewBox="-55 -55 110 110" aria-hidden="true">
-                  <circle class="registry-row__halo" r="45" /><rect class="registry-row__shell" x="-30" y="-30" width="60" height="60" rx="11" />
-                  <path class="registry-row__icon" d="M-15 16V-14H15V16M-6 16V3H6V16M-8-6h16" />
-                </svg>
-                <div><strong>A2A Registry</strong><small>Agent card directory</small></div><span data-registry-skynet-status="a2a-registry">Waiting</span>
-              </article>
+            <div class="search-evidence-grid">
+              <section class="event-history timeline-card" data-event-history-section hidden>
+                <div class="event-history__heading">
+                  <div><span>Timeline</span><small data-event-count>Step 2</small></div>
+                  <button type="button" data-return-live hidden>Return to live</button>
+                </div>
+                <div class="event-history__list" data-event-history-list></div>
+              </section>
+
+              <section class="registry-ledger">
+                <div class="section-heading"><p>Registry activity</p><span>2 sources</span></div>
+                <article class="registry-row" data-skynet-registry="agentcensus" data-status="waiting">
+                  <svg class="registry-row__mark" viewBox="-55 -55 110 110" aria-hidden="true">
+                    <circle class="registry-row__halo" r="45" /><circle class="registry-row__shell" r="30" />
+                    <path class="registry-row__icon" d="M-16 5A17 17 0 0116 5M-10 5a10 10 0 0120 0M0-18V15M-8 18h16" /><circle class="registry-row__signal" cy="-2" r="3" />
+                  </svg>
+                  <div><strong>AgentCensus</strong><small>Agent observation network</small></div><span data-registry-skynet-status="agentcensus">Waiting</span>
+                </article>
+                <article class="registry-row" data-skynet-registry="a2a-registry" data-status="waiting">
+                  <svg class="registry-row__mark" viewBox="-55 -55 110 110" aria-hidden="true">
+                    <circle class="registry-row__halo" r="45" /><rect class="registry-row__shell" x="-30" y="-30" width="60" height="60" rx="11" />
+                    <path class="registry-row__icon" d="M-15 16V-14H15V16M-6 16V3H6V16M-8-6h16" />
+                  </svg>
+                  <div><strong>A2A Registry</strong><small>Agent card directory</small></div><span data-registry-skynet-status="a2a-registry">Waiting</span>
+                </article>
+              </section>
+            </div>
+
+            <section class="result-board">
+              <div class="section-heading"><p>Behind the Scene</p></div>
+              <div class="behind-scene-current">
+                <span>Current operation</span>
+                <strong data-behind-title>Interpreting request</strong>
+                <p data-behind-detail>Mochi is deriving a search intent.</p>
+              </div>
+              <div class="candidate-results" data-candidate-results></div>
             </section>
           </div>
-
-          <section class="result-board">
-            <div class="section-heading"><p>Behind the Scene</p></div>
-            <div class="behind-scene-current">
-              <span>Current operation</span>
-              <strong data-behind-title>Ready to search</strong>
-              <p data-behind-detail>Waiting for Mochi to receive a task.</p>
-            </div>
-            <div class="candidate-results" data-candidate-results></div>
-          </section>
         </div>
       </aside>
     </main>
@@ -452,6 +497,9 @@ const eventCount = document.querySelector<HTMLElement>('[data-event-count]');
 const returnLiveButton = document.querySelector<HTMLButtonElement>('[data-return-live]');
 const skynetMode = document.querySelector<HTMLElement>('[data-skynet-mode]');
 const candidateResults = document.querySelector<HTMLElement>('[data-candidate-results]');
+const intakeEvidence = document.querySelector<HTMLElement>('[data-intake-evidence]');
+const discoveryAnalysis = document.querySelector<HTMLElement>('[data-discovery-analysis]');
+const requestFlightAnimation = document.querySelector<SVGAnimationElement>('[data-request-flight-animation]');
 
 const activityEvents: ActivityEvent[] = [];
 let runId = 'run-c3-1';
@@ -459,6 +507,8 @@ let runSequence = 1;
 let eventSequence = 0;
 let eventCursor: number | null = null;
 let scheduledTimers: number[] = [];
+let timelineReplayTimers: number[] = [];
+let renderedStep = 0;
 
 const bookingCandidate: Candidate = {
   id: 'bookings-service',
@@ -473,6 +523,17 @@ const setText = (selector: string, value: string) => {
   const element = document.querySelector<HTMLElement>(selector);
   if (element) element.textContent = value;
 };
+
+const displayStepNumber = (step: ReturnType<typeof projectDiscovery>['step']) => (
+  step >= 2 ? step - 1 : step
+);
+
+const clearTimelineReplay = () => {
+  timelineReplayTimers.forEach((timer) => window.clearTimeout(timer));
+  timelineReplayTimers = [];
+};
+
+const replayDelay = (delay: number) => prefersReducedMotion ? Math.min(delay, 350) : delay;
 
 const registryStatusLabel = (status: ReturnType<typeof projectDiscovery>['registries'][RegistryId]) => {
   if (status.status === 'searching') return 'Searching…';
@@ -516,6 +577,7 @@ const renderCandidates = (projection: ReturnType<typeof projectDiscovery>) => {
 const renderActivity = () => {
   const displayedEvents = eventsAtCursor(activityEvents, eventCursor);
   const projection = projectDiscovery(displayedEvents);
+  const displayStep = displayStepNumber(projection.step);
   const mochiProjection = projectMochi(displayedEvents);
   const mochiButton = buttons.find((button) => button.dataset.agentId === 'personal-assistant');
   const bookingsButton = buttons.find((button) => button.dataset.agentId === 'bookings-service');
@@ -526,13 +588,20 @@ const renderActivity = () => {
 
   const worldPhase = document.querySelector<HTMLElement>('[data-world-phase]');
   if (worldPhase) worldPhase.hidden = projection.step === 0;
-  setText('[data-world-step]', `STEP ${projection.step}`);
+  setText('[data-world-step]', `STEP ${displayStep}`);
   setText('[data-world-phase-title]', projection.title);
-  setText('[data-skynet-step]', `STEP ${projection.step}`);
+  setText('[data-skynet-step]', `STEP ${displayStep}`);
   setText('[data-activity-title]', projection.title);
   setText('[data-activity-detail]', projection.detail);
   setText('[data-behind-title]', projection.title);
   setText('[data-behind-detail]', projection.detail);
+  if (intakeEvidence) {
+    intakeEvidence.hidden = projection.step !== 1 && projection.step !== 2;
+    intakeEvidence.dataset.state = projection.step === 2 ? 'understood' : 'delivering';
+    intakeEvidence.setAttribute('aria-label', projection.step === 2 ? 'Mochi understood your request' : 'Your request is traveling to Mochi');
+  }
+  if (discoveryAnalysis) discoveryAnalysis.hidden = projection.step < 3;
+  if (projection.step === 1 && renderedStep !== 1) requestFlightAnimation?.beginElement();
   const syncPhase = document.querySelector<HTMLElement>('.sync-phase');
   if (syncPhase) syncPhase.dataset.step = String(projection.step);
 
@@ -585,22 +654,53 @@ const renderActivity = () => {
   renderCandidates(projection);
 
   if (eventHistorySection) eventHistorySection.hidden = activityEvents.length === 0;
-  if (eventCount) eventCount.textContent = `Step ${projection.step}`;
+  if (eventCount) eventCount.textContent = `Step ${displayStep}`;
   if (eventHistoryList) {
     eventHistoryList.replaceChildren();
     activityEvents.forEach((event, index) => {
+      const nextEvent = activityEvents[index + 1];
+      const previousEvent = activityEvents[index - 1];
+      if (event.type === 'task.requested' && nextEvent?.type === 'search.intent-derived') return;
+
       const eventProjection = projectSkynet(activityEvents.slice(0, index + 1));
       if (!eventProjection) return;
+      const isMergedHandoff = event.type === 'search.intent-derived' && previousEvent?.type === 'task.requested';
+      const timelineStep = displayStepNumber(eventProjection.step);
+      const title = isMergedHandoff ? 'Request delivered & understood' : eventProjection.title;
+      const currentIndex = eventCursor ?? activityEvents.length - 1;
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'event-history__item';
-      button.classList.toggle('is-current', index === (eventCursor ?? activityEvents.length - 1));
+      button.classList.toggle('is-current', isMergedHandoff
+        ? currentIndex === index || currentIndex === index - 1
+        : currentIndex === index);
       button.innerHTML = '<span class="event-history__sequence"></span><span class="event-history__copy"><strong></strong><small></small></span><i></i>';
-      button.querySelector<HTMLElement>('.event-history__sequence')!.textContent = String(eventProjection.step).padStart(2, '0');
-      button.querySelector('strong')!.textContent = eventProjection.title;
-      button.querySelector('small')!.textContent = `${event.source} · ${event.type}`;
-      button.setAttribute('aria-label', `Review synchronized step ${eventProjection.step}: ${eventProjection.title}`);
-      button.addEventListener('click', () => { eventCursor = index; renderActivity(); });
+      button.querySelector<HTMLElement>('.event-history__sequence')!.textContent = String(timelineStep).padStart(2, '0');
+      button.querySelector('strong')!.textContent = title;
+      button.querySelector('small')!.textContent = isMergedHandoff
+        ? 'observed + derived · request handoff'
+        : `${event.source} · ${event.type}`;
+      button.setAttribute('aria-label', `Review synchronized step ${timelineStep}: ${title}`);
+      button.addEventListener('click', () => {
+        clearTimelineReplay();
+        if (!isMergedHandoff) {
+          eventCursor = index;
+          renderActivity();
+          return;
+        }
+
+        eventCursor = index - 1;
+        renderActivity();
+        timelineReplayTimers.push(window.setTimeout(() => {
+          eventCursor = index;
+          renderActivity();
+          timelineReplayTimers.push(window.setTimeout(() => {
+            if (activityEvents[index + 1]?.type !== 'registries.search-started') return;
+            eventCursor = index + 1;
+            renderActivity();
+          }, replayDelay(UNDERSTOOD_HOLD_DELAY)));
+        }, replayDelay(INTENT_DERIVATION_DELAY)));
+      });
       eventHistoryList.append(button);
     });
     eventHistoryList.querySelector<HTMLElement>('.is-current')?.scrollIntoView({ block: 'nearest' });
@@ -612,6 +712,7 @@ const renderActivity = () => {
     returnLiveButton.textContent = newerEventCount > 0 ? `Return to current · ${newerEventCount} new` : 'Return to current';
   }
   if (skynetMode) skynetMode.textContent = eventCursor === null ? 'Scenario' : 'Reviewing';
+  renderedStep = projection.step;
 };
 
 const nextEnvelope = () => {
@@ -629,6 +730,7 @@ const schedule = (delay: number, callback: () => void) => {
 };
 
 const sendTaskToMochi = (message: string) => {
+  clearTimelineReplay();
   scheduledTimers.forEach((timer) => window.clearTimeout(timer));
   scheduledTimers = [];
   activityEvents.splice(0);
@@ -647,15 +749,19 @@ const sendTaskToMochi = (message: string) => {
     appendActivityEvent(nextEvent);
   });
 
-  addStep(5500, () => ({ ...nextEnvelope(), type: 'search.intent-derived', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { intent: 'meeting scheduling', candidateType: 'service agent' } }));
-  addStep(11500, () => ({ ...nextEnvelope(), type: 'registries.search-started', source: 'simulated', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { query: 'meeting scheduling', registries: ['agentcensus', 'a2a-registry'] } }));
+  addStep(INTENT_DERIVATION_DELAY, () => ({ ...nextEnvelope(), type: 'search.intent-derived', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { intent: 'meeting scheduling', candidateType: 'service agent' } }));
+  addStep(REGISTRY_SEARCH_DELAY, () => ({ ...nextEnvelope(), type: 'registries.search-started', source: 'simulated', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { query: 'meeting scheduling', registries: ['agentcensus', 'a2a-registry'] } }));
   addStep(19500, () => ({ ...nextEnvelope(), type: 'registry.results-returned', source: 'reported', actorId: 'agentcensus', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'agentcensus', candidates: [bookingCandidate], resultCount: 1 } }));
   addStep(26000, () => ({ ...nextEnvelope(), type: 'registry.no-results', source: 'reported', actorId: 'a2a-registry', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'a2a-registry', resultCount: 0 } }));
   addStep(32500, () => ({ ...nextEnvelope(), type: 'candidates.normalized', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { reportedCount: 1, uniqueCount: 1 } }));
   addStep(39500, () => ({ ...nextEnvelope(), type: 'search.completed', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { candidates: [bookingCandidate], rankingMethod: 'Relevance to the derived intent using reported registry metadata' } }));
 };
 
-returnLiveButton?.addEventListener('click', () => { eventCursor = null; renderActivity(); });
+returnLiveButton?.addEventListener('click', () => {
+  clearTimelineReplay();
+  eventCursor = null;
+  renderActivity();
+});
 
 const syncSearchComposer = () => {
   const query = chatInput?.value.trim() ?? '';

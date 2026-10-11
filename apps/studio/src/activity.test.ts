@@ -32,7 +32,7 @@ describe('synchronized C3 discovery projection', () => {
     const events = [taskEvent, intentEvent];
     expect(projectDiscovery(events)).toMatchObject({ step: 2, title: 'Intent understood' });
     expect(projectSkynet(events)).toMatchObject({ step: 2, title: 'Intent understood' });
-    expect(projectMochi(events)).toMatchObject({ state: 'intent-derived', status: 'Intent understood' });
+    expect(projectMochi(events)).toMatchObject({ state: 'intent-derived', status: 'Intent understood', bubble: 'Understood!' });
   });
 
   it('tracks the two registry outcomes independently', () => {
