@@ -86,7 +86,7 @@ app.innerHTML = `
   <section
     class="world-intro"
     data-world-intro
-    aria-label="Agentopia introduction. Agents come online, publish information through AgentCensus and A2A Registry, then Mochi connects with other agents on your behalf."
+    aria-label="Agentopia introduction. Agents come online, publish information through AgentCensus, A2A Registry, and MCP Registry, then Mochi connects with other agents on your behalf."
   >
     <button class="world-intro__skip" type="button" data-intro-skip>Skip intro</button>
 
@@ -116,15 +116,19 @@ app.innerHTML = `
         <g class="intro-routes">
           <path id="route-census" d="M105 540C125 430 155 355 230 300" />
           <path id="route-a2a" d="M475 565C505 430 545 325 600 250" />
+          <path id="route-mcp" d="M1090 535C1062 435 1025 360 970 310" />
           <path class="intro-route-extra intro-route-extra--census" d="M326 558C310 450 275 360 235 305" />
           <path class="intro-route-extra intro-route-extra--census" d="M167 590C175 470 200 380 230 305" />
           <path class="intro-route-extra intro-route-extra--a2a" d="M544 530C560 430 575 330 600 255" />
           <path class="intro-route-extra intro-route-extra--a2a" d="M723 560C695 450 650 340 605 255" />
+          <path class="intro-route-extra intro-route-extra--mcp" d="M845 565C890 470 935 390 968 315" />
+          <path class="intro-route-extra intro-route-extra--mcp" d="M978 575C985 480 982 390 972 315" />
         </g>
 
         <g class="intro-packets">
           <circle class="intro-packet intro-packet--green" r="5"><animateMotion begin="2.1s" dur="2s" fill="freeze"><mpath href="#route-census" /></animateMotion></circle>
           <circle class="intro-packet intro-packet--violet" r="5"><animateMotion begin="4.1s" dur="2s" fill="freeze"><mpath href="#route-a2a" /></animateMotion></circle>
+          <circle class="intro-packet intro-packet--orange" r="5"><animateMotion begin="6.1s" dur="2s" fill="freeze"><mpath href="#route-mcp" /></animateMotion></circle>
         </g>
 
         <g class="intro-agents intro-agents--early">
@@ -154,6 +158,13 @@ app.innerHTML = `
             <path class="intro-outpost__icon" d="M-24 24V-22H24V24M-10 24V4H10V24M-13-8h26" />
             <text class="intro-outpost__name" y="88">A2A REGISTRY</text>
             <text class="intro-outpost__type" y="106">AGENT CARD DIRECTORY</text>
+          </g>
+          <g class="intro-outpost intro-outpost--mcp" transform="translate(970 270)">
+            <circle class="intro-outpost__halo" r="73" />
+            <path class="intro-outpost__shell" d="M0-52L45-26V26L0 52-45 26V-26Z" />
+            <path class="intro-outpost__icon" d="M-20 0H20M-10-15V15M10-15V15M-26-20V20M26-20V20" />
+            <text class="intro-outpost__name" y="88">MCP REGISTRY</text>
+            <text class="intro-outpost__type" y="106">SERVER DIRECTORY</text>
           </g>
         </g>
 
@@ -211,21 +222,25 @@ app.innerHTML = `
           <div class="world-scene" role="group" aria-label="Mochi searching AgentCensus and A2A Registry for service agents">
             <div class="world-coordinates" aria-hidden="true"><span>01</span><span>02</span><span>03</span><span>04</span></div>
             <svg class="world-network" viewBox="0 0 600 620" preserveAspectRatio="none" aria-hidden="true">
-              <path id="user-flow-path" class="network-line network-line--user" data-user-link d="M72 530 C145 490 176 420 245 342" />
+              <path id="user-flow-path" class="network-line network-line--user" data-user-link d="M62 348 C100 348 122 338 158 334" />
               <polygon class="network-arrow network-arrow--user" data-user-arrow points="-7,-4 7,0 -7,4" hidden>
                 <animateMotion dur="1.7s" repeatCount="indefinite" rotate="auto">
                   <mpath href="#user-flow-path" />
                 </animateMotion>
               </polygon>
-              <path id="census-flow-path" class="network-line network-line--registry" data-registry-link="agentcensus" d="M250 340 C210 260 150 205 92 142" />
+              <path id="census-flow-path" class="network-line network-line--registry" data-registry-link="agentcensus" d="M250 330 C292 310 318 268 356 230" />
               <polygon class="network-arrow network-arrow--registry" data-registry-packet="agentcensus" points="-7,-4 7,0 -7,4" hidden>
                 <animateMotion dur="1.25s" repeatCount="indefinite" rotate="auto">
                   <mpath href="#census-flow-path" />
                 </animateMotion>
               </polygon>
-              <path id="a2a-flow-path" class="network-line network-line--registry network-line--a2a" data-registry-link="a2a-registry" d="M275 335 C345 255 422 200 505 142" />
+              <path id="a2a-flow-path" class="network-line network-line--registry network-line--a2a" data-registry-link="a2a-registry" d="M250 350 C292 370 318 402 356 420" />
               <polygon class="network-arrow network-arrow--registry network-arrow--a2a" data-registry-packet="a2a-registry" points="-7,-4 7,0 -7,4" hidden>
                 <animateMotion dur="1.35s" repeatCount="indefinite" rotate="auto"><mpath href="#a2a-flow-path" /></animateMotion>
+              </polygon>
+              <path id="result-flow-path" class="network-line network-line--result" data-result-link d="M390 230 C447 230 478 275 526 318" />
+              <polygon class="network-arrow network-arrow--result" data-result-packet points="-7,-4 7,0 -7,4" hidden>
+                <animateMotion dur="1.45s" repeatCount="indefinite" rotate="auto"><mpath href="#result-flow-path" /></animateMotion>
               </polygon>
             </svg>
 
@@ -252,12 +267,21 @@ app.innerHTML = `
             </div>
 
             <div class="registry-node registry-node--census" data-registry-node="agentcensus" data-status="waiting">
-              <i aria-hidden="true"></i>
+              <svg viewBox="-70 -70 140 140" aria-hidden="true">
+                <circle class="registry-node__halo" r="57" />
+                <circle class="registry-node__shell" r="38" />
+                <path class="registry-node__icon" d="M-20 6A21 21 0 0120 6M-13 6a13 13 0 0126 0M0-23V19M-10 22h20" />
+                <circle class="registry-node__signal" cy="-3" r="3.5" />
+              </svg>
               <strong>AgentCensus</strong>
               <small data-registry-world-status="agentcensus">Waiting</small>
             </div>
             <div class="registry-node registry-node--a2a" data-registry-node="a2a-registry" data-status="waiting">
-              <i aria-hidden="true"></i>
+              <svg viewBox="-70 -70 140 140" aria-hidden="true">
+                <circle class="registry-node__halo" r="57" />
+                <rect class="registry-node__shell" x="-38" y="-38" width="76" height="76" rx="14" />
+                <path class="registry-node__icon" d="M-19 20V-18H19V20M-8 20V4H8V20M-10-7h20" />
+              </svg>
               <strong>A2A Registry</strong>
               <small data-registry-world-status="a2a-registry">Waiting</small>
             </div>
@@ -272,6 +296,7 @@ app.innerHTML = `
             </div>
 
             ${agentButton(agents['personal-assistant'], 'assistant')}
+            <div class="result-provenance" data-result-provenance hidden><span>AgentCensus</span><strong>1 result</strong></div>
             ${agentButton(agents['bookings-service'], 'bookings')}
 
           </div>
@@ -543,6 +568,13 @@ const renderActivity = () => {
 
   userLink?.classList.toggle('is-active', projection.step === 1);
   userArrow?.toggleAttribute('hidden', projection.step !== 1);
+  const resultLink = document.querySelector<SVGPathElement>('[data-result-link]');
+  const resultPacket = document.querySelector<SVGPolygonElement>('[data-result-packet]');
+  const resultProvenance = document.querySelector<HTMLElement>('[data-result-provenance]');
+  resultLink?.classList.toggle('is-visible', projection.candidates.length > 0);
+  resultLink?.classList.toggle('is-active', projection.step === 4);
+  resultPacket?.toggleAttribute('hidden', projection.step !== 4);
+  if (resultProvenance) resultProvenance.hidden = projection.candidates.length === 0;
 
   (['agentcensus', 'a2a-registry'] as RegistryId[]).forEach((registry) => {
     const state = projection.registries[registry];
@@ -644,12 +676,12 @@ const sendTaskToMochi = (message: string) => {
     appendActivityEvent(nextEvent);
   });
 
-  addStep(1100, () => ({ ...nextEnvelope(), type: 'search.intent-derived', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { intent: 'meeting scheduling', candidateType: 'service agent' } }));
-  addStep(2300, () => ({ ...nextEnvelope(), type: 'registries.search-started', source: 'simulated', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { query: 'meeting scheduling', registries: ['agentcensus', 'a2a-registry'] } }));
-  addStep(3900, () => ({ ...nextEnvelope(), type: 'registry.results-returned', source: 'reported', actorId: 'agentcensus', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'agentcensus', candidates: [bookingCandidate], resultCount: 1 } }));
-  addStep(5200, () => ({ ...nextEnvelope(), type: 'registry.no-results', source: 'reported', actorId: 'a2a-registry', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'a2a-registry', resultCount: 0 } }));
-  addStep(6500, () => ({ ...nextEnvelope(), type: 'candidates.normalized', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { reportedCount: 1, uniqueCount: 1 } }));
-  addStep(7900, () => ({ ...nextEnvelope(), type: 'search.completed', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { candidates: [bookingCandidate], rankingMethod: 'Relevance to the derived intent using reported registry metadata' } }));
+  addStep(5500, () => ({ ...nextEnvelope(), type: 'search.intent-derived', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { intent: 'meeting scheduling', candidateType: 'service agent' } }));
+  addStep(11500, () => ({ ...nextEnvelope(), type: 'registries.search-started', source: 'simulated', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { query: 'meeting scheduling', registries: ['agentcensus', 'a2a-registry'] } }));
+  addStep(19500, () => ({ ...nextEnvelope(), type: 'registry.results-returned', source: 'reported', actorId: 'agentcensus', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'agentcensus', candidates: [bookingCandidate], resultCount: 1 } }));
+  addStep(26000, () => ({ ...nextEnvelope(), type: 'registry.no-results', source: 'reported', actorId: 'a2a-registry', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'a2a-registry', resultCount: 0 } }));
+  addStep(32500, () => ({ ...nextEnvelope(), type: 'candidates.normalized', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { reportedCount: 1, uniqueCount: 1 } }));
+  addStep(39500, () => ({ ...nextEnvelope(), type: 'search.completed', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { candidates: [bookingCandidate], rankingMethod: 'Relevance to the derived intent using reported registry metadata' } }));
 };
 
 returnLiveButton?.addEventListener('click', () => { eventCursor = null; renderActivity(); });
