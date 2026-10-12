@@ -133,11 +133,11 @@ export const projectDiscovery = (events: readonly ActivityEvent[]): DiscoveryPro
         break;
       case 'candidates.normalized':
         Object.assign(projection, {
-          step: 6, title: 'Evidence Consolidated',
-          detail: `${event.payload.reportedCount} reported results became ${event.payload.uniqueCount} unique candidates after normalization.`,
+          step: 6, title: 'Consolidating Results',
+          detail: `Combining ${event.payload.reportedCount} registry records and sorting ${event.payload.uniqueCount} unique candidates by relevance.`,
           reportedCount: event.payload.reportedCount, uniqueCount: event.payload.uniqueCount,
-          mochiState: 'normalizing', mochiStatus: 'Comparing reported evidence',
-          mochiBubble: 'Comparing names, domains, and capabilities…',
+          mochiState: 'normalizing', mochiStatus: 'Consolidating registry results',
+          mochiBubble: 'Reviewing...',
         });
         break;
       case 'search.completed':

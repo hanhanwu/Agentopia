@@ -18,9 +18,10 @@ if (!app) {
 }
 
 type ServiceVariant = 1 | 2 | 3 | 4 | 5 | 6 | 7;
-const INTENT_DERIVATION_DELAY = 5500;
-const UNDERSTOOD_HOLD_DELAY = 4000;
+const INTENT_DERIVATION_DELAY = 4800;
+const UNDERSTOOD_HOLD_DELAY = 2000;
 const REGISTRY_SEARCH_DELAY = INTENT_DERIVATION_DELAY + UNDERSTOOD_HOLD_DELAY;
+const SEARCH_COMPLETE_DELAY = 31000;
 const STEP_REPLAY_LEAD_DELAY = 700;
 
 const mochiArtwork = () => `
@@ -93,7 +94,6 @@ const registryPrintout = (registry: (typeof registrySearchMock.registries)[numbe
       <strong>${registry.name}</strong>
       <span><i></i> <span data-registry-printout-status="${registry.id}">Streaming</span></span>
     </header>
-    <div class="registry-printout__mock-label">Mock search records</div>
     <div class="registry-printout__columns"><span>Agent</span><span>Domain</span><span>Relevance</span></div>
     ${registry.records.map((record, index) => `
       <div class="registry-printout__row" style="animation-delay: ${(0.65 + index * 0.55).toFixed(2)}s">
@@ -103,6 +103,23 @@ const registryPrintout = (registry: (typeof registrySearchMock.registries)[numbe
     <footer><span class="registry-printout__prompt">›</span> ${registry.records.length} raw records · compatibility pending</footer>
   </article>
 `;
+
+const consolidatedSearchRecords = registrySearchMock.registries
+  .flatMap((registry) => registry.records.map((record) => ({ ...record, registryId: registry.id })))
+  .sort((left, right) => right.relevanceScore - left.relevanceScore);
+
+const consolidatedResultRows = () => consolidatedSearchRecords.map((record, index) => `
+  <div
+    class="consolidated-result consolidated-result--${record.registryId === 'agentcensus' ? 'census' : 'a2a'}"
+    style="animation-delay: ${(0.3 + index * 0.22).toFixed(2)}s"
+  >
+    <b>${String(index + 1).padStart(2, '0')}</b>
+    <strong>${record.agentName}</strong>
+    <span>${record.domain}</span>
+    <em>${record.registryId === 'agentcensus' ? 'AgentCensus' : 'A2A Registry'}</em>
+    <i>${record.relevanceScore}%</i>
+  </div>
+`).join('');
 
 app.innerHTML = `
   <section
@@ -462,6 +479,35 @@ app.innerHTML = `
               <div class="registry-printouts" data-search-printouts hidden>
                 ${registrySearchMock.registries.map(registryPrintout).join('')}
               </div>
+              <div class="consolidation-board" data-consolidation-board hidden>
+                <div class="consolidation-board__flow" aria-hidden="true">
+                  <span class="consolidation-board__source consolidation-board__source--census">5</span>
+                  <i>→</i>
+                  <div class="consolidation-reader">
+                    <svg viewBox="0 0 276 270">
+                      <defs>
+                        <mask id="consolidation-mochi-paper-mask">
+                          <rect width="276" height="270" fill="white" />
+                          <path d="M78 177h107l19 19v58H78z" fill="black" />
+                        </mask>
+                      </defs>
+                      <g mask="url(#consolidation-mochi-paper-mask)">${mochiArtwork()}</g>
+                      <g class="consolidation-reader__paper">
+                        <path class="consolidation-reader__arm" d="M57 219q8-16 21-15M211 219q-4-10-7-12" />
+                        <path class="consolidation-reader__sheet" d="M78 177h107l19 19v58H78zM185 177v19h19" />
+                        <path class="consolidation-reader__line consolidation-reader__line--1" d="M97 200h61" />
+                        <path class="consolidation-reader__line consolidation-reader__line--2" d="M97 217h85" />
+                        <path class="consolidation-reader__line consolidation-reader__line--3" d="M97 234h72" />
+                        <path class="consolidation-reader__line consolidation-reader__line--4" d="M97 247h50" />
+                      </g>
+                    </svg>
+                  </div>
+                  <i>←</i>
+                  <span class="consolidation-board__source consolidation-board__source--a2a">3</span>
+                </div>
+                <div class="consolidation-board__columns"><span>Rank</span><span>Agent</span><span>Domain</span><span>Source</span><span>Relevance</span></div>
+                <div class="consolidation-board__results">${consolidatedResultRows()}</div>
+              </div>
               <div class="behind-scene-current" data-behind-current>
                 <span>Current operation</span>
                 <strong data-behind-title>Interpreting request</strong>
@@ -531,6 +577,7 @@ const intakeEvidence = document.querySelector<HTMLElement>('[data-intake-evidenc
 const discoveryAnalysis = document.querySelector<HTMLElement>('[data-discovery-analysis]');
 const requestFlightAnimation = document.querySelector<SVGAnimationElement>('[data-request-flight-animation]');
 const searchPrintouts = document.querySelector<HTMLElement>('[data-search-printouts]');
+const consolidationBoard = document.querySelector<HTMLElement>('[data-consolidation-board]');
 const behindCurrent = document.querySelector<HTMLElement>('[data-behind-current]');
 const registryResultAnimations = new Map<RegistryId, SVGAnimationElement | null>([
   ['agentcensus', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="agentcensus"]')],
@@ -649,7 +696,7 @@ const renderActivity = () => {
   const displayedEvents = eventsAtCursor(activityEvents, eventCursor);
   const projection = projectDiscovery(displayedEvents);
   const displayStep = displayStepNumber(projection.step);
-  const hasSelectedCandidate = projection.step >= 6 && projection.candidates.length > 0;
+  const hasSelectedCandidate = projection.step >= 7 && projection.candidates.length > 0;
   const mochiProjection = projectMochi(displayedEvents);
   const mochiButton = buttons.find((button) => button.dataset.agentId === 'personal-assistant');
   const bookingsButton = buttons.find((button) => button.dataset.agentId === 'bookings-service');
@@ -674,9 +721,11 @@ const renderActivity = () => {
   }
   if (discoveryAnalysis) discoveryAnalysis.hidden = projection.step < 3;
   const isRegistryWork = projection.step >= 3 && projection.step <= 5;
+  const isConsolidating = projection.step === 6;
   if (searchPrintouts) searchPrintouts.hidden = !isRegistryWork;
   if (searchPrintouts) searchPrintouts.dataset.state = projection.step === 5 ? 'results' : 'searching';
-  if (behindCurrent) behindCurrent.hidden = isRegistryWork;
+  if (consolidationBoard) consolidationBoard.hidden = !isConsolidating;
+  if (behindCurrent) behindCurrent.hidden = isRegistryWork || isConsolidating;
   if (projection.step === 1 && renderedStep !== 1) requestFlightAnimation?.beginElement();
   const syncPhase = document.querySelector<HTMLElement>('.sync-phase');
   if (syncPhase) syncPhase.dataset.step = String(displayStep);
@@ -701,8 +750,8 @@ const renderActivity = () => {
   const resultPacket = document.querySelector<SVGPolygonElement>('[data-result-packet]');
   const resultProvenance = document.querySelector<HTMLElement>('[data-result-provenance]');
   resultLink?.classList.toggle('is-visible', hasSelectedCandidate);
-  resultLink?.classList.toggle('is-active', projection.step === 6);
-  resultPacket?.toggleAttribute('hidden', projection.step !== 6);
+  resultLink?.classList.toggle('is-active', projection.step === 7);
+  resultPacket?.toggleAttribute('hidden', projection.step !== 7);
   if (resultProvenance) resultProvenance.hidden = !hasSelectedCandidate;
 
   (['agentcensus', 'a2a-registry'] as RegistryId[]).forEach((registry) => {
@@ -719,7 +768,7 @@ const renderActivity = () => {
     if (row) row.dataset.status = state.status;
     if (link) link.classList.toggle('is-active', state.status === 'searching');
     packet?.toggleAttribute('hidden', state.status !== 'searching');
-    resultBatch?.toggleAttribute('hidden', state.status !== 'results' || projection.step > 5);
+    resultBatch?.toggleAttribute('hidden', state.status !== 'results' || projection.step > 6);
     setText(`[data-registry-world-status="${registry}"]`, registryStatusLabel(state));
     setText(`[data-registry-skynet-status="${registry}"]`, registryStatusLabel(state));
     setText(`[data-registry-printout-status="${registry}"]`, state.status === 'results' ? `${state.resultCount} found` : 'Streaming');
@@ -881,7 +930,7 @@ const sendTaskToMochi = (message: string) => {
     renderActivity();
   });
   addStep(27000, () => ({ ...nextEnvelope(), type: 'candidates.normalized', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { reportedCount: 8, uniqueCount: 8 } }));
-  addStep(39500, () => ({ ...nextEnvelope(), type: 'search.completed', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { candidates: [bookingCandidate], rankingMethod: 'Relevance to the derived intent using reported registry metadata' } }));
+  addStep(SEARCH_COMPLETE_DELAY, () => ({ ...nextEnvelope(), type: 'search.completed', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { candidates: [bookingCandidate], rankingMethod: 'Relevance to the derived intent using reported registry metadata' } }));
 };
 
 returnLiveButton?.addEventListener('click', () => {
