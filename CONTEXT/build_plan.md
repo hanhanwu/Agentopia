@@ -14,6 +14,9 @@ agent ecosystem visible, explorable, and easier to improve.
   explore while remaining grounded in inspectable data. It later provides
   controlled agents for reproducing important behaviors that cannot be tested
   safely or reliably on public agents.
+- **Skynet-powered visuals should eventually travel beyond Agentopia.** Bloggers,
+  researchers, and other creators should be able to export animations, embed
+  interactive visualizations, and reuse visual subcomponents in their own media.
 - **The community** should be able to investigate the data, discover patterns,
   contribute experiments, and turn missing evidence into concrete research and
   engineering questions.
@@ -48,6 +51,25 @@ Agentopia_Lab: collect → explore → analyze → select insights
 Agentopia:                                  visualize insights
 ```
 
+## Long-term: portable visualizations
+
+Keep this future possible without building a component platform too early:
+
+1. Build each scenario as a reusable scene, separate from page layout, controls,
+   data fetching, and Skynet's internal storage.
+2. Define a stable, versioned visualization schema between Skynet evidence and
+   Agentopia's renderer. Include evidence references so every claim remains
+   inspectable.
+3. After several scenarios reveal which visual elements are genuinely shared,
+   extract reusable pieces such as agents, interaction trails, protocol doors,
+   trust boundaries, failures, and evidence badges.
+4. Offer distribution in stages: downloadable images or video first, interactive
+   embeds second, and an open-source component library or SDK later.
+
+Portable outputs should support pinned evidence snapshots, responsive layouts,
+reduced motion, and privacy-conscious embeds. For now, Scenario 1 should prove
+the reusable-scene approach; do not build the full SDK yet.
+
 ## Repository roles
 
 - **Agentopia_Lab (private):** research workspace for data collection,
@@ -63,4 +85,5 @@ Agentopia:                                  visualize insights
   and PAP's `poppy.json` versus MCP/A2A's `ai-catalog.json`.
 - [ ] Add evidence-backed visualizations to Agentopia when the exploration
   produces useful insights.
+- [ ] Implement initial portable visualization.
 - [ ] Replace Scenario 1's mock data with real collected data.
