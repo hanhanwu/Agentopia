@@ -48,9 +48,19 @@ describe('synchronized C3 discovery projection', () => {
     };
     const a2aEvent: ActivityEvent = {
       ...taskEvent, eventId: 'event-4', sequence: 4, logicalTime: 4, source: 'reported',
-      type: 'registry.no-results', actorId: 'a2a-registry', subjectId: 'personal-assistant',
-      payload: { registry: 'a2a-registry', resultCount: 0 },
+      type: 'registry.results-returned', actorId: 'a2a-registry', subjectId: 'personal-assistant',
+      payload: {
+        registry: 'a2a-registry',
+        candidates: [1, 2, 3].map((number) => ({ ...candidate, id: `a2a-result-${number}`, sources: ['a2a-registry'] })),
+        resultCount: 3,
+      },
     };
+
+    expect(projectDiscovery([taskEvent, searchEvent])).toMatchObject({
+      step: 3,
+      title: 'Searching Agent Registries',
+      mochiStatus: 'Searching agent registries',
+    });
 
     const whileWaiting = projectDiscovery([taskEvent, searchEvent, censusEvent]);
     expect(whileWaiting.registries.agentcensus).toEqual({ status: 'results', resultCount: 1 });
@@ -58,7 +68,9 @@ describe('synchronized C3 discovery projection', () => {
 
     const settled = projectDiscovery([taskEvent, searchEvent, censusEvent, a2aEvent]);
     expect(settled.step).toBe(5);
-    expect(settled.registries['a2a-registry']).toEqual({ status: 'no-results', resultCount: 0 });
+    expect(settled.title).toBe('Registry results received');
+    expect(settled.registries['a2a-registry']).toEqual({ status: 'results', resultCount: 3 });
+    expect(settled.candidates).toHaveLength(4);
   });
 
   it('labels the final order as derived search relevance', () => {

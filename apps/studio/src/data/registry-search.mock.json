@@ -1,0 +1,57 @@
+{
+  "label": "Simulated registry search output",
+  "registries": [
+    {
+      "id": "agentcensus",
+      "name": "AgentCensus",
+      "records": [
+        {
+          "agentName": "Bookings",
+          "domain": "bookings.darknetian.com",
+          "relevanceScore": 96
+        },
+        {
+          "agentName": "Schedule Scout",
+          "domain": "schedule-scout.example.test",
+          "relevanceScore": 84
+        },
+        {
+          "agentName": "MeetFlow",
+          "domain": "meetflow.example.test",
+          "relevanceScore": 72
+        },
+        {
+          "agentName": "Agenda Pilot",
+          "domain": "agenda-pilot.example.test",
+          "relevanceScore": 67
+        },
+        {
+          "agentName": "Calendar Crew",
+          "domain": "calendar-crew.example.test",
+          "relevanceScore": 59
+        }
+      ]
+    },
+    {
+      "id": "a2a-registry",
+      "name": "A2A Registry",
+      "records": [
+        {
+          "agentName": "MeetMate",
+          "domain": "meetmate.example.test",
+          "relevanceScore": 82
+        },
+        {
+          "agentName": "Calendar Relay",
+          "domain": "calendar-relay.example.test",
+          "relevanceScore": 74
+        },
+        {
+          "agentName": "TimeBridge",
+          "domain": "timebridge.example.test",
+          "relevanceScore": 61
+        }
+      ]
+    }
+  ]
+}

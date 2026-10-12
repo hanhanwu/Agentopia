@@ -1,5 +1,6 @@
 import './styles.css';
 import { agents, type Agent } from './agents.ts';
+import registrySearchMock from './data/registry-search.mock.json';
 import {
   eventsAtCursor,
   projectDiscovery,
@@ -20,6 +21,7 @@ type ServiceVariant = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 const INTENT_DERIVATION_DELAY = 5500;
 const UNDERSTOOD_HOLD_DELAY = 4000;
 const REGISTRY_SEARCH_DELAY = INTENT_DERIVATION_DELAY + UNDERSTOOD_HOLD_DELAY;
+const STEP_REPLAY_LEAD_DELAY = 700;
 
 const mochiArtwork = () => `
   <path class="squid-body" d="M48 205V140C48 65 91 25 132 25s84 40 84 115v65c0 21-15 37-34 37s-34-16-34-37c0 21-15 37-34 37s-34-16-34-37c0 21-14 37-32 37s-32-16-32-37z" />
@@ -83,6 +85,23 @@ const agentButton = (agent: Agent, placement: string) => `
       <small>${agent.shortRole}</small>
     </span>
   </button>
+`;
+
+const registryPrintout = (registry: (typeof registrySearchMock.registries)[number]) => `
+  <article class="registry-printout registry-printout--${registry.id === 'agentcensus' ? 'census' : 'a2a'}" data-registry-printout="${registry.id}">
+    <header>
+      <strong>${registry.name}</strong>
+      <span><i></i> <span data-registry-printout-status="${registry.id}">Streaming</span></span>
+    </header>
+    <div class="registry-printout__mock-label">Mock search records</div>
+    <div class="registry-printout__columns"><span>Agent</span><span>Domain</span><span>Relevance</span></div>
+    ${registry.records.map((record, index) => `
+      <div class="registry-printout__row" style="animation-delay: ${(0.65 + index * 0.55).toFixed(2)}s">
+        <strong>${record.agentName}</strong><span>${record.domain}</span><b>${record.relevanceScore}%</b>
+      </div>
+    `).join('')}
+    <footer><span class="registry-printout__prompt">›</span> ${registry.records.length} raw records · compatibility pending</footer>
+  </article>
 `;
 
 app.innerHTML = `
@@ -237,10 +256,22 @@ app.innerHTML = `
                   <mpath href="#census-flow-path" />
                 </animateMotion>
               </polygon>
+              <g class="network-result-batch network-result-batch--census" data-registry-result-batch="agentcensus" hidden>
+                <circle r="13" /><text y="4">5</text>
+                <animateMotion data-registry-result-animation="agentcensus" begin="indefinite" dur="1.35s" repeatCount="1" fill="freeze" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+                  <mpath href="#census-flow-path" />
+                </animateMotion>
+              </g>
               <path id="a2a-flow-path" class="network-line network-line--registry network-line--a2a" data-registry-link="a2a-registry" d="M250 350 C292 370 318 402 356 420" />
               <polygon class="network-arrow network-arrow--registry network-arrow--a2a" data-registry-packet="a2a-registry" points="-7,-4 7,0 -7,4" hidden>
                 <animateMotion dur="1.35s" repeatCount="indefinite" rotate="auto"><mpath href="#a2a-flow-path" /></animateMotion>
               </polygon>
+              <g class="network-result-batch network-result-batch--a2a" data-registry-result-batch="a2a-registry" hidden>
+                <circle r="13" /><text y="4">3</text>
+                <animateMotion data-registry-result-animation="a2a-registry" begin="indefinite" dur="1.35s" repeatCount="1" fill="freeze" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+                  <mpath href="#a2a-flow-path" />
+                </animateMotion>
+              </g>
               <path id="result-flow-path" class="network-line network-line--result" data-result-link d="M390 230 C447 230 478 275 526 318" />
               <polygon class="network-arrow network-arrow--result" data-result-packet points="-7,-4 7,0 -7,4" hidden>
                 <animateMotion dur="1.45s" repeatCount="indefinite" rotate="auto"><mpath href="#result-flow-path" /></animateMotion>
@@ -299,7 +330,7 @@ app.innerHTML = `
             </div>
 
             ${agentButton(agents['personal-assistant'], 'assistant')}
-            <div class="result-provenance" data-result-provenance hidden><span>AgentCensus</span><strong>1 result</strong></div>
+            <div class="result-provenance" data-result-provenance hidden><span>AgentCensus</span><strong data-result-provenance-count>0 results</strong></div>
             ${agentButton(agents['bookings-service'], 'bookings')}
 
           </div>
@@ -332,9 +363,6 @@ app.innerHTML = `
         <div class="inspector-heading">
           <div>
             <h2 id="skynet-title" data-text="SKYNET">SKYNET</h2>
-          </div>
-          <div class="inspector-controls">
-            <span class="inspector-badge"><i></i> <span data-skynet-mode>Live</span></span>
           </div>
         </div>
 
@@ -398,7 +426,7 @@ app.innerHTML = `
           <div data-discovery-analysis hidden>
             <section class="sync-phase" aria-live="polite">
               <span data-skynet-step>STEP 2</span>
-              <div><h3 data-activity-title>Searching both registries</h3><p data-activity-detail></p></div>
+              <div><h3 data-activity-title>Searching Agent Registries</h3><p data-activity-detail></p></div>
             </section>
 
             <div class="search-evidence-grid">
@@ -431,7 +459,10 @@ app.innerHTML = `
 
             <section class="result-board">
               <div class="section-heading"><p>Behind the Scene</p></div>
-              <div class="behind-scene-current">
+              <div class="registry-printouts" data-search-printouts hidden>
+                ${registrySearchMock.registries.map(registryPrintout).join('')}
+              </div>
+              <div class="behind-scene-current" data-behind-current>
                 <span>Current operation</span>
                 <strong data-behind-title>Interpreting request</strong>
                 <p data-behind-detail>Mochi is deriving a search intent.</p>
@@ -495,11 +526,16 @@ const eventHistorySection = document.querySelector<HTMLElement>('[data-event-his
 const eventHistoryList = document.querySelector<HTMLElement>('[data-event-history-list]');
 const eventCount = document.querySelector<HTMLElement>('[data-event-count]');
 const returnLiveButton = document.querySelector<HTMLButtonElement>('[data-return-live]');
-const skynetMode = document.querySelector<HTMLElement>('[data-skynet-mode]');
 const candidateResults = document.querySelector<HTMLElement>('[data-candidate-results]');
 const intakeEvidence = document.querySelector<HTMLElement>('[data-intake-evidence]');
 const discoveryAnalysis = document.querySelector<HTMLElement>('[data-discovery-analysis]');
 const requestFlightAnimation = document.querySelector<SVGAnimationElement>('[data-request-flight-animation]');
+const searchPrintouts = document.querySelector<HTMLElement>('[data-search-printouts]');
+const behindCurrent = document.querySelector<HTMLElement>('[data-behind-current]');
+const registryResultAnimations = new Map<RegistryId, SVGAnimationElement | null>([
+  ['agentcensus', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="agentcensus"]')],
+  ['a2a-registry', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="a2a-registry"]')],
+]);
 
 const activityEvents: ActivityEvent[] = [];
 let runId = 'run-c3-1';
@@ -519,13 +555,35 @@ const bookingCandidate: Candidate = {
   matchReason: 'Its reported scheduling capability directly matches the requested intent.',
 };
 
+const mockCandidatesFor = (registryId: RegistryId): Candidate[] => {
+  const registry = registrySearchMock.registries.find(({ id }) => id === registryId);
+  if (!registry) return [];
+  return registry.records.map((record, index) => record.domain === bookingCandidate.domain
+    ? bookingCandidate
+    : {
+      id: `${registryId}-mock-${index + 1}`,
+      name: record.agentName,
+      domain: record.domain,
+      capability: 'Meeting scheduling (mock search record)',
+      sources: [registryId],
+      matchReason: `Temporary mock relevance: ${record.relevanceScore}%.`,
+    });
+};
+
+const agentCensusSearchCandidates = mockCandidatesFor('agentcensus');
+const a2aSearchCandidates = mockCandidatesFor('a2a-registry');
+
 const setText = (selector: string, value: string) => {
   const element = document.querySelector<HTMLElement>(selector);
   if (element) element.textContent = value;
 };
 
 const displayStepNumber = (step: ReturnType<typeof projectDiscovery>['step']) => (
-  step >= 2 ? step - 1 : step
+  step <= 1 ? step
+    : step === 2 ? 1
+      : step <= 4 ? step - 1
+        : step === 5 ? 3
+          : step - 2
 );
 
 const clearTimelineReplay = () => {
@@ -534,6 +592,18 @@ const clearTimelineReplay = () => {
 };
 
 const replayDelay = (delay: number) => prefersReducedMotion ? Math.min(delay, 350) : delay;
+
+const queueTimelineReplay = (delay: number, callback: () => void) => {
+  timelineReplayTimers.push(window.setTimeout(callback, replayDelay(delay)));
+};
+
+const restartRegistryPrintouts = () => {
+  searchPrintouts?.querySelectorAll<HTMLElement>('.registry-printout__row').forEach((row) => {
+    row.style.animationName = 'none';
+    void row.offsetWidth;
+    row.style.animationName = '';
+  });
+};
 
 const registryStatusLabel = (status: ReturnType<typeof projectDiscovery>['registries'][RegistryId]) => {
   if (status.status === 'searching') return 'Searching…';
@@ -546,11 +616,12 @@ const registryStatusLabel = (status: ReturnType<typeof projectDiscovery>['regist
 const renderCandidates = (projection: ReturnType<typeof projectDiscovery>) => {
   if (!candidateResults) return;
   candidateResults.replaceChildren();
+  const visibleCandidates = projection.step === 7 ? projection.candidates : [];
   const resultEmpty = document.querySelector<HTMLElement>('[data-result-empty]');
-  if (resultEmpty) resultEmpty.hidden = projection.candidates.length > 0;
-  setText('[data-result-count]', `${projection.candidates.length} ${projection.candidates.length === 1 ? 'candidate' : 'candidates'}`);
+  if (resultEmpty) resultEmpty.hidden = visibleCandidates.length > 0;
+  setText('[data-result-count]', `${visibleCandidates.length} ${visibleCandidates.length === 1 ? 'candidate' : 'candidates'}`);
 
-  projection.candidates.forEach((candidate, index) => {
+  visibleCandidates.forEach((candidate, index) => {
     const card = document.createElement('article');
     card.className = 'candidate-card';
     card.classList.toggle('is-ranked', projection.step === 7);
@@ -578,12 +649,13 @@ const renderActivity = () => {
   const displayedEvents = eventsAtCursor(activityEvents, eventCursor);
   const projection = projectDiscovery(displayedEvents);
   const displayStep = displayStepNumber(projection.step);
+  const hasSelectedCandidate = projection.step >= 6 && projection.candidates.length > 0;
   const mochiProjection = projectMochi(displayedEvents);
   const mochiButton = buttons.find((button) => button.dataset.agentId === 'personal-assistant');
   const bookingsButton = buttons.find((button) => button.dataset.agentId === 'bookings-service');
 
   worldScene?.classList.toggle('is-searching', projection.step > 0);
-  worldScene?.classList.toggle('has-candidate', projection.candidates.length > 0);
+  worldScene?.classList.toggle('has-candidate', hasSelectedCandidate);
   if (worldScene) worldScene.dataset.step = String(projection.step);
 
   const worldPhase = document.querySelector<HTMLElement>('[data-world-phase]');
@@ -601,6 +673,10 @@ const renderActivity = () => {
     intakeEvidence.setAttribute('aria-label', projection.step === 2 ? 'Mochi understood your request' : 'Your request is traveling to Mochi');
   }
   if (discoveryAnalysis) discoveryAnalysis.hidden = projection.step < 3;
+  const isRegistryWork = projection.step >= 3 && projection.step <= 5;
+  if (searchPrintouts) searchPrintouts.hidden = !isRegistryWork;
+  if (searchPrintouts) searchPrintouts.dataset.state = projection.step === 5 ? 'results' : 'searching';
+  if (behindCurrent) behindCurrent.hidden = isRegistryWork;
   if (projection.step === 1 && renderedStep !== 1) requestFlightAnimation?.beginElement();
   const syncPhase = document.querySelector<HTMLElement>('.sync-phase');
   if (syncPhase) syncPhase.dataset.step = String(projection.step);
@@ -613,7 +689,7 @@ const renderActivity = () => {
     mochiButton.dataset.activityState = mochiProjection.state;
     mochiButton.setAttribute('aria-label', `Mochi, Personal Agent. ${mochiProjection.status}`);
   }
-  if (bookingsButton) bookingsButton.setAttribute('aria-hidden', String(projection.candidates.length === 0));
+  if (bookingsButton) bookingsButton.setAttribute('aria-hidden', String(!hasSelectedCandidate));
   if (mochiBubble) {
     mochiBubble.textContent = mochiProjection.bubble ?? '';
     mochiBubble.hidden = mochiProjection.bubble === null;
@@ -624,10 +700,10 @@ const renderActivity = () => {
   const resultLink = document.querySelector<SVGPathElement>('[data-result-link]');
   const resultPacket = document.querySelector<SVGPolygonElement>('[data-result-packet]');
   const resultProvenance = document.querySelector<HTMLElement>('[data-result-provenance]');
-  resultLink?.classList.toggle('is-visible', projection.candidates.length > 0);
-  resultLink?.classList.toggle('is-active', projection.step === 4);
-  resultPacket?.toggleAttribute('hidden', projection.step !== 4);
-  if (resultProvenance) resultProvenance.hidden = projection.candidates.length === 0;
+  resultLink?.classList.toggle('is-visible', hasSelectedCandidate);
+  resultLink?.classList.toggle('is-active', projection.step === 6);
+  resultPacket?.toggleAttribute('hidden', projection.step !== 6);
+  if (resultProvenance) resultProvenance.hidden = !hasSelectedCandidate;
 
   (['agentcensus', 'a2a-registry'] as RegistryId[]).forEach((registry) => {
     const state = projection.registries[registry];
@@ -635,6 +711,7 @@ const renderActivity = () => {
     const row = document.querySelector<HTMLElement>(`[data-skynet-registry="${registry}"]`);
     const link = document.querySelector<SVGPathElement>(`[data-registry-link="${registry}"]`);
     const packet = document.querySelector<SVGPolygonElement>(`[data-registry-packet="${registry}"]`);
+    const resultBatch = document.querySelector<SVGGElement>(`[data-registry-result-batch="${registry}"]`);
     if (node) {
       node.hidden = projection.step < 3;
       node.dataset.status = state.status;
@@ -642,9 +719,23 @@ const renderActivity = () => {
     if (row) row.dataset.status = state.status;
     if (link) link.classList.toggle('is-active', state.status === 'searching');
     packet?.toggleAttribute('hidden', state.status !== 'searching');
+    resultBatch?.toggleAttribute('hidden', state.status !== 'results' || projection.step > 5);
     setText(`[data-registry-world-status="${registry}"]`, registryStatusLabel(state));
     setText(`[data-registry-skynet-status="${registry}"]`, registryStatusLabel(state));
+    setText(`[data-registry-printout-status="${registry}"]`, state.status === 'results' ? `${state.resultCount} found` : 'Streaming');
+    if (registry === 'agentcensus') {
+      setText('[data-result-provenance-count]', `${state.resultCount ?? 0} ${state.resultCount === 1 ? 'result' : 'results'}`);
+    }
   });
+
+  if (projection.step === 4 && renderedStep !== 4) {
+    registryResultAnimations.get('agentcensus')?.beginElement();
+  } else if (projection.step === 5 && renderedStep === 4) {
+    registryResultAnimations.get('a2a-registry')?.beginElement();
+  } else if (projection.step === 5 && renderedStep !== 5) {
+    registryResultAnimations.get('agentcensus')?.beginElement();
+    registryResultAnimations.get('a2a-registry')?.beginElement();
+  }
 
   if (projection.step > 0) {
     if (emptyInspector) emptyInspector.hidden = true;
@@ -661,17 +752,27 @@ const renderActivity = () => {
       const nextEvent = activityEvents[index + 1];
       const previousEvent = activityEvents[index - 1];
       if (event.type === 'task.requested' && nextEvent?.type === 'search.intent-derived') return;
+      if (event.type === 'registry.results-returned'
+        && event.payload.registry === 'agentcensus'
+        && nextEvent?.type === 'registry.results-returned'
+        && nextEvent.payload.registry === 'a2a-registry') return;
 
       const eventProjection = projectSkynet(activityEvents.slice(0, index + 1));
       if (!eventProjection) return;
       const isMergedHandoff = event.type === 'search.intent-derived' && previousEvent?.type === 'task.requested';
+      const isMergedRegistryResponse = event.type === 'registry.results-returned'
+        && event.payload.registry === 'a2a-registry'
+        && previousEvent?.type === 'registry.results-returned'
+        && previousEvent.payload.registry === 'agentcensus';
       const timelineStep = displayStepNumber(eventProjection.step);
-      const title = isMergedHandoff ? 'Request delivered & understood' : eventProjection.title;
+      const title = isMergedHandoff
+        ? 'Request delivered & understood'
+        : isMergedRegistryResponse ? 'Registry results received' : eventProjection.title;
       const currentIndex = eventCursor ?? activityEvents.length - 1;
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'event-history__item';
-      button.classList.toggle('is-current', isMergedHandoff
+      button.classList.toggle('is-current', isMergedHandoff || isMergedRegistryResponse
         ? currentIndex === index || currentIndex === index - 1
         : currentIndex === index);
       button.innerHTML = '<span class="event-history__sequence"></span><span class="event-history__copy"><strong></strong><small></small></span><i></i>';
@@ -679,27 +780,49 @@ const renderActivity = () => {
       button.querySelector('strong')!.textContent = title;
       button.querySelector('small')!.textContent = isMergedHandoff
         ? 'observed + derived · request handoff'
-        : `${event.source} · ${event.type}`;
+        : isMergedRegistryResponse
+          ? 'reported · 5 AgentCensus + 3 A2A'
+          : `${event.source} · ${event.type}`;
       button.setAttribute('aria-label', `Review synchronized step ${timelineStep}: ${title}`);
       button.addEventListener('click', () => {
         clearTimelineReplay();
-        if (!isMergedHandoff) {
-          eventCursor = index;
+        if (isMergedHandoff) {
+          eventCursor = index - 1;
           renderActivity();
+          queueTimelineReplay(INTENT_DERIVATION_DELAY, () => {
+            eventCursor = index;
+            renderActivity();
+            queueTimelineReplay(UNDERSTOOD_HOLD_DELAY, () => {
+              if (activityEvents[index + 1]?.type !== 'registries.search-started') return;
+              eventCursor = index + 1;
+              renderActivity();
+              restartRegistryPrintouts();
+            });
+          });
           return;
         }
 
-        eventCursor = index - 1;
-        renderActivity();
-        timelineReplayTimers.push(window.setTimeout(() => {
+        if (isMergedRegistryResponse) {
           eventCursor = index;
           renderActivity();
-          timelineReplayTimers.push(window.setTimeout(() => {
-            if (activityEvents[index + 1]?.type !== 'registries.search-started') return;
-            eventCursor = index + 1;
-            renderActivity();
-          }, replayDelay(UNDERSTOOD_HOLD_DELAY)));
-        }, replayDelay(INTENT_DERIVATION_DELAY)));
+          registryResultAnimations.get('agentcensus')?.beginElement();
+          registryResultAnimations.get('a2a-registry')?.beginElement();
+          return;
+        }
+
+        if (event.type === 'registries.search-started') {
+          eventCursor = index;
+          renderActivity();
+          restartRegistryPrintouts();
+          return;
+        }
+
+        eventCursor = Math.max(0, index - 1);
+        renderActivity();
+        queueTimelineReplay(STEP_REPLAY_LEAD_DELAY, () => {
+          eventCursor = index;
+          renderActivity();
+        });
       });
       eventHistoryList.append(button);
     });
@@ -711,7 +834,6 @@ const renderActivity = () => {
     returnLiveButton.hidden = eventCursor === null;
     returnLiveButton.textContent = newerEventCount > 0 ? `Return to current · ${newerEventCount} new` : 'Return to current';
   }
-  if (skynetMode) skynetMode.textContent = eventCursor === null ? 'Scenario' : 'Reviewing';
   renderedStep = projection.step;
 };
 
@@ -751,9 +873,9 @@ const sendTaskToMochi = (message: string) => {
 
   addStep(INTENT_DERIVATION_DELAY, () => ({ ...nextEnvelope(), type: 'search.intent-derived', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { intent: 'meeting scheduling', candidateType: 'service agent' } }));
   addStep(REGISTRY_SEARCH_DELAY, () => ({ ...nextEnvelope(), type: 'registries.search-started', source: 'simulated', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { query: 'meeting scheduling', registries: ['agentcensus', 'a2a-registry'] } }));
-  addStep(19500, () => ({ ...nextEnvelope(), type: 'registry.results-returned', source: 'reported', actorId: 'agentcensus', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'agentcensus', candidates: [bookingCandidate], resultCount: 1 } }));
-  addStep(26000, () => ({ ...nextEnvelope(), type: 'registry.no-results', source: 'reported', actorId: 'a2a-registry', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'a2a-registry', resultCount: 0 } }));
-  addStep(32500, () => ({ ...nextEnvelope(), type: 'candidates.normalized', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { reportedCount: 1, uniqueCount: 1 } }));
+  addStep(19500, () => ({ ...nextEnvelope(), type: 'registry.results-returned', source: 'reported', actorId: 'agentcensus', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'agentcensus', candidates: agentCensusSearchCandidates, resultCount: agentCensusSearchCandidates.length } }));
+  addStep(20200, () => ({ ...nextEnvelope(), type: 'registry.results-returned', source: 'reported', actorId: 'a2a-registry', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'a2a-registry', candidates: a2aSearchCandidates, resultCount: a2aSearchCandidates.length } }));
+  addStep(27000, () => ({ ...nextEnvelope(), type: 'candidates.normalized', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { reportedCount: 8, uniqueCount: 8 } }));
   addStep(39500, () => ({ ...nextEnvelope(), type: 'search.completed', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { candidates: [bookingCandidate], rankingMethod: 'Relevance to the derived intent using reported registry metadata' } }));
 };
 
