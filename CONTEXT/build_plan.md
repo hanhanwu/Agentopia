@@ -161,8 +161,9 @@ produced a valuable research question.
 3. Use those views to decide which static comparisons are genuinely useful.
 4. Begin a small safe-interaction dataset for the first dynamic view.
 
-Detailed experiment history and scoring rules belong in `EXPERIMENTS/`, not in
-this build plan.
+Detailed experiment history and scoring rules belong in the
+[`Agentopia_Lab/EXPERIMENTS`](https://github.com/hanhanwu/Agentopia_Lab/tree/main/EXPERIMENTS)
+workspace, not in this build plan.
 
 ## Reminders — priority TBD
 
