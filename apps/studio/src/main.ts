@@ -21,7 +21,7 @@ type ServiceVariant = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 const INTENT_DERIVATION_DELAY = 4800;
 const UNDERSTOOD_HOLD_DELAY = 2000;
 const REGISTRY_SEARCH_DELAY = INTENT_DERIVATION_DELAY + UNDERSTOOD_HOLD_DELAY;
-const SEARCH_COMPLETE_DELAY = 31000;
+const CONSOLIDATION_START_DELAY = 27000;
 const STEP_REPLAY_LEAD_DELAY = 700;
 
 const mochiArtwork = () => `
@@ -107,11 +107,20 @@ const registryPrintout = (registry: (typeof registrySearchMock.registries)[numbe
 const consolidatedSearchRecords = registrySearchMock.registries
   .flatMap((registry) => registry.records.map((record) => ({ ...record, registryId: registry.id })))
   .sort((left, right) => right.relevanceScore - left.relevanceScore);
+const CONSOLIDATION_FIRST_ROW_DELAY = 300;
+const CONSOLIDATION_ROW_STAGGER = 220;
+const CONSOLIDATION_ROW_DURATION = 520;
+const STEP_4_TO_5_GAP = 4000;
+const SEARCH_COMPLETE_DELAY = CONSOLIDATION_START_DELAY
+  + CONSOLIDATION_FIRST_ROW_DELAY
+  + (consolidatedSearchRecords.length - 1) * CONSOLIDATION_ROW_STAGGER
+  + CONSOLIDATION_ROW_DURATION
+  + STEP_4_TO_5_GAP;
 
 const consolidatedResultRows = () => consolidatedSearchRecords.map((record, index) => `
   <div
     class="consolidated-result consolidated-result--${record.registryId === 'agentcensus' ? 'census' : 'a2a'}"
-    style="animation-delay: ${(0.3 + index * 0.22).toFixed(2)}s"
+    style="animation-delay: ${(CONSOLIDATION_FIRST_ROW_DELAY + index * CONSOLIDATION_ROW_STAGGER) / 1000}s"
   >
     <b>${String(index + 1).padStart(2, '0')}</b>
     <strong>${record.agentName}</strong>
@@ -355,23 +364,23 @@ app.innerHTML = `
 
         <form class="chat-composer" data-chat-form>
           <div class="composer-agent">${avatar(agents['personal-assistant'])}</div>
-          <label class="chat-composer__field">
-            <span>What should Mochi find?</span>
+          <label class="chat-composer__field" data-chat-field>
             <input
               name="message"
               type="text"
               maxlength="240"
               autocomplete="off"
-              value="search for "
-              placeholder="search for a meeting schedule assistant"
-              aria-label="Search request for Mochi"
-              aria-describedby="search-prompt-hint"
+              value="Search for "
+              aria-label="Message Mochi"
               data-chat-input
             />
-            <small id="search-prompt-hint">Try: search for meeting schedule assistant</small>
           </label>
+          <div class="chat-composer__paused" data-chat-paused role="status" aria-live="polite" hidden>
+            <span class="chat-composer__pause-icon" aria-hidden="true"><i></i><i></i></span>
+            <strong>Waiting for Mochi's Response</strong>
+          </div>
           <button type="submit" data-chat-send disabled>
-            <span>Search</span><i aria-hidden="true">↗</i>
+            <span>Chat</span><i aria-hidden="true">↗</i>
           </button>
         </form>
       </section>
@@ -564,6 +573,8 @@ const agentInspector = document.querySelector<HTMLElement>('[data-agent-inspecto
 const chatForm = document.querySelector<HTMLFormElement>('[data-chat-form]');
 const chatInput = document.querySelector<HTMLInputElement>('[data-chat-input]');
 const chatSend = document.querySelector<HTMLButtonElement>('[data-chat-send]');
+const chatField = document.querySelector<HTMLElement>('[data-chat-field]');
+const chatPaused = document.querySelector<HTMLElement>('[data-chat-paused]');
 const worldScene = document.querySelector<HTMLElement>('.world-scene');
 const mochiBubble = document.querySelector<HTMLElement>('[data-mochi-bubble]');
 const userLink = document.querySelector<SVGPathElement>('[data-user-link]');
@@ -695,6 +706,8 @@ const renderCandidates = (projection: ReturnType<typeof projectDiscovery>) => {
 const renderActivity = () => {
   const displayedEvents = eventsAtCursor(activityEvents, eventCursor);
   const projection = projectDiscovery(displayedEvents);
+  const liveProjection = projectDiscovery(activityEvents);
+  const isComposerPaused = liveProjection.step > 0 && liveProjection.step < 7;
   const displayStep = displayStepNumber(projection.step);
   const hasSelectedCandidate = projection.step >= 7 && projection.candidates.length > 0;
   const mochiProjection = projectMochi(displayedEvents);
@@ -704,6 +717,12 @@ const renderActivity = () => {
   worldScene?.classList.toggle('is-searching', projection.step > 0);
   worldScene?.classList.toggle('has-candidate', hasSelectedCandidate);
   if (worldScene) worldScene.dataset.step = String(projection.step);
+  chatForm?.classList.toggle('is-paused', isComposerPaused);
+  chatForm?.setAttribute('aria-busy', String(isComposerPaused));
+  if (chatInput) chatInput.disabled = isComposerPaused;
+  if (chatField) chatField.hidden = isComposerPaused;
+  if (chatPaused) chatPaused.hidden = !isComposerPaused;
+  if (chatSend) chatSend.hidden = isComposerPaused;
 
   const worldPhase = document.querySelector<HTMLElement>('[data-world-phase]');
   if (worldPhase) worldPhase.hidden = projection.step === 0;
@@ -830,7 +849,7 @@ const renderActivity = () => {
       button.querySelector('small')!.textContent = isMergedHandoff
         ? 'observed + derived · request handoff'
         : isMergedRegistryResponse
-          ? 'reported · 5 AgentCensus + 3 A2A'
+          ? 'reported · 5 AgentCensus + 3 A2A Registry'
           : `${event.source} · ${event.type}`;
       button.setAttribute('aria-label', `Review synchronized step ${timelineStep}: ${title}`);
       button.addEventListener('click', () => {
@@ -929,7 +948,7 @@ const sendTaskToMochi = (message: string) => {
     activityEvents.push(censusEvent, a2aEvent);
     renderActivity();
   });
-  addStep(27000, () => ({ ...nextEnvelope(), type: 'candidates.normalized', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { reportedCount: 8, uniqueCount: 8 } }));
+  addStep(CONSOLIDATION_START_DELAY, () => ({ ...nextEnvelope(), type: 'candidates.normalized', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { reportedCount: 8, uniqueCount: 8 } }));
   addStep(SEARCH_COMPLETE_DELAY, () => ({ ...nextEnvelope(), type: 'search.completed', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { candidates: [bookingCandidate], rankingMethod: 'Relevance to the derived intent using reported registry metadata' } }));
 };
 
@@ -940,19 +959,26 @@ returnLiveButton?.addEventListener('click', () => {
 });
 
 const syncSearchComposer = () => {
+  const liveProjection = projectDiscovery(activityEvents);
+  const isComposerPaused = liveProjection.step > 0 && liveProjection.step < 7;
   const query = chatInput?.value.trim() ?? '';
   const hasSearchSubject = query.length > 0 && query.toLowerCase() !== 'search for';
-  if (chatSend) chatSend.disabled = !hasSearchSubject;
-  chatForm?.classList.toggle('is-ready', hasSearchSubject);
+  if (chatSend) chatSend.disabled = isComposerPaused || !hasSearchSubject;
+  chatForm?.classList.toggle('is-ready', !isComposerPaused && hasSearchSubject);
 };
 
 chatInput?.addEventListener('input', syncSearchComposer);
 chatForm?.addEventListener('submit', (event) => {
   event.preventDefault();
+  const liveProjection = projectDiscovery(activityEvents);
+  if (liveProjection.step > 0 && liveProjection.step < 7) return;
   const message = chatInput?.value.trim() ?? '';
   if (!message || message.toLowerCase() === 'search for') return chatInput?.focus();
   sendTaskToMochi(message);
-  if (chatInput) { chatInput.value = 'search for '; chatInput.focus(); }
+  if (chatInput) {
+    chatInput.value = '';
+    chatInput.placeholder = 'Message';
+  }
   syncSearchComposer();
 });
 

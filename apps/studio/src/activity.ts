@@ -120,7 +120,7 @@ export const projectDiscovery = (events: readonly ActivityEvent[]): DiscoveryPro
           mochiStatus: event.payload.registry === 'agentcensus' ? 'Collecting registry responses' : 'Registry search finished',
           mochiBubble: event.payload.registry === 'agentcensus'
             ? `Received ${event.payload.resultCount} from AgentCensus!`
-            : `Received ${projection.registries.agentcensus.resultCount ?? 0} from AgentCensus and ${event.payload.resultCount} from A2A!`,
+            : `Received ${projection.registries.agentcensus.resultCount ?? 0} from AgentCensus and ${event.payload.resultCount} from A2A Registry!`,
         });
         projection.registries[event.payload.registry] = { status: 'results', resultCount: event.payload.resultCount };
         break;

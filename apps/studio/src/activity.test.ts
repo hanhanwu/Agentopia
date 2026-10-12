@@ -71,6 +71,7 @@ describe('synchronized C3 discovery projection', () => {
     expect(settled.title).toBe('Registry Results Received');
     expect(settled.registries['a2a-registry']).toEqual({ status: 'results', resultCount: 3 });
     expect(settled.candidates).toHaveLength(4);
+    expect(settled.mochiBubble).toContain('A2A Registry');
   });
 
   it('labels the final order as derived search relevance', () => {
