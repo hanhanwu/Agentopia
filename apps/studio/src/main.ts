@@ -297,7 +297,7 @@ app.innerHTML = `
 
             <div class="world-phase" data-world-phase hidden aria-live="polite">
               <span data-world-step>STEP 1</span>
-              <strong data-world-phase-title>Request received</strong>
+              <strong data-world-phase-title>Request Received</strong>
             </div>
 
             <div class="registry-node registry-node--census" data-registry-node="agentcensus" data-status="waiting">
@@ -679,7 +679,7 @@ const renderActivity = () => {
   if (behindCurrent) behindCurrent.hidden = isRegistryWork;
   if (projection.step === 1 && renderedStep !== 1) requestFlightAnimation?.beginElement();
   const syncPhase = document.querySelector<HTMLElement>('.sync-phase');
-  if (syncPhase) syncPhase.dataset.step = String(projection.step);
+  if (syncPhase) syncPhase.dataset.step = String(displayStep);
 
   const intentChip = document.querySelector<HTMLElement>('[data-intent-chip]');
   if (intentChip) intentChip.hidden = projection.step < 2;
@@ -766,8 +766,8 @@ const renderActivity = () => {
         && previousEvent.payload.registry === 'agentcensus';
       const timelineStep = displayStepNumber(eventProjection.step);
       const title = isMergedHandoff
-        ? 'Request delivered & understood'
-        : isMergedRegistryResponse ? 'Registry results received' : eventProjection.title;
+        ? 'Request Delivered & Understood'
+        : isMergedRegistryResponse ? 'Registry Results Received' : eventProjection.title;
       const currentIndex = eventCursor ?? activityEvents.length - 1;
       const button = document.createElement('button');
       button.type = 'button';
@@ -873,8 +873,13 @@ const sendTaskToMochi = (message: string) => {
 
   addStep(INTENT_DERIVATION_DELAY, () => ({ ...nextEnvelope(), type: 'search.intent-derived', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { intent: 'meeting scheduling', candidateType: 'service agent' } }));
   addStep(REGISTRY_SEARCH_DELAY, () => ({ ...nextEnvelope(), type: 'registries.search-started', source: 'simulated', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { query: 'meeting scheduling', registries: ['agentcensus', 'a2a-registry'] } }));
-  addStep(19500, () => ({ ...nextEnvelope(), type: 'registry.results-returned', source: 'reported', actorId: 'agentcensus', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'agentcensus', candidates: agentCensusSearchCandidates, resultCount: agentCensusSearchCandidates.length } }));
-  addStep(20200, () => ({ ...nextEnvelope(), type: 'registry.results-returned', source: 'reported', actorId: 'a2a-registry', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'a2a-registry', candidates: a2aSearchCandidates, resultCount: a2aSearchCandidates.length } }));
+  schedule(19500, () => {
+    const censusEvent: ActivityEvent = { ...nextEnvelope(), type: 'registry.results-returned', source: 'reported', actorId: 'agentcensus', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'agentcensus', candidates: agentCensusSearchCandidates, resultCount: agentCensusSearchCandidates.length } };
+    const a2aEvent: ActivityEvent = { ...nextEnvelope(), type: 'registry.results-returned', source: 'reported', actorId: 'a2a-registry', subjectId: 'personal-assistant', causalParentId: censusEvent.eventId, payload: { registry: 'a2a-registry', candidates: a2aSearchCandidates, resultCount: a2aSearchCandidates.length } };
+    parentEventId = a2aEvent.eventId;
+    activityEvents.push(censusEvent, a2aEvent);
+    renderActivity();
+  });
   addStep(27000, () => ({ ...nextEnvelope(), type: 'candidates.normalized', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { reportedCount: 8, uniqueCount: 8 } }));
   addStep(39500, () => ({ ...nextEnvelope(), type: 'search.completed', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { candidates: [bookingCandidate], rankingMethod: 'Relevance to the derived intent using reported registry metadata' } }));
 };

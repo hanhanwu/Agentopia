@@ -30,8 +30,8 @@ describe('synchronized C3 discovery projection', () => {
     };
 
     const events = [taskEvent, intentEvent];
-    expect(projectDiscovery(events)).toMatchObject({ step: 2, title: 'Intent understood' });
-    expect(projectSkynet(events)).toMatchObject({ step: 2, title: 'Intent understood' });
+    expect(projectDiscovery(events)).toMatchObject({ step: 2, title: 'Intent Understood' });
+    expect(projectSkynet(events)).toMatchObject({ step: 2, title: 'Intent Understood' });
     expect(projectMochi(events)).toMatchObject({ state: 'intent-derived', status: 'Intent understood', bubble: 'Understood!' });
   });
 
@@ -68,7 +68,7 @@ describe('synchronized C3 discovery projection', () => {
 
     const settled = projectDiscovery([taskEvent, searchEvent, censusEvent, a2aEvent]);
     expect(settled.step).toBe(5);
-    expect(settled.title).toBe('Registry results received');
+    expect(settled.title).toBe('Registry Results Received');
     expect(settled.registries['a2a-registry']).toEqual({ status: 'results', resultCount: 3 });
     expect(settled.candidates).toHaveLength(4);
   });
@@ -80,7 +80,7 @@ describe('synchronized C3 discovery projection', () => {
       subjectId: 'personal-assistant', payload: { candidates: [candidate], rankingMethod: 'Reported metadata relevance' },
     });
     const projection = projectDiscovery([taskEvent, completeEvent]);
-    expect(projection).toMatchObject({ step: 7, title: 'Search complete', rankingMethod: 'Reported metadata relevance' });
+    expect(projection).toMatchObject({ step: 7, title: 'Search Complete', rankingMethod: 'Reported metadata relevance' });
     expect(projection.candidates).toEqual([candidate]);
   });
 

@@ -57,7 +57,7 @@ export type DiscoveryProjection = {
 
 const initialProjection = (): DiscoveryProjection => ({
   step: 0,
-  title: 'Ready to search',
+  title: 'Ready to Search',
   detail: 'Ask Mochi to find a service agent.',
   query: null,
   intent: null,
@@ -90,13 +90,13 @@ export const projectDiscovery = (events: readonly ActivityEvent[]): DiscoveryPro
     switch (event.type) {
       case 'task.requested':
         Object.assign(projection, {
-          step: 1, title: 'Request received', detail: `User asked Mochi: “${event.payload.message}”`,
+          step: 1, title: 'Request Received', detail: `User asked Mochi: “${event.payload.message}”`,
           query: event.payload.message, mochiState: 'task-received', mochiStatus: 'Understanding the request', mochiBubble: 'I’ve got it!',
         });
         break;
       case 'search.intent-derived':
         Object.assign(projection, {
-          step: 2, title: 'Intent understood', detail: `Mochi interpreted the task as ${event.payload.intent}.`,
+          step: 2, title: 'Intent Understood', detail: `Mochi interpreted the task as ${event.payload.intent}.`,
           intent: event.payload.intent, candidateType: event.payload.candidateType,
           mochiState: 'intent-derived', mochiStatus: 'Intent understood', mochiBubble: 'Understood!',
         });
@@ -112,7 +112,7 @@ export const projectDiscovery = (events: readonly ActivityEvent[]): DiscoveryPro
       case 'registry.results-returned':
         Object.assign(projection, {
           step: event.payload.registry === 'agentcensus' ? 4 : 5,
-          title: event.payload.registry === 'agentcensus' ? 'AgentCensus replied' : 'Registry results received',
+          title: event.payload.registry === 'agentcensus' ? 'AgentCensus Replied' : 'Registry Results Received',
           detail: event.payload.registry === 'agentcensus'
             ? `AgentCensus returned ${event.payload.resultCount} search records.`
             : `AgentCensus returned ${projection.registries.agentcensus.resultCount ?? 0} records and A2A Registry returned ${event.payload.resultCount}.`,
@@ -126,14 +126,14 @@ export const projectDiscovery = (events: readonly ActivityEvent[]): DiscoveryPro
         break;
       case 'registry.no-results':
         Object.assign(projection, {
-          step: 5, title: 'A2A Registry replied', detail: 'A2A Registry returned successfully with no compatible candidates.',
+          step: 5, title: 'A2A Registry Replied', detail: 'A2A Registry returned successfully with no compatible candidates.',
           mochiState: 'collecting-results', mochiStatus: 'Registry search finished', mochiBubble: 'Both sources have replied.',
         });
         projection.registries[event.payload.registry] = { status: 'no-results', resultCount: 0 };
         break;
       case 'candidates.normalized':
         Object.assign(projection, {
-          step: 6, title: 'Evidence consolidated',
+          step: 6, title: 'Evidence Consolidated',
           detail: `${event.payload.reportedCount} reported results became ${event.payload.uniqueCount} unique candidates after normalization.`,
           reportedCount: event.payload.reportedCount, uniqueCount: event.payload.uniqueCount,
           mochiState: 'normalizing', mochiStatus: 'Comparing reported evidence',
@@ -142,7 +142,7 @@ export const projectDiscovery = (events: readonly ActivityEvent[]): DiscoveryPro
         break;
       case 'search.completed':
         Object.assign(projection, {
-          step: 7, title: 'Search complete',
+          step: 7, title: 'Search Complete',
           detail: `${event.payload.candidates.length} unique candidate ranked by search relevance.`,
           candidates: event.payload.candidates, rankingMethod: event.payload.rankingMethod,
           mochiState: 'search-complete', mochiStatus: 'Shortlist ready', mochiBubble: 'I found one relevant candidate.',
