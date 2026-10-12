@@ -81,7 +81,12 @@ describe('synchronized C3 discovery projection', () => {
       subjectId: 'personal-assistant', payload: { candidates: [candidate], rankingMethod: 'Reported metadata relevance' },
     });
     const projection = projectDiscovery([taskEvent, completeEvent]);
-    expect(projection).toMatchObject({ step: 7, title: 'Search Complete', rankingMethod: 'Reported metadata relevance' });
+    expect(projection).toMatchObject({
+      step: 7,
+      title: 'Decision Made',
+      rankingMethod: 'Reported metadata relevance',
+      mochiBubble: 'Recommend the most relevant candidate',
+    });
     expect(projection.candidates).toEqual([candidate]);
   });
 

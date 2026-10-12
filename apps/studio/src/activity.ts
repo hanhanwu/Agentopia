@@ -142,10 +142,10 @@ export const projectDiscovery = (events: readonly ActivityEvent[]): DiscoveryPro
         break;
       case 'search.completed':
         Object.assign(projection, {
-          step: 7, title: 'Search Complete',
-          detail: `${event.payload.candidates.length} unique candidate ranked by search relevance.`,
+          step: 7, title: 'Decision Made',
+          detail: 'Selected the most relevant candidate.',
           candidates: event.payload.candidates, rankingMethod: event.payload.rankingMethod,
-          mochiState: 'search-complete', mochiStatus: 'Shortlist ready', mochiBubble: 'I found one relevant candidate.',
+          mochiState: 'search-complete', mochiStatus: 'Decision made', mochiBubble: 'Recommend the most relevant candidate',
         });
         break;
     }

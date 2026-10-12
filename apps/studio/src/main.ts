@@ -356,7 +356,6 @@ app.innerHTML = `
             </div>
 
             ${agentButton(agents['personal-assistant'], 'assistant')}
-            <div class="result-provenance" data-result-provenance hidden><span>AgentCensus</span><strong data-result-provenance-count>0 results</strong></div>
             ${agentButton(agents['bookings-service'], 'bookings')}
 
           </div>
@@ -680,6 +679,7 @@ const renderCandidates = (projection: ReturnType<typeof projectDiscovery>) => {
   setText('[data-result-count]', `${visibleCandidates.length} ${visibleCandidates.length === 1 ? 'candidate' : 'candidates'}`);
 
   visibleCandidates.forEach((candidate, index) => {
+    const relevanceScore = consolidatedSearchRecords.find((record) => record.domain === candidate.domain)?.relevanceScore;
     const card = document.createElement('article');
     card.className = 'candidate-card';
     card.classList.toggle('is-ranked', projection.step === 7);
@@ -687,18 +687,14 @@ const renderCandidates = (projection: ReturnType<typeof projectDiscovery>) => {
       <span class="candidate-card__rank"></span>
       <div class="candidate-card__avatar"><svg viewBox="0 0 276 270" aria-hidden="true">${serviceAgentArtwork(1)}</svg></div>
       <div class="candidate-card__body">
-        <div class="candidate-card__title"><div><strong></strong><small></small></div><span>REPORTED</span></div>
+        <div class="candidate-card__title"><strong></strong><small></small></div>
         <p class="candidate-card__capability"></p>
-        <div class="candidate-card__meta"><span>AgentCensus</span><span>Capability match</span></div>
-        <p class="candidate-card__reason"></p>
-      </div>`;
+      </div>
+      <span class="candidate-card__relevance"><small>Relevance</small><strong>${relevanceScore ?? '—'}${relevanceScore === undefined ? '' : '%'}</strong></span>`;
     card.querySelector<HTMLElement>('.candidate-card__rank')!.textContent = projection.step === 7 ? `#${index + 1}` : 'NEW';
     card.querySelector<HTMLElement>('.candidate-card__title strong')!.textContent = candidate.name;
-    card.querySelector<HTMLElement>('.candidate-card__title small')!.textContent = candidate.domain;
-    card.querySelector<HTMLElement>('.candidate-card__capability')!.textContent = `Reports: ${candidate.capability}`;
-    card.querySelector<HTMLElement>('.candidate-card__reason')!.textContent = projection.step === 7
-      ? candidate.matchReason
-      : 'Waiting for evidence consolidation and relevance ordering.';
+    card.querySelector<HTMLElement>('.candidate-card__title small')!.textContent = `Domain: ${candidate.domain}`;
+    card.querySelector<HTMLElement>('.candidate-card__capability')!.textContent = `Capability Match: ${candidate.capability}`;
     candidateResults.append(card);
   });
 };
@@ -744,13 +740,13 @@ const renderActivity = () => {
   if (searchPrintouts) searchPrintouts.hidden = !isRegistryWork;
   if (searchPrintouts) searchPrintouts.dataset.state = projection.step === 5 ? 'results' : 'searching';
   if (consolidationBoard) consolidationBoard.hidden = !isConsolidating;
-  if (behindCurrent) behindCurrent.hidden = isRegistryWork || isConsolidating;
+  if (behindCurrent) behindCurrent.hidden = isRegistryWork || isConsolidating || projection.step === 7;
   if (projection.step === 1 && renderedStep !== 1) requestFlightAnimation?.beginElement();
   const syncPhase = document.querySelector<HTMLElement>('.sync-phase');
   if (syncPhase) syncPhase.dataset.step = String(displayStep);
 
   const intentChip = document.querySelector<HTMLElement>('[data-intent-chip]');
-  if (intentChip) intentChip.hidden = projection.step < 2;
+  if (intentChip) intentChip.hidden = projection.step < 2 || projection.step === 7;
   setText('[data-world-intent]', projection.intent ?? 'Meeting scheduling');
 
   if (mochiButton) {
@@ -767,11 +763,9 @@ const renderActivity = () => {
   userArrow?.toggleAttribute('hidden', projection.step !== 1);
   const resultLink = document.querySelector<SVGPathElement>('[data-result-link]');
   const resultPacket = document.querySelector<SVGPolygonElement>('[data-result-packet]');
-  const resultProvenance = document.querySelector<HTMLElement>('[data-result-provenance]');
   resultLink?.classList.toggle('is-visible', hasSelectedCandidate);
   resultLink?.classList.toggle('is-active', projection.step === 7);
   resultPacket?.toggleAttribute('hidden', projection.step !== 7);
-  if (resultProvenance) resultProvenance.hidden = !hasSelectedCandidate;
 
   (['agentcensus', 'a2a-registry'] as RegistryId[]).forEach((registry) => {
     const state = projection.registries[registry];
@@ -791,9 +785,6 @@ const renderActivity = () => {
     setText(`[data-registry-world-status="${registry}"]`, registryStatusLabel(state));
     setText(`[data-registry-skynet-status="${registry}"]`, registryStatusLabel(state));
     setText(`[data-registry-printout-status="${registry}"]`, state.status === 'results' ? `${state.resultCount} found` : 'Streaming');
-    if (registry === 'agentcensus') {
-      setText('[data-result-provenance-count]', `${state.resultCount ?? 0} ${state.resultCount === 1 ? 'result' : 'results'}`);
-    }
   });
 
   if (projection.step === 4 && renderedStep !== 4) {
