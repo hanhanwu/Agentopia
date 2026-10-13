@@ -13,3 +13,4 @@ This directory contains approval-stage visual concepts for Agentopia and Skynet.
 ## Current review item
 
 - `agents/agent-concepts-v1.svg` — approved initial silhouette and state-language direction.
+- `discovery/discovery-mechanism-logos-v1.svg` — approval-stage ARD, DNS-AID, and ANS identity concepts; not yet used by the Studio UI.

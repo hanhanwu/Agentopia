@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="950" viewBox="0 0 1500 950" role="img" aria-labelledby="title description">
+  <title id="title">Agentopia discovery mechanism logo concepts version one</title>
+  <desc id="description">Three distinct logo concepts for ARD, DNS-AID, and ANS: a layered catalog route, an SVCB-style service record pointer, and a name record connected directly to an endpoint.</desc>
+
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071019"/>
+      <stop offset="0.55" stop-color="#09131e"/>
+      <stop offset="1" stop-color="#04080e"/>
+    </linearGradient>
+    <radialGradient id="card-glow" cx="50%" cy="30%" r="74%">
+      <stop offset="0" stop-color="currentColor" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="currentColor" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#263a48" stroke-width="1" opacity="0.24"/>
+    </pattern>
+
+    <filter id="cyan-glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feFlood flood-color="#55e6ff" flood-opacity="0.5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="amber-glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feFlood flood-color="#ffd166" flood-opacity="0.48"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="pink-glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feFlood flood-color="#ff7ac6" flood-opacity="0.5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <style>
+      .eyebrow { font: 650 16px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 4px; fill: #6f8499; }
+      .title { font: 750 46px Inter, ui-sans-serif, system-ui, sans-serif; letter-spacing: -1px; fill: #eef8ff; }
+      .subtitle { font: 400 18px Inter, ui-sans-serif, system-ui, sans-serif; fill: #8da0b3; }
+      .mechanism-name { font: 800 29px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; fill: currentColor; }
+      .mechanism-type { font: 700 13px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 2px; fill: #7890a5; }
+      .mechanism-copy { font: 400 16px Inter, ui-sans-serif, system-ui, sans-serif; fill: #8da0b3; }
+      .token-label { font: 650 13px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; fill: #6f8499; }
+      .token-value { font: 700 13px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #d9ebf7; }
+      .logo-shell { fill: #091721; stroke: currentColor; stroke-width: 3; stroke-linejoin: round; }
+      .logo-line { fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+      .logo-line-thin { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.65; }
+      .logo-dot { fill: currentColor; }
+      .small-shell { fill: none; stroke: currentColor; stroke-width: 4; stroke-linejoin: round; }
+      .small-line { fill: none; stroke: currentColor; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .small-dot { fill: currentColor; }
+    </style>
+
+    <!-- ARD: three catalog leaves resolve into one outward route. -->
+    <symbol id="ard-mark" viewBox="-90 -90 180 180">
+      <path class="logo-shell" d="M0-66L58-34V34L0 66-58 34V-34Z"/>
+      <path class="logo-line-thin" d="M-33-20H10M-33-4H10M-33 12H-2"/>
+      <path class="logo-line" d="M-34-31H20V24"/>
+      <path class="logo-line" d="M2 24H42M30 12l12 12-12 12"/>
+      <path class="logo-line-thin" d="M-42-39H12M-42-31V22"/>
+      <circle class="logo-dot" cx="-33" cy="-20" r="3.5"/>
+      <circle class="logo-dot" cx="-33" cy="-4" r="3.5"/>
+      <circle class="logo-dot" cx="-33" cy="12" r="3.5"/>
+    </symbol>
+
+    <!-- DNS-AID: an SVCB-style record exposes one protocol-bearing service pointer. -->
+    <symbol id="dns-aid-mark" viewBox="-90 -90 180 180">
+      <path class="logo-shell" d="M0-70L62 0 0 70-62 0Z"/>
+      <rect class="logo-line" x="-40" y="-34" width="54" height="68" rx="7"/>
+      <circle class="logo-dot" cx="-29" cy="-20" r="3.5"/>
+      <circle class="logo-dot" cx="-29" cy="0" r="3.5"/>
+      <circle class="logo-dot" cx="-29" cy="20" r="3.5"/>
+      <path class="logo-line-thin" d="M-20-20H3M-20 0H3M-20 20H3"/>
+      <path class="logo-line" d="M14 0H41M30-11L43 0 30 11"/>
+      <circle class="logo-dot" cx="48" cy="0" r="5"/>
+    </symbol>
+
+    <!-- ANS: a name/TXT tag supplies one endpoint directly. -->
+    <symbol id="ans-mark" viewBox="-90 -90 180 180">
+      <circle class="logo-shell" r="65"/>
+      <path class="logo-line" d="M-43-25H5L23 0 5 25H-43Z"/>
+      <circle class="logo-dot" cx="-31" cy="-13" r="4"/>
+      <path class="logo-line-thin" d="M-20-13H2M-31 0H7M-31 13H2"/>
+      <path class="logo-line" d="M23 0H43"/>
+      <path class="logo-line-thin" d="M33-8L43 0 33 8"/>
+      <circle class="logo-dot" cx="50" cy="0" r="6"/>
+    </symbol>
+  </defs>
+
+  <rect width="1500" height="950" fill="url(#background)"/>
+  <rect width="1500" height="950" fill="url(#grid)"/>
+
+  <g transform="translate(58 54)">
+    <text class="eyebrow">AGENTOPIA · DISCOVERY MECHANISM IDENTITIES 01</text>
+    <text class="title" y="61">Three discovery paths · three unmistakable marks</text>
+    <text class="subtitle" y="100">Original product symbols, designed for Skynet evidence trails—not official standards-body logos.</text>
+  </g>
+
+  <g transform="translate(58 198)" color="#55e6ff">
+    <rect width="430" height="480" rx="28" fill="#09131d" stroke="#294052" stroke-width="2"/>
+    <rect width="430" height="480" rx="28" fill="url(#card-glow)"/>
+    <g transform="translate(215 132)" filter="url(#cyan-glow)">
+      <use href="#ard-mark" x="-90" y="-90" width="180" height="180"/>
+    </g>
+    <text class="mechanism-name" x="28" y="275">ARD</text>
+    <text class="mechanism-type" x="28" y="306">CATALOG → ENDPOINT</text>
+    <text class="mechanism-copy" x="28" y="350">Layered catalog lines resolve into</text>
+    <text class="mechanism-copy" x="28" y="376">one outward route. Hexagonal shell.</text>
+    <path d="M28 411H402" stroke="#294052"/>
+    <text class="token-label" x="28" y="442">IDENTITY</text>
+    <text class="token-value" x="129" y="442">CYAN #55E6FF</text>
+  </g>
+
+  <g transform="translate(535 198)" color="#ffd166">
+    <rect width="430" height="480" rx="28" fill="#09131d" stroke="#4d422b" stroke-width="2"/>
+    <rect width="430" height="480" rx="28" fill="url(#card-glow)"/>
+    <g transform="translate(215 132)" filter="url(#amber-glow)">
+      <use href="#dns-aid-mark" x="-90" y="-90" width="180" height="180"/>
+    </g>
+    <text class="mechanism-name" x="28" y="275">DNS-AID</text>
+    <text class="mechanism-type" x="28" y="306">SVCB RECORD → SERVICE TARGET</text>
+    <text class="mechanism-copy" x="28" y="350">A DNS service record exposes protocol</text>
+    <text class="mechanism-copy" x="28" y="376">metadata and points to its target.</text>
+    <path d="M28 411H402" stroke="#4d422b"/>
+    <text class="token-label" x="28" y="442">IDENTITY</text>
+    <text class="token-value" x="129" y="442">AMBER #FFD166</text>
+  </g>
+
+  <g transform="translate(1012 198)" color="#ff7ac6">
+    <rect width="430" height="480" rx="28" fill="#09131d" stroke="#503047" stroke-width="2"/>
+    <rect width="430" height="480" rx="28" fill="url(#card-glow)"/>
+    <g transform="translate(215 132)" filter="url(#pink-glow)">
+      <use href="#ans-mark" x="-90" y="-90" width="180" height="180"/>
+    </g>
+    <text class="mechanism-name" x="28" y="275">ANS</text>
+    <text class="mechanism-type" x="28" y="306">NAME/TXT → DIRECT ENDPOINT</text>
+    <text class="mechanism-copy" x="28" y="350">A name record carries the endpoint</text>
+    <text class="mechanism-copy" x="28" y="376">directly, with no card in between.</text>
+    <path d="M28 411H402" stroke="#503047"/>
+    <text class="token-label" x="28" y="442">IDENTITY</text>
+    <text class="token-value" x="129" y="442">PINK #FF7AC6</text>
+  </g>
+
+  <g transform="translate(58 735)">
+    <text class="eyebrow">SMALL-SCALE · MONOCHROME CHECK</text>
+    <text class="subtitle" y="38">Shape remains the primary identifier when glow and identity color are unavailable.</text>
+
+    <g transform="translate(45 108) scale(.42)" color="#e9f4fb">
+      <use href="#ard-mark" x="-90" y="-90" width="180" height="180"/>
+    </g>
+    <text class="token-value" x="94" y="115">ARD · layered route</text>
+
+    <g transform="translate(525 108) scale(.42)" color="#e9f4fb">
+      <use href="#dns-aid-mark" x="-90" y="-90" width="180" height="180"/>
+    </g>
+    <text class="token-value" x="574" y="115">DNS-AID · SVCB service pointer</text>
+
+    <g transform="translate(1040 108) scale(.42)" color="#e9f4fb">
+      <use href="#ans-mark" x="-90" y="-90" width="180" height="180"/>
+    </g>
+    <text class="token-value" x="1089" y="115">ANS · name tag to endpoint</text>
+  </g>
+</svg>
