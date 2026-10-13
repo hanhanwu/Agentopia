@@ -273,6 +273,7 @@ button { color: inherit; }
 .world-agent--cafe:hover::after, .world-agent--cafe:focus-visible::after, .world-agent--cafe.is-selected::after { box-shadow: 0 0 0 5px rgba(255,173,92,.05); }
 .world-agent--assistant { color: var(--user-white); }.world-agent--cafe { color: var(--orange); }
 .world-agent__status { position: absolute; z-index: 4; top: 4px; right: 13px; width: 8px; height: 8px; border-radius: 50%; background: var(--green); border: 2px solid #071019; box-shadow: 0 0 9px var(--green); }
+.world-agent__beam-frame { position: absolute; left: 13px; top: 0; width: 128px; height: 128px; pointer-events: none; }
 .world-agent[data-activity-state='task-received'] .world-agent__status { background: #ffe16a; box-shadow: 0 0 11px #ffe16a; }
 .world-agent[data-activity-state='discovering'] .world-agent__status,
 .world-agent[data-activity-state='checking'] .world-agent__status,
@@ -570,6 +571,10 @@ button { color: inherit; }
 .mechanism-beam--ard { stroke: #55e6ff; filter: drop-shadow(0 0 7px #55e6ff); }
 .mechanism-beam--dns-aid { stroke: #ffd166; filter: drop-shadow(0 0 7px #ffd166); }
 .mechanism-beam--ans { stroke: #ff7ac6; filter: drop-shadow(0 0 7px #ff7ac6); }
+.mechanism-beam-origin { opacity: 0; fill: currentColor; stroke: #07100b; stroke-width: 1.5; filter: drop-shadow(0 0 6px currentColor); }
+.mechanism-beam-origin--ard { color: #55e6ff; }
+.mechanism-beam-origin--dns-aid { color: #ffd166; }
+.mechanism-beam-origin--ans { color: #ff7ac6; }
 .mechanism-orbit { position: absolute; display: grid; width: 128px; justify-items: center; color: #55e6ff; opacity: 0; transform: translate(-50%, 8px) scale(.65); }
 .mechanism-orbit--ard { left: 77.7%; top: 25%; }
 .mechanism-orbit--dns-aid { left: 77.7%; top: 43%; color: #ffd166; }
@@ -587,6 +592,7 @@ button { color: inherit; }
 .world-scene[data-step='8'] .inspection-magnifier { animation: inspectionMagnifierIn .55s cubic-bezier(.2,.9,.25,1.3) .55s forwards; }
 .world-scene[data-step='8'] .inspection-beam__cone { animation: inspectionConeIn .7s ease-out 1s forwards; }
 .world-scene[data-step='8'] .mechanism-beam { animation: mechanismBeamIn .75s ease-out 2s forwards, dash .8s linear 2.75s infinite; }
+.world-scene[data-step='8'] .mechanism-beam-origin { animation: mechanismBeamOriginIn .2s ease-out 2s forwards; }
 .world-scene[data-step='8'] .mechanism-orbit { animation: mechanismOrbitIn .48s cubic-bezier(.2,.9,.25,1.35) 2.85s forwards; }
 .world-scene[data-step='8'] .mechanism-orbit--dns-aid { animation-delay: 3.07s; }
 .world-scene[data-step='8'] .mechanism-orbit--ans { animation-delay: 3.29s; }
@@ -604,6 +610,7 @@ button { color: inherit; }
 @keyframes inspectionMagnifierIn { from { opacity: 0; transform: translate(-18px,10px) rotate(-18deg) scale(.65); } to { opacity: 1; transform: none; } }
 @keyframes inspectionConeIn { from { opacity: 0; transform: scaleX(.05); } to { opacity: .42; transform: scaleX(1); } }
 @keyframes mechanismBeamIn { from { opacity: 0; stroke-dashoffset: 130; } to { opacity: .92; stroke-dashoffset: 0; } }
+@keyframes mechanismBeamOriginIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes mechanismOrbitIn { from { opacity: 0; transform: translate(-50%,8px) scale(.65); } to { opacity: 1; transform: translate(-50%,0) scale(1); } }
 .world-agent--bookings .agent-bubble { display: none; }
 .world-agent--bookings:hover::after, .world-agent--bookings:focus-visible::after { border-color: transparent; }

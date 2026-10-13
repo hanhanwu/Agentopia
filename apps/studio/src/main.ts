@@ -80,6 +80,7 @@ const agentButton = (agent: Agent, placement: string) => `
     aria-pressed="false"
   >
     <span class="world-agent__status" aria-hidden="true"></span>
+    <span class="world-agent__beam-frame" aria-hidden="true"></span>
     <span class="agent-bubble" data-${agent.id === 'personal-assistant' ? 'mochi' : 'luca'}-bubble hidden></span>
     ${avatar(agent)}
     <span class="world-agent__label">
@@ -413,9 +414,12 @@ app.innerHTML = `
                   <circle class="inspection-magnifier__glint" cx="182" cy="307" r="14"/>
                 </g>
                 <g class="mechanism-beams">
-                  <path class="mechanism-beam mechanism-beam--ard" d="M362 316C398 278 430 238 466 207"/>
-                  <path class="mechanism-beam mechanism-beam--dns-aid" d="M362 316C402 316 430 316 466 316"/>
-                  <path class="mechanism-beam mechanism-beam--ans" d="M362 316C398 350 430 383 466 409"/>
+                  <circle class="mechanism-beam-origin mechanism-beam-origin--ard" data-mechanism-beam-origin="ard" cx="354" cy="282" r="4"/>
+                  <circle class="mechanism-beam-origin mechanism-beam-origin--dns-aid" data-mechanism-beam-origin="dns-aid" cx="354" cy="316" r="4"/>
+                  <circle class="mechanism-beam-origin mechanism-beam-origin--ans" data-mechanism-beam-origin="ans" cx="354" cy="340" r="4"/>
+                  <path class="mechanism-beam mechanism-beam--ard" data-mechanism-beam="ard" d="M354 282C394 266 430 230 466 207"/>
+                  <path class="mechanism-beam mechanism-beam--dns-aid" data-mechanism-beam="dns-aid" d="M354 316C398 316 428 316 466 316"/>
+                  <path class="mechanism-beam mechanism-beam--ans" data-mechanism-beam="ans" d="M354 340C394 358 430 390 466 409"/>
                 </g>
               </svg>
               <span class="mechanism-orbit mechanism-orbit--ard">${discoveryMechanismMark('ard')}<b>ARD</b></span>
@@ -674,6 +678,7 @@ let eventCursor: number | null = null;
 let scheduledTimers: number[] = [];
 let timelineReplayTimers: number[] = [];
 let renderedStep = 0;
+let endpointBeamAlignmentTimer: number | null = null;
 
 const bookingCandidate: Candidate = {
   id: 'bookings-service',
@@ -701,6 +706,40 @@ const mockCandidatesFor = (registryId: RegistryId): Candidate[] => {
 
 const agentCensusSearchCandidates = mockCandidatesFor('agentcensus');
 const a2aSearchCandidates = mockCandidatesFor('a2a-registry');
+
+const alignEndpointDiscoveryBeams = () => {
+  if (!worldScene) return;
+  const bookingsFrame = document.querySelector<HTMLElement>('[data-agent-id="bookings-service"] .world-agent__beam-frame');
+  if (!bookingsFrame) return;
+  const worldBounds = worldScene.getBoundingClientRect();
+  const frameBounds = bookingsFrame.getBoundingClientRect();
+  if (worldBounds.width === 0 || worldBounds.height === 0 || frameBounds.width === 0) return;
+
+  const originX = ((frameBounds.right - worldBounds.left) / worldBounds.width) * 600;
+  const originY = (ratio: number) => (
+    ((frameBounds.top + frameBounds.height * ratio - worldBounds.top) / worldBounds.height) * 620
+  );
+  const beamGeometry: Record<DiscoveryMechanismId, { y: number; path: string }> = {
+    ard: {
+      y: originY(.28),
+      path: `M${originX} ${originY(.28)}C${originX + 38} ${originY(.28) - 16} 430 230 466 207`,
+    },
+    'dns-aid': {
+      y: originY(.5),
+      path: `M${originX} ${originY(.5)}C${originX + 42} ${originY(.5)} 428 316 466 316`,
+    },
+    ans: {
+      y: originY(.72),
+      path: `M${originX} ${originY(.72)}C${originX + 38} ${originY(.72) + 16} 430 390 466 409`,
+    },
+  };
+
+  Object.entries(beamGeometry).forEach(([mechanism, geometry]) => {
+    document.querySelector<SVGCircleElement>(`[data-mechanism-beam-origin="${mechanism}"]`)?.setAttribute('cx', String(originX));
+    document.querySelector<SVGCircleElement>(`[data-mechanism-beam-origin="${mechanism}"]`)?.setAttribute('cy', String(geometry.y));
+    document.querySelector<SVGPathElement>(`[data-mechanism-beam="${mechanism}"]`)?.setAttribute('d', geometry.path);
+  });
+};
 
 const setText = (selector: string, value: string) => {
   const element = document.querySelector<HTMLElement>(selector);
@@ -785,6 +824,11 @@ const renderActivity = () => {
   worldScene?.classList.toggle('is-searching', projection.step > 0);
   worldScene?.classList.toggle('has-candidate', hasSelectedCandidate);
   if (worldScene) worldScene.dataset.step = String(projection.step);
+  if (endpointBeamAlignmentTimer !== null) window.clearTimeout(endpointBeamAlignmentTimer);
+  if (projection.step === 8) {
+    window.requestAnimationFrame(alignEndpointDiscoveryBeams);
+    endpointBeamAlignmentTimer = window.setTimeout(alignEndpointDiscoveryBeams, 650);
+  }
   chatForm?.classList.toggle('is-paused', isComposerPaused);
   chatForm?.setAttribute('aria-busy', String(isComposerPaused));
   if (chatInput) chatInput.disabled = isComposerPaused;
@@ -856,6 +900,7 @@ const renderActivity = () => {
       node.dataset.status = state.status;
     }
     if (row) row.dataset.status = state.status;
+    link?.toggleAttribute('hidden', projection.step < 3);
     if (link) link.classList.toggle('is-active', state.status === 'searching');
     packet?.toggleAttribute('hidden', state.status !== 'searching');
     resultBatch?.toggleAttribute('hidden', state.status !== 'results' || projection.step > 6);
@@ -1047,6 +1092,9 @@ const syncSearchComposer = () => {
 };
 
 chatInput?.addEventListener('input', syncSearchComposer);
+window.addEventListener('resize', () => {
+  if (worldScene?.dataset.step === '8') alignEndpointDiscoveryBeams();
+});
 chatForm?.addEventListener('submit', (event) => {
   event.preventDefault();
   const liveProjection = projectDiscovery(activityEvents);
