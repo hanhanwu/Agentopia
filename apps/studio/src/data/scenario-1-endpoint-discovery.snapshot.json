@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "scenarioId": "one-agent-different-doors",
+  "agent": {
+    "name": "Bookings",
+    "domain": "bookings.darknetian.com"
+  },
+  "observedAt": "2026-10-13T04:55:55Z",
+  "mechanisms": [
+    {
+      "id": "ard",
+      "status": "found",
+      "summary": "Matched 3 catalog entries and found 3 endpoint claims.",
+      "claims": [
+        { "protocol": "a2a", "endpoint": "https://bookings.darknetian.com/a2a" },
+        { "protocol": "mcp", "endpoint": "https://bookings.darknetian.com/mcp" },
+        { "protocol": "https", "endpoint": "https://bookings.darknetian.com/ask" }
+      ]
+    },
+    {
+      "id": "dns-aid",
+      "status": "found",
+      "summary": "Found 1 endpoint claims across current and compatibility lookup shapes.",
+      "claims": [
+        { "protocol": "mcp", "endpoint": "https://bookings.darknetian.com/" }
+      ]
+    },
+    {
+      "id": "ans",
+      "status": "found",
+      "summary": "Found 1 endpoint claims across canonical and compatibility lookup shapes.",
+      "claims": [
+        { "protocol": "mcp", "endpoint": "https://bookings.darknetian.com/" }
+      ]
+    }
+  ]
+}

@@ -33,9 +33,10 @@ export type ActivityEvent =
   | (EventEnvelope & { type: 'registry.results-returned'; actorId: RegistryId; subjectId: 'personal-assistant'; payload: { registry: RegistryId; candidates: Candidate[]; resultCount: number } })
   | (EventEnvelope & { type: 'registry.no-results'; actorId: RegistryId; subjectId: 'personal-assistant'; payload: { registry: RegistryId; resultCount: 0 } })
   | (EventEnvelope & { type: 'candidates.normalized'; actorId: 'personal-assistant'; subjectId: 'personal-assistant'; payload: { reportedCount: number; uniqueCount: number } })
-  | (EventEnvelope & { type: 'search.completed'; actorId: 'personal-assistant'; subjectId: 'personal-assistant'; payload: { candidates: Candidate[]; rankingMethod: string } });
+  | (EventEnvelope & { type: 'search.completed'; actorId: 'personal-assistant'; subjectId: 'personal-assistant'; payload: { candidates: Candidate[]; rankingMethod: string } })
+  | (EventEnvelope & { type: 'endpoints.discovery-started'; actorId: 'personal-assistant'; subjectId: 'bookings-service'; payload: { domain: string; mechanisms: ['ard', 'dns-aid', 'ans'] } });
 
-export type DiscoveryStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type DiscoveryStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export type DiscoveryProjection = {
   step: DiscoveryStep;
@@ -146,6 +147,14 @@ export const projectDiscovery = (events: readonly ActivityEvent[]): DiscoveryPro
           detail: 'Selected the most relevant candidate.',
           candidates: event.payload.candidates, rankingMethod: event.payload.rankingMethod,
           mochiState: 'search-complete', mochiStatus: 'Decision made', mochiBubble: 'Recommend the most relevant candidate',
+        });
+        break;
+      case 'endpoints.discovery-started':
+        Object.assign(projection, {
+          step: 8, title: 'Discovering Agent Endpoints',
+          detail: `Mochi is checking ARD, DNS-AID, and ANS for ${event.payload.domain}.`,
+          mochiState: 'discovering-endpoints', mochiStatus: 'Discovering agent endpoints',
+          mochiBubble: 'Checking every discovery path…',
         });
         break;
     }

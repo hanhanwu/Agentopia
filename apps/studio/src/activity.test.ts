@@ -90,6 +90,22 @@ describe('synchronized C3 discovery projection', () => {
     expect(projection.candidates).toEqual([candidate]);
   });
 
+  it('moves from the selected Bookings agent into endpoint discovery', () => {
+    const endpointDiscoveryEvent = next({
+      schemaVersion: '1.0', eventId: 'event-8', runId: 'run-1', sequence: 8, logicalTime: 8,
+      source: 'reported', visibility: 'studio', type: 'endpoints.discovery-started',
+      actorId: 'personal-assistant', subjectId: 'bookings-service',
+      payload: { domain: candidate.domain, mechanisms: ['ard', 'dns-aid', 'ans'] },
+    });
+
+    expect(projectDiscovery([taskEvent, endpointDiscoveryEvent])).toMatchObject({
+      step: 8,
+      title: 'Discovering Agent Endpoints',
+      mochiState: 'discovering-endpoints',
+      mochiBubble: 'Checking every discovery path…',
+    });
+  });
+
   it('rewinds the shared state without mutating canonical history', () => {
     const events = [taskEvent, { ...taskEvent, eventId: 'event-2', sequence: 2, logicalTime: 2 }];
     expect(eventsAtCursor(events, 0)).toEqual([taskEvent]);

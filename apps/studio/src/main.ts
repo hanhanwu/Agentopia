@@ -1,6 +1,7 @@
 import './styles.css';
 import { agents, type Agent } from './agents.ts';
 import registrySearchMock from './data/registry-search.mock.json';
+import endpointDiscoverySnapshot from './data/scenario-1-endpoint-discovery.snapshot.json';
 import {
   eventsAtCursor,
   projectDiscovery,
@@ -116,6 +117,48 @@ const SEARCH_COMPLETE_DELAY = CONSOLIDATION_START_DELAY
   + (consolidatedSearchRecords.length - 1) * CONSOLIDATION_ROW_STAGGER
   + CONSOLIDATION_ROW_DURATION
   + STEP_4_TO_5_GAP;
+const ENDPOINT_DISCOVERY_DELAY = SEARCH_COMPLETE_DELAY + 3500;
+
+type DiscoveryMechanismId = (typeof endpointDiscoverySnapshot.mechanisms)[number]['id'];
+
+const discoveryMechanismName: Record<DiscoveryMechanismId, string> = {
+  ard: 'ARD',
+  'dns-aid': 'DNS-AID',
+  ans: 'ANS',
+};
+
+const discoveryMechanismMark = (id: DiscoveryMechanismId, className = '') => {
+  const artwork: Record<DiscoveryMechanismId, string> = {
+    ard: `
+      <path class="mechanism-mark__shell" d="M0-66L58-34V34L0 66-58 34V-34Z"/>
+      <path class="mechanism-mark__thin" d="M-33-20H10M-33-4H10M-33 12H-2M-42-39H12M-42-31V22"/>
+      <path class="mechanism-mark__line" d="M-34-31H20V24M2 24H42M30 12l12 12-12 12"/>
+      <circle class="mechanism-mark__dot" cx="-33" cy="-20" r="3.5"/><circle class="mechanism-mark__dot" cx="-33" cy="-4" r="3.5"/><circle class="mechanism-mark__dot" cx="-33" cy="12" r="3.5"/>`,
+    'dns-aid': `
+      <path class="mechanism-mark__shell" d="M0-70L62 0 0 70-62 0Z"/>
+      <rect class="mechanism-mark__line" x="-40" y="-34" width="54" height="68" rx="7"/>
+      <circle class="mechanism-mark__dot" cx="-29" cy="-20" r="3.5"/><circle class="mechanism-mark__dot" cx="-29" cy="0" r="3.5"/><circle class="mechanism-mark__dot" cx="-29" cy="20" r="3.5"/>
+      <path class="mechanism-mark__thin" d="M-20-20H3M-20 0H3M-20 20H3"/><path class="mechanism-mark__line" d="M14 0H41M30-11L43 0 30 11"/><circle class="mechanism-mark__dot" cx="48" cy="0" r="5"/>`,
+    ans: `
+      <circle class="mechanism-mark__shell" r="65"/><path class="mechanism-mark__line" d="M-43-25H5L23 0 5 25H-43Z"/><circle class="mechanism-mark__dot" cx="-31" cy="-13" r="4"/>
+      <path class="mechanism-mark__thin" d="M-20-13H2M-31 0H7M-31 13H2"/><path class="mechanism-mark__line" d="M23 0H43"/><path class="mechanism-mark__thin" d="M33-8L43 0 33 8"/><circle class="mechanism-mark__dot" cx="50" cy="0" r="6"/>`,
+  };
+
+  return `<svg class="mechanism-mark mechanism-mark--${id} ${className}" viewBox="-90 -90 180 180" aria-hidden="true">${artwork[id]}</svg>`;
+};
+
+const endpointMechanismCards = () => endpointDiscoverySnapshot.mechanisms.map((mechanism, index) => `
+  <article class="endpoint-mechanism-card endpoint-mechanism-card--${mechanism.id}" style="--mechanism-index: ${index}">
+    <header>
+      ${discoveryMechanismMark(mechanism.id)}
+      <div><strong>${discoveryMechanismName[mechanism.id]}</strong><span>${mechanism.status} · ${mechanism.claims.length} ${mechanism.claims.length === 1 ? 'claim' : 'claims'}</span></div>
+    </header>
+    <div class="endpoint-mechanism-card__claims">
+      ${mechanism.claims.map((claim) => `<div><b>${claim.protocol}</b><code>${claim.endpoint}</code></div>`).join('')}
+    </div>
+    <p>${mechanism.summary}</p>
+  </article>
+`).join('');
 
 const consolidatedResultRows = () => consolidatedSearchRecords.map((record, index) => `
   <div
@@ -355,6 +398,31 @@ app.innerHTML = `
               <span class="user-node__core">YOU</span>
             </div>
 
+            <div class="endpoint-discovery-visual" data-endpoint-discovery-visual aria-hidden="true">
+              <svg class="endpoint-discovery-visual__beams" viewBox="0 0 600 620" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="inspection-beam" x1="0" x2="1">
+                    <stop offset="0" stop-color="#eefcff" stop-opacity=".88"/>
+                    <stop offset="1" stop-color="#ffd79a" stop-opacity=".18"/>
+                  </linearGradient>
+                </defs>
+                <path class="inspection-beam__cone" d="M214 301L305 286L305 346L214 331Z"/>
+                <g class="inspection-magnifier">
+                  <path d="M137 378L175 335"/>
+                  <circle cx="190" cy="316" r="29"/>
+                  <circle class="inspection-magnifier__glint" cx="182" cy="307" r="14"/>
+                </g>
+                <g class="mechanism-beams">
+                  <path class="mechanism-beam mechanism-beam--ard" d="M362 316C398 278 430 238 466 207"/>
+                  <path class="mechanism-beam mechanism-beam--dns-aid" d="M362 316C402 316 430 316 466 316"/>
+                  <path class="mechanism-beam mechanism-beam--ans" d="M362 316C398 350 430 383 466 409"/>
+                </g>
+              </svg>
+              <span class="mechanism-orbit mechanism-orbit--ard">${discoveryMechanismMark('ard')}<b>ARD</b></span>
+              <span class="mechanism-orbit mechanism-orbit--dns-aid">${discoveryMechanismMark('dns-aid')}<b>DNS-AID</b></span>
+              <span class="mechanism-orbit mechanism-orbit--ans">${discoveryMechanismMark('ans')}<b>ANS</b></span>
+            </div>
+
             ${agentButton(agents['personal-assistant'], 'assistant')}
             ${agentButton(agents['bookings-service'], 'bookings')}
 
@@ -484,6 +552,9 @@ app.innerHTML = `
 
             <section class="result-board">
               <div class="section-heading"><p>Behind the Scene</p></div>
+              <div class="endpoint-mechanism-grid" data-endpoint-mechanism-grid hidden>
+                ${endpointMechanismCards()}
+              </div>
               <div class="registry-printouts" data-search-printouts hidden>
                 ${registrySearchMock.registries.map(registryPrintout).join('')}
               </div>
@@ -589,6 +660,7 @@ const requestFlightAnimation = document.querySelector<SVGAnimationElement>('[dat
 const searchPrintouts = document.querySelector<HTMLElement>('[data-search-printouts]');
 const consolidationBoard = document.querySelector<HTMLElement>('[data-consolidation-board]');
 const behindCurrent = document.querySelector<HTMLElement>('[data-behind-current]');
+const endpointMechanismGrid = document.querySelector<HTMLElement>('[data-endpoint-mechanism-grid]');
 const registryResultAnimations = new Map<RegistryId, SVGAnimationElement | null>([
   ['agentcensus', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="agentcensus"]')],
   ['a2a-registry', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="a2a-registry"]')],
@@ -640,7 +712,7 @@ const displayStepNumber = (step: ReturnType<typeof projectDiscovery>['step']) =>
     : step === 2 ? 1
       : step <= 4 ? step - 1
         : step === 5 ? 3
-          : step - 2
+          : step === 8 ? 6 : step - 2
 );
 
 const clearTimelineReplay = () => {
@@ -734,19 +806,24 @@ const renderActivity = () => {
     intakeEvidence.dataset.state = projection.step === 2 ? 'understood' : 'delivering';
     intakeEvidence.setAttribute('aria-label', projection.step === 2 ? 'Mochi understood your request' : 'Your request is traveling to Mochi');
   }
-  if (discoveryAnalysis) discoveryAnalysis.hidden = projection.step < 3;
+  if (discoveryAnalysis) {
+    discoveryAnalysis.hidden = projection.step < 3;
+    discoveryAnalysis.dataset.step = String(projection.step);
+  }
   const isRegistryWork = projection.step >= 3 && projection.step <= 5;
   const isConsolidating = projection.step === 6;
+  const isDiscoveringEndpoints = projection.step === 8;
   if (searchPrintouts) searchPrintouts.hidden = !isRegistryWork;
   if (searchPrintouts) searchPrintouts.dataset.state = projection.step === 5 ? 'results' : 'searching';
   if (consolidationBoard) consolidationBoard.hidden = !isConsolidating;
-  if (behindCurrent) behindCurrent.hidden = isRegistryWork || isConsolidating || projection.step === 7;
+  if (endpointMechanismGrid) endpointMechanismGrid.hidden = !isDiscoveringEndpoints;
+  if (behindCurrent) behindCurrent.hidden = isRegistryWork || isConsolidating || projection.step >= 7;
   if (projection.step === 1 && renderedStep !== 1) requestFlightAnimation?.beginElement();
   const syncPhase = document.querySelector<HTMLElement>('.sync-phase');
   if (syncPhase) syncPhase.dataset.step = String(displayStep);
 
   const intentChip = document.querySelector<HTMLElement>('[data-intent-chip]');
-  if (intentChip) intentChip.hidden = projection.step < 2 || projection.step === 7;
+  if (intentChip) intentChip.hidden = projection.step < 2 || projection.step >= 7;
   setText('[data-world-intent]', projection.intent ?? 'Meeting scheduling');
 
   if (mochiButton) {
@@ -876,6 +953,16 @@ const renderActivity = () => {
           return;
         }
 
+        if (event.type === 'endpoints.discovery-started') {
+          eventCursor = Math.max(0, index - 1);
+          renderActivity();
+          queueTimelineReplay(STEP_REPLAY_LEAD_DELAY, () => {
+            eventCursor = index;
+            renderActivity();
+          });
+          return;
+        }
+
         eventCursor = Math.max(0, index - 1);
         renderActivity();
         queueTimelineReplay(STEP_REPLAY_LEAD_DELAY, () => {
@@ -941,6 +1028,7 @@ const sendTaskToMochi = (message: string) => {
   });
   addStep(CONSOLIDATION_START_DELAY, () => ({ ...nextEnvelope(), type: 'candidates.normalized', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { reportedCount: 8, uniqueCount: 8 } }));
   addStep(SEARCH_COMPLETE_DELAY, () => ({ ...nextEnvelope(), type: 'search.completed', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { candidates: [bookingCandidate], rankingMethod: 'Relevance to the derived intent using reported registry metadata' } }));
+  addStep(ENDPOINT_DISCOVERY_DELAY, () => ({ ...nextEnvelope(), type: 'endpoints.discovery-started', source: 'reported', actorId: 'personal-assistant', subjectId: 'bookings-service', causalParentId: parentEventId, payload: { domain: bookingCandidate.domain, mechanisms: ['ard', 'dns-aid', 'ans'] } }));
 };
 
 returnLiveButton?.addEventListener('click', () => {
