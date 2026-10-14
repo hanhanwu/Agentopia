@@ -83,6 +83,16 @@ const agentButton = (agent: Agent, placement: string) => `
     <span class="world-agent__beam-frame" aria-hidden="true"></span>
     <span class="agent-bubble" data-${agent.id === 'personal-assistant' ? 'mochi' : 'luca'}-bubble hidden></span>
     ${avatar(agent)}
+    ${agent.id === 'personal-assistant' ? `<span class="mochi-inspection-magnifier" aria-hidden="true">
+      <svg viewBox="0 0 120 90">
+        <path class="mochi-inspection-magnifier__arm" d="M41 42C48 42 52 40 58 38"/>
+        <path class="mochi-inspection-magnifier__handle" d="M70 41 79 45"/>
+        <path class="mochi-inspection-magnifier__hand" d="M54 29c5-5 13-5 18-1 5 3 7 10 3 15-4 6-14 9-21 4-6-4-6-12 0-18Z"/>
+        <path class="mochi-inspection-magnifier__finger" d="M58 34c4 2 7 5 9 9M65 31c4 2 7 5 8 8"/>
+        <circle class="mochi-inspection-magnifier__glass" cx="98" cy="27" r="27"/>
+        <path class="mochi-inspection-magnifier__glint" d="M84 20c5-7 14-10 22-7"/>
+      </svg>
+    </span>` : ''}
     <span class="world-agent__label">
       <strong>${agent.name}</strong>
       <small>${agent.shortRole}</small>
@@ -148,18 +158,74 @@ const discoveryMechanismMark = (id: DiscoveryMechanismId, className = '') => {
   return `<svg class="mechanism-mark mechanism-mark--${id} ${className}" viewBox="-90 -90 180 180" aria-hidden="true">${artwork[id]}</svg>`;
 };
 
-const endpointMechanismCards = () => endpointDiscoverySnapshot.mechanisms.map((mechanism, index) => `
-  <article class="endpoint-mechanism-card endpoint-mechanism-card--${mechanism.id}" style="--mechanism-index: ${index}">
-    <header>
-      ${discoveryMechanismMark(mechanism.id)}
-      <div><strong>${discoveryMechanismName[mechanism.id]}</strong><span>${mechanism.status} · ${mechanism.claims.length} ${mechanism.claims.length === 1 ? 'claim' : 'claims'}</span></div>
-    </header>
-    <div class="endpoint-mechanism-card__claims">
-      ${mechanism.claims.map((claim) => `<div><b>${claim.protocol}</b><code>${claim.endpoint}</code></div>`).join('')}
+type EndpointMechanism = (typeof endpointDiscoverySnapshot.mechanisms)[number];
+type DiscoveryPathNode = EndpointMechanism['path']['nodes'][number];
+
+const escapeMarkup = (value: string) => value.replace(/[&<>"']/g, (character) => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+}[character] ?? character));
+
+const discoveryNode = (node: DiscoveryPathNode, modifier = '') => {
+  const artifact = 'artifact' in node ? node.artifact : '';
+  const role = node.role === 'required' ? '' : ` · ${node.role}`;
+  const outcome = node.outcome === 'pass' ? 'Observed' : node.outcome === 'absent' ? `Not published${role}` : 'Could not check';
+  return `<div class="discovery-path-node discovery-path-node--${node.kind} discovery-path-node--${node.outcome} ${modifier}">
+    <span class="discovery-path-node__status" aria-hidden="true"></span>
+    <div><strong>${escapeMarkup(node.label)}</strong><small>${escapeMarkup(outcome)}</small>${artifact ? `<code>${escapeMarkup(artifact)}</code>` : ''}</div>
+  </div>`;
+};
+
+const endpointClaimNode = (claim: EndpointMechanism['claims'][number]) => `
+  <div class="discovery-endpoint-claim"><span>${escapeMarkup(claim.protocol)}</span><code>${escapeMarkup(claim.endpoint)}</code></div>`;
+
+const endpointPathPanel = (mechanism: EndpointMechanism, index: number) => {
+  const [startNode, ...remainingNodes] = mechanism.path.nodes;
+  const header = `<header class="discovery-path-panel__header">
+    ${discoveryMechanismMark(mechanism.id)}
+    <div><span>PATH ${index + 1} OF 3</span><strong>${discoveryMechanismName[mechanism.id]}</strong><small>${mechanism.summary}</small></div>
+  </header>`;
+
+  if (mechanism.id === 'ard') {
+    const [pointerNode, bareNode, catalogNode, ...documentNodes] = remainingNodes;
+    return `<article class="discovery-path-panel discovery-path-panel--ard" data-discovery-path-panel="ard">
+      ${header}<div class="discovery-path-map">
+        ${discoveryNode(startNode)}<i class="discovery-path-connector"></i>
+        <div class="discovery-path-fork">${discoveryNode(pointerNode)}${discoveryNode(bareNode)}</div>
+        <i class="discovery-path-connector"></i>${discoveryNode(catalogNode)}<i class="discovery-path-connector"></i>
+        <div class="discovery-path-branches">${documentNodes.map((node) => {
+          const claim = mechanism.claims.find(({ sourceNodeId }) => sourceNodeId === node.id);
+          return `<div class="discovery-path-branch">${discoveryNode(node)}${claim ? endpointClaimNode(claim) : ''}</div>`;
+        }).join('')}</div>
+      </div>
+    </article>`;
+  }
+
+  return `<article class="discovery-path-panel discovery-path-panel--${mechanism.id}" data-discovery-path-panel="${mechanism.id}">
+    ${header}<div class="discovery-path-map discovery-path-map--dns">
+      ${discoveryNode(startNode)}<i class="discovery-path-connector"></i>
+      <div class="discovery-path-fork">${remainingNodes.map((node) => discoveryNode(node)).join('')}</div>
+      <i class="discovery-path-connector"></i>${mechanism.claims.map(endpointClaimNode).join('')}
     </div>
-    <p>${mechanism.summary}</p>
-  </article>
-`).join('');
+  </article>`;
+};
+
+const endpointDiscoveryPathStage = () => `
+  <section class="endpoint-path-stage" data-endpoint-path-stage hidden aria-live="polite">
+    <nav class="endpoint-path-tabs" data-endpoint-path-tabs aria-label="Explore discovery paths" hidden>
+      <div>
+        ${endpointDiscoverySnapshot.mechanisms.map(({ id }) => `
+          <button type="button" data-endpoint-path-select="${id}" aria-pressed="false" hidden>
+            ${discoveryMechanismMark(id)}<strong>${discoveryMechanismName[id]}</strong>
+          </button>`).join('')}
+      </div>
+    </nav>
+    <div class="endpoint-path-stage__waiting">
+      <div>${endpointDiscoverySnapshot.mechanisms.map(({ id }) => discoveryMechanismMark(id)).join('')}</div>
+      <strong>Mapping three discovery mechanisms</strong>
+      <span>The first path will open after the discovery beams stabilize.</span>
+    </div>
+    ${endpointDiscoverySnapshot.mechanisms.map(endpointPathPanel).join('')}
+  </section>`;
 
 const consolidatedResultRows = () => consolidatedSearchRecords.map((record, index) => `
   <div
@@ -314,7 +380,7 @@ app.innerHTML = `
           <div class="world-scene" role="group" aria-label="Mochi searching AgentCensus and A2A Registry for service agents">
             <div class="world-coordinates" aria-hidden="true"><span>01</span><span>02</span><span>03</span><span>04</span></div>
             <svg class="world-network" viewBox="0 0 600 620" preserveAspectRatio="none" aria-hidden="true">
-              <path id="user-flow-path" class="network-line network-line--user" data-user-link d="M62 348 C100 348 122 338 158 334" />
+              <path id="user-flow-path" class="network-line network-line--user" data-user-link d="M76 328 C86 328 93 306 103 306" />
               <polygon class="network-arrow network-arrow--user" data-user-arrow points="-7,-4 7,0 -7,4" hidden>
                 <animateMotion dur="1.7s" repeatCount="indefinite" rotate="auto">
                   <mpath href="#user-flow-path" />
@@ -425,6 +491,12 @@ app.innerHTML = `
               <span class="mechanism-orbit mechanism-orbit--ard">${discoveryMechanismMark('ard')}<b>ARD</b></span>
               <span class="mechanism-orbit mechanism-orbit--dns-aid">${discoveryMechanismMark('dns-aid')}<b>DNS-AID</b></span>
               <span class="mechanism-orbit mechanism-orbit--ans">${discoveryMechanismMark('ans')}<b>ANS</b></span>
+            </div>
+
+            <div class="discovery-domain-target" data-discovery-domain-target aria-label="Selected domain bookings.darknetian.com">
+              <span class="discovery-domain-target__beam-frame" aria-hidden="true"></span>
+              <small>SELECTED DOMAIN</small>
+              <strong>bookings.<br/>darknetian.com</strong>
             </div>
 
             ${agentButton(agents['personal-assistant'], 'assistant')}
@@ -556,9 +628,7 @@ app.innerHTML = `
 
             <section class="result-board">
               <div class="section-heading"><p>Behind the Scene</p></div>
-              <div class="endpoint-mechanism-grid" data-endpoint-mechanism-grid hidden>
-                ${endpointMechanismCards()}
-              </div>
+              ${endpointDiscoveryPathStage()}
               <div class="registry-printouts" data-search-printouts hidden>
                 ${registrySearchMock.registries.map(registryPrintout).join('')}
               </div>
@@ -664,7 +734,9 @@ const requestFlightAnimation = document.querySelector<SVGAnimationElement>('[dat
 const searchPrintouts = document.querySelector<HTMLElement>('[data-search-printouts]');
 const consolidationBoard = document.querySelector<HTMLElement>('[data-consolidation-board]');
 const behindCurrent = document.querySelector<HTMLElement>('[data-behind-current]');
-const endpointMechanismGrid = document.querySelector<HTMLElement>('[data-endpoint-mechanism-grid]');
+const endpointPathStage = document.querySelector<HTMLElement>('[data-endpoint-path-stage]');
+const endpointPathTabs = document.querySelector<HTMLElement>('[data-endpoint-path-tabs]');
+const endpointPathButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-endpoint-path-select]'));
 const registryResultAnimations = new Map<RegistryId, SVGAnimationElement | null>([
   ['agentcensus', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="agentcensus"]')],
   ['a2a-registry', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="a2a-registry"]')],
@@ -679,6 +751,8 @@ let scheduledTimers: number[] = [];
 let timelineReplayTimers: number[] = [];
 let renderedStep = 0;
 let endpointBeamAlignmentTimer: number | null = null;
+let userFlowAlignmentTimer: number | null = null;
+let endpointInspectionTimers: number[] = [];
 
 const bookingCandidate: Candidate = {
   id: 'bookings-service',
@@ -707,12 +781,38 @@ const mockCandidatesFor = (registryId: RegistryId): Candidate[] => {
 const agentCensusSearchCandidates = mockCandidatesFor('agentcensus');
 const a2aSearchCandidates = mockCandidatesFor('a2a-registry');
 
+const alignUserFlow = () => {
+  if (!worldScene || !userLink) return;
+  const userCore = document.querySelector<HTMLElement>('.user-node__core');
+  const mochiFrame = document.querySelector<HTMLElement>('[data-agent-id="personal-assistant"] .world-agent__beam-frame');
+  if (!userCore || !mochiFrame) return;
+
+  const worldBounds = worldScene.getBoundingClientRect();
+  const userBounds = userCore.getBoundingClientRect();
+  const mochiBounds = mochiFrame.getBoundingClientRect();
+  if (worldBounds.width === 0 || worldBounds.height === 0) return;
+
+  const toSceneX = (value: number) => ((value - worldBounds.left) / worldBounds.width) * 600;
+  const toSceneY = (value: number) => ((value - worldBounds.top) / worldBounds.height) * 620;
+  const startX = toSceneX(userBounds.right);
+  const startY = toSceneY(userBounds.top + userBounds.height / 2);
+  const endX = toSceneX(mochiBounds.left);
+  const endY = toSceneY(mochiBounds.top + mochiBounds.height / 2);
+  const direction = endX >= startX ? 1 : -1;
+  const curve = Math.max(12, Math.abs(endX - startX) * .45);
+
+  userLink.setAttribute(
+    'd',
+    `M${startX.toFixed(1)} ${startY.toFixed(1)} C${(startX + direction * curve).toFixed(1)} ${startY.toFixed(1)} ${(endX - direction * curve).toFixed(1)} ${endY.toFixed(1)} ${endX.toFixed(1)} ${endY.toFixed(1)}`,
+  );
+};
+
 const alignEndpointDiscoveryBeams = () => {
   if (!worldScene) return;
-  const bookingsFrame = document.querySelector<HTMLElement>('[data-agent-id="bookings-service"] .world-agent__beam-frame');
-  if (!bookingsFrame) return;
+  const domainFrame = document.querySelector<HTMLElement>('[data-discovery-domain-target] .discovery-domain-target__beam-frame');
+  if (!domainFrame) return;
   const worldBounds = worldScene.getBoundingClientRect();
-  const frameBounds = bookingsFrame.getBoundingClientRect();
+  const frameBounds = domainFrame.getBoundingClientRect();
   if (worldBounds.width === 0 || worldBounds.height === 0 || frameBounds.width === 0) return;
 
   const originX = ((frameBounds.right - worldBounds.left) / worldBounds.width) * 600;
@@ -745,6 +845,100 @@ const setText = (selector: string, value: string) => {
   const element = document.querySelector<HTMLElement>(selector);
   if (element) element.textContent = value;
 };
+
+const clearEndpointInspection = () => {
+  endpointInspectionTimers.forEach((timer) => window.clearTimeout(timer));
+  endpointInspectionTimers = [];
+  worldScene?.removeAttribute('data-inspection-phase');
+  endpointPathStage?.removeAttribute('data-active-mechanism');
+  endpointPathStage?.removeAttribute('data-explorable');
+  endpointPathStage?.removeAttribute('data-has-path-tabs');
+  if (endpointPathTabs) endpointPathTabs.hidden = true;
+  endpointPathButtons.forEach((button) => {
+    button.disabled = true;
+    button.hidden = true;
+    button.setAttribute('aria-pressed', 'false');
+  });
+};
+
+const selectEndpointPath = (mechanism: DiscoveryMechanismId) => {
+  if (!endpointPathStage) return;
+  endpointPathStage.dataset.activeMechanism = mechanism;
+  endpointPathStage.setAttribute('aria-label', `${discoveryMechanismName[mechanism]} discovery path`);
+  endpointPathStage.querySelector<HTMLElement>('.endpoint-path-stage__waiting')?.setAttribute('aria-hidden', 'true');
+  endpointPathStage.querySelectorAll<HTMLElement>('[data-discovery-path-panel]').forEach((panel) => {
+    panel.setAttribute('aria-hidden', String(panel.dataset.discoveryPathPanel !== mechanism));
+  });
+  endpointPathButtons.forEach((button) => {
+    button.setAttribute('aria-pressed', String(button.dataset.endpointPathSelect === mechanism));
+  });
+};
+
+const enableEndpointPathExploration = () => {
+  if (!endpointPathStage || !endpointPathTabs) return;
+  endpointPathStage.dataset.explorable = 'true';
+  endpointPathButtons.forEach((button) => { button.disabled = false; });
+};
+
+const revealEndpointPathButton = (mechanism: DiscoveryMechanismId) => {
+  if (!endpointPathStage || !endpointPathTabs) return;
+  endpointPathStage.dataset.hasPathTabs = 'true';
+  endpointPathTabs.hidden = false;
+  const button = endpointPathButtons.find(({ dataset }) => dataset.endpointPathSelect === mechanism);
+  if (button) button.hidden = false;
+};
+
+const setEndpointInspectionPhase = (phase: 'beams' | DiscoveryMechanismId) => {
+  if (!worldScene || !endpointPathStage) return;
+  worldScene.dataset.inspectionPhase = phase;
+  if (phase === 'beams') {
+    endpointPathStage.dataset.activeMechanism = phase;
+    endpointPathStage.querySelector<HTMLElement>('.endpoint-path-stage__waiting')?.setAttribute('aria-hidden', 'false');
+    endpointPathStage.querySelectorAll<HTMLElement>('[data-discovery-path-panel]').forEach((panel) => {
+      panel.setAttribute('aria-hidden', 'true');
+    });
+    endpointPathStage.setAttribute('aria-label', 'Mapping ARD, DNS-AID, and ANS discovery mechanisms');
+    setText('[data-activity-title]', 'Discovering Agent Endpoints');
+    setText('[data-activity-detail]', `Mochi is mapping ARD, DNS-AID, and ANS for ${bookingCandidate.domain}.`);
+    if (mochiBubble) mochiBubble.textContent = 'Checking every discovery path…';
+    return;
+  }
+  revealEndpointPathButton(phase);
+  selectEndpointPath(phase);
+  const mechanism = endpointDiscoverySnapshot.mechanisms.find(({ id }) => id === phase);
+  setText('[data-activity-title]', `Inspecting ${discoveryMechanismName[phase]}`);
+  setText('[data-activity-detail]', mechanism?.summary ?? 'Following the published discovery path.');
+  if (mochiBubble) mochiBubble.textContent = `Inspecting ${discoveryMechanismName[phase]}…`;
+};
+
+const startEndpointInspection = () => {
+  clearEndpointInspection();
+  setEndpointInspectionPhase('beams');
+  const phases: Array<{ delay: number; mechanism: DiscoveryMechanismId }> = prefersReducedMotion
+    ? [
+      { delay: 250, mechanism: 'ard' },
+      { delay: 900, mechanism: 'dns-aid' },
+      { delay: 1550, mechanism: 'ans' },
+    ]
+    : [
+      { delay: 5800, mechanism: 'ard' },
+      { delay: 11000, mechanism: 'dns-aid' },
+      { delay: 16200, mechanism: 'ans' },
+    ];
+  endpointInspectionTimers = phases.map(({ delay, mechanism }) => window.setTimeout(
+    () => setEndpointInspectionPhase(mechanism), delay,
+  ));
+  const completionDelay = phases.at(-1)!.delay + (prefersReducedMotion ? 300 : 1200);
+  endpointInspectionTimers.push(window.setTimeout(enableEndpointPathExploration, completionDelay));
+};
+
+endpointPathButtons.forEach((button) => {
+  button.disabled = true;
+  button.addEventListener('click', () => {
+    if (endpointPathStage?.dataset.explorable !== 'true') return;
+    selectEndpointPath(button.dataset.endpointPathSelect as DiscoveryMechanismId);
+  });
+});
 
 const displayStepNumber = (step: ReturnType<typeof projectDiscovery>['step']) => (
   step <= 1 ? step
@@ -824,6 +1018,9 @@ const renderActivity = () => {
   worldScene?.classList.toggle('is-searching', projection.step > 0);
   worldScene?.classList.toggle('has-candidate', hasSelectedCandidate);
   if (worldScene) worldScene.dataset.step = String(projection.step);
+  if (userFlowAlignmentTimer !== null) window.clearTimeout(userFlowAlignmentTimer);
+  window.requestAnimationFrame(alignUserFlow);
+  userFlowAlignmentTimer = window.setTimeout(alignUserFlow, 450);
   if (endpointBeamAlignmentTimer !== null) window.clearTimeout(endpointBeamAlignmentTimer);
   if (projection.step === 8) {
     window.requestAnimationFrame(alignEndpointDiscoveryBeams);
@@ -860,7 +1057,9 @@ const renderActivity = () => {
   if (searchPrintouts) searchPrintouts.hidden = !isRegistryWork;
   if (searchPrintouts) searchPrintouts.dataset.state = projection.step === 5 ? 'results' : 'searching';
   if (consolidationBoard) consolidationBoard.hidden = !isConsolidating;
-  if (endpointMechanismGrid) endpointMechanismGrid.hidden = !isDiscoveringEndpoints;
+  if (endpointPathStage) endpointPathStage.hidden = !isDiscoveringEndpoints;
+  if (isDiscoveringEndpoints && renderedStep !== 8) startEndpointInspection();
+  if (!isDiscoveringEndpoints && renderedStep === 8) clearEndpointInspection();
   if (behindCurrent) behindCurrent.hidden = isRegistryWork || isConsolidating || projection.step >= 7;
   if (projection.step === 1 && renderedStep !== 1) requestFlightAnimation?.beginElement();
   const syncPhase = document.querySelector<HTMLElement>('.sync-phase');
@@ -1093,6 +1292,7 @@ const syncSearchComposer = () => {
 
 chatInput?.addEventListener('input', syncSearchComposer);
 window.addEventListener('resize', () => {
+  alignUserFlow();
   if (worldScene?.dataset.step === '8') alignEndpointDiscoveryBeams();
 });
 chatForm?.addEventListener('submit', (event) => {
