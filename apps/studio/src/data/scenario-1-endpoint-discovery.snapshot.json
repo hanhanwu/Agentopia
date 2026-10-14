@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "scenarioId": "one-agent-different-doors",
   "agent": {
     "name": "Bookings",
@@ -11,27 +11,334 @@
       "id": "ard",
       "status": "found",
       "summary": "Matched 3 catalog entries and found 3 endpoint claims.",
+      "path": {
+        "nodes": [
+          {
+            "id": "ard-domain",
+            "kind": "start",
+            "label": "bookings.darknetian.com",
+            "role": "required",
+            "outcome": "pass"
+          },
+          {
+            "id": "ard-catalog-pointer",
+            "kind": "dns-query",
+            "label": "Dedicated ARD catalog pointer",
+            "artifact": "dns://_catalog._agents.bookings.darknetian.com/SVCB",
+            "role": "optional",
+            "outcome": "absent",
+            "evidenceDigest": "2d39075f16422228364ab41cf2aec22efe7ff59fbd08288917a48c66ab321fdc"
+          },
+          {
+            "id": "ard-bare-svcb",
+            "kind": "dns-query",
+            "label": "Bare-domain catalog hint",
+            "artifact": "dns://bookings.darknetian.com/SVCB",
+            "role": "compatibility",
+            "outcome": "pass",
+            "evidenceDigest": "c8030f0569a47ec5c4e66b7b039ec56d1890a61ac36dd7e48f4f5822bdef434a"
+          },
+          {
+            "id": "ard-catalog",
+            "kind": "http-document",
+            "label": "ARD catalog",
+            "artifact": "https://bookings.darknetian.com/.well-known/ai-catalog.json",
+            "role": "required",
+            "outcome": "pass",
+            "evidenceDigest": "160ddcca36c03e5bbcdfbdfbeae4613094ff0e23b3d5b1a58c77194df1f80042"
+          },
+          {
+            "id": "ard-document-1",
+            "kind": "http-document",
+            "label": "Bookings (A2A) information document",
+            "artifact": "https://bookings.darknetian.com/.well-known/agent-card.json",
+            "role": "required",
+            "outcome": "pass",
+            "evidenceDigest": "bf8951469a4c5c1b56a6dd2aa493db69ac2a436461d7b28f3b6d36d65523eb74"
+          },
+          {
+            "id": "ard-document-2",
+            "kind": "http-document",
+            "label": "Bookings (MCP) information document",
+            "artifact": "https://bookings.darknetian.com/.well-known/mcp/server-card.json",
+            "role": "required",
+            "outcome": "pass",
+            "evidenceDigest": "0eac29f340270f03b319612eeb340b12afb5fecfc04083350e05543aff67a851"
+          },
+          {
+            "id": "ard-document-3",
+            "kind": "http-document",
+            "label": "Bookings (plain HTTPS) information document",
+            "artifact": "https://bookings.darknetian.com/openapi.yaml",
+            "role": "required",
+            "outcome": "pass",
+            "evidenceDigest": "8dc79e351010ebe8ff684d84af6b1136fc4b8721c970495c7a07c97384781b59"
+          }
+        ],
+        "edges": [
+          {
+            "from": "ard-domain",
+            "to": "ard-catalog-pointer"
+          },
+          {
+            "from": "ard-domain",
+            "to": "ard-bare-svcb"
+          },
+          {
+            "from": "ard-bare-svcb",
+            "to": "ard-catalog"
+          },
+          {
+            "from": "ard-catalog",
+            "to": "ard-document-1"
+          },
+          {
+            "from": "ard-catalog",
+            "to": "ard-document-2"
+          },
+          {
+            "from": "ard-catalog",
+            "to": "ard-document-3"
+          }
+        ]
+      },
       "claims": [
-        { "protocol": "a2a", "endpoint": "https://bookings.darknetian.com/a2a" },
-        { "protocol": "mcp", "endpoint": "https://bookings.darknetian.com/mcp" },
-        { "protocol": "https", "endpoint": "https://bookings.darknetian.com/ask" }
+        {
+          "id": "ard-claim-1",
+          "protocol": "a2a",
+          "endpoint": "https://bookings.darknetian.com/a2a",
+          "sourceNodeId": "ard-document-1",
+          "sourceField": "interfaces[0].url",
+          "evidenceDigest": "bf8951469a4c5c1b56a6dd2aa493db69ac2a436461d7b28f3b6d36d65523eb74"
+        },
+        {
+          "id": "ard-claim-2",
+          "protocol": "mcp",
+          "endpoint": "https://bookings.darknetian.com/mcp",
+          "sourceNodeId": "ard-document-2",
+          "sourceField": "transport.url",
+          "evidenceDigest": "0eac29f340270f03b319612eeb340b12afb5fecfc04083350e05543aff67a851"
+        },
+        {
+          "id": "ard-claim-3",
+          "protocol": "https",
+          "endpoint": "https://bookings.darknetian.com/ask",
+          "sourceNodeId": "ard-document-3",
+          "sourceField": "servers[0].url + paths['/ask'].post",
+          "evidenceDigest": "8dc79e351010ebe8ff684d84af6b1136fc4b8721c970495c7a07c97384781b59"
+        }
       ]
     },
     {
       "id": "dns-aid",
       "status": "found",
       "summary": "Found 1 endpoint claims across current and compatibility lookup shapes.",
+      "path": {
+        "nodes": [
+          {
+            "id": "dns-aid-domain",
+            "kind": "start",
+            "label": "bookings.darknetian.com",
+            "role": "required",
+            "outcome": "pass"
+          },
+          {
+            "id": "dns-aid-current",
+            "kind": "dns-query",
+            "label": "SVCB at domain",
+            "artifact": "dns://bookings.darknetian.com/SVCB",
+            "role": "required",
+            "outcome": "pass",
+            "evidenceDigest": "a1759091c226bf4589f1fc09d4fc471e51bd32cd3444b64b8f256da633a0ae5c"
+          },
+          {
+            "id": "dns-aid-compatibility",
+            "kind": "dns-query",
+            "label": "_agent._tcp compatibility lookup",
+            "artifact": "dns://_agent._tcp.bookings.darknetian.com/SVCB",
+            "role": "compatibility",
+            "outcome": "absent",
+            "evidenceDigest": "b650addbaff49bcc098601b423a22c3af09645bcc2214bf267fd311bf7cb35cb"
+          }
+        ],
+        "edges": [
+          {
+            "from": "dns-aid-domain",
+            "to": "dns-aid-current"
+          },
+          {
+            "from": "dns-aid-domain",
+            "to": "dns-aid-compatibility"
+          }
+        ]
+      },
       "claims": [
-        { "protocol": "mcp", "endpoint": "https://bookings.darknetian.com/" }
+        {
+          "id": "dns-aid-claim-1",
+          "protocol": "mcp",
+          "endpoint": "https://bookings.darknetian.com/",
+          "sourceNodeId": "dns-aid-current",
+          "sourceField": "answers[0].TargetName + protocol parameter",
+          "evidenceDigest": "448758fb1dcbdd7c29e46a4abf010b9c2be96ecefa590e6304d45cd5a14b3727"
+        }
       ]
     },
     {
       "id": "ans",
       "status": "found",
       "summary": "Found 1 endpoint claims across canonical and compatibility lookup shapes.",
+      "path": {
+        "nodes": [
+          {
+            "id": "ans-domain",
+            "kind": "start",
+            "label": "bookings.darknetian.com",
+            "role": "required",
+            "outcome": "pass"
+          },
+          {
+            "id": "ans-canonical",
+            "kind": "dns-query",
+            "label": "Canonical _ans TXT lookup",
+            "artifact": "dns://_ans.bookings.darknetian.com/TXT",
+            "role": "required",
+            "outcome": "pass",
+            "evidenceDigest": "e33c62ea453b30dc577bb582f0e67a0e3b1d6d546e0aaed9edbb0800af989b17"
+          },
+          {
+            "id": "ans-compatibility",
+            "kind": "dns-query",
+            "label": "Bare-domain TXT compatibility lookup",
+            "artifact": "dns://bookings.darknetian.com/TXT",
+            "role": "compatibility",
+            "outcome": "absent",
+            "evidenceDigest": "65c9c39828ad5fe6dfd208a79668b12f4229cbb8a91ca1839ac6dab95ffd9ad7"
+          }
+        ],
+        "edges": [
+          {
+            "from": "ans-domain",
+            "to": "ans-canonical"
+          },
+          {
+            "from": "ans-domain",
+            "to": "ans-compatibility"
+          }
+        ]
+      },
       "claims": [
-        { "protocol": "mcp", "endpoint": "https://bookings.darknetian.com/" }
+        {
+          "id": "ans-claim-1",
+          "protocol": "mcp",
+          "endpoint": "https://bookings.darknetian.com/",
+          "sourceNodeId": "ans-canonical",
+          "sourceField": "answers[0].url",
+          "evidenceDigest": "5cc1ee1184d90070dae316b69be4842b4c06a6ddbd2dfeae96123027009e981f"
+        }
       ]
     }
-  ]
+  ],
+  "doors": [
+    {
+      "id": "door-1",
+      "protocol": "a2a",
+      "endpoint": "https://bookings.darknetian.com/a2a",
+      "claimedBy": [
+        "ard"
+      ],
+      "validation": {
+        "status": "temporarily-unavailable",
+        "latestAttemptStatus": "temporarily-unavailable",
+        "latestMethod": "a2a-message-send",
+        "reason": "a2a-message-send was rate-limited (HTTP 429).",
+        "everUsable": false,
+        "attempts": [
+          {
+            "observedAt": "2026-10-13T04:36:45Z",
+            "method": "a2a-message-send",
+            "status": "temporarily-unavailable",
+            "reason": "a2a-message-send was rate-limited (HTTP 429).",
+            "httpStatus": 429
+          }
+        ]
+      }
+    },
+    {
+      "id": "door-2",
+      "protocol": "https",
+      "endpoint": "https://bookings.darknetian.com/ask",
+      "claimedBy": [
+        "ard"
+      ],
+      "validation": {
+        "status": "temporarily-unavailable",
+        "latestAttemptStatus": "temporarily-unavailable",
+        "latestMethod": "https-post",
+        "reason": "https-post was rate-limited (HTTP 429).",
+        "everUsable": false,
+        "attempts": [
+          {
+            "observedAt": "2026-10-13T04:36:45Z",
+            "method": "https-post",
+            "status": "temporarily-unavailable",
+            "reason": "https-post was rate-limited (HTTP 429).",
+            "httpStatus": 429
+          }
+        ]
+      }
+    },
+    {
+      "id": "door-3",
+      "protocol": "mcp",
+      "endpoint": "https://bookings.darknetian.com/",
+      "claimedBy": [
+        "dns-aid",
+        "ans"
+      ],
+      "validation": {
+        "status": "unusable",
+        "latestAttemptStatus": "unusable",
+        "latestMethod": "mcp-initialize",
+        "reason": "MCP initialize did not succeed (HTTP 404).",
+        "everUsable": false,
+        "attempts": [
+          {
+            "observedAt": "2026-10-13T04:36:45Z",
+            "method": "mcp-initialize",
+            "status": "unusable",
+            "reason": "MCP initialize did not succeed (HTTP 404).",
+            "httpStatus": 404
+          }
+        ]
+      }
+    },
+    {
+      "id": "door-4",
+      "protocol": "mcp",
+      "endpoint": "https://bookings.darknetian.com/mcp",
+      "claimedBy": [
+        "ard"
+      ],
+      "validation": {
+        "status": "usable",
+        "latestAttemptStatus": "usable",
+        "latestMethod": "mcp-initialize",
+        "reason": "This exact endpoint previously passed protocol validation; no further probe is required.",
+        "everUsable": true,
+        "attempts": [
+          {
+            "observedAt": "2026-10-13T03:09:38Z",
+            "method": "mcp-initialize",
+            "status": "usable",
+            "reason": "MCP initialize succeeded.",
+            "httpStatus": 200
+          }
+        ]
+      }
+    }
+  ],
+  "decision": {
+    "selectedDoorId": "door-4",
+    "publicReason": "Selected because this endpoint passed a non-mutating protocol check."
+  }
 }

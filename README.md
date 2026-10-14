@@ -1,7 +1,5 @@
 # Agentopia
 
-An open-source environment for making agent discovery, interaction, and evidence visible.
-
 ## Making Agent-to-Agent Interactions Observable, with A Game UI 😉
 
 ![Agentopia game UI demo](demo/agentopia_v0_demo.gif)

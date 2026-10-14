@@ -35,6 +35,13 @@ discover → collect evidence → analyze patterns → visualize gaps → reprod
 Keep the experience playful, but the conclusions rigorous. Do not design scores
 or visualizations before the evidence supports them.
 
+## Repository roles
+
+- **Agentopia_Lab (private):** research workspace for data collection,
+  exploration, analysis, schemas, evidence, and experiments.
+- **Agentopia (public):** product workspace for presenting proven insights as
+  understandable, playful visualizations.
+
 ## High-level plan
 
 1. **Research in Agentopia_Lab.** Collect real-world agent data, explore it, and
@@ -69,13 +76,6 @@ Keep this future possible without building a component platform too early:
 Portable outputs should support pinned evidence snapshots, responsive layouts,
 reduced motion, and privacy-conscious embeds. For now, Scenario 1 should prove
 the reusable-scene approach; do not build the full SDK yet.
-
-## Repository roles
-
-- **Agentopia_Lab (private):** research workspace for data collection,
-  exploration, analysis, schemas, evidence, and experiments.
-- **Agentopia (public):** product workspace for presenting proven insights as
-  understandable, playful visualizations.
 
 ### Current action plan
 
