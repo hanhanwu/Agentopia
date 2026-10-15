@@ -44,6 +44,10 @@
       <circle class="logo-shell" cx="37" r="47"/>
       <circle class="logo-line-thin" cx="37" r="27"/>
       <circle class="logo-dot" cx="37" r="5"/>
+      <!-- Upright pin: head faces north and its tip lands on the target center. -->
+      <circle class="logo-shell" cx="37" cy="-67" r="10"/>
+      <path class="logo-line" d="M37-57V-5"/>
+      <path class="logo-dot" d="M32-5H42L37 2Z"/>
       <path class="logo-dash" d="M-73-46 37 0-73 46-50 0Z"/>
       <path class="logo-line-thin" d="M-57-29-50 0-57 29"/>
       <text class="logo-word" x="-23" y="6">ARD</text>

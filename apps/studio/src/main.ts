@@ -187,18 +187,37 @@ const endpointClaimNode = (claim: EndpointMechanism['claims'][number]) => `
   <div class="discovery-endpoint-claim"><span>${escapeMarkup(claim.protocol)}</span><code>${escapeMarkup(claim.endpoint)}</code></div>`;
 
 const ardDiscoveryMark = (semantic: ArdNodeSemantic) => {
-  const artwork: Partial<Record<ArdNodeSemantic, string>> = {
-    'catalog-pointer': `
-      <circle class="ard-stage-mark__dim" cx="27" r="40"/><circle class="ard-stage-mark__thin" cx="27" r="24"/><circle class="ard-stage-mark__fill" cx="27" r="5"/>
-      <path class="ard-stage-mark__dash" d="M-67-42 27 0-67 42-46 0Z"/><text class="ard-stage-mark__word" x="-24" y="6">ARD</text>`,
-    'catalog-hint': `
-      <path class="ard-stage-mark__line" d="M-54-30Q0-78 54-30M-39-11Q0-46 39-11M-24 8Q0-14 24 8M-54 30Q0 78 54 30M-39 11Q0 46 39 11"/>
-      <circle class="ard-stage-mark__fill" cy="-63" r="3.5"/><circle class="ard-stage-mark__fill" cy="63" r="3.5"/><text class="ard-stage-mark__word" y="6">ARD</text>`,
-    catalog: `
-      <rect class="ard-stage-mark__dim" x="-63" y="-36" width="58" height="72" rx="7"/><rect class="ard-stage-mark__dim" x="5" y="-36" width="58" height="72" rx="7"/>
-      <rect class="ard-stage-mark__thin ard-stage-mark__paper" x="-46" y="-47" width="92" height="94" rx="9"/><path class="ard-stage-mark__thin" d="M-25 18H25M-18 29H18"/><text class="ard-stage-mark__word" y="2">ARD</text>`,
+  const artwork: Partial<Record<ArdNodeSemantic, { viewBox: string; content: string }>> = {
+    'catalog-pointer': {
+      viewBox: '-90 -90 180 180',
+      content: `
+        <circle class="ard-stage-mark__shell" cx="37" r="47"/><circle class="ard-stage-mark__thin" cx="37" r="27"/><circle class="ard-stage-mark__fill" cx="37" r="5"/>
+        <path class="ard-stage-mark__dash" d="M-73-46 37 0-73 46-50 0Z"/><path class="ard-stage-mark__thin" d="M-57-29-50 0-57 29"/>
+        <text class="ard-stage-mark__word" x="-23" y="6">ARD</text>`,
+    },
+    'catalog-hint': {
+      viewBox: '-90 -90 270 180',
+      content: `
+        <path class="ard-stage-mark__shell" d="M-38-12c0-34 16-55 38-55s38 21 38 55c0 18-7 31-19 42-7 6-10 12-10 20H-9c0-8-3-14-10-20-12-11-19-24-19-42Z"/>
+        <path class="ard-stage-mark__line" d="M-13 61h26M-9 72H9M-4 82h8M0-76v-11M-54-56l-9-9M54-56l9-9M-61-14h-13M61-14h13M-51 37l-11 8M51 37l11 8"/>
+        <path class="ard-stage-mark__thin" d="M-15 50h30"/><circle class="ard-stage-mark__fill" cy="-76" r="3.5"/>
+        <circle class="ard-stage-mark__fill" cx="-61" cy="-14" r="3.5"/><circle class="ard-stage-mark__fill" cx="61" cy="-14" r="3.5"/>
+        <text class="ard-stage-mark__label" x="82" y="8">DNS Hint</text>`,
+    },
+    catalog: {
+      viewBox: '-90 -90 180 180',
+      content: `
+        <path class="ard-stage-mark__thin" d="M-48-62v-14h27v14M-13-62v-20h27v20M22-62v-14h27v14"/>
+        <rect class="ard-stage-mark__shell" x="-62" y="-62" width="124" height="130" rx="11"/><path class="ard-stage-mark__thin" d="M-62-29H62"/>
+        <text class="ard-stage-mark__word" y="-40">ARD</text>
+        <rect class="ard-stage-mark__line" x="-45" y="-18" width="90" height="20" rx="4"/><rect class="ard-stage-mark__line" x="-45" y="10" width="90" height="20" rx="4"/><rect class="ard-stage-mark__line" x="-45" y="38" width="90" height="20" rx="4"/>
+        <path class="ard-stage-mark__thin" d="M-29-8H0M-29 20H0M-29 48H0"/><circle class="ard-stage-mark__fill" cx="28" cy="-8" r="3.5"/><circle class="ard-stage-mark__fill" cx="28" cy="20" r="3.5"/><circle class="ard-stage-mark__fill" cx="28" cy="48" r="3.5"/>`,
+    },
   };
-  return `<svg class="ard-stage-mark" viewBox="-90 -90 180 180" aria-hidden="true">${artwork[semantic] ?? ''}</svg>`;
+  const mark = artwork[semantic];
+  return mark
+    ? `<svg class="ard-stage-mark ard-stage-mark--${semantic}" viewBox="${mark.viewBox}" aria-hidden="true">${mark.content}</svg>`
+    : '';
 };
 
 const ardDiscoveryNode = (node: DiscoveryPathNode & { semantic?: string }, modifier = '') => {
@@ -220,19 +239,26 @@ const endpointPathPanel = (mechanism: EndpointMechanism, index: number) => {
 
   if (mechanism.id === 'ard') {
     const projection = projectArdDiscoveryPath(mechanism.path);
-    const routes = [...projection.primaryRoutes, ...projection.secondaryRoutes];
     const catalogs = projection.catalogs;
     const documentNodes = catalogs.flatMap(({ documents }) => documents);
     return `<article class="discovery-path-panel discovery-path-panel--ard" data-discovery-path-panel="ard">
       ${header}<div class="discovery-path-map">
         ${discoveryNode(projection.domain)}<i class="discovery-path-connector"></i>
-        <div class="discovery-path-fork${routes.length === 1 ? ' discovery-path-fork--single' : ''}">
-          ${routes.map(({ locator, state }) => ardDiscoveryNode(locator, `discovery-path-node--route-${state}`)).join('')}
-        </div>
-        ${catalogs.length ? `<i class="discovery-path-connector"></i>
-          <div class="discovery-path-catalogs${catalogs.length === 1 ? ' discovery-path-catalogs--single' : ''}">
-            ${catalogs.map(({ catalog }) => ardDiscoveryNode(catalog, projection.hasConflict ? 'discovery-path-node--conflict' : '')).join('')}
+        <div class="ard-path-route-layout${projection.secondaryRoutes.length ? ' ard-path-route-layout--with-secondary' : ''}">
+          <div class="ard-path-primary-route">
+            <div class="ard-path-primary-locators${projection.primaryRoutes.length === 1 ? ' ard-path-primary-locators--single' : ''}">
+              ${projection.primaryRoutes.map(({ locator, state }) => ardDiscoveryNode(locator, `discovery-path-node--route-${state}`)).join('')}
+            </div>
+            ${catalogs.length ? `<i class="discovery-path-connector"></i>
+              <div class="discovery-path-catalogs${catalogs.length === 1 ? ' discovery-path-catalogs--single' : ''}">
+                ${catalogs.map(({ catalog }) => ardDiscoveryNode(catalog, projection.hasConflict ? 'discovery-path-node--conflict' : '')).join('')}
+              </div>` : ''}
+          </div>
+          ${projection.secondaryRoutes.length ? `<div class="ard-path-secondary-routes">
+            ${projection.secondaryRoutes.map(({ locator, state }) => ardDiscoveryNode(locator, `discovery-path-node--route-${state}`)).join('')}
+            <i class="ard-path-route-stop" aria-hidden="true"></i>
           </div>` : ''}
+        </div>
         ${documentNodes.length ? '<i class="discovery-path-connector"></i>' : ''}
         <div class="discovery-path-branches">${documentNodes.map((node) => {
           const claim = mechanism.claims.find(({ sourceNodeId }) => sourceNodeId === node.id);
