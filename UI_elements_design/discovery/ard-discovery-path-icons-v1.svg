@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="950" viewBox="0 0 1500 950" role="img" aria-labelledby="title description">
+  <title id="title">Agentopia ARD discovery path concepts version one</title>
+  <desc id="description">Three cyan ARD path concepts in the Agentopia discovery-mechanism style: a dedicated catalog pointer, a light-bulb DNS Hint, and an indexed ARD catalog.</desc>
+
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071019"/>
+      <stop offset="0.55" stop-color="#09131e"/>
+      <stop offset="1" stop-color="#04080e"/>
+    </linearGradient>
+    <radialGradient id="card-glow" cx="50%" cy="30%" r="74%">
+      <stop offset="0" stop-color="currentColor" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="currentColor" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#263a48" stroke-width="1" opacity="0.24"/>
+    </pattern>
+    <filter id="cyan-glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feFlood flood-color="#55e6ff" flood-opacity="0.5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <style>
+      .eyebrow { font: 650 16px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 4px; fill: #6f8499; }
+      .title { font: 750 46px Inter, ui-sans-serif, system-ui, sans-serif; letter-spacing: -1px; fill: #eef8ff; }
+      .subtitle { font: 400 18px Inter, ui-sans-serif, system-ui, sans-serif; fill: #8da0b3; }
+      .concept-name { font: 800 29px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; fill: currentColor; }
+      .concept-type { font: 700 13px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 2px; fill: #7890a5; }
+      .concept-copy { font: 400 16px Inter, ui-sans-serif, system-ui, sans-serif; fill: #8da0b3; }
+      .token-label { font: 650 13px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; fill: #6f8499; }
+      .token-value { font: 700 13px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #d9ebf7; }
+      .logo-shell { fill: #091721; stroke: currentColor; stroke-width: 3; stroke-linejoin: round; }
+      .logo-line { fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+      .logo-line-thin { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.65; }
+      .logo-dash { fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 8 9; }
+      .logo-dot { fill: currentColor; }
+      .logo-word { fill: #d9faff; font: 800 17px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1.5px; text-anchor: middle; }
+      .hint-name { fill: currentColor; font: 800 24px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; }
+    </style>
+
+    <symbol id="ard-pointer-mark" viewBox="-90 -90 180 180">
+      <circle class="logo-shell" cx="37" r="47"/>
+      <circle class="logo-line-thin" cx="37" r="27"/>
+      <circle class="logo-dot" cx="37" r="5"/>
+      <path class="logo-dash" d="M-73-46 37 0-73 46-50 0Z"/>
+      <path class="logo-line-thin" d="M-57-29-50 0-57 29"/>
+      <text class="logo-word" x="-23" y="6">ARD</text>
+    </symbol>
+
+    <symbol id="dns-hint-mark" viewBox="-90 -90 180 180">
+      <path class="logo-shell" d="M-38-12c0-34 16-55 38-55s38 21 38 55c0 18-7 31-19 42-7 6-10 12-10 20H-9c0-8-3-14-10-20-12-11-19-24-19-42Z"/>
+      <path class="logo-line" d="M-13 61h26M-9 72H9M-4 82h8"/>
+      <path class="logo-line-thin" d="M-15 50h30"/>
+      <path class="logo-line" d="M0-76v-11M-54-56l-9-9M54-56l9-9M-61-14h-13M61-14h13M-51 37l-11 8M51 37l11 8"/>
+      <circle class="logo-dot" cy="-76" r="3.5"/>
+      <circle class="logo-dot" cx="-61" cy="-14" r="3.5"/>
+      <circle class="logo-dot" cx="61" cy="-14" r="3.5"/>
+    </symbol>
+
+    <symbol id="ard-catalog-mark" viewBox="-90 -90 180 180">
+      <path class="logo-line-thin" d="M-48-62v-14h27v14M-13-62v-20h27v20M22-62v-14h27v14"/>
+      <rect class="logo-shell" x="-62" y="-62" width="124" height="130" rx="11"/>
+      <path class="logo-line-thin" d="M-62-29H62"/>
+      <text class="logo-word" y="-40">ARD</text>
+      <rect class="logo-line" x="-45" y="-18" width="90" height="20" rx="4"/>
+      <rect class="logo-line" x="-45" y="10" width="90" height="20" rx="4"/>
+      <rect class="logo-line" x="-45" y="38" width="90" height="20" rx="4"/>
+      <path class="logo-line-thin" d="M-29-8H0M-29 20H0M-29 48H0"/>
+      <circle class="logo-dot" cx="28" cy="-8" r="3.5"/>
+      <circle class="logo-dot" cx="28" cy="20" r="3.5"/>
+      <circle class="logo-dot" cx="28" cy="48" r="3.5"/>
+    </symbol>
+  </defs>
+
+  <rect width="1500" height="950" fill="url(#background)"/>
+  <rect width="1500" height="950" fill="url(#grid)"/>
+
+  <g transform="translate(58 54)">
+    <text class="eyebrow">AGENTOPIA · ARD DISCOVERY PATH 01</text>
+    <text class="title" y="61">One catalog · two ways to locate it</text>
+    <text class="subtitle" y="100">A shared visual language for the dedicated pointer, DNS hint, and catalog artifact.</text>
+  </g>
+
+  <g transform="translate(58 198)" color="#55e6ff">
+    <rect width="430" height="480" rx="28" fill="#09131d" stroke="#294052" stroke-width="2"/>
+    <rect width="430" height="480" rx="28" fill="url(#card-glow)"/>
+    <g transform="translate(215 132)" filter="url(#cyan-glow)">
+      <use href="#ard-pointer-mark" x="-90" y="-90" width="180" height="180"/>
+    </g>
+    <text class="concept-name" x="28" y="275">ARD POINTER</text>
+    <text class="concept-type" x="28" y="306">DEDICATED DNS → CATALOG</text>
+    <text class="concept-copy" x="28" y="350">A dashed route asks the dedicated ARD</text>
+    <text class="concept-copy" x="28" y="376">name for an explicit catalog location.</text>
+    <path d="M28 411H402" stroke="#294052"/>
+    <text class="token-label" x="28" y="442">IDENTITY</text>
+    <text class="token-value" x="129" y="442">CYAN #55E6FF</text>
+  </g>
+
+  <g transform="translate(535 198)" color="#55e6ff">
+    <rect width="430" height="480" rx="28" fill="#09131d" stroke="#294052" stroke-width="2"/>
+    <rect width="430" height="480" rx="28" fill="url(#card-glow)"/>
+    <g transform="translate(142 132)" filter="url(#cyan-glow)">
+      <use href="#dns-hint-mark" x="-78" y="-78" width="156" height="156"/>
+    </g>
+    <text class="hint-name" x="218" y="141">DNS Hint</text>
+    <text class="concept-name" x="28" y="275">DNS HINT</text>
+    <text class="concept-type" x="28" y="306">BARE-DOMAIN SVCB → CLUE</text>
+    <text class="concept-copy" x="28" y="350">A DNS answer provides the clue used to</text>
+    <text class="concept-copy" x="28" y="376">locate the catalog without becoming it.</text>
+    <path d="M28 411H402" stroke="#294052"/>
+    <text class="token-label" x="28" y="442">IDENTITY</text>
+    <text class="token-value" x="129" y="442">CYAN #55E6FF</text>
+  </g>
+
+  <g transform="translate(1012 198)" color="#55e6ff">
+    <rect width="430" height="480" rx="28" fill="#09131d" stroke="#294052" stroke-width="2"/>
+    <rect width="430" height="480" rx="28" fill="url(#card-glow)"/>
+    <g transform="translate(215 132)" filter="url(#cyan-glow)">
+      <use href="#ard-catalog-mark" x="-90" y="-90" width="180" height="180"/>
+    </g>
+    <text class="concept-name" x="28" y="275">ARD CATALOG</text>
+    <text class="concept-type" x="28" y="306">INDEX → INFORMATION DOCUMENTS</text>
+    <text class="concept-copy" x="28" y="350">Indexed drawers organize the catalog's</text>
+    <text class="concept-copy" x="28" y="376">links without resembling a single file.</text>
+    <path d="M28 411H402" stroke="#294052"/>
+    <text class="token-label" x="28" y="442">IDENTITY</text>
+    <text class="token-value" x="129" y="442">CYAN #55E6FF</text>
+  </g>
+
+  <g transform="translate(58 735)">
+    <text class="eyebrow">SMALL-SCALE · MONOCHROME CHECK</text>
+    <text class="subtitle" y="38">The pointer, bulb, and indexed cabinet remain distinct without card copy or glow.</text>
+
+    <g transform="translate(45 108) scale(.42)" color="#e9f4fb">
+      <use href="#ard-pointer-mark" x="-90" y="-90" width="180" height="180"/>
+    </g>
+    <text class="token-value" x="94" y="115">ARD catalog pointer</text>
+
+    <g transform="translate(525 108) scale(.42)" color="#e9f4fb">
+      <use href="#dns-hint-mark" x="-90" y="-90" width="180" height="180"/>
+    </g>
+    <text class="token-value" x="574" y="115">DNS Hint</text>
+
+    <g transform="translate(1040 108) scale(.42)" color="#e9f4fb">
+      <use href="#ard-catalog-mark" x="-90" y="-90" width="180" height="180"/>
+    </g>
+    <text class="token-value" x="1089" y="115">ARD catalog</text>
+  </g>
+</svg>

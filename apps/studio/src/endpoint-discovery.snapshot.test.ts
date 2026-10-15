@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import endpointDiscoverySnapshot from './data/scenario-1-endpoint-discovery.snapshot.json';
+import { projectArdDiscoveryPath } from './endpoint-discovery-visual.ts';
 
 describe('Scenario 1 endpoint discovery snapshot', () => {
   it('contains the real public output needed by the three Step 6 panels', () => {
@@ -7,6 +8,18 @@ describe('Scenario 1 endpoint discovery snapshot', () => {
     expect(endpointDiscoverySnapshot.agent.domain).toBe('bookings.darknetian.com');
     expect(endpointDiscoverySnapshot.mechanisms.map(({ id }) => id)).toEqual(['ard', 'dns-aid', 'ans']);
     expect(endpointDiscoverySnapshot.mechanisms.map(({ claims }) => claims.length)).toEqual([3, 1, 1]);
+
+    const ard = endpointDiscoverySnapshot.mechanisms.find(({ id }) => id === 'ard');
+    const ardSemantics = ard?.path.nodes.map((node) => 'semantic' in node ? node.semantic : undefined) ?? [];
+    expect(ardSemantics).toEqual(expect.arrayContaining(['domain', 'catalog-pointer', 'catalog-hint', 'catalog']));
+    expect(ardSemantics.filter((semantic) => semantic === 'information-document')).toHaveLength(3);
+    if (!ard) throw new Error('ARD mechanism is required by Scenario 1.');
+    const ardProjection = projectArdDiscoveryPath(ard.path);
+    expect(ardProjection.primaryRoutes.map(({ locator }) => locator.semantic)).toEqual(['catalog-hint']);
+    expect(ardProjection.secondaryRoutes.map(({ locator, state }) => [locator.semantic, state])).toEqual([
+      ['catalog-pointer', 'absent'],
+    ]);
+    expect(ardProjection.catalogs[0]?.documents).toHaveLength(3);
 
     endpointDiscoverySnapshot.mechanisms.forEach((mechanism) => {
       expect(mechanism.status).toBe('found');

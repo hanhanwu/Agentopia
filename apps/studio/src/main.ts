@@ -2,6 +2,7 @@ import './styles.css';
 import { agents, type Agent } from './agents.ts';
 import registrySearchMock from './data/registry-search.mock.json';
 import endpointDiscoverySnapshot from './data/scenario-1-endpoint-discovery.snapshot.json';
+import { projectArdDiscoveryPath, type ArdNodeSemantic } from './endpoint-discovery-visual.ts';
 import {
   eventsAtCursor,
   projectDiscovery,
@@ -159,7 +160,14 @@ const discoveryMechanismMark = (id: DiscoveryMechanismId, className = '') => {
 };
 
 type EndpointMechanism = (typeof endpointDiscoverySnapshot.mechanisms)[number];
-type DiscoveryPathNode = EndpointMechanism['path']['nodes'][number];
+type DiscoveryPathNode = {
+  id: string;
+  kind: string;
+  label: string;
+  role: string;
+  outcome: string;
+  artifact?: string;
+};
 
 const escapeMarkup = (value: string) => value.replace(/[&<>"']/g, (character) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -178,6 +186,31 @@ const discoveryNode = (node: DiscoveryPathNode, modifier = '') => {
 const endpointClaimNode = (claim: EndpointMechanism['claims'][number]) => `
   <div class="discovery-endpoint-claim"><span>${escapeMarkup(claim.protocol)}</span><code>${escapeMarkup(claim.endpoint)}</code></div>`;
 
+const ardDiscoveryMark = (semantic: ArdNodeSemantic) => {
+  const artwork: Partial<Record<ArdNodeSemantic, string>> = {
+    'catalog-pointer': `
+      <circle class="ard-stage-mark__dim" cx="27" r="40"/><circle class="ard-stage-mark__thin" cx="27" r="24"/><circle class="ard-stage-mark__fill" cx="27" r="5"/>
+      <path class="ard-stage-mark__dash" d="M-67-42 27 0-67 42-46 0Z"/><text class="ard-stage-mark__word" x="-24" y="6">ARD</text>`,
+    'catalog-hint': `
+      <path class="ard-stage-mark__line" d="M-54-30Q0-78 54-30M-39-11Q0-46 39-11M-24 8Q0-14 24 8M-54 30Q0 78 54 30M-39 11Q0 46 39 11"/>
+      <circle class="ard-stage-mark__fill" cy="-63" r="3.5"/><circle class="ard-stage-mark__fill" cy="63" r="3.5"/><text class="ard-stage-mark__word" y="6">ARD</text>`,
+    catalog: `
+      <rect class="ard-stage-mark__dim" x="-63" y="-36" width="58" height="72" rx="7"/><rect class="ard-stage-mark__dim" x="5" y="-36" width="58" height="72" rx="7"/>
+      <rect class="ard-stage-mark__thin ard-stage-mark__paper" x="-46" y="-47" width="92" height="94" rx="9"/><path class="ard-stage-mark__thin" d="M-25 18H25M-18 29H18"/><text class="ard-stage-mark__word" y="2">ARD</text>`,
+  };
+  return `<svg class="ard-stage-mark" viewBox="-90 -90 180 180" aria-hidden="true">${artwork[semantic] ?? ''}</svg>`;
+};
+
+const ardDiscoveryNode = (node: DiscoveryPathNode & { semantic?: string }, modifier = '') => {
+  const semantic = node.semantic as ArdNodeSemantic;
+  const outcome = node.outcome === 'pass' ? 'Observed' : node.outcome === 'absent' ? 'Not published' : 'Could not check';
+  const status = node.outcome === 'pass' ? '✓' : node.outcome === 'absent' ? '×' : '!';
+  return `<div class="ard-discovery-symbol ard-discovery-symbol--${semantic} discovery-path-node--${node.outcome} ${modifier}"
+    role="img" aria-label="${escapeMarkup(node.label)}: ${outcome}">
+    ${ardDiscoveryMark(semantic)}<span aria-hidden="true">${status}</span>
+  </div>`;
+};
+
 const endpointPathPanel = (mechanism: EndpointMechanism, index: number) => {
   const [startNode, ...remainingNodes] = mechanism.path.nodes;
   const header = `<header class="discovery-path-panel__header">
@@ -186,12 +219,21 @@ const endpointPathPanel = (mechanism: EndpointMechanism, index: number) => {
   </header>`;
 
   if (mechanism.id === 'ard') {
-    const [pointerNode, bareNode, catalogNode, ...documentNodes] = remainingNodes;
+    const projection = projectArdDiscoveryPath(mechanism.path);
+    const routes = [...projection.primaryRoutes, ...projection.secondaryRoutes];
+    const catalogs = projection.catalogs;
+    const documentNodes = catalogs.flatMap(({ documents }) => documents);
     return `<article class="discovery-path-panel discovery-path-panel--ard" data-discovery-path-panel="ard">
       ${header}<div class="discovery-path-map">
-        ${discoveryNode(startNode)}<i class="discovery-path-connector"></i>
-        <div class="discovery-path-fork">${discoveryNode(pointerNode)}${discoveryNode(bareNode)}</div>
-        <i class="discovery-path-connector"></i>${discoveryNode(catalogNode)}<i class="discovery-path-connector"></i>
+        ${discoveryNode(projection.domain)}<i class="discovery-path-connector"></i>
+        <div class="discovery-path-fork${routes.length === 1 ? ' discovery-path-fork--single' : ''}">
+          ${routes.map(({ locator, state }) => ardDiscoveryNode(locator, `discovery-path-node--route-${state}`)).join('')}
+        </div>
+        ${catalogs.length ? `<i class="discovery-path-connector"></i>
+          <div class="discovery-path-catalogs${catalogs.length === 1 ? ' discovery-path-catalogs--single' : ''}">
+            ${catalogs.map(({ catalog }) => ardDiscoveryNode(catalog, projection.hasConflict ? 'discovery-path-node--conflict' : '')).join('')}
+          </div>` : ''}
+        ${documentNodes.length ? '<i class="discovery-path-connector"></i>' : ''}
         <div class="discovery-path-branches">${documentNodes.map((node) => {
           const claim = mechanism.claims.find(({ sourceNodeId }) => sourceNodeId === node.id);
           return `<div class="discovery-path-branch">${discoveryNode(node)}${claim ? endpointClaimNode(claim) : ''}</div>`;

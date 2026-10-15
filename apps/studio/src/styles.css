@@ -777,14 +777,40 @@ button { color: inherit; }
 .discovery-path-map { display: flex; min-width: 0; flex-direction: column; align-items: center; gap: 5px; margin-top: 10px; }
 .discovery-path-map > .discovery-path-node { width: min(100%, 240px); }
 .discovery-path-map--dns { justify-content: center; min-height: 280px; }
-.discovery-path-fork, .discovery-path-branches { display: grid; min-width: 0; gap: 6px; }
+.discovery-path-fork, .discovery-path-catalogs, .discovery-path-branches { display: grid; min-width: 0; gap: 6px; }
 .discovery-path-fork { width: min(100%, 430px); grid-template-columns: repeat(2,minmax(0,1fr)); }
+.discovery-path-fork--single { width: min(100%, 240px); grid-template-columns: minmax(0,1fr); }
+.discovery-path-catalogs { width: min(100%, 430px); grid-template-columns: repeat(2,minmax(0,1fr)); }
+.discovery-path-catalogs--single { width: min(100%, 240px); grid-template-columns: minmax(0,1fr); }
 .discovery-path-branches { width: 100%; grid-template-columns: repeat(3,minmax(0,1fr)); }
 .discovery-path-branch { min-width: 0; }
 .discovery-path-node { position: relative; display: grid; min-width: 0; grid-template-columns: 8px minmax(0,1fr); gap: 6px; align-content: center; padding: 8px; border: 1px solid color-mix(in srgb, var(--path-color) 25%, transparent); border-radius: 6px; background: color-mix(in srgb, var(--path-color) 5%, rgba(5,14,20,.9)); }
 .discovery-path-node__status { width: 7px; height: 7px; margin-top: 2px; border: 1px solid var(--path-color); border-radius: 50%; background: var(--path-color); box-shadow: 0 0 6px var(--path-color); }
 .discovery-path-node--absent { border-style: dashed; opacity: .6; }
 .discovery-path-node--absent .discovery-path-node__status { background: transparent; box-shadow: none; }
+.discovery-path-node--route-unresolved, .discovery-path-node--route-error, .discovery-path-node--conflict { border-color: #ff9e72; }
+.discovery-path-node--route-unresolved .discovery-path-node__status,
+.discovery-path-node--route-error .discovery-path-node__status,
+.discovery-path-node--conflict .discovery-path-node__status { border-color: #ff9e72; background: #ff9e72; box-shadow: 0 0 6px #ff9e72; }
+.ard-discovery-symbol { position: relative; display: grid; width: 100%; min-height: 82px; place-items: center; border: 1px solid color-mix(in srgb, var(--path-color) 25%, transparent); border-radius: 8px; background: color-mix(in srgb, var(--path-color) 4%, rgba(5,14,20,.9)); }
+.ard-discovery-symbol > span { position: absolute; right: 7px; bottom: 6px; display: grid; width: 17px; height: 17px; place-items: center; border: 1px solid var(--path-color); border-radius: 50%; color: var(--path-color); font: 900 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; box-shadow: 0 0 6px color-mix(in srgb, var(--path-color) 45%, transparent); }
+.ard-discovery-symbol.discovery-path-node--absent { border-style: dashed; opacity: .55; }
+.ard-discovery-symbol.discovery-path-node--absent > span { box-shadow: none; }
+.ard-discovery-symbol.discovery-path-node--route-unresolved,
+.ard-discovery-symbol.discovery-path-node--route-error,
+.ard-discovery-symbol.discovery-path-node--conflict { border-color: #ff9e72; }
+.ard-discovery-symbol.discovery-path-node--route-unresolved > span,
+.ard-discovery-symbol.discovery-path-node--route-error > span,
+.ard-discovery-symbol.discovery-path-node--conflict > span { border-color: #ff9e72; color: #ff9e72; }
+.ard-stage-mark { width: 76px; height: 76px; overflow: visible; color: var(--path-color); filter: drop-shadow(0 0 5px color-mix(in srgb, var(--path-color) 50%, transparent)); }
+.ard-stage-mark__line, .ard-stage-mark__thin, .ard-stage-mark__dim, .ard-stage-mark__dash { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+.ard-stage-mark__line { stroke-width: 6; }
+.ard-stage-mark__thin { stroke-width: 4; }
+.ard-stage-mark__dim { stroke-width: 5; opacity: .5; }
+.ard-stage-mark__dash { stroke-width: 5; stroke-dasharray: 10 10; }
+.ard-stage-mark__fill { fill: currentColor; }
+.ard-stage-mark__paper { fill: #07131d; }
+.ard-stage-mark__word { fill: #c3f8ff; font: 750 17px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1.5px; text-anchor: middle; }
 .discovery-path-node strong, .discovery-path-node small, .discovery-path-node code { display: block; min-width: 0; }
 .discovery-path-node strong { overflow: hidden; color: #c6e7f3; font: 750 9px/1.25 ui-monospace, SFMono-Regular, Menlo, monospace; text-overflow: ellipsis; }
 .discovery-path-node small { margin-top: 4px; color: color-mix(in srgb, var(--path-color) 72%, #6f8792); font: 700 7px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; }
@@ -798,7 +824,8 @@ button { color: inherit; }
 .discovery-endpoint-claim code { margin-top: 4px; overflow-wrap: anywhere; color: #c1e2ee; font: 600 8px/1.35 ui-monospace, SFMono-Regular, Menlo, monospace; }
 .endpoint-path-stage[data-active-mechanism='ard'] [data-discovery-path-panel='ard'] .discovery-path-node,
 .endpoint-path-stage[data-active-mechanism='dns-aid'] [data-discovery-path-panel='dns-aid'] .discovery-path-node,
-.endpoint-path-stage[data-active-mechanism='ans'] [data-discovery-path-panel='ans'] .discovery-path-node { animation: pathNodeReveal .38s ease both; }
+.endpoint-path-stage[data-active-mechanism='ans'] [data-discovery-path-panel='ans'] .discovery-path-node,
+.endpoint-path-stage[data-active-mechanism='ard'] [data-discovery-path-panel='ard'] .ard-discovery-symbol { animation: pathNodeReveal .38s ease both; }
 .endpoint-path-stage[data-active-mechanism='ard'] [data-discovery-path-panel='ard'] .discovery-endpoint-claim,
 .endpoint-path-stage[data-active-mechanism='dns-aid'] [data-discovery-path-panel='dns-aid'] .discovery-endpoint-claim,
 .endpoint-path-stage[data-active-mechanism='ans'] [data-discovery-path-panel='ans'] .discovery-endpoint-claim { animation: pathClaimReveal .4s .22s ease both; }
@@ -935,7 +962,7 @@ button { color: inherit; }
   .endpoint-path-stage { min-height: 430px; overflow-y: auto; }
   .discovery-path-map, .discovery-path-map--dns { flex-wrap: wrap; align-content: flex-start; }
   .discovery-path-map > .discovery-path-node { flex-basis: calc(50% - 18px); }
-  .discovery-path-fork, .discovery-path-branches { flex-basis: 100%; }
+  .discovery-path-fork, .discovery-path-catalogs, .discovery-path-branches { flex-basis: 100%; }
   .discovery-path-connector { display: none; }
   .discovery-path-map--dns > .discovery-endpoint-claim { flex-basis: 100%; }
   .mechanism-orbit { scale: .82; }

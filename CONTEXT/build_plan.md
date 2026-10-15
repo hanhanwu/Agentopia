@@ -42,6 +42,14 @@ or visualizations before the evidence supports them.
 - **Agentopia (public):** product workspace for presenting proven insights as
   understandable, playful visualizations.
 
+## Visual design workflow
+
+Before creating or editing a visual concept, reviewing one, or integrating an
+approved design into the UI, read and follow
+[`UI_elements_design/visual_design_principles.md`](../UI_elements_design/visual_design_principles.md).
+Keep approval-stage visual artifacts in `UI_elements_design` as SVG files and
+do not integrate them into the application before user approval.
+
 ## High-level plan
 
 1. **Research in Agentopia_Lab.** Collect real-world agent data, explore it, and
@@ -87,3 +95,20 @@ the reusable-scene approach; do not build the full SDK yet.
   produces useful insights.
 - [ ] Implement initial portable visualization.
 - [ ] Replace Scenario 1's mock data with real collected data.
+
+### Discovery visualization contract
+
+Preserve the complete discovery evidence graph, but derive simplified visual
+routes from explicit node semantics, graph edges, and observed outcomes. Never
+infer a route from JSON array position, display labels, or scenario-specific
+node IDs. The presentation may emphasize the successful route, but it must not
+hide absent, failed, unresolved, or conflicting evidence.
+
+Keep this contract executable as well as documented:
+
+- Give discovery nodes stable semantic roles in evidence snapshots.
+- Use a pure projection function to convert evidence into visual routes.
+- Cover each supported route shape and failure state with unit tests.
+- Keep the raw evidence unchanged when simplifying its presentation.
+- Treat two successful locators that resolve to different artifacts as a
+  conflict; never merge them into one apparent route.

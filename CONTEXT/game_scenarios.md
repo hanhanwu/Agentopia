@@ -71,6 +71,44 @@ Its discovery mechanisms currently advertise different paths:
 
     4.2.  Mochi select the valid and most voted door to enter.
 
+#### ARD path projection rules
+
+The ARD evidence snapshot uses explicit semantic roles: `domain`,
+`catalog-pointer`, `catalog-hint`, `catalog`, and `information-document`.
+Skynet derives the diagram by following graph edges and outcomes; it must not
+depend on node order, labels, or IDs.
+
+The dedicated catalog pointer and bare-domain catalog hint are alternative
+ways to locate an ARD catalog. They are not three sequential stages. For the
+current Bookings evidence, show the successful route prominently:
+
+```text
+Domain → DNS catalog hint ✓ → ARD catalog ✓ → information documents
+```
+
+Retain the unsuccessful alternative as secondary evidence:
+
+```text
+Domain → dedicated ARD catalog pointer ✕ absent
+```
+
+Future snapshots map as follows:
+
+```text
+Hint only:       Domain → catalog hint ✓ → ARD catalog
+Pointer only:    Domain → catalog pointer ✓ → ARD catalog
+Same catalog:    Domain → { pointer ✓, hint ✓ } → ARD catalog
+Neither works:   Domain → { pointer ✕, hint ✕ }
+Conflict:        Domain → pointer ✓ → Catalog A
+                        → hint ✓    → Catalog B ⚠
+```
+
+If the UI depicts a DNS lookup operation separately, the SVCB lookup may
+precede the locator result. If a “DNS SVCB” card represents the returned record
+itself, that card *is* the catalog hint or pointer and must not be duplicated as
+another visual node. Simplification affects only presentation; the complete
+lookup evidence remains inspectable.
+
 5. **The endpoints become doors**  
    Each distinct endpoint appears as a door into the same agent. The ARD paths
    offer A2A, MCP, or HTTPS interaction, while the site-root endpoint advertised

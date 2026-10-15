@@ -15,6 +15,7 @@
         "nodes": [
           {
             "id": "ard-domain",
+            "semantic": "domain",
             "kind": "start",
             "label": "bookings.darknetian.com",
             "role": "required",
@@ -22,6 +23,7 @@
           },
           {
             "id": "ard-catalog-pointer",
+            "semantic": "catalog-pointer",
             "kind": "dns-query",
             "label": "Dedicated ARD catalog pointer",
             "artifact": "dns://_catalog._agents.bookings.darknetian.com/SVCB",
@@ -31,6 +33,7 @@
           },
           {
             "id": "ard-bare-svcb",
+            "semantic": "catalog-hint",
             "kind": "dns-query",
             "label": "Bare-domain catalog hint",
             "artifact": "dns://bookings.darknetian.com/SVCB",
@@ -40,6 +43,7 @@
           },
           {
             "id": "ard-catalog",
+            "semantic": "catalog",
             "kind": "http-document",
             "label": "ARD catalog",
             "artifact": "https://bookings.darknetian.com/.well-known/ai-catalog.json",
@@ -49,6 +53,7 @@
           },
           {
             "id": "ard-document-1",
+            "semantic": "information-document",
             "kind": "http-document",
             "label": "Bookings (A2A) information document",
             "artifact": "https://bookings.darknetian.com/.well-known/agent-card.json",
@@ -58,6 +63,7 @@
           },
           {
             "id": "ard-document-2",
+            "semantic": "information-document",
             "kind": "http-document",
             "label": "Bookings (MCP) information document",
             "artifact": "https://bookings.darknetian.com/.well-known/mcp/server-card.json",
@@ -67,6 +73,7 @@
           },
           {
             "id": "ard-document-3",
+            "semantic": "information-document",
             "kind": "http-document",
             "label": "Bookings (plain HTTPS) information document",
             "artifact": "https://bookings.darknetian.com/openapi.yaml",
