@@ -86,7 +86,8 @@ current Bookings evidence, show the successful route prominently:
 Domain → DNS catalog hint ✓ → ARD catalog ✓ → information documents
 ```
 
-Retain the unsuccessful alternative as secondary evidence:
+Retain the unsuccessful alternative in the evidence snapshot, but do not draw
+it as part of the successful discovery path:
 
 ```text
 Domain → dedicated ARD catalog pointer ✕ absent

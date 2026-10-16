@@ -230,21 +230,17 @@ const ardDiscoveryNode = (node: DiscoveryPathNode & { semantic?: string }, modif
   </div>`;
 };
 
-const endpointPathPanel = (mechanism: EndpointMechanism, index: number) => {
+const endpointPathPanel = (mechanism: EndpointMechanism) => {
   const [startNode, ...remainingNodes] = mechanism.path.nodes;
-  const header = `<header class="discovery-path-panel__header">
-    ${discoveryMechanismMark(mechanism.id)}
-    <div><span>PATH ${index + 1} OF 3</span><strong>${discoveryMechanismName[mechanism.id]}</strong><small>${mechanism.summary}</small></div>
-  </header>`;
 
   if (mechanism.id === 'ard') {
     const projection = projectArdDiscoveryPath(mechanism.path);
     const catalogs = projection.catalogs;
     const documentNodes = catalogs.flatMap(({ documents }) => documents);
     return `<article class="discovery-path-panel discovery-path-panel--ard" data-discovery-path-panel="ard">
-      ${header}<div class="discovery-path-map">
+      <div class="discovery-path-map">
         ${discoveryNode(projection.domain)}<i class="discovery-path-connector"></i>
-        <div class="ard-path-route-layout${projection.secondaryRoutes.length ? ' ard-path-route-layout--with-secondary' : ''}">
+        <div class="ard-path-route-layout">
           <div class="ard-path-primary-route">
             <div class="ard-path-primary-locators${projection.primaryRoutes.length === 1 ? ' ard-path-primary-locators--single' : ''}">
               ${projection.primaryRoutes.map(({ locator, state }) => ardDiscoveryNode(locator, `discovery-path-node--route-${state}`)).join('')}
@@ -254,10 +250,6 @@ const endpointPathPanel = (mechanism: EndpointMechanism, index: number) => {
                 ${catalogs.map(({ catalog }) => ardDiscoveryNode(catalog, projection.hasConflict ? 'discovery-path-node--conflict' : '')).join('')}
               </div>` : ''}
           </div>
-          ${projection.secondaryRoutes.length ? `<div class="ard-path-secondary-routes">
-            ${projection.secondaryRoutes.map(({ locator, state }) => ardDiscoveryNode(locator, `discovery-path-node--route-${state}`)).join('')}
-            <i class="ard-path-route-stop" aria-hidden="true"></i>
-          </div>` : ''}
         </div>
         ${documentNodes.length ? '<i class="discovery-path-connector"></i>' : ''}
         <div class="discovery-path-branches">${documentNodes.map((node) => {
@@ -269,7 +261,7 @@ const endpointPathPanel = (mechanism: EndpointMechanism, index: number) => {
   }
 
   return `<article class="discovery-path-panel discovery-path-panel--${mechanism.id}" data-discovery-path-panel="${mechanism.id}">
-    ${header}<div class="discovery-path-map discovery-path-map--dns">
+    <div class="discovery-path-map discovery-path-map--dns">
       ${discoveryNode(startNode)}<i class="discovery-path-connector"></i>
       <div class="discovery-path-fork">${remainingNodes.map((node) => discoveryNode(node)).join('')}</div>
       <i class="discovery-path-connector"></i>${mechanism.claims.map(endpointClaimNode).join('')}
@@ -278,7 +270,7 @@ const endpointPathPanel = (mechanism: EndpointMechanism, index: number) => {
 };
 
 const endpointDiscoveryPathStage = () => `
-  <section class="endpoint-path-stage" data-endpoint-path-stage hidden aria-live="polite">
+  <div class="endpoint-path-explorer">
     <nav class="endpoint-path-tabs" data-endpoint-path-tabs aria-label="Explore discovery paths" hidden>
       <div>
         ${endpointDiscoverySnapshot.mechanisms.map(({ id }) => `
@@ -287,13 +279,15 @@ const endpointDiscoveryPathStage = () => `
           </button>`).join('')}
       </div>
     </nav>
-    <div class="endpoint-path-stage__waiting">
-      <div>${endpointDiscoverySnapshot.mechanisms.map(({ id }) => discoveryMechanismMark(id)).join('')}</div>
-      <strong>Mapping three discovery mechanisms</strong>
-      <span>The first path will open after the discovery beams stabilize.</span>
-    </div>
-    ${endpointDiscoverySnapshot.mechanisms.map(endpointPathPanel).join('')}
-  </section>`;
+    <section class="endpoint-path-stage" data-endpoint-path-stage hidden aria-live="polite">
+      <div class="endpoint-path-stage__waiting">
+        <div>${endpointDiscoverySnapshot.mechanisms.map(({ id }) => discoveryMechanismMark(id)).join('')}</div>
+        <strong>Mapping three discovery mechanisms</strong>
+        <span>The first path will open after the discovery beams stabilize.</span>
+      </div>
+      ${endpointDiscoverySnapshot.mechanisms.map(endpointPathPanel).join('')}
+    </section>
+  </div>`;
 
 const consolidatedResultRows = () => consolidatedSearchRecords.map((record, index) => `
   <div
