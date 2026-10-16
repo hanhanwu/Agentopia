@@ -1,0 +1,290 @@
+{
+  "schemaVersion": 2,
+  "scenarioId": "one-agent-different-doors",
+  "agent": {
+    "name": "Agent Bench Travel Merchant",
+    "domain": "travel.agenthaven.dev"
+  },
+  "observedAt": "2026-10-16T03:20:45Z",
+  "mechanisms": [
+    {
+      "id": "ard",
+      "status": "found",
+      "summary": "Matched 1 catalog entries and found 2 endpoint claims.",
+      "path": {
+        "nodes": [
+          {
+            "id": "ard-domain",
+            "semantic": "domain",
+            "kind": "start",
+            "label": "travel.agenthaven.dev",
+            "role": "required",
+            "outcome": "pass"
+          },
+          {
+            "id": "ard-catalog-pointer",
+            "kind": "dns-query",
+            "label": "Dedicated ARD catalog pointer",
+            "artifact": "dns://_catalog._agents.travel.agenthaven.dev/SVCB",
+            "role": "optional",
+            "outcome": "absent",
+            "evidenceDigest": "0580d858b47bf024718b1ce59c5a0b48a2b483f3f52e49b1c113931df7fbc1ae",
+            "semantic": "catalog-pointer"
+          },
+          {
+            "id": "ard-bare-svcb",
+            "kind": "dns-query",
+            "label": "Bare-domain catalog hint",
+            "artifact": "dns://travel.agenthaven.dev/SVCB",
+            "role": "compatibility",
+            "outcome": "pass",
+            "evidenceDigest": "52516561296551269d8521930a11f4569076c8b7f9ca02dd48aac695c2d120b9",
+            "semantic": "catalog-hint"
+          },
+          {
+            "id": "ard-catalog",
+            "kind": "http-document",
+            "label": "ARD catalog",
+            "artifact": "https://travel.agenthaven.dev/.well-known/ai-catalog.json",
+            "role": "required",
+            "outcome": "pass",
+            "evidenceDigest": "2f71f2ffb9af32b5f94c1753ed1fcf6e8ba3862034e1b32830eb51c8b1344638",
+            "semantic": "catalog"
+          },
+          {
+            "id": "ard-document-1",
+            "kind": "http-document",
+            "label": "Agent Bench Travel: flight search and booking checkout information document",
+            "artifact": "https://travel.agenthaven.dev/.well-known/agent-card.json",
+            "role": "required",
+            "outcome": "pass",
+            "evidenceDigest": "b162732c83c0b8cff1870a6f8ed298cb7c49e9523be583d9a3a831605276c6bd",
+            "semantic": "information-document"
+          }
+        ],
+        "edges": [
+          {
+            "from": "ard-domain",
+            "to": "ard-catalog-pointer"
+          },
+          {
+            "from": "ard-domain",
+            "to": "ard-bare-svcb"
+          },
+          {
+            "from": "ard-domain",
+            "to": "ard-catalog"
+          },
+          {
+            "from": "ard-catalog",
+            "to": "ard-document-1"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "id": "ard-claim-1",
+          "protocol": "a2a",
+          "endpoint": "https://travel.agenthaven.dev/a2a",
+          "sourceNodeId": "ard-document-1",
+          "sourceField": "supportedInterfaces[0].url",
+          "evidenceDigest": "b162732c83c0b8cff1870a6f8ed298cb7c49e9523be583d9a3a831605276c6bd"
+        },
+        {
+          "id": "ard-claim-2",
+          "protocol": "mcp",
+          "endpoint": "https://travel.agenthaven.dev/mcp",
+          "sourceNodeId": "ard-document-1",
+          "sourceField": "supportedInterfaces[1].url",
+          "evidenceDigest": "b162732c83c0b8cff1870a6f8ed298cb7c49e9523be583d9a3a831605276c6bd"
+        }
+      ]
+    },
+    {
+      "id": "dns-aid",
+      "status": "found",
+      "summary": "Found 2 endpoint claims across current and compatibility lookup shapes.",
+      "path": {
+        "nodes": [
+          {
+            "id": "dns-aid-domain",
+            "kind": "start",
+            "label": "travel.agenthaven.dev",
+            "role": "required",
+            "outcome": "pass"
+          },
+          {
+            "id": "dns-aid-current",
+            "kind": "dns-query",
+            "label": "SVCB at domain",
+            "artifact": "dns://travel.agenthaven.dev/SVCB",
+            "role": "required",
+            "outcome": "pass",
+            "evidenceDigest": "15244723c90a4e621b48222c132aa27ed01b36f8dc282537ba763aef35e92d8f"
+          },
+          {
+            "id": "dns-aid-compatibility",
+            "kind": "dns-query",
+            "label": "_agent._tcp compatibility lookup",
+            "artifact": "dns://_agent._tcp.travel.agenthaven.dev/SVCB",
+            "role": "compatibility",
+            "outcome": "absent",
+            "evidenceDigest": "2a59696c743ae6321648e4638dd1673e22326ccff7de66124ec8b9b658236c1d"
+          },
+          {
+            "id": "dns-aid-card-1-1",
+            "kind": "http-document",
+            "label": "Agent information document",
+            "artifact": "https://travel.agenthaven.dev/.well-known/agent-card.json",
+            "role": "required",
+            "outcome": "pass",
+            "evidenceDigest": "b162732c83c0b8cff1870a6f8ed298cb7c49e9523be583d9a3a831605276c6bd"
+          }
+        ],
+        "edges": [
+          {
+            "from": "dns-aid-domain",
+            "to": "dns-aid-current"
+          },
+          {
+            "from": "dns-aid-domain",
+            "to": "dns-aid-compatibility"
+          },
+          {
+            "from": "dns-aid-current",
+            "to": "dns-aid-card-1-1"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "id": "dns-aid-claim-1",
+          "protocol": "a2a",
+          "endpoint": "https://travel.agenthaven.dev/a2a",
+          "sourceNodeId": "dns-aid-card-1-1",
+          "sourceField": "supportedInterfaces[0].url",
+          "evidenceDigest": "b162732c83c0b8cff1870a6f8ed298cb7c49e9523be583d9a3a831605276c6bd"
+        },
+        {
+          "id": "dns-aid-claim-2",
+          "protocol": "mcp",
+          "endpoint": "https://travel.agenthaven.dev/mcp",
+          "sourceNodeId": "dns-aid-card-1-1",
+          "sourceField": "supportedInterfaces[1].url",
+          "evidenceDigest": "b162732c83c0b8cff1870a6f8ed298cb7c49e9523be583d9a3a831605276c6bd"
+        }
+      ]
+    },
+    {
+      "id": "ans",
+      "status": "found",
+      "summary": "Found 1 endpoint claims across canonical and compatibility lookup shapes.",
+      "path": {
+        "nodes": [
+          {
+            "id": "ans-domain",
+            "kind": "start",
+            "label": "travel.agenthaven.dev",
+            "role": "required",
+            "outcome": "pass"
+          },
+          {
+            "id": "ans-canonical",
+            "kind": "dns-query",
+            "label": "Canonical _ans TXT lookup",
+            "artifact": "dns://_ans.travel.agenthaven.dev/TXT",
+            "role": "required",
+            "outcome": "pass",
+            "evidenceDigest": "551870a022957de669254ec91c131d7e6128afde56ce940edde53f3d58256690"
+          },
+          {
+            "id": "ans-compatibility",
+            "kind": "dns-query",
+            "label": "Bare-domain TXT compatibility lookup",
+            "artifact": "dns://travel.agenthaven.dev/TXT",
+            "role": "compatibility",
+            "outcome": "pass",
+            "evidenceDigest": "7f0e51aad38bf92cd5b1d886edcec6ea89451b79327e934dc10008e8f2a863e5"
+          }
+        ],
+        "edges": [
+          {
+            "from": "ans-domain",
+            "to": "ans-canonical"
+          },
+          {
+            "from": "ans-domain",
+            "to": "ans-compatibility"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "id": "ans-claim-1",
+          "protocol": "a2a",
+          "endpoint": "https://travel.agenthaven.dev/a2a",
+          "sourceNodeId": "ans-canonical",
+          "sourceField": "answers[0].url",
+          "evidenceDigest": "50f3403d8a61e766e6dfe3817b8beac14a6dfcf78ec36a032af54b9a784fe9c1"
+        }
+      ]
+    }
+  ],
+  "doors": [
+    {
+      "id": "door-1",
+      "protocol": "a2a",
+      "endpoint": "https://travel.agenthaven.dev/a2a",
+      "claimedBy": [
+        "ard",
+        "dns-aid",
+        "ans"
+      ],
+      "validation": {
+        "status": "usable",
+        "latestAttemptStatus": "usable",
+        "latestMethod": "a2a-message-send",
+        "reason": "This exact endpoint previously passed protocol validation; no further probe is required.",
+        "everUsable": true,
+        "attempts": [
+          {
+            "observedAt": "2026-10-16T03:20:19Z",
+            "method": "a2a-message-send",
+            "status": "usable",
+            "reason": "A2A message/send returned a valid response.",
+            "httpStatus": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "door-2",
+      "protocol": "mcp",
+      "endpoint": "https://travel.agenthaven.dev/mcp",
+      "claimedBy": [
+        "ard",
+        "dns-aid"
+      ],
+      "validation": {
+        "status": "usable",
+        "latestAttemptStatus": "usable",
+        "latestMethod": "mcp-initialize",
+        "reason": "This exact endpoint previously passed protocol validation; no further probe is required.",
+        "everUsable": true,
+        "attempts": [
+          {
+            "observedAt": "2026-10-16T03:20:19Z",
+            "method": "mcp-initialize",
+            "status": "usable",
+            "reason": "MCP initialize succeeded.",
+            "httpStatus": 200
+          }
+        ]
+      }
+    }
+  ],
+  "decision": {
+    "selectedDoorId": "door-1",
+    "publicReason": "Selected because this endpoint passed a non-mutating protocol check."
+  }
+}

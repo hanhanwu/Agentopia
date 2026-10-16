@@ -96,6 +96,16 @@ the reusable-scene approach; do not build the full SDK yet.
 - [ ] Implement initial portable visualization.
 - [ ] Replace Scenario 1's mock data with real collected data.
 
+### Remember to Check
+
+- Discovery: DNS-AID and ARD
+- Identity: ANS and SPIFFE
+- Authorization: OAuth
+- Communication: A2A and MCP
+- Payment: AP2 and UCP
+- Traceability: SCITT
+- Trust: the open Trust Index
+
 ### Discovery visualization contract
 
 Preserve the complete discovery evidence graph, but derive simplified visual

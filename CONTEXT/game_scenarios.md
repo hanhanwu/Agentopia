@@ -60,16 +60,16 @@ Its discovery mechanisms currently advertise different paths:
    which source returned results or no result.
 
 3. **One agent is selected**  
-   Mochi selects the Bookings agent. The game shows its domain, claimed
-   scheduling capabilities, and the sources that reported it. The rest of the
-   scenario follows only this agent.
+   Mochi ranks Nic's Bookings agent first and selects it. Fabio's Agent Bench
+   Travel Merchant remains second in the search evidence, but is not shown as
+   another selected agent.
 
 4. **Mochi discovers its endpoints**  
 4.1 Mochi investigates the selected domain independently through ARD, DNS-AID,
    and ANS. Skynet shows the endpoint claimed by each mechanism without hiding
    missing or conflicting results.
 
-    4.2.  Mochi select the valid and most voted door to enter.
+    4.2. Mochi tries the best-supported valid door.
 
 #### ARD path projection rules
 
@@ -114,10 +114,11 @@ lookup evidence remains inspectable.
    offer A2A, MCP, or HTTPS interaction, while the site-root endpoint advertised
    by DNS-AID and ANS produces no usable MCP interaction.
 
-6. **Mochi represents the user to interact with the agent**  
-
-
-* Mochi interact with the agent, making jusdement then send satisfying response to the suer
-* We can show how does Mochi interact, make decisions behind the scene
+6. **Mochi falls back and compares DNS-AID paths**  
+   Nic's DNS-AID path stops at a claimed MCP site root that returns HTTP 404.
+   Mochi then checks Fabio's DNS-AID path, follows its agent-card pointer, and
+   reaches working A2A and MCP endpoints. Show the paths side by side so the
+   missing precise endpoint in Nic's publication is easy to see, then let Mochi
+   continue through Fabio's working door.
 
 

@@ -11,9 +11,9 @@
           "relevanceScore": 96
         },
         {
-          "agentName": "Schedule Scout",
-          "domain": "schedule-scout.example.test",
-          "relevanceScore": 84
+          "agentName": "Agent Bench Travel Merchant",
+          "domain": "travel.agenthaven.dev",
+          "relevanceScore": 90
         },
         {
           "agentName": "MeetFlow",

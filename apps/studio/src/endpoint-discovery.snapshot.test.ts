@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import endpointDiscoverySnapshot from './data/scenario-1-endpoint-discovery.snapshot.json';
+import fabioEndpointDiscoverySnapshot from './data/scenario-1-fabio-endpoint-discovery.snapshot.json';
 import { projectArdDiscoveryPath } from './endpoint-discovery-visual.ts';
 
 describe('Scenario 1 endpoint discovery snapshot', () => {
@@ -39,5 +40,26 @@ describe('Scenario 1 endpoint discovery snapshot', () => {
 
     expect(endpointDiscoverySnapshot.doors).toHaveLength(4);
     expect(endpointDiscoverySnapshot.decision.selectedDoorId).toBe('door-4');
+  });
+
+  it('keeps Fabio’s real DNS-AID path as the usable comparison case', () => {
+    const nicDnsAid = endpointDiscoverySnapshot.mechanisms.find(({ id }) => id === 'dns-aid');
+    const dnsAid = fabioEndpointDiscoverySnapshot.mechanisms.find(({ id }) => id === 'dns-aid');
+    expect(fabioEndpointDiscoverySnapshot.agent.domain).toBe('travel.agenthaven.dev');
+    expect(nicDnsAid?.claims.map(({ endpoint }) => endpoint)).toEqual([
+      'https://bookings.darknetian.com/',
+    ]);
+    expect(endpointDiscoverySnapshot.doors.find(({ endpoint }) => (
+      endpoint === 'https://bookings.darknetian.com/'
+    ))?.validation.status).toBe('unusable');
+    expect(dnsAid?.path.nodes.map(({ id }) => id)).toContain('dns-aid-card-1-1');
+    expect(dnsAid?.claims.map(({ protocol, endpoint }) => [protocol, endpoint])).toEqual([
+      ['a2a', 'https://travel.agenthaven.dev/a2a'],
+      ['mcp', 'https://travel.agenthaven.dev/mcp'],
+    ]);
+    expect(fabioEndpointDiscoverySnapshot.doors.map(({ validation }) => validation.status)).toEqual([
+      'usable',
+      'usable',
+    ]);
   });
 });

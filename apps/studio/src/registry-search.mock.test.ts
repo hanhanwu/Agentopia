@@ -18,5 +18,13 @@ describe('temporary registry search records', () => {
         expect(record.relevanceScore).toBeLessThanOrEqual(100);
       });
     });
+
+    const ranked = registrySearchMock.registries
+      .flatMap((registry) => registry.records)
+      .sort((left, right) => right.relevanceScore - left.relevanceScore);
+    expect(ranked.slice(0, 2).map(({ domain }) => domain)).toEqual([
+      'bookings.darknetian.com',
+      'travel.agenthaven.dev',
+    ]);
   });
 });

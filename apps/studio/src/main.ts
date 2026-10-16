@@ -831,19 +831,30 @@ const bookingCandidate: Candidate = {
   matchReason: 'Its reported scheduling capability directly matches the requested intent.',
 };
 
+const fabioTravelCandidate: Candidate = {
+  id: 'fabio-travel-service',
+  name: 'Agent Bench Travel Merchant',
+  domain: 'travel.agenthaven.dev',
+  capability: 'Booking workflow with callable A2A and MCP interfaces',
+  sources: ['agentcensus'],
+  matchReason: 'The next-highest reported match provides a comparable booking flow and DNS-AID path.',
+};
+
 const mockCandidatesFor = (registryId: RegistryId): Candidate[] => {
   const registry = registrySearchMock.registries.find(({ id }) => id === registryId);
   if (!registry) return [];
-  return registry.records.map((record, index) => record.domain === bookingCandidate.domain
-    ? bookingCandidate
-    : {
+  return registry.records.map((record, index) => {
+    if (record.domain === bookingCandidate.domain) return bookingCandidate;
+    if (record.domain === fabioTravelCandidate.domain) return fabioTravelCandidate;
+    return {
       id: `${registryId}-mock-${index + 1}`,
       name: record.agentName,
       domain: record.domain,
       capability: 'Meeting scheduling (mock search record)',
       sources: [registryId],
       matchReason: `Temporary mock relevance: ${record.relevanceScore}%.`,
-    });
+    };
+  });
 };
 
 const agentCensusSearchCandidates = mockCandidatesFor('agentcensus');
