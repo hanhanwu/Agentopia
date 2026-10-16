@@ -576,6 +576,25 @@ app.innerHTML = `
               <span class="mechanism-orbit mechanism-orbit--ard">${discoveryMechanismMark('ard')}<b>ARD</b></span>
               <span class="mechanism-orbit mechanism-orbit--dns-aid">${discoveryMechanismMark('dns-aid')}<b>DNS-AID</b></span>
               <span class="mechanism-orbit mechanism-orbit--ans">${discoveryMechanismMark('ans')}<b>ANS</b></span>
+              <div class="ard-door-outcome" aria-hidden="true">
+                <svg class="ard-door-outcome__links" viewBox="0 0 600 620" preserveAspectRatio="none">
+                  <defs>
+                    <marker id="ard-door-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+                      <path d="M0 0 8 4 0 8Z" />
+                    </marker>
+                  </defs>
+                  <path class="ard-door-outcome__curve" d="M246 147C264 147 274 182 287 182" />
+                </svg>
+                <span class="ard-endpoint-door ard-endpoint-door--a2a">
+                  <img src="${endpointInterfaceLogo.a2a}" alt="" />
+                </span>
+                <span class="ard-endpoint-door ard-endpoint-door--mcp">
+                  <img src="${endpointInterfaceLogo.mcp}" alt="" />
+                </span>
+                <span class="ard-endpoint-door ard-endpoint-door--openapi">
+                  <img src="${endpointInterfaceLogo.openapi}" alt="" />
+                </span>
+              </div>
             </div>
 
             <div class="discovery-domain-target" data-discovery-domain-target aria-label="Selected domain bookings.darknetian.com">
