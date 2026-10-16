@@ -13,6 +13,12 @@ import {
   type RegistryId,
 } from './activity.ts';
 
+const endpointInterfaceLogo = {
+  a2a: new URL('../../../UI_elements_design/discovery/official-marks/a2a.svg', import.meta.url).href,
+  mcp: new URL('../../../UI_elements_design/discovery/official-marks/mcp.svg', import.meta.url).href,
+  openapi: new URL('../../../UI_elements_design/discovery/official-marks/openapi.svg', import.meta.url).href,
+} as const;
+
 const app = document.querySelector<HTMLDivElement>('#app');
 
 if (!app) {
@@ -196,13 +202,12 @@ const ardDiscoveryMark = (semantic: ArdNodeSemantic) => {
         <text class="ard-stage-mark__word" x="-23" y="6">ARD</text>`,
     },
     'catalog-hint': {
-      viewBox: '-90 -90 270 180',
+      viewBox: '-90 -90 180 180',
       content: `
         <path class="ard-stage-mark__shell" d="M-38-12c0-34 16-55 38-55s38 21 38 55c0 18-7 31-19 42-7 6-10 12-10 20H-9c0-8-3-14-10-20-12-11-19-24-19-42Z"/>
         <path class="ard-stage-mark__line" d="M-13 61h26M-9 72H9M-4 82h8M0-76v-11M-54-56l-9-9M54-56l9-9M-61-14h-13M61-14h13M-51 37l-11 8M51 37l11 8"/>
         <path class="ard-stage-mark__thin" d="M-15 50h30"/><circle class="ard-stage-mark__fill" cy="-76" r="3.5"/>
-        <circle class="ard-stage-mark__fill" cx="-61" cy="-14" r="3.5"/><circle class="ard-stage-mark__fill" cx="61" cy="-14" r="3.5"/>
-        <text class="ard-stage-mark__label" x="82" y="8">DNS Hint</text>`,
+        <circle class="ard-stage-mark__fill" cx="-61" cy="-14" r="3.5"/><circle class="ard-stage-mark__fill" cx="61" cy="-14" r="3.5"/>`,
     },
     catalog: {
       viewBox: '-90 -90 180 180',
@@ -230,6 +235,23 @@ const ardDiscoveryNode = (node: DiscoveryPathNode & { semantic?: string }, modif
   </div>`;
 };
 
+const ardEndpointLeaf = (
+  claim: EndpointMechanism['claims'][number],
+  documentNode: DiscoveryPathNode | undefined,
+) => {
+  const isOpenApi = claim.protocol === 'https' && documentNode?.artifact?.toLowerCase().includes('openapi');
+  const identity = isOpenApi ? 'openapi' : claim.protocol.toLowerCase() as keyof typeof endpointInterfaceLogo;
+  const label = isOpenApi ? 'OpenAPI' : claim.protocol.toUpperCase();
+  const logo = endpointInterfaceLogo[identity];
+
+  return `<article class="ard-endpoint-leaf ard-endpoint-leaf--${identity}"
+    aria-label="${escapeMarkup(label)} discovered endpoint: ${escapeMarkup(claim.endpoint)}">
+    <img class="ard-endpoint-leaf__logo" src="${logo}" alt="" aria-hidden="true" />
+    <strong>${escapeMarkup(label)}</strong>
+    <code>${escapeMarkup(claim.endpoint)}</code>
+  </article>`;
+};
+
 const endpointPathPanel = (mechanism: EndpointMechanism) => {
   const [startNode, ...remainingNodes] = mechanism.path.nodes;
 
@@ -238,24 +260,25 @@ const endpointPathPanel = (mechanism: EndpointMechanism) => {
     const catalogs = projection.catalogs;
     const documentNodes = catalogs.flatMap(({ documents }) => documents);
     return `<article class="discovery-path-panel discovery-path-panel--ard" data-discovery-path-panel="ard">
-      <div class="discovery-path-map">
-        ${discoveryNode(projection.domain)}<i class="discovery-path-connector"></i>
-        <div class="ard-path-route-layout">
-          <div class="ard-path-primary-route">
-            <div class="ard-path-primary-locators${projection.primaryRoutes.length === 1 ? ' ard-path-primary-locators--single' : ''}">
-              ${projection.primaryRoutes.map(({ locator, state }) => ardDiscoveryNode(locator, `discovery-path-node--route-${state}`)).join('')}
-            </div>
-            ${catalogs.length ? `<i class="discovery-path-connector"></i>
-              <div class="discovery-path-catalogs${catalogs.length === 1 ? ' discovery-path-catalogs--single' : ''}">
-                ${catalogs.map(({ catalog }) => ardDiscoveryNode(catalog, projection.hasConflict ? 'discovery-path-node--conflict' : '')).join('')}
-              </div>` : ''}
-          </div>
+      <div class="discovery-path-map discovery-path-map--ard">
+        <div class="ard-path-domain">${discoveryNode(projection.domain)}</div>
+        <i class="ard-path-arrow" aria-hidden="true"></i>
+        <div class="ard-path-square ard-path-square--hint">
+          ${projection.primaryRoutes.map(({ locator, state }) => ardDiscoveryNode(locator, `discovery-path-node--route-${state}`)).join('')}
+          <small>Catalog hint</small>
         </div>
-        ${documentNodes.length ? '<i class="discovery-path-connector"></i>' : ''}
-        <div class="discovery-path-branches">${documentNodes.map((node) => {
-          const claim = mechanism.claims.find(({ sourceNodeId }) => sourceNodeId === node.id);
-          return `<div class="discovery-path-branch">${discoveryNode(node)}${claim ? endpointClaimNode(claim) : ''}</div>`;
-        }).join('')}</div>
+        <i class="ard-path-arrow" aria-hidden="true"></i>
+        <div class="ard-path-square ard-path-square--catalog">
+          ${catalogs.map(({ catalog }) => ardDiscoveryNode(catalog, projection.hasConflict ? 'discovery-path-node--conflict' : '')).join('')}
+          <small>ARD catalog</small>
+        </div>
+        <i class="ard-path-arrow ard-path-arrow--branch-stem" aria-hidden="true"></i>
+        <div class="ard-path-endpoints">
+          ${mechanism.claims.map((claim) => ardEndpointLeaf(
+            claim,
+            documentNodes.find(({ id }) => id === claim.sourceNodeId),
+          )).join('')}
+        </div>
       </div>
     </article>`;
   }
@@ -804,7 +827,23 @@ const registryResultAnimations = new Map<RegistryId, SVGAnimationElement | null>
   ['a2a-registry', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="a2a-registry"]')],
 ]);
 
+const DEV_REPLAY_STORAGE_KEY = 'agentopia.dev.activity-events';
+const shouldRestoreDevReplay = ['127.0.0.1', 'localhost'].includes(window.location.hostname);
 const activityEvents: ActivityEvent[] = [];
+let restoredDevReplay = false;
+if (shouldRestoreDevReplay) {
+  try {
+    const savedEvents = JSON.parse(window.sessionStorage.getItem(DEV_REPLAY_STORAGE_KEY) ?? '[]');
+    if (Array.isArray(savedEvents) && savedEvents.every((event) => (
+      event?.schemaVersion === '1.0' && typeof event?.type === 'string'
+    ))) {
+      activityEvents.push(...savedEvents as ActivityEvent[]);
+      restoredDevReplay = activityEvents.length > 0;
+    }
+  } catch {
+    window.sessionStorage.removeItem(DEV_REPLAY_STORAGE_KEY);
+  }
+}
 let runId = 'run-c3-1';
 let runSequence = 1;
 let eventSequence = 0;
@@ -1078,6 +1117,9 @@ const renderCandidates = (projection: ReturnType<typeof projectDiscovery>) => {
 };
 
 const renderActivity = () => {
+  if (shouldRestoreDevReplay && activityEvents.length > 0) {
+    window.sessionStorage.setItem(DEV_REPLAY_STORAGE_KEY, JSON.stringify(activityEvents));
+  }
   const displayedEvents = eventsAtCursor(activityEvents, eventCursor);
   const projection = projectDiscovery(displayedEvents);
   const liveProjection = projectDiscovery(activityEvents);
@@ -1382,5 +1424,9 @@ chatForm?.addEventListener('submit', (event) => {
   syncSearchComposer();
 });
 
+if (restoredDevReplay) {
+  window.clearTimeout(introTimer);
+  finishIntro();
+}
 syncSearchComposer();
 renderActivity();
