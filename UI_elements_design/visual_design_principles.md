@@ -4,6 +4,16 @@
 - Do not integrate a design into the UI until the user approves it.
 - Store visual design artifacts as `.svg` files only. Do not create PNG, JPG,
   PDF, or duplicate preview files.
+- Save composed UI mockups in `UI_elements_design/draft/`. This includes full
+  screens, panels, flows, and layouts intended to be implemented directly in
+  the UI. The folder is gitignored, so these review drafts remain local and are
+  not published.
+- Save standalone reusable assets—such as logos, icons, and official marks—in
+  the appropriate tracked subfolder outside `draft/`. These assets may be used
+  directly by the production UI.
+- After approval, implement a composed draft in the application. Do not copy
+  the full mockup into a tracked design folder unless it becomes a production
+  asset itself.
 - Make visuals vivid and understandable with shapes first; avoid explanatory
   text unless a short label is required.
 - Give different concepts distinct silhouettes. Do not reuse document-like
