@@ -22,6 +22,13 @@ describe('Scenario 1 endpoint discovery snapshot', () => {
     ]);
     expect(ardProjection.catalogs[0]?.documents).toHaveLength(3);
 
+    const ans = endpointDiscoverySnapshot.mechanisms.find(({ id }) => id === 'ans');
+    expect(ans?.path.nodes.find(({ id }) => id === 'ans-canonical')?.outcome).toBe('pass');
+    expect(ans?.path.nodes.find(({ id }) => id === 'ans-compatibility')?.outcome).toBe('absent');
+    expect(ans?.claims.map(({ protocol, endpoint, sourceNodeId }) => [protocol, endpoint, sourceNodeId])).toEqual([
+      ['mcp', 'https://bookings.darknetian.com/', 'ans-canonical'],
+    ]);
+
     endpointDiscoverySnapshot.mechanisms.forEach((mechanism) => {
       expect(mechanism.status).toBe('found');
       const nodeIds = new Set(mechanism.path.nodes.map(({ id }) => id));

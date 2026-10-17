@@ -237,15 +237,28 @@ const ardDiscoveryNode = (node: DiscoveryPathNode & { semantic?: string }, modif
 
 const dnsAidDiscoveryNode = (node: DiscoveryPathNode) => {
   const outcome = node.outcome === 'pass' ? 'Observed' : node.outcome === 'absent' ? 'Not published' : 'Could not check';
-  return `<div class="dns-aid-discovery-symbol discovery-path-node--${node.outcome}"
+  return `<div class="direct-record-discovery-symbol discovery-path-node--${node.outcome}"
     role="img" aria-label="DNS SVCB: ${outcome}">
-    <svg class="dns-aid-stage-mark" viewBox="0 0 284 284" aria-hidden="true">
+    <svg class="direct-record-stage-mark dns-aid-stage-mark" viewBox="0 0 284 284" aria-hidden="true">
       <path class="dns-aid-stage-mark__shell" d="M142 0 284 142 142 284 0 142Z"/>
       <rect class="dns-aid-stage-mark__record" x="70" y="78" width="144" height="112" rx="10"/>
       <circle class="dns-aid-stage-mark__dot" cx="89" cy="103" r="4"/>
       <circle class="dns-aid-stage-mark__dot" cx="89" cy="129" r="4"/>
       <circle class="dns-aid-stage-mark__dot" cx="89" cy="155" r="4"/>
       <path class="dns-aid-stage-mark__line" d="M102 103H194M102 129H178M102 155H188"/>
+    </svg>
+  </div>`;
+};
+
+const ansTxtDiscoveryNode = (node: DiscoveryPathNode) => {
+  const outcome = node.outcome === 'pass' ? 'Observed' : node.outcome === 'absent' ? 'Not published' : 'Could not check';
+  return `<div class="direct-record-discovery-symbol discovery-path-node--${node.outcome}"
+    role="img" aria-label="ANS TXT: ${outcome}">
+    <svg class="direct-record-stage-mark ans-txt-stage-mark" viewBox="0 0 284 284" aria-hidden="true">
+      <rect class="ans-txt-stage-mark__shell" x="3" y="3" width="278" height="278" rx="48"/>
+      <path class="ans-txt-stage-mark__record" d="M64 85H163L220 142 163 199H64Z"/>
+      <circle class="ans-txt-stage-mark__dot" cx="87" cy="112" r="6"/>
+      <path class="ans-txt-stage-mark__line" d="M103 112H157M87 142H176M87 172H151"/>
     </svg>
   </div>`;
 };
@@ -305,16 +318,35 @@ const endpointPathPanel = (mechanism: EndpointMechanism) => {
   if (mechanism.id === 'dns-aid') {
     const svcbNode = mechanism.path.nodes.find(({ id }) => id === 'dns-aid-current');
     if (!svcbNode) throw new Error('DNS-AID requires the primary domain SVCB observation.');
-    return `<article class="discovery-path-panel discovery-path-panel--dns-aid" data-discovery-path-panel="dns-aid">
-      <div class="discovery-path-map discovery-path-map--dns-aid">
+    return `<article class="discovery-path-panel discovery-path-panel--direct-record" data-discovery-path-panel="dns-aid">
+      <div class="discovery-path-map discovery-path-map--direct-record">
         <div class="ard-path-domain">${discoveryNode(startNode, 'discovery-path-node--domain')}</div>
         <i class="ard-path-arrow" aria-hidden="true"></i>
-        <div class="dns-aid-path-square">
+        <div class="direct-record-path-square">
           ${dnsAidDiscoveryNode(svcbNode)}
           <small>DNS SVCB</small>
         </div>
         <i class="ard-path-arrow" aria-hidden="true"></i>
-        <div class="dns-aid-path-endpoint">
+        <div class="direct-record-path-endpoint">
+          ${mechanism.claims.map((claim) => ardEndpointLeaf(claim, undefined)).join('')}
+        </div>
+      </div>
+    </article>`;
+  }
+
+  if (mechanism.id === 'ans') {
+    const txtNode = mechanism.path.nodes.find(({ id }) => id === 'ans-canonical');
+    if (!txtNode) throw new Error('ANS requires the canonical _ans TXT observation.');
+    return `<article class="discovery-path-panel discovery-path-panel--direct-record" data-discovery-path-panel="ans">
+      <div class="discovery-path-map discovery-path-map--direct-record">
+        <div class="ard-path-domain">${discoveryNode(startNode, 'discovery-path-node--domain')}</div>
+        <i class="ard-path-arrow" aria-hidden="true"></i>
+        <div class="direct-record-path-square">
+          ${ansTxtDiscoveryNode(txtNode)}
+          <small>ANS TXT</small>
+        </div>
+        <i class="ard-path-arrow" aria-hidden="true"></i>
+        <div class="direct-record-path-endpoint">
           ${mechanism.claims.map((claim) => ardEndpointLeaf(claim, undefined)).join('')}
         </div>
       </div>
@@ -635,16 +667,31 @@ app.innerHTML = `
                   </span>
                 </div>
               </div>
-              <div class="dns-aid-door-outcome" aria-hidden="true">
-                <svg class="dns-aid-door-outcome__links" viewBox="0 0 600 620" preserveAspectRatio="none">
+              <div class="single-endpoint-door-outcome single-endpoint-door-outcome--dns-aid" aria-hidden="true">
+                <svg class="single-endpoint-door-outcome__links" viewBox="0 0 600 620" preserveAspectRatio="none">
                   <defs>
                     <marker id="dns-aid-door-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
                       <path d="M0 0 8 4 0 8Z" />
                     </marker>
                   </defs>
-                  <path class="dns-aid-door-outcome__curve" d="M235 308C280 308 294 260 336 260" />
+                  <path d="M235 308C280 308 294 260 336 260" />
                 </svg>
-                <div class="dns-aid-endpoint-door-group">
+                <div class="single-endpoint-door-group">
+                  <span class="ard-endpoint-door ard-endpoint-door--mcp">
+                    <img src="${endpointInterfaceLogo.mcp}" alt="" />
+                  </span>
+                </div>
+              </div>
+              <div class="single-endpoint-door-outcome single-endpoint-door-outcome--ans" aria-hidden="true">
+                <svg class="single-endpoint-door-outcome__links" viewBox="0 0 600 620" preserveAspectRatio="none">
+                  <defs>
+                    <marker id="ans-door-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+                      <path d="M0 0 8 4 0 8Z" />
+                    </marker>
+                  </defs>
+                  <path d="M240 469C280 469 296 415 336 415" />
+                </svg>
+                <div class="single-endpoint-door-group">
                   <span class="ard-endpoint-door ard-endpoint-door--mcp">
                     <img src="${endpointInterfaceLogo.mcp}" alt="" />
                   </span>
