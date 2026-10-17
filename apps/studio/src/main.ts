@@ -246,6 +246,10 @@ const ardEndpointLeaf = (
 
   return `<article class="ard-endpoint-leaf ard-endpoint-leaf--${identity}"
     aria-label="${escapeMarkup(label)} discovered endpoint: ${escapeMarkup(claim.endpoint)}">
+    <svg class="ard-endpoint-leaf__arrow" viewBox="0 0 32 12" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="0" y1="6" x2="22" y2="6" />
+      <polygon points="22,1 32,6 22,11" />
+    </svg>
     <img class="ard-endpoint-leaf__logo" src="${logo}" alt="" aria-hidden="true" />
     <strong>${escapeMarkup(label)}</strong>
     <code>${escapeMarkup(claim.endpoint)}</code>
@@ -285,7 +289,7 @@ const endpointPathPanel = (mechanism: EndpointMechanism) => {
 
   return `<article class="discovery-path-panel discovery-path-panel--${mechanism.id}" data-discovery-path-panel="${mechanism.id}">
     <div class="discovery-path-map discovery-path-map--dns">
-      ${discoveryNode(startNode)}<i class="discovery-path-connector"></i>
+      ${discoveryNode(startNode, 'discovery-path-node--domain')}<i class="discovery-path-connector"></i>
       <div class="discovery-path-fork">${remainingNodes.map((node) => discoveryNode(node)).join('')}</div>
       <i class="discovery-path-connector"></i>${mechanism.claims.map(endpointClaimNode).join('')}
     </div>
