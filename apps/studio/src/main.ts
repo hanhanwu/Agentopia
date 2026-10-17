@@ -235,6 +235,21 @@ const ardDiscoveryNode = (node: DiscoveryPathNode & { semantic?: string }, modif
   </div>`;
 };
 
+const dnsAidDiscoveryNode = (node: DiscoveryPathNode) => {
+  const outcome = node.outcome === 'pass' ? 'Observed' : node.outcome === 'absent' ? 'Not published' : 'Could not check';
+  return `<div class="dns-aid-discovery-symbol discovery-path-node--${node.outcome}"
+    role="img" aria-label="DNS SVCB: ${outcome}">
+    <svg class="dns-aid-stage-mark" viewBox="0 0 284 284" aria-hidden="true">
+      <path class="dns-aid-stage-mark__shell" d="M142 0 284 142 142 284 0 142Z"/>
+      <rect class="dns-aid-stage-mark__record" x="70" y="78" width="144" height="112" rx="10"/>
+      <circle class="dns-aid-stage-mark__dot" cx="89" cy="103" r="4"/>
+      <circle class="dns-aid-stage-mark__dot" cx="89" cy="129" r="4"/>
+      <circle class="dns-aid-stage-mark__dot" cx="89" cy="155" r="4"/>
+      <path class="dns-aid-stage-mark__line" d="M102 103H194M102 129H178M102 155H188"/>
+    </svg>
+  </div>`;
+};
+
 const ardEndpointLeaf = (
   claim: EndpointMechanism['claims'][number],
   documentNode: DiscoveryPathNode | undefined,
@@ -282,6 +297,25 @@ const endpointPathPanel = (mechanism: EndpointMechanism) => {
             claim,
             documentNodes.find(({ id }) => id === claim.sourceNodeId),
           )).join('')}
+        </div>
+      </div>
+    </article>`;
+  }
+
+  if (mechanism.id === 'dns-aid') {
+    const svcbNode = mechanism.path.nodes.find(({ id }) => id === 'dns-aid-current');
+    if (!svcbNode) throw new Error('DNS-AID requires the primary domain SVCB observation.');
+    return `<article class="discovery-path-panel discovery-path-panel--dns-aid" data-discovery-path-panel="dns-aid">
+      <div class="discovery-path-map discovery-path-map--dns-aid">
+        <div class="ard-path-domain">${discoveryNode(startNode, 'discovery-path-node--domain')}</div>
+        <i class="ard-path-arrow" aria-hidden="true"></i>
+        <div class="dns-aid-path-square">
+          ${dnsAidDiscoveryNode(svcbNode)}
+          <small>DNS SVCB</small>
+        </div>
+        <i class="ard-path-arrow" aria-hidden="true"></i>
+        <div class="dns-aid-path-endpoint">
+          ${mechanism.claims.map((claim) => ardEndpointLeaf(claim, undefined)).join('')}
         </div>
       </div>
     </article>`;
@@ -587,17 +621,34 @@ app.innerHTML = `
                       <path d="M0 0 8 4 0 8Z" />
                     </marker>
                   </defs>
-                  <path class="ard-door-outcome__curve" d="M246 147C264 147 274 182 287 182" />
+                  <path class="ard-door-outcome__curve" d="M235 147C252 147 260 176 270 182" />
                 </svg>
-                <span class="ard-endpoint-door ard-endpoint-door--a2a">
-                  <img src="${endpointInterfaceLogo.a2a}" alt="" />
-                </span>
-                <span class="ard-endpoint-door ard-endpoint-door--mcp">
-                  <img src="${endpointInterfaceLogo.mcp}" alt="" />
-                </span>
-                <span class="ard-endpoint-door ard-endpoint-door--openapi">
-                  <img src="${endpointInterfaceLogo.openapi}" alt="" />
-                </span>
+                <div class="ard-endpoint-door-group">
+                  <span class="ard-endpoint-door ard-endpoint-door--a2a">
+                    <img src="${endpointInterfaceLogo.a2a}" alt="" />
+                  </span>
+                  <span class="ard-endpoint-door ard-endpoint-door--mcp">
+                    <img src="${endpointInterfaceLogo.mcp}" alt="" />
+                  </span>
+                  <span class="ard-endpoint-door ard-endpoint-door--openapi">
+                    <img src="${endpointInterfaceLogo.openapi}" alt="" />
+                  </span>
+                </div>
+              </div>
+              <div class="dns-aid-door-outcome" aria-hidden="true">
+                <svg class="dns-aid-door-outcome__links" viewBox="0 0 600 620" preserveAspectRatio="none">
+                  <defs>
+                    <marker id="dns-aid-door-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+                      <path d="M0 0 8 4 0 8Z" />
+                    </marker>
+                  </defs>
+                  <path class="dns-aid-door-outcome__curve" d="M235 308C280 308 294 260 336 260" />
+                </svg>
+                <div class="dns-aid-endpoint-door-group">
+                  <span class="ard-endpoint-door ard-endpoint-door--mcp">
+                    <img src="${endpointInterfaceLogo.mcp}" alt="" />
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -1071,7 +1122,7 @@ endpointPathButtons.forEach((button) => {
   button.disabled = true;
   button.addEventListener('click', () => {
     if (endpointPathStage?.dataset.explorable !== 'true') return;
-    selectEndpointPath(button.dataset.endpointPathSelect as DiscoveryMechanismId);
+    setEndpointInspectionPhase(button.dataset.endpointPathSelect as DiscoveryMechanismId);
   });
 });
 
