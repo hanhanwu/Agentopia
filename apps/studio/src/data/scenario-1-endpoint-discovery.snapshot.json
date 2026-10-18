@@ -327,25 +327,25 @@
         "ard"
       ],
       "validation": {
-        "status": "temporarily-unavailable",
-        "latestAttemptStatus": "temporarily-unavailable",
+        "status": "usable",
+        "latestAttemptStatus": "usable",
         "latestMethod": "mcp-initialize",
-        "reason": "mcp-initialize was rate-limited (HTTP 429).",
-        "everUsable": false,
+        "reason": "This exact endpoint previously passed protocol validation; no further probe is required.",
+        "everUsable": true,
         "attempts": [
           {
-            "observedAt": "2026-10-13T04:36:45Z",
+            "observedAt": "2026-10-13T03:09:38Z",
             "method": "mcp-initialize",
-            "status": "temporarily-unavailable",
-            "reason": "mcp-initialize was rate-limited (HTTP 429).",
-            "httpStatus": 429
+            "status": "usable",
+            "reason": "MCP initialize succeeded.",
+            "httpStatus": 200
           }
         ]
       }
     }
   ],
   "decision": {
-    "selectedDoorId": null,
-    "publicReason": "No endpoint was selected because every interaction attempt failed."
+    "selectedDoorId": "door-4",
+    "publicReason": "Selected because this endpoint passed a non-mutating protocol check."
   }
 }

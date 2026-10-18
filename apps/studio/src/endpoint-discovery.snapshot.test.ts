@@ -46,10 +46,11 @@ describe('Scenario 1 endpoint discovery snapshot', () => {
     });
 
     expect(endpointDiscoverySnapshot.doors).toHaveLength(4);
-    expect(endpointDiscoverySnapshot.doors.every(({ validation }) => (
-      validation.latestAttemptStatus !== 'usable' && !validation.everUsable
-    ))).toBe(true);
-    expect(endpointDiscoverySnapshot.decision.selectedDoorId).toBeNull();
+    expect(endpointDiscoverySnapshot.doors.find(({ id }) => id === 'door-4')?.validation).toMatchObject({
+      latestAttemptStatus: 'usable',
+      everUsable: true,
+    });
+    expect(endpointDiscoverySnapshot.decision.selectedDoorId).toBe('door-4');
   });
 
   it('keeps Fabio’s real DNS-AID path as the usable comparison case', () => {

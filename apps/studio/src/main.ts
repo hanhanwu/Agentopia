@@ -2,7 +2,15 @@ import './styles.css';
 import { agents, type Agent } from './agents.ts';
 import registrySearchMock from './data/registry-search.mock.json';
 import endpointDiscoverySnapshot from './data/scenario-1-endpoint-discovery.snapshot.json';
+import fabioEndpointDiscoverySnapshot from './data/scenario-1-fabio-endpoint-discovery.snapshot.json';
 import { projectArdDiscoveryPath, type ArdNodeSemantic } from './endpoint-discovery-visual.ts';
+import {
+  projectEndpointInteractions,
+  transitionEndpointInteractionPhase,
+  type EndpointInterfaceId,
+  type EndpointInteractionPhase,
+  type ProjectedEndpointInteraction,
+} from './endpoint-interaction.ts';
 import {
   eventsAtCursor,
   projectDiscovery,
@@ -139,7 +147,7 @@ const SEARCH_COMPLETE_DELAY = CONSOLIDATION_START_DELAY
 const ENDPOINT_DISCOVERY_DELAY = SEARCH_COMPLETE_DELAY + 3500;
 const ENDPOINT_INTERACTION_DELAY = ENDPOINT_DISCOVERY_DELAY + 19000;
 
-type DiscoveryMechanismId = (typeof endpointDiscoverySnapshot.mechanisms)[number]['id'];
+type DiscoveryMechanismId = EndpointInteraction['mechanism'];
 
 const discoveryMechanismName: Record<DiscoveryMechanismId, string> = {
   ard: 'ARD',
@@ -147,35 +155,8 @@ const discoveryMechanismName: Record<DiscoveryMechanismId, string> = {
   ans: 'ANS',
 };
 
-const endpointAttemptName: Record<string, string> = {
-  'a2a-message-send': 'A2A message/send',
-  'https-post': 'HTTPS POST',
-  'mcp-initialize': 'MCP initialize',
-};
-
-const endpointInteractions: EndpointInteraction[] = endpointDiscoverySnapshot.mechanisms.flatMap((mechanism) => (
-  mechanism.claims.map((claim) => {
-    const door = endpointDiscoverySnapshot.doors.find((candidate) => (
-      candidate.protocol === claim.protocol && candidate.endpoint === claim.endpoint
-    ));
-    const attempts = door?.validation.attempts.map(({ method }) => endpointAttemptName[method] ?? method) ?? [];
-    const latestAttempt = door?.validation.attempts[door.validation.attempts.length - 1];
-
-    return {
-      mechanism: mechanism.id as EndpointInteraction['mechanism'],
-      endpoint: claim.endpoint,
-      attempts: attempts.length > 0 ? attempts : ['No compatible attempt'],
-      outcome: door?.validation.latestAttemptStatus === 'usable' ? 'success' : 'failed',
-      status: latestAttempt?.httpStatus ? `HTTP ${latestAttempt.httpStatus}` : 'NO RESPONSE',
-    };
-  })
-));
-
-const endpointOutcome = (mechanism: DiscoveryMechanismId, endpoint: string): 'success' | 'failed' => (
-  endpointInteractions.find((interaction) => (
-    interaction.mechanism === mechanism && interaction.endpoint === endpoint
-  ))?.outcome ?? 'failed'
-);
+const bookingsEndpointInteractions = projectEndpointInteractions(endpointDiscoverySnapshot);
+const fabioEndpointInteractions = projectEndpointInteractions(fabioEndpointDiscoverySnapshot);
 
 const discoveryMechanismMark = (id: DiscoveryMechanismId, className = '') => {
   const artwork: Record<DiscoveryMechanismId, string> = {
@@ -197,13 +178,17 @@ const discoveryMechanismMark = (id: DiscoveryMechanismId, className = '') => {
   return `<svg class="mechanism-mark mechanism-mark--${id} ${className}" viewBox="-90 -90 180 180" aria-hidden="true">${artwork[id]}</svg>`;
 };
 
-type EndpointInterfaceId = keyof typeof endpointInterfaceLogo;
+type EndpointAgentChoice = 'bookings' | 'fabio';
 
-const endpointInteractionDoor = (interfaceId: EndpointInterfaceId, outcome: 'success' | 'failed') => `
+const endpointInteractionDoor = (
+  interfaceId: EndpointInterfaceId,
+  outcome: 'success' | 'failed',
+  agent: EndpointAgentChoice,
+) => `
   <span class="endpoint-interaction-door endpoint-interaction-door--${interfaceId}" role="img" aria-label="${interfaceId.toUpperCase()} endpoint ${outcome}">
     <span class="endpoint-interaction-door__result endpoint-interaction-door__result--${outcome}" aria-hidden="true">
       ${outcome === 'success'
-        ? `<svg viewBox="0 0 276 270">${serviceAgentArtwork(1)}</svg>`
+        ? `<svg class="endpoint-interaction-door__agent endpoint-interaction-door__agent--${agent}" viewBox="0 0 276 270">${serviceAgentArtwork(1)}</svg>`
         : '<i></i>'}
     </span>
     <span class="ard-endpoint-door ard-endpoint-door--${interfaceId} endpoint-interaction-door__leaf">
@@ -211,38 +196,58 @@ const endpointInteractionDoor = (interfaceId: EndpointInterfaceId, outcome: 'suc
     </span>
   </span>`;
 
+const endpointInteractionRows = (
+  interactions: ProjectedEndpointInteraction[],
+  agent: EndpointAgentChoice,
+) => (['ard', 'dns-aid', 'ans'] as DiscoveryMechanismId[]).map((mechanism) => {
+  const mechanismInteractions = interactions.filter((interaction) => interaction.mechanism === mechanism);
+  const doorCount = Math.max(1, mechanismInteractions.length);
+
+  return `
+    <section class="endpoint-interaction-row endpoint-interaction-row--${mechanism}">
+      <div class="endpoint-interaction-door-block endpoint-interaction-door-block--${doorCount}">
+        ${mechanismInteractions.map((interaction) => (
+          endpointInteractionDoor(interaction.interfaceId, interaction.outcome, agent)
+        )).join('')}
+      </div>
+      <span class="endpoint-interaction-mechanism">
+        ${discoveryMechanismMark(mechanism)}
+        <strong>${discoveryMechanismName[mechanism]}</strong>
+      </span>
+    </section>`;
+}).join('');
+
 const endpointInteractionVisual = () => `
   <div class="endpoint-interaction-visual" data-endpoint-interaction-visual aria-hidden="true">
     <div class="endpoint-interaction-spell">
       <strong>Open, Sesame!</strong>
       <svg viewBox="0 0 80 58" aria-hidden="true"><path d="M39 57C58 44 21 33 40 16" /></svg>
     </div>
-    <section class="endpoint-interaction-row endpoint-interaction-row--ard">
-      <div class="endpoint-interaction-door-block">
-        ${endpointInteractionDoor('a2a', endpointOutcome('ard', 'https://bookings.darknetian.com/a2a'))}
-        ${endpointInteractionDoor('mcp', endpointOutcome('ard', 'https://bookings.darknetian.com/mcp'))}
-        ${endpointInteractionDoor('openapi', endpointOutcome('ard', 'https://bookings.darknetian.com/ask'))}
+    <div data-endpoint-interaction-rows>
+      ${endpointInteractionRows(bookingsEndpointInteractions, 'bookings')}
+    </div>
+    <div class="endpoint-fallback" data-endpoint-fallback hidden>
+      <div class="agent-bubble endpoint-fallback__prompt" role="status" aria-live="polite">
+        <strong>Communication choice is limited, let me find you a better agent?</strong>
+        <div class="endpoint-fallback__actions" role="group" aria-label="Find a better agent">
+          <button type="button" data-endpoint-fallback-yes>YES</button>
+          <button type="button" data-endpoint-fallback-no>NO</button>
+        </div>
       </div>
-      <span class="endpoint-interaction-mechanism">
-        ${discoveryMechanismMark('ard')}
-        <strong>ARD</strong>
-      </span>
-    </section>
-    <section class="endpoint-interaction-row endpoint-interaction-row--dns-aid">
-      <div class="endpoint-interaction-door-block">${endpointInteractionDoor('mcp', endpointOutcome('dns-aid', 'https://bookings.darknetian.com/'))}</div>
-      <span class="endpoint-interaction-mechanism">
-        ${discoveryMechanismMark('dns-aid')}
-        <strong>DNS-AID</strong>
-      </span>
-    </section>
-    <section class="endpoint-interaction-row endpoint-interaction-row--ans">
-      <div class="endpoint-interaction-door-block">${endpointInteractionDoor('mcp', endpointOutcome('ans', 'https://bookings.darknetian.com/'))}</div>
-      <span class="endpoint-interaction-mechanism">
-        ${discoveryMechanismMark('ans')}
-        <strong>ANS</strong>
-      </span>
-    </section>
+    </div>
   </div>`;
+
+const endpointInteractionTableRows = (interactions: ProjectedEndpointInteraction[]) => interactions.map((interaction) => `
+  <div class="endpoint-interaction-record endpoint-interaction-record--${interaction.mechanism}" role="row">
+    <strong role="cell">${discoveryMechanismName[interaction.mechanism]}</strong>
+    <code role="cell">${interaction.endpoint}</code>
+    <div role="cell">${interaction.attempts.length > 1
+      ? `<ul>${interaction.attempts.map((attempt) => `<li>${attempt}</li>`).join('')}</ul>`
+      : `<span>${interaction.attempts[0]}</span>`}</div>
+    <p class="endpoint-interaction-record__result endpoint-interaction-record__result--${interaction.outcome}" role="cell">
+      <b>${interaction.outcome.toUpperCase()}</b><small>${interaction.status}</small>
+    </p>
+  </div>`).join('');
 
 const endpointInteractionTable = () => `
   <section class="endpoint-interaction-board" data-endpoint-interaction-board hidden>
@@ -251,17 +256,9 @@ const endpointInteractionTable = () => `
       <div class="endpoint-interaction-table__header" role="row">
         <span>Mechanism</span><span>Endpoint</span><span>Attempt</span><span>Result</span>
       </div>
-      ${endpointInteractions.map((interaction) => `
-        <div class="endpoint-interaction-record endpoint-interaction-record--${interaction.mechanism}" role="row">
-          <strong role="cell">${discoveryMechanismName[interaction.mechanism]}</strong>
-          <code role="cell">${interaction.endpoint}</code>
-          <div role="cell">${interaction.attempts.length > 1
-            ? `<ul>${interaction.attempts.map((attempt) => `<li>${attempt}</li>`).join('')}</ul>`
-            : `<span>${interaction.attempts[0]}</span>`}</div>
-          <p class="endpoint-interaction-record__result endpoint-interaction-record__result--${interaction.outcome}" role="cell">
-            <b>${interaction.outcome.toUpperCase()}</b><small>${interaction.status}</small>
-          </p>
-        </div>`).join('')}
+      <div data-endpoint-interaction-table-body>
+        ${endpointInteractionTableRows(bookingsEndpointInteractions)}
+      </div>
     </div>
   </section>`;
 
@@ -466,15 +463,18 @@ const endpointDiscoveryPathStage = () => `
   <div class="endpoint-path-explorer">
     <nav class="endpoint-path-tabs" data-endpoint-path-tabs aria-label="Explore discovery paths" hidden>
       <div>
-        ${endpointDiscoverySnapshot.mechanisms.map(({ id }) => `
+        ${endpointDiscoverySnapshot.mechanisms.map(({ id: rawId }) => {
+          const id = rawId as DiscoveryMechanismId;
+          return `
           <button type="button" data-endpoint-path-select="${id}" aria-pressed="false" hidden>
             ${discoveryMechanismMark(id)}<strong>${discoveryMechanismName[id]}</strong>
-          </button>`).join('')}
+          </button>`;
+        }).join('')}
       </div>
     </nav>
     <section class="endpoint-path-stage" data-endpoint-path-stage hidden aria-live="polite">
       <div class="endpoint-path-stage__waiting">
-        <div>${endpointDiscoverySnapshot.mechanisms.map(({ id }) => discoveryMechanismMark(id)).join('')}</div>
+        <div>${endpointDiscoverySnapshot.mechanisms.map(({ id }) => discoveryMechanismMark(id as DiscoveryMechanismId)).join('')}</div>
         <strong>Mapping three discovery mechanisms</strong>
         <span>The first path will open after the discovery beams stabilize.</span>
       </div>
@@ -1046,7 +1046,13 @@ const behindCurrent = document.querySelector<HTMLElement>('[data-behind-current]
 const endpointPathStage = document.querySelector<HTMLElement>('[data-endpoint-path-stage]');
 const endpointPathTabs = document.querySelector<HTMLElement>('[data-endpoint-path-tabs]');
 const endpointPathButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-endpoint-path-select]'));
+const endpointInteractionVisualElement = document.querySelector<HTMLElement>('[data-endpoint-interaction-visual]');
+const endpointInteractionRowsElement = document.querySelector<HTMLElement>('[data-endpoint-interaction-rows]');
 const endpointInteractionBoard = document.querySelector<HTMLElement>('[data-endpoint-interaction-board]');
+const endpointInteractionTableBody = document.querySelector<HTMLElement>('[data-endpoint-interaction-table-body]');
+const endpointFallback = document.querySelector<HTMLElement>('[data-endpoint-fallback]');
+const endpointFallbackYes = document.querySelector<HTMLButtonElement>('[data-endpoint-fallback-yes]');
+const endpointFallbackNo = document.querySelector<HTMLButtonElement>('[data-endpoint-fallback-no]');
 const registryResultAnimations = new Map<RegistryId, SVGAnimationElement | null>([
   ['agentcensus', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="agentcensus"]')],
   ['a2a-registry', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="a2a-registry"]')],
@@ -1079,6 +1085,9 @@ let renderedStep = 0;
 let endpointBeamAlignmentTimer: number | null = null;
 let userFlowAlignmentTimer: number | null = null;
 let endpointInspectionTimers: number[] = [];
+let endpointFallbackTimer: number | null = null;
+let endpointInteractionAgent: EndpointAgentChoice = 'bookings';
+let endpointInteractionPhase: EndpointInteractionPhase = 'idle';
 
 const bookingCandidate: Candidate = {
   id: 'bookings-service',
@@ -1314,6 +1323,77 @@ const restartEndpointInteraction = () => {
   animatedElements.forEach((element) => { element.style.removeProperty('animation'); });
 };
 
+const clearEndpointFallbackTimer = () => {
+  if (endpointFallbackTimer === null) return;
+  window.clearTimeout(endpointFallbackTimer);
+  endpointFallbackTimer = null;
+};
+
+const renderEndpointInteractionAgent = (agent: EndpointAgentChoice) => {
+  const interactions = agent === 'fabio' ? fabioEndpointInteractions : bookingsEndpointInteractions;
+  const snapshot = agent === 'fabio' ? fabioEndpointDiscoverySnapshot : endpointDiscoverySnapshot;
+  endpointInteractionAgent = agent;
+  if (endpointInteractionRowsElement) {
+    endpointInteractionRowsElement.innerHTML = endpointInteractionRows(interactions, agent);
+  }
+  if (endpointInteractionTableBody) {
+    endpointInteractionTableBody.innerHTML = endpointInteractionTableRows(interactions);
+  }
+  endpointInteractionBoard?.querySelector<HTMLElement>('.endpoint-interaction-table')
+    ?.setAttribute('aria-label', `Endpoint interaction attempts for ${snapshot.agent.name}`);
+  setText('[data-activity-detail]', `Mochi tested every advertised endpoint for ${snapshot.agent.domain}.`);
+  setText('[data-behind-detail]', `Mochi tested every advertised endpoint for ${snapshot.agent.domain}.`);
+  if (worldScene) worldScene.dataset.endpointAgent = agent;
+};
+
+const hideEndpointFallback = () => {
+  if (endpointFallback) endpointFallback.hidden = true;
+};
+
+const showEndpointFallback = () => {
+  if (worldScene?.dataset.step !== '9' || endpointInteractionAgent !== 'bookings') return;
+  endpointInteractionPhase = transitionEndpointInteractionPhase(endpointInteractionPhase, 'bookings-finished');
+  if (worldScene) worldScene.dataset.endpointInteractionPhase = endpointInteractionPhase;
+  if (endpointFallback) endpointFallback.hidden = false;
+};
+
+const startEndpointInteractionExperience = () => {
+  clearEndpointFallbackTimer();
+  endpointInteractionPhase = transitionEndpointInteractionPhase(endpointInteractionPhase, 'reset');
+  if (worldScene) worldScene.dataset.endpointInteractionPhase = endpointInteractionPhase;
+  hideEndpointFallback();
+  renderEndpointInteractionAgent('bookings');
+  window.requestAnimationFrame(restartEndpointInteraction);
+  endpointFallbackTimer = window.setTimeout(
+    showEndpointFallback,
+    prefersReducedMotion ? 450 : 6200,
+  );
+};
+
+const stopEndpointInteractionExperience = () => {
+  clearEndpointFallbackTimer();
+  endpointInteractionPhase = transitionEndpointInteractionPhase(endpointInteractionPhase, 'leave');
+  if (worldScene) {
+    delete worldScene.dataset.endpointInteractionPhase;
+    delete worldScene.dataset.endpointAgent;
+  }
+  hideEndpointFallback();
+};
+
+endpointFallbackYes?.addEventListener('click', () => {
+  if (endpointInteractionPhase !== 'offering') return;
+  clearEndpointFallbackTimer();
+  endpointInteractionPhase = transitionEndpointInteractionPhase(endpointInteractionPhase, 'accept');
+  if (worldScene) worldScene.dataset.endpointInteractionPhase = endpointInteractionPhase;
+  hideEndpointFallback();
+  renderEndpointInteractionAgent('fabio');
+});
+
+endpointFallbackNo?.addEventListener('click', () => {
+  endpointInteractionPhase = transitionEndpointInteractionPhase(endpointInteractionPhase, 'decline');
+  // The declined state intentionally preserves Nic's current result and prompt.
+});
+
 const registryStatusLabel = (status: ReturnType<typeof projectDiscovery>['registries'][RegistryId]) => {
   if (status.status === 'searching') return 'Searching…';
   if (status.status === 'results') return `${status.resultCount ?? 0} result`;
@@ -1410,8 +1490,11 @@ const renderActivity = () => {
   if (consolidationBoard) consolidationBoard.hidden = !isConsolidating;
   if (endpointPathStage) endpointPathStage.hidden = !isDiscoveringEndpoints;
   if (endpointInteractionBoard) endpointInteractionBoard.hidden = !isInteractingEndpoints;
+  endpointInteractionVisualElement?.setAttribute('aria-hidden', String(!isInteractingEndpoints));
   if (isDiscoveringEndpoints && renderedStep !== 8) startEndpointInspection();
   if (!isDiscoveringEndpoints && renderedStep === 8) clearEndpointInspection();
+  if (isInteractingEndpoints && renderedStep !== 9) startEndpointInteractionExperience();
+  if (!isInteractingEndpoints && renderedStep === 9) stopEndpointInteractionExperience();
   if (behindCurrent) behindCurrent.hidden = isRegistryWork || isConsolidating || projection.step >= 7;
   if (projection.step === 1 && renderedStep !== 1) requestFlightAnimation?.beginElement();
   const syncPhase = document.querySelector<HTMLElement>('.sync-phase');
@@ -1560,9 +1643,10 @@ const renderActivity = () => {
         }
 
         if (event.type === 'endpoints.interaction-completed') {
+          const isReplayingCurrentStep = renderedStep === 9;
           eventCursor = index;
           renderActivity();
-          window.requestAnimationFrame(restartEndpointInteraction);
+          if (isReplayingCurrentStep) window.requestAnimationFrame(startEndpointInteractionExperience);
           return;
         }
 
@@ -1602,6 +1686,7 @@ const schedule = (delay: number, callback: () => void) => {
 
 const sendTaskToMochi = (message: string) => {
   clearTimelineReplay();
+  stopEndpointInteractionExperience();
   scheduledTimers.forEach((timer) => window.clearTimeout(timer));
   scheduledTimers = [];
   activityEvents.splice(0);
@@ -1632,7 +1717,7 @@ const sendTaskToMochi = (message: string) => {
   addStep(CONSOLIDATION_START_DELAY, () => ({ ...nextEnvelope(), type: 'candidates.normalized', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { reportedCount: 8, uniqueCount: 8 } }));
   addStep(SEARCH_COMPLETE_DELAY, () => ({ ...nextEnvelope(), type: 'search.completed', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { candidates: [bookingCandidate], rankingMethod: 'Relevance to the derived intent using reported registry metadata' } }));
   addStep(ENDPOINT_DISCOVERY_DELAY, () => ({ ...nextEnvelope(), type: 'endpoints.discovery-started', source: 'reported', actorId: 'personal-assistant', subjectId: 'bookings-service', causalParentId: parentEventId, payload: { domain: bookingCandidate.domain, mechanisms: ['ard', 'dns-aid', 'ans'] } }));
-  addStep(ENDPOINT_INTERACTION_DELAY, () => ({ ...nextEnvelope(), type: 'endpoints.interaction-completed', source: 'observed', actorId: 'personal-assistant', subjectId: 'bookings-service', causalParentId: parentEventId, payload: { domain: bookingCandidate.domain, interactions: endpointInteractions } }));
+  addStep(ENDPOINT_INTERACTION_DELAY, () => ({ ...nextEnvelope(), type: 'endpoints.interaction-completed', source: 'observed', actorId: 'personal-assistant', subjectId: 'bookings-service', causalParentId: parentEventId, payload: { domain: bookingCandidate.domain, interactions: bookingsEndpointInteractions } }));
 };
 
 returnLiveButton?.addEventListener('click', () => {
