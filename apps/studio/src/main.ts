@@ -147,13 +147,35 @@ const discoveryMechanismName: Record<DiscoveryMechanismId, string> = {
   ans: 'ANS',
 };
 
-const endpointInteractions: EndpointInteraction[] = [
-  { mechanism: 'ard', endpoint: 'https://bookings.darknetian.com/a2a', attempts: ['A2A message/send'], outcome: 'failed', status: 'HTTP 429' },
-  { mechanism: 'ard', endpoint: 'https://bookings.darknetian.com/mcp', attempts: ['MCP initialize'], outcome: 'success', status: 'HTTP 200' },
-  { mechanism: 'ard', endpoint: 'https://bookings.darknetian.com/ask', attempts: ['HTTPS POST'], outcome: 'failed', status: 'HTTP 429' },
-  { mechanism: 'dns-aid', endpoint: 'https://bookings.darknetian.com/', attempts: ['MCP initialize'], outcome: 'failed', status: 'HTTP 404' },
-  { mechanism: 'ans', endpoint: 'https://bookings.darknetian.com/', attempts: ['MCP initialize'], outcome: 'failed', status: 'HTTP 404' },
-];
+const endpointAttemptName: Record<string, string> = {
+  'a2a-message-send': 'A2A message/send',
+  'https-post': 'HTTPS POST',
+  'mcp-initialize': 'MCP initialize',
+};
+
+const endpointInteractions: EndpointInteraction[] = endpointDiscoverySnapshot.mechanisms.flatMap((mechanism) => (
+  mechanism.claims.map((claim) => {
+    const door = endpointDiscoverySnapshot.doors.find((candidate) => (
+      candidate.protocol === claim.protocol && candidate.endpoint === claim.endpoint
+    ));
+    const attempts = door?.validation.attempts.map(({ method }) => endpointAttemptName[method] ?? method) ?? [];
+    const latestAttempt = door?.validation.attempts[door.validation.attempts.length - 1];
+
+    return {
+      mechanism: mechanism.id as EndpointInteraction['mechanism'],
+      endpoint: claim.endpoint,
+      attempts: attempts.length > 0 ? attempts : ['No compatible attempt'],
+      outcome: door?.validation.latestAttemptStatus === 'usable' ? 'success' : 'failed',
+      status: latestAttempt?.httpStatus ? `HTTP ${latestAttempt.httpStatus}` : 'NO RESPONSE',
+    };
+  })
+));
+
+const endpointOutcome = (mechanism: DiscoveryMechanismId, endpoint: string): 'success' | 'failed' => (
+  endpointInteractions.find((interaction) => (
+    interaction.mechanism === mechanism && interaction.endpoint === endpoint
+  ))?.outcome ?? 'failed'
+);
 
 const discoveryMechanismMark = (id: DiscoveryMechanismId, className = '') => {
   const artwork: Record<DiscoveryMechanismId, string> = {
@@ -197,9 +219,9 @@ const endpointInteractionVisual = () => `
     </div>
     <section class="endpoint-interaction-row endpoint-interaction-row--ard">
       <div class="endpoint-interaction-door-block">
-        ${endpointInteractionDoor('a2a', 'failed')}
-        ${endpointInteractionDoor('mcp', 'success')}
-        ${endpointInteractionDoor('openapi', 'failed')}
+        ${endpointInteractionDoor('a2a', endpointOutcome('ard', 'https://bookings.darknetian.com/a2a'))}
+        ${endpointInteractionDoor('mcp', endpointOutcome('ard', 'https://bookings.darknetian.com/mcp'))}
+        ${endpointInteractionDoor('openapi', endpointOutcome('ard', 'https://bookings.darknetian.com/ask'))}
       </div>
       <span class="endpoint-interaction-mechanism">
         ${discoveryMechanismMark('ard')}
@@ -207,14 +229,14 @@ const endpointInteractionVisual = () => `
       </span>
     </section>
     <section class="endpoint-interaction-row endpoint-interaction-row--dns-aid">
-      <div class="endpoint-interaction-door-block">${endpointInteractionDoor('mcp', 'failed')}</div>
+      <div class="endpoint-interaction-door-block">${endpointInteractionDoor('mcp', endpointOutcome('dns-aid', 'https://bookings.darknetian.com/'))}</div>
       <span class="endpoint-interaction-mechanism">
         ${discoveryMechanismMark('dns-aid')}
         <strong>DNS-AID</strong>
       </span>
     </section>
     <section class="endpoint-interaction-row endpoint-interaction-row--ans">
-      <div class="endpoint-interaction-door-block">${endpointInteractionDoor('mcp', 'failed')}</div>
+      <div class="endpoint-interaction-door-block">${endpointInteractionDoor('mcp', endpointOutcome('ans', 'https://bookings.darknetian.com/'))}</div>
       <span class="endpoint-interaction-mechanism">
         ${discoveryMechanismMark('ans')}
         <strong>ANS</strong>

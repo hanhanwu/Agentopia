@@ -4,7 +4,7 @@ import fabioEndpointDiscoverySnapshot from './data/scenario-1-fabio-endpoint-dis
 import { projectArdDiscoveryPath } from './endpoint-discovery-visual.ts';
 
 describe('Scenario 1 endpoint discovery snapshot', () => {
-  it('contains the real public output needed by the three Step 6 panels', () => {
+  it('contains the Agentopia scenario output needed by the three Step 6 panels', () => {
     expect(endpointDiscoverySnapshot.schemaVersion).toBe(2);
     expect(endpointDiscoverySnapshot.agent.domain).toBe('bookings.darknetian.com');
     expect(endpointDiscoverySnapshot.mechanisms.map(({ id }) => id)).toEqual(['ard', 'dns-aid', 'ans']);
@@ -46,7 +46,10 @@ describe('Scenario 1 endpoint discovery snapshot', () => {
     });
 
     expect(endpointDiscoverySnapshot.doors).toHaveLength(4);
-    expect(endpointDiscoverySnapshot.decision.selectedDoorId).toBe('door-4');
+    expect(endpointDiscoverySnapshot.doors.every(({ validation }) => (
+      validation.latestAttemptStatus !== 'usable' && !validation.everUsable
+    ))).toBe(true);
+    expect(endpointDiscoverySnapshot.decision.selectedDoorId).toBeNull();
   });
 
   it('keeps Fabio’s real DNS-AID path as the usable comparison case', () => {

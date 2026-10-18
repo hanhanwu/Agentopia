@@ -101,7 +101,7 @@ the reusable-scene approach; do not build the full SDK yet.
 - Discovery: DNS-AID and ARD
 - Identity: ANS and SPIFFE
 - Authorization: OAuth
-- Communication: A2A and MCP
+- Communication: A2A, MCP and PAP
 - Payment: AP2 and UCP
 - Traceability: SCITT
 - Trust: the open Trust Index
