@@ -1103,14 +1103,55 @@ const agentQueryTableBody = document.querySelector<HTMLTableSectionElement>('[da
 const agentQueryCount = document.querySelector<HTMLElement>('[data-agent-query-count]');
 const resultLink = document.querySelector<SVGPathElement>('[data-result-link]');
 const resultPacket = document.querySelector<SVGPolygonElement>('[data-result-packet]');
+const userCore = document.querySelector<HTMLElement>('.user-node__core');
+const mochiFrame = document.querySelector<HTMLElement>('[data-agent-id="personal-assistant"] .world-agent__beam-frame');
+const serviceFrame = document.querySelector<HTMLElement>('[data-agent-id="bookings-service"] .world-agent__beam-frame');
+const domainFrame = document.querySelector<HTMLElement>('[data-discovery-domain-target] .discovery-domain-target__beam-frame');
+const worldPhase = document.querySelector<HTMLElement>('[data-world-phase]');
+const syncPhase = document.querySelector<HTMLElement>('.sync-phase');
+const intentChip = document.querySelector<HTMLElement>('[data-intent-chip]');
+const resultEmpty = document.querySelector<HTMLElement>('[data-result-empty]');
+const buttonsByAgentId = new Map(buttons.map((button) => [button.dataset.agentId, button]));
+const relevanceByDomain = new Map(consolidatedSearchRecords.map(({ domain, relevanceScore }) => (
+  [domain, relevanceScore]
+)));
 const registryResultAnimations = new Map<RegistryId, SVGAnimationElement | null>([
   ['agentcensus', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="agentcensus"]')],
   ['a2a-registry', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="a2a-registry"]')],
 ]);
+const registryElements = new Map<RegistryId, {
+  node: HTMLElement | null;
+  row: HTMLElement | null;
+  link: SVGPathElement | null;
+  packet: SVGPolygonElement | null;
+  resultBatch: SVGGElement | null;
+  worldStatus: HTMLElement | null;
+  skynetStatus: HTMLElement | null;
+  printoutStatus: HTMLElement | null;
+}>((['agentcensus', 'a2a-registry'] as const).map((registry) => [registry, {
+  node: document.querySelector<HTMLElement>(`[data-registry-node="${registry}"]`),
+  row: document.querySelector<HTMLElement>(`[data-skynet-registry="${registry}"]`),
+  link: document.querySelector<SVGPathElement>(`[data-registry-link="${registry}"]`),
+  packet: document.querySelector<SVGPolygonElement>(`[data-registry-packet="${registry}"]`),
+  resultBatch: document.querySelector<SVGGElement>(`[data-registry-result-batch="${registry}"]`),
+  worldStatus: document.querySelector<HTMLElement>(`[data-registry-world-status="${registry}"]`),
+  skynetStatus: document.querySelector<HTMLElement>(`[data-registry-skynet-status="${registry}"]`),
+  printoutStatus: document.querySelector<HTMLElement>(`[data-registry-printout-status="${registry}"]`),
+}]));
+const endpointBeamElements = new Map<DiscoveryMechanismId, {
+  origin: SVGCircleElement | null;
+  path: SVGPathElement | null;
+}>((['ard', 'dns-aid', 'ans'] as const).map((mechanism) => [mechanism, {
+  origin: document.querySelector<SVGCircleElement>(`[data-mechanism-beam-origin="${mechanism}"]`),
+  path: document.querySelector<SVGPathElement>(`[data-mechanism-beam="${mechanism}"]`),
+}]));
 
 const DEV_REPLAY_STORAGE_KEY = 'agentopia.dev.activity-events';
 const shouldRestoreDevReplay = ['127.0.0.1', 'localhost'].includes(window.location.hostname);
 const activityEvents: ActivityEvent[] = [];
+let runId = 'run-c3-1';
+let runSequence = 1;
+let eventSequence = 0;
 let restoredDevReplay = false;
 if (shouldRestoreDevReplay) {
   try {
@@ -1120,14 +1161,21 @@ if (shouldRestoreDevReplay) {
     ))) {
       activityEvents.push(...savedEvents as ActivityEvent[]);
       restoredDevReplay = activityEvents.length > 0;
+      eventSequence = activityEvents.reduce((maximum, event) => Math.max(maximum, event.sequence), 0);
+      runId = activityEvents.at(-1)?.runId ?? runId;
+      runSequence = activityEvents.reduce((maximum, event) => {
+        const match = /^run-c3-(\d+)$/.exec(event.runId);
+        return Math.max(maximum, Number(match?.[1] ?? 0));
+      }, runSequence);
     }
   } catch {
-    window.sessionStorage.removeItem(DEV_REPLAY_STORAGE_KEY);
+    try {
+      window.sessionStorage.removeItem(DEV_REPLAY_STORAGE_KEY);
+    } catch {
+      // Storage can be disabled entirely by browser privacy settings.
+    }
   }
 }
-let runId = 'run-c3-1';
-let runSequence = 1;
-let eventSequence = 0;
 let eventCursor: number | null = null;
 let scheduledTimers: number[] = [];
 let timelineReplayTimers: number[] = [];
@@ -1181,10 +1229,7 @@ const agentCensusSearchCandidates = mockCandidatesFor('agentcensus');
 const a2aSearchCandidates = mockCandidatesFor('a2a-registry');
 
 const alignUserFlow = () => {
-  if (!worldScene || !userLink) return;
-  const userCore = document.querySelector<HTMLElement>('.user-node__core');
-  const mochiFrame = document.querySelector<HTMLElement>('[data-agent-id="personal-assistant"] .world-agent__beam-frame');
-  if (!userCore || !mochiFrame) return;
+  if (!worldScene || !userLink || !userCore || !mochiFrame) return;
 
   const worldBounds = worldScene.getBoundingClientRect();
   const userBounds = userCore.getBoundingClientRect();
@@ -1207,14 +1252,11 @@ const alignUserFlow = () => {
 };
 
 const alignAgentQueryFlow = () => {
-  if (!worldScene || !resultLink) return;
+  if (!worldScene || !resultLink || !mochiFrame || !serviceFrame) return;
   if (worldScene.dataset.step !== '10') {
     resultLink.setAttribute('d', DEFAULT_RESULT_FLOW_PATH);
     return;
   }
-  const mochiFrame = document.querySelector<HTMLElement>('[data-agent-id="personal-assistant"] .world-agent__beam-frame');
-  const serviceFrame = document.querySelector<HTMLElement>('[data-agent-id="bookings-service"] .world-agent__beam-frame');
-  if (!mochiFrame || !serviceFrame) return;
   const worldBounds = worldScene.getBoundingClientRect();
   const mochiBounds = mochiFrame.getBoundingClientRect();
   const serviceBounds = serviceFrame.getBoundingClientRect();
@@ -1233,9 +1275,7 @@ const alignAgentQueryFlow = () => {
 };
 
 const alignEndpointDiscoveryBeams = () => {
-  if (!worldScene) return;
-  const domainFrame = document.querySelector<HTMLElement>('[data-discovery-domain-target] .discovery-domain-target__beam-frame');
-  if (!domainFrame) return;
+  if (!worldScene || !domainFrame) return;
   const worldBounds = worldScene.getBoundingClientRect();
   const frameBounds = domainFrame.getBoundingClientRect();
   if (worldBounds.width === 0 || worldBounds.height === 0 || frameBounds.width === 0) return;
@@ -1259,10 +1299,11 @@ const alignEndpointDiscoveryBeams = () => {
     },
   };
 
-  Object.entries(beamGeometry).forEach(([mechanism, geometry]) => {
-    document.querySelector<SVGCircleElement>(`[data-mechanism-beam-origin="${mechanism}"]`)?.setAttribute('cx', String(originX));
-    document.querySelector<SVGCircleElement>(`[data-mechanism-beam-origin="${mechanism}"]`)?.setAttribute('cy', String(geometry.y));
-    document.querySelector<SVGPathElement>(`[data-mechanism-beam="${mechanism}"]`)?.setAttribute('d', geometry.path);
+  (Object.entries(beamGeometry) as Array<[DiscoveryMechanismId, { y: number; path: string }]>).forEach(([mechanism, geometry]) => {
+    const elements = endpointBeamElements.get(mechanism);
+    elements?.origin?.setAttribute('cx', String(originX));
+    elements?.origin?.setAttribute('cy', String(geometry.y));
+    elements?.path?.setAttribute('d', geometry.path);
   });
 };
 
@@ -1525,12 +1566,11 @@ const renderCandidates = (projection: ReturnType<typeof projectDiscovery>) => {
   if (!candidateResults) return;
   candidateResults.replaceChildren();
   const visibleCandidates = projection.step === 7 ? projection.candidates : [];
-  const resultEmpty = document.querySelector<HTMLElement>('[data-result-empty]');
   if (resultEmpty) resultEmpty.hidden = visibleCandidates.length > 0;
   setText('[data-result-count]', `${visibleCandidates.length} ${visibleCandidates.length === 1 ? 'candidate' : 'candidates'}`);
 
   visibleCandidates.forEach((candidate, index) => {
-    const relevanceScore = consolidatedSearchRecords.find((record) => record.domain === candidate.domain)?.relevanceScore;
+    const relevanceScore = relevanceByDomain.get(candidate.domain);
     const card = document.createElement('article');
     card.className = 'candidate-card';
     card.classList.toggle('is-ranked', projection.step === 7);
@@ -1588,7 +1628,11 @@ const restoreBookingsAgent = (bookingsButton: HTMLButtonElement | undefined) => 
 
 const renderActivity = () => {
   if (shouldRestoreDevReplay && activityEvents.length > 0) {
-    window.sessionStorage.setItem(DEV_REPLAY_STORAGE_KEY, JSON.stringify(activityEvents));
+    try {
+      window.sessionStorage.setItem(DEV_REPLAY_STORAGE_KEY, JSON.stringify(activityEvents));
+    } catch {
+      // Replay persistence is a development convenience; rendering must not depend on storage access.
+    }
   }
   const displayedEvents = eventsAtCursor(activityEvents, eventCursor);
   const projection = projectDiscovery(displayedEvents);
@@ -1598,8 +1642,8 @@ const renderActivity = () => {
   const displayStep = displayStepNumber(projection.step);
   const hasSelectedCandidate = projection.step >= 7 && projection.candidates.length > 0;
   const mochiProjection = projectMochi(displayedEvents);
-  const mochiButton = buttons.find((button) => button.dataset.agentId === 'personal-assistant');
-  const bookingsButton = buttons.find((button) => button.dataset.agentId === 'bookings-service');
+  const mochiButton = buttonsByAgentId.get('personal-assistant');
+  const bookingsButton = buttonsByAgentId.get('bookings-service');
 
   worldScene?.classList.toggle('is-searching', projection.step > 0);
   worldScene?.classList.toggle('has-candidate', hasSelectedCandidate);
@@ -1620,7 +1664,6 @@ const renderActivity = () => {
   if (chatPaused) chatPaused.hidden = !isComposerPaused;
   if (chatSend) chatSend.hidden = isComposerPaused;
 
-  const worldPhase = document.querySelector<HTMLElement>('[data-world-phase]');
   if (worldPhase) worldPhase.hidden = projection.step === 0;
   setText('[data-world-step]', `STEP ${displayStep}`);
   setText('[data-world-phase-title]', projection.title);
@@ -1657,10 +1700,8 @@ const renderActivity = () => {
   if (!isInteractingEndpoints && renderedStep === 9) stopEndpointInteractionExperience();
   if (behindCurrent) behindCurrent.hidden = isRegistryWork || isConsolidating || projection.step >= 7;
   if (projection.step === 1 && renderedStep !== 1) requestFlightAnimation?.beginElement();
-  const syncPhase = document.querySelector<HTMLElement>('.sync-phase');
   if (syncPhase) syncPhase.dataset.step = String(displayStep);
 
-  const intentChip = document.querySelector<HTMLElement>('[data-intent-chip]');
   if (intentChip) intentChip.hidden = projection.step < 2 || projection.step >= 7;
   setText('[data-world-intent]', projection.intent ?? 'Meeting scheduling');
 
@@ -1693,11 +1734,9 @@ const renderActivity = () => {
 
   (['agentcensus', 'a2a-registry'] as RegistryId[]).forEach((registry) => {
     const state = projection.registries[registry];
-    const node = document.querySelector<HTMLElement>(`[data-registry-node="${registry}"]`);
-    const row = document.querySelector<HTMLElement>(`[data-skynet-registry="${registry}"]`);
-    const link = document.querySelector<SVGPathElement>(`[data-registry-link="${registry}"]`);
-    const packet = document.querySelector<SVGPolygonElement>(`[data-registry-packet="${registry}"]`);
-    const resultBatch = document.querySelector<SVGGElement>(`[data-registry-result-batch="${registry}"]`);
+    const elements = registryElements.get(registry);
+    if (!elements) return;
+    const { node, row, link, packet, resultBatch, worldStatus, skynetStatus, printoutStatus } = elements;
     if (node) {
       node.hidden = projection.step < 3;
       node.dataset.status = state.status;
@@ -1707,9 +1746,10 @@ const renderActivity = () => {
     if (link) link.classList.toggle('is-active', state.status === 'searching');
     packet?.toggleAttribute('hidden', state.status !== 'searching');
     resultBatch?.toggleAttribute('hidden', state.status !== 'results' || projection.step > 6);
-    setText(`[data-registry-world-status="${registry}"]`, registryStatusLabel(state));
-    setText(`[data-registry-skynet-status="${registry}"]`, registryStatusLabel(state));
-    setText(`[data-registry-printout-status="${registry}"]`, state.status === 'results' ? `${state.resultCount} found` : 'Streaming');
+    const statusLabel = registryStatusLabel(state);
+    if (worldStatus) worldStatus.textContent = statusLabel;
+    if (skynetStatus) skynetStatus.textContent = statusLabel;
+    if (printoutStatus) printoutStatus.textContent = state.status === 'results' ? `${state.resultCount} found` : 'Streaming';
   });
 
   if (projection.step === 4 && renderedStep !== 4) {
@@ -1994,10 +2034,15 @@ const syncSearchComposer = () => {
 };
 
 chatInput?.addEventListener('input', syncSearchComposer);
+let resizeAnimationFrame: number | null = null;
 window.addEventListener('resize', () => {
-  alignUserFlow();
-  alignAgentQueryFlow();
-  if (worldScene?.dataset.step === '8') alignEndpointDiscoveryBeams();
+  if (resizeAnimationFrame !== null) return;
+  resizeAnimationFrame = window.requestAnimationFrame(() => {
+    resizeAnimationFrame = null;
+    alignUserFlow();
+    alignAgentQueryFlow();
+    if (worldScene?.dataset.step === '8') alignEndpointDiscoveryBeams();
+  });
 });
 chatForm?.addEventListener('submit', (event) => {
   event.preventDefault();

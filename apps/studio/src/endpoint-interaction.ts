@@ -3,16 +3,16 @@ import type { EndpointInteraction, EndpointMechanismId } from './activity.ts';
 export type EndpointInterfaceId = 'a2a' | 'mcp' | 'openapi';
 
 type EndpointDiscoverySnapshot = {
-  mechanisms: Array<{
+  mechanisms: ReadonlyArray<{
     id: string;
-    claims: Array<{ protocol: string; endpoint: string }>;
+    claims: ReadonlyArray<{ protocol: string; endpoint: string }>;
   }>;
-  doors: Array<{
+  doors: ReadonlyArray<{
     protocol: string;
     endpoint: string;
     validation: {
       latestAttemptStatus: string;
-      attempts: Array<{ method: string; httpStatus?: number }>;
+      attempts: ReadonlyArray<{ method: string; httpStatus?: number }>;
     };
   }>;
 };
@@ -54,27 +54,32 @@ const isEndpointMechanism = (value: string): value is EndpointMechanismId => (
 
 export const projectEndpointInteractions = (
   snapshot: EndpointDiscoverySnapshot,
-): ProjectedEndpointInteraction[] => snapshot.mechanisms.flatMap((mechanism) => {
-  const mechanismId = mechanism.id;
-  if (!isEndpointMechanism(mechanismId)) return [];
+): ProjectedEndpointInteraction[] => {
+  const doorsByEndpoint = new Map(snapshot.doors.map((door) => [
+    `${door.protocol}\0${door.endpoint}`,
+    door,
+  ]));
 
-  return mechanism.claims.flatMap((claim) => {
-    const interfaceId = endpointInterface[claim.protocol];
-    if (!interfaceId) return [];
-    const door = snapshot.doors.find((candidate) => (
-      candidate.protocol === claim.protocol && candidate.endpoint === claim.endpoint
-    ));
-    const attempts = door?.validation.attempts.map(({ method }) => endpointAttemptName[method] ?? method) ?? [];
-    const latestAttempt = door?.validation.attempts[door.validation.attempts.length - 1];
+  return snapshot.mechanisms.flatMap((mechanism) => {
+    const mechanismId = mechanism.id;
+    if (!isEndpointMechanism(mechanismId)) return [];
 
-    return [{
-      mechanism: mechanismId,
-      protocol: claim.protocol,
-      interfaceId,
-      endpoint: claim.endpoint,
-      attempts: attempts.length > 0 ? attempts : ['No compatible attempt'],
-      outcome: door?.validation.latestAttemptStatus === 'usable' ? 'success' : 'failed',
-      status: latestAttempt?.httpStatus ? `HTTP ${latestAttempt.httpStatus}` : 'NO RESPONSE',
-    }];
+    return mechanism.claims.flatMap((claim) => {
+      const interfaceId = endpointInterface[claim.protocol];
+      if (!interfaceId) return [];
+      const door = doorsByEndpoint.get(`${claim.protocol}\0${claim.endpoint}`);
+      const attempts = door?.validation.attempts.map(({ method }) => endpointAttemptName[method] ?? method) ?? [];
+      const latestAttempt = door?.validation.attempts[door.validation.attempts.length - 1];
+
+      return [{
+        mechanism: mechanismId,
+        protocol: claim.protocol,
+        interfaceId,
+        endpoint: claim.endpoint,
+        attempts: attempts.length > 0 ? attempts : ['No compatible attempt'],
+        outcome: door?.validation.latestAttemptStatus === 'usable' ? 'success' : 'failed',
+        status: latestAttempt?.httpStatus !== undefined ? `HTTP ${latestAttempt.httpStatus}` : 'NO RESPONSE',
+      }];
+    });
   });
-});
+};

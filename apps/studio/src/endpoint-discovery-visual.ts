@@ -66,6 +66,9 @@ const isArdSemantic = (semantic: string | undefined): semantic is ArdNodeSemanti
  */
 export const projectArdDiscoveryPath = (path: ArdEvidencePath): ArdVisualProjection => {
   const nodesById = new Map(path.nodes.map((node) => [node.id, node]));
+  if (nodesById.size !== path.nodes.length) {
+    throw new Error('ARD evidence node IDs must be unique.');
+  }
   const outgoing = new Map<string, ArdEvidenceNode[]>();
 
   path.nodes.forEach((node) => {

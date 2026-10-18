@@ -50,9 +50,12 @@ export const projectAgentQuery = (
   const answer = snapshot.answers.find((candidate) => candidate.agentId === agentId);
   if (!answer) throw new Error(`Missing flight-search answer for ${agentId}.`);
 
-  const uniqueResponses = answer.responses.filter((response, index, responses) => (
-    responses.findIndex(({ endpoint }) => endpoint === response.endpoint) === index
-  ));
+  const seenEndpoints = new Set<string>();
+  const uniqueResponses = answer.responses.filter(({ endpoint }) => {
+    if (seenEndpoints.has(endpoint)) return false;
+    seenEndpoints.add(endpoint);
+    return true;
+  });
   const optionLines = answer.options?.map(({ price, stops, duration }) => (
     `${price} · ${stops.toLowerCase()} · ${duration}`
   ));

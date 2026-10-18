@@ -36,4 +36,11 @@ describe('Step 7 endpoint interaction projection', () => {
     expect(transitionEndpointInteractionPhase('offering', 'accept')).toBe('connected');
     expect(transitionEndpointInteractionPhase('connected', 'reset')).toBe('testing');
   });
+
+  it('preserves an explicit zero status instead of reporting no response', () => {
+    const snapshot = structuredClone(bookingsSnapshot);
+    snapshot.doors[0].validation.attempts.at(-1)!.httpStatus = 0;
+
+    expect(projectEndpointInteractions(snapshot)[0]?.status).toBe('HTTP 0');
+  });
 });

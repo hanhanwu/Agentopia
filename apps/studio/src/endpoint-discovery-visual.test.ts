@@ -74,4 +74,11 @@ describe('ARD discovery visual projection', () => {
   it('rejects untagged evidence instead of guessing from array position or labels', () => {
     expect(() => projectArdDiscoveryPath(path([node('domain', undefined)], []))).toThrow(/recognized semantic role/);
   });
+
+  it('rejects duplicate node IDs instead of silently resolving edges to the last node', () => {
+    expect(() => projectArdDiscoveryPath(path([
+      node('domain', 'domain'),
+      node('domain', 'catalog'),
+    ], []))).toThrow(/node IDs must be unique/);
+  });
 });
