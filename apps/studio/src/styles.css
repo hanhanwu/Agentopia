@@ -1186,15 +1186,6 @@ button { color: inherit; }
 .world-scene[data-step='10'] .world-agent--bookings .world-agent__label { min-width: 180px; border-color: currentColor; }
 .world-scene[data-step='10'] .world-agent--bookings .world-agent__status { background: var(--green); box-shadow: 0 0 10px var(--green); }
 .world-scene[data-step='10'] .world-agent--assistant .agent-bubble { bottom: 174px; min-width: 235px; max-width: 260px; }
-.agent-query-route-labels { position: absolute; z-index: 14; inset: 0; visibility: hidden; opacity: 0; pointer-events: none; }
-.world-scene[data-step='10'] .agent-query-route-labels { visibility: visible; opacity: 1; }
-.agent-query-route-label { position: absolute; padding: 6px 9px; border: 1px solid currentColor; border-radius: 999px; background: rgba(5,15,14,.92); font: 800 8px/1 ui-monospace,SFMono-Regular,Menlo,monospace; white-space: nowrap; opacity: 0; }
-.agent-query-route-label--user { left: 21%; top: 68%; color: var(--green); }
-.agent-query-route-label--agent { left: 59%; top: 43%; color: var(--orange); }
-.world-scene[data-step='10'][data-query-agent='fabio'] .agent-query-route-label--agent { color: var(--violet); }
-.world-scene[data-step='10'][data-query-phase='submitted'] .agent-query-route-label--user,
-.world-scene[data-step='10'][data-query-phase='forwarded'] .agent-query-route-label,
-.world-scene[data-step='10'][data-query-phase='answered'] .agent-query-route-label { opacity: 1; }
 .chat-composer.is-agent-query-ready { border-color: rgba(69,255,138,.82); animation: agentQueryComposerPulse 1.5s ease-in-out infinite; }
 @keyframes agentQueryComposerPulse { 0%,100% { box-shadow: 0 0 0 2px rgba(69,255,138,.06),0 16px 36px rgba(0,0,0,.18); } 50% { box-shadow: 0 0 0 5px rgba(69,255,138,.16),0 0 25px rgba(69,255,138,.2); } }
 

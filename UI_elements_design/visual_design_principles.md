@@ -26,6 +26,29 @@
 - Do not duplicate one artifact as two visual steps. For example, if a DNS SVCB
   card represents the returned hint, it is the DNS hint.
 
+## Do not add descriptive microcopy to Agentopia UI
+
+- Agentopia is a visual interface. Do not add visible small descriptive text to
+  explain what a visual, connection, animation, agent, or state means. The
+  visual design must communicate that meaning directly.
+- Do not add helper copy, explanatory captions, instructional subtitles,
+  numbered route descriptions such as `User → Mochi`, or prose that merely
+  narrates an animation already visible on screen.
+- Prefer spatial relationships, silhouettes, icons, color, motion, and state
+  changes over explanatory text. If a visual needs a paragraph or small caption
+  to be understood, improve the visual instead of adding the text.
+- Visible text is limited to information users must read or act on: names,
+  concrete values, user-provided content, endpoint or domain data, status values
+  that cannot be shown unambiguously, and labels on interactive controls.
+- Accessibility is not an exception to clarity. Provide non-visible accessible
+  names and descriptions with semantic HTML, `aria-label`, or visually hidden
+  text when needed; do not expose redundant descriptive microcopy in the visual
+  layout.
+- Add descriptive UI text only when the user explicitly requests it or when it
+  is required for safety, legal compliance, or an otherwise ambiguous action.
+  When reviewing a change, remove any text that only repeats what the visual
+  already shows.
+
 ## Cross-step continuity is the default
 
 - Treat a new numbered step as a state change inside the existing product, not

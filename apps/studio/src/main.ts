@@ -846,11 +846,6 @@ app.innerHTML = `
 
             ${endpointInteractionVisual()}
 
-            <div class="agent-query-route-labels" data-agent-query-route-labels aria-hidden="true">
-              <span class="agent-query-route-label agent-query-route-label--user">1 · USER → MOCHI</span>
-              <span class="agent-query-route-label agent-query-route-label--agent">2 · MOCHI → AGENT</span>
-            </div>
-
             <div class="discovery-domain-target" data-discovery-domain-target aria-label="Selected domain bookings.darknetian.com">
               <span class="discovery-domain-target__beam-frame" aria-hidden="true"></span>
               <small>SELECTED DOMAIN</small>
