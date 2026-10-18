@@ -42,6 +42,7 @@ const UNDERSTOOD_HOLD_DELAY = 2000;
 const REGISTRY_SEARCH_DELAY = INTENT_DERIVATION_DELAY + UNDERSTOOD_HOLD_DELAY;
 const CONSOLIDATION_START_DELAY = 27000;
 const STEP_REPLAY_LEAD_DELAY = 700;
+const DEFAULT_RESULT_FLOW_PATH = 'M390 230 C447 230 478 275 526 318';
 
 const mochiArtwork = () => `
   <path class="squid-body" d="M48 205V140C48 65 91 25 132 25s84 40 84 115v65c0 21-15 37-34 37s-34-16-34-37c0 21-15 37-34 37s-34-16-34-37c0 21-14 37-32 37s-32-16-32-37z" />
@@ -701,7 +702,7 @@ app.innerHTML = `
                   <mpath href="#a2a-flow-path" />
                 </animateMotion>
               </g>
-              <path id="result-flow-path" class="network-line network-line--result" data-result-link d="M390 230 C447 230 478 275 526 318" />
+              <path id="result-flow-path" class="network-line network-line--result" data-result-link d="${DEFAULT_RESULT_FLOW_PATH}" />
               <polygon class="network-arrow network-arrow--result" data-result-packet points="-7,-4 7,0 -7,4" hidden>
                 <animateMotion dur="1.45s" repeatCount="indefinite" rotate="auto"><mpath href="#result-flow-path" /></animateMotion>
               </polygon>
@@ -1135,6 +1136,7 @@ let endpointBeamAlignmentTimer: number | null = null;
 let userFlowAlignmentTimer: number | null = null;
 let endpointInspectionTimers: number[] = [];
 let endpointFallbackTimer: number | null = null;
+let endpointInteractionTableTimer: number | null = null;
 let endpointInteractionAgent: EndpointAgentChoice = 'bookings';
 let endpointInteractionPhase: EndpointInteractionPhase = 'idle';
 let agentQueryEntryTimer: number | null = null;
@@ -1206,6 +1208,10 @@ const alignUserFlow = () => {
 
 const alignAgentQueryFlow = () => {
   if (!worldScene || !resultLink) return;
+  if (worldScene.dataset.step !== '10') {
+    resultLink.setAttribute('d', DEFAULT_RESULT_FLOW_PATH);
+    return;
+  }
   const mochiFrame = document.querySelector<HTMLElement>('[data-agent-id="personal-assistant"] .world-agent__beam-frame');
   const serviceFrame = document.querySelector<HTMLElement>('[data-agent-id="bookings-service"] .world-agent__beam-frame');
   if (!mochiFrame || !serviceFrame) return;
@@ -1402,6 +1408,24 @@ const clearEndpointFallbackTimer = () => {
   endpointFallbackTimer = null;
 };
 
+const clearEndpointInteractionTableTimer = () => {
+  if (endpointInteractionTableTimer === null) return;
+  window.clearTimeout(endpointInteractionTableTimer);
+  endpointInteractionTableTimer = null;
+};
+
+const scheduleEndpointInteractionTableReveal = (agent: EndpointAgentChoice) => {
+  clearEndpointInteractionTableTimer();
+  if (endpointInteractionBoard) endpointInteractionBoard.hidden = true;
+  const delay = prefersReducedMotion ? 80 : agent === 'fabio' ? 1350 : 6000;
+  endpointInteractionTableTimer = window.setTimeout(() => {
+    endpointInteractionTableTimer = null;
+    if (worldScene?.dataset.step === '9' && endpointInteractionAgent === agent && endpointInteractionBoard) {
+      endpointInteractionBoard.hidden = false;
+    }
+  }, delay);
+};
+
 const renderEndpointInteractionAgent = (agent: EndpointAgentChoice) => {
   const interactions = agent === 'fabio' ? fabioEndpointInteractions : bookingsEndpointInteractions;
   const snapshot = agent === 'fabio' ? fabioEndpointDiscoverySnapshot : endpointDiscoverySnapshot;
@@ -1432,10 +1456,12 @@ const showEndpointFallback = () => {
 
 const startEndpointInteractionExperience = () => {
   clearEndpointFallbackTimer();
+  clearEndpointInteractionTableTimer();
   endpointInteractionPhase = transitionEndpointInteractionPhase(endpointInteractionPhase, 'reset');
   if (worldScene) worldScene.dataset.endpointInteractionPhase = endpointInteractionPhase;
   hideEndpointFallback();
   renderEndpointInteractionAgent('bookings');
+  scheduleEndpointInteractionTableReveal('bookings');
   window.requestAnimationFrame(restartEndpointInteraction);
   endpointFallbackTimer = window.setTimeout(
     showEndpointFallback,
@@ -1445,26 +1471,42 @@ const startEndpointInteractionExperience = () => {
 
 const stopEndpointInteractionExperience = () => {
   clearEndpointFallbackTimer();
+  clearEndpointInteractionTableTimer();
   endpointInteractionPhase = transitionEndpointInteractionPhase(endpointInteractionPhase, 'leave');
   if (worldScene) {
     delete worldScene.dataset.endpointInteractionPhase;
     delete worldScene.dataset.endpointAgent;
   }
   hideEndpointFallback();
+  if (endpointInteractionBoard) endpointInteractionBoard.hidden = true;
+};
+
+const replaceReplayedAgentQueryBranch = () => {
+  if (eventCursor === null) return;
+  clearTimelineReplay();
+  clearAgentQueryTimers();
+  if (agentQueryEntryTimer !== null) window.clearTimeout(agentQueryEntryTimer);
+  agentQueryEntryTimer = null;
+  activityEvents.splice(eventCursor + 1);
+  eventCursor = null;
+  renderActivity();
 };
 
 endpointFallbackYes?.addEventListener('click', () => {
   if (endpointInteractionPhase !== 'offering') return;
+  replaceReplayedAgentQueryBranch();
   clearEndpointFallbackTimer();
   endpointInteractionPhase = transitionEndpointInteractionPhase(endpointInteractionPhase, 'accept');
   if (worldScene) worldScene.dataset.endpointInteractionPhase = endpointInteractionPhase;
   hideEndpointFallback();
   renderEndpointInteractionAgent('fabio');
+  scheduleEndpointInteractionTableReveal('fabio');
   scheduleAgentQueryEntry('fabio');
 });
 
 endpointFallbackNo?.addEventListener('click', () => {
   if (endpointInteractionPhase !== 'offering') return;
+  replaceReplayedAgentQueryBranch();
   endpointInteractionPhase = transitionEndpointInteractionPhase(endpointInteractionPhase, 'decline');
   hideEndpointFallback();
   renderEndpointInteractionAgent('bookings');
@@ -1834,6 +1876,9 @@ const appendActivityEvent = (event: ActivityEvent) => {
 function scheduleAgentQueryEntry(choice: AgentQueryChoice) {
   if (agentQueryEntryTimer !== null) window.clearTimeout(agentQueryEntryTimer);
   const projection = agentQueryProjections[choice];
+  const entryDelay = choice === 'fabio'
+    ? (prefersReducedMotion ? 3000 : 4350)
+    : (prefersReducedMotion ? 250 : 1600);
   agentQueryEntryTimer = window.setTimeout(() => {
     agentQueryEntryTimer = null;
     eventCursor = null;
@@ -1849,7 +1894,7 @@ function scheduleAgentQueryEntry(choice: AgentQueryChoice) {
       chatInput.setSelectionRange(chatInput.value.length, chatInput.value.length);
     }
     syncSearchComposer();
-  }, prefersReducedMotion ? 250 : 1600);
+  }, entryDelay);
 }
 
 const clearAgentQueryTimers = () => {
