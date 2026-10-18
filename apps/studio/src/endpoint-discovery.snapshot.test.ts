@@ -53,11 +53,11 @@ describe('Scenario 1 endpoint discovery snapshot', () => {
     expect(endpointDiscoverySnapshot.decision.selectedDoorId).toBe('door-4');
   });
 
-  it('keeps Fabio’s real DNS-AID path as the usable comparison case', () => {
-    const nicDnsAid = endpointDiscoverySnapshot.mechanisms.find(({ id }) => id === 'dns-aid');
+  it('keeps the travel agent’s real DNS-AID path as the usable comparison case', () => {
+    const bookingsDnsAid = endpointDiscoverySnapshot.mechanisms.find(({ id }) => id === 'dns-aid');
     const dnsAid = fabioEndpointDiscoverySnapshot.mechanisms.find(({ id }) => id === 'dns-aid');
     expect(fabioEndpointDiscoverySnapshot.agent.domain).toBe('travel.agenthaven.dev');
-    expect(nicDnsAid?.claims.map(({ endpoint }) => endpoint)).toEqual([
+    expect(bookingsDnsAid?.claims.map(({ endpoint }) => endpoint)).toEqual([
       'https://bookings.darknetian.com/',
     ]);
     expect(endpointDiscoverySnapshot.doors.find(({ endpoint }) => (

@@ -43,6 +43,12 @@ const REGISTRY_SEARCH_DELAY = INTENT_DERIVATION_DELAY + UNDERSTOOD_HOLD_DELAY;
 const CONSOLIDATION_START_DELAY = 27000;
 const STEP_REPLAY_LEAD_DELAY = 700;
 const DEFAULT_RESULT_FLOW_PATH = 'M390 230 C447 230 478 275 526 318';
+const REGISTRY_ARROW_LENGTH = 7;
+const REGISTRY_REQUEST_ORIGIN_GAP = 18;
+const REGISTRY_RESULT_ORIGIN_GAP = 48;
+const REGISTRY_RESULT_VERTICAL_OFFSET = 13;
+const REGISTRY_HALO_TOP_RATIO = (70 - 57) / 140;
+const AGENT_CENSUS_HALO_BOTTOM_RATIO = (70 + 57) / 140;
 
 const mochiArtwork = () => `
   <path class="squid-body" d="M48 205V140C48 65 91 25 132 25s84 40 84 115v65c0 21-15 37-34 37s-34-16-34-37c0 21-15 37-34 37s-34-16-34-37c0 21-14 37-32 37s-32-16-32-37z" />
@@ -680,9 +686,9 @@ app.innerHTML = `
                   <mpath href="#user-flow-path" />
                 </animateMotion>
               </polygon>
-              <path id="census-flow-path" class="network-line network-line--registry" data-registry-link="agentcensus" d="M250 330 C292 310 318 268 356 230" />
+              <path id="census-flow-path" class="network-line network-line--registry" data-registry-link="agentcensus" d="M268 340 C306 310 340 260 350 224" />
               <polygon class="network-arrow network-arrow--registry" data-registry-packet="agentcensus" points="-7,-4 7,0 -7,4" hidden>
-                <animateMotion dur="1.25s" repeatCount="indefinite" rotate="auto">
+                <animateMotion data-registry-request-animation="agentcensus" begin="indefinite" dur="1.3s" repeatCount="indefinite" rotate="auto">
                   <mpath href="#census-flow-path" />
                 </animateMotion>
               </polygon>
@@ -692,9 +698,9 @@ app.innerHTML = `
                   <mpath href="#census-flow-path" />
                 </animateMotion>
               </g>
-              <path id="a2a-flow-path" class="network-line network-line--registry network-line--a2a" data-registry-link="a2a-registry" d="M250 350 C292 370 318 402 356 420" />
+              <path id="a2a-flow-path" class="network-line network-line--registry network-line--a2a" data-registry-link="a2a-registry" d="M268 340 C306 370 340 365 350 348" />
               <polygon class="network-arrow network-arrow--registry network-arrow--a2a" data-registry-packet="a2a-registry" points="-7,-4 7,0 -7,4" hidden>
-                <animateMotion dur="1.35s" repeatCount="indefinite" rotate="auto"><mpath href="#a2a-flow-path" /></animateMotion>
+                <animateMotion data-registry-request-animation="a2a-registry" begin="indefinite" dur="1.3s" repeatCount="indefinite" rotate="auto"><mpath href="#a2a-flow-path" /></animateMotion>
               </polygon>
               <g class="network-result-batch network-result-batch--a2a" data-registry-result-batch="a2a-registry" hidden>
                 <circle r="13" /><text y="4">3</text>
@@ -1103,6 +1109,10 @@ const agentQueryTableBody = document.querySelector<HTMLTableSectionElement>('[da
 const agentQueryCount = document.querySelector<HTMLElement>('[data-agent-query-count]');
 const resultLink = document.querySelector<SVGPathElement>('[data-result-link]');
 const resultPacket = document.querySelector<SVGPolygonElement>('[data-result-packet]');
+const registryLogos = new Map<RegistryId, SVGSVGElement | null>([
+  ['agentcensus', document.querySelector<SVGSVGElement>('[data-registry-node="agentcensus"] > svg')],
+  ['a2a-registry', document.querySelector<SVGSVGElement>('[data-registry-node="a2a-registry"] > svg')],
+]);
 const userCore = document.querySelector<HTMLElement>('.user-node__core');
 const mochiFrame = document.querySelector<HTMLElement>('[data-agent-id="personal-assistant"] .world-agent__beam-frame');
 const serviceFrame = document.querySelector<HTMLElement>('[data-agent-id="bookings-service"] .world-agent__beam-frame');
@@ -1118,6 +1128,10 @@ const relevanceByDomain = new Map(consolidatedSearchRecords.map(({ domain, relev
 const registryResultAnimations = new Map<RegistryId, SVGAnimationElement | null>([
   ['agentcensus', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="agentcensus"]')],
   ['a2a-registry', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="a2a-registry"]')],
+]);
+const registryRequestAnimations = new Map<RegistryId, SVGAnimationElement | null>([
+  ['agentcensus', document.querySelector<SVGAnimationElement>('[data-registry-request-animation="agentcensus"]')],
+  ['a2a-registry', document.querySelector<SVGAnimationElement>('[data-registry-request-animation="a2a-registry"]')],
 ]);
 const registryElements = new Map<RegistryId, {
   node: HTMLElement | null;
@@ -1272,6 +1286,49 @@ const alignAgentQueryFlow = () => {
     'd',
     `M${startX.toFixed(1)} ${startY.toFixed(1)} C${(startX + curve).toFixed(1)} ${startY.toFixed(1)} ${(endX - curve).toFixed(1)} ${endY.toFixed(1)} ${endX.toFixed(1)} ${endY.toFixed(1)}`,
   );
+};
+
+const alignRegistryFlows = () => {
+  if (!worldScene || !mochiFrame) return;
+
+  const worldBounds = worldScene.getBoundingClientRect();
+  const mochiBounds = mochiFrame.getBoundingClientRect();
+  if (worldBounds.width === 0 || worldBounds.height === 0) return;
+
+  const toSceneX = (value: number) => ((value - worldBounds.left) / worldBounds.width) * 600;
+  const toSceneY = (value: number) => ((value - worldBounds.top) / worldBounds.height) * 620;
+  const mochiEdgeX = toSceneX(mochiBounds.right);
+  const startY = toSceneY(mochiBounds.top + mochiBounds.height / 2);
+
+  (['agentcensus', 'a2a-registry'] as const).forEach((registry) => {
+    const path = registryElements.get(registry)?.link;
+    const registryNode = registryElements.get(registry)?.node;
+    const logo = registryLogos.get(registry);
+    if (!path || !logo) return;
+    const logoBounds = logo.getBoundingClientRect();
+    if (logoBounds.width === 0) return;
+
+    const endX = toSceneX(logoBounds.left + logoBounds.width / 2);
+    const isCensus = registry === 'agentcensus';
+    const hasResult = registryNode?.dataset.status === 'results';
+    const startX = mochiEdgeX + (hasResult
+      ? REGISTRY_RESULT_ORIGIN_GAP
+      : REGISTRY_REQUEST_ORIGIN_GAP);
+    const pathStartY = startY + (hasResult
+      ? (isCensus ? -REGISTRY_RESULT_VERTICAL_OFFSET : REGISTRY_RESULT_VERTICAL_OFFSET)
+      : 0);
+    const haloEdge = logoBounds.top + logoBounds.height * (
+      isCensus ? AGENT_CENSUS_HALO_BOTTOM_RATIO : REGISTRY_HALO_TOP_RATIO
+    );
+    const endY = toSceneY(haloEdge) + (isCensus ? REGISTRY_ARROW_LENGTH : -REGISTRY_ARROW_LENGTH);
+    const controlX = startX + (endX - startX) * .58;
+    const targetControlY = endY + (isCensus ? 42 : -42);
+
+    path.setAttribute(
+      'd',
+      `M${startX.toFixed(1)} ${pathStartY.toFixed(1)} C${controlX.toFixed(1)} ${pathStartY.toFixed(1)} ${endX.toFixed(1)} ${targetControlY.toFixed(1)} ${endX.toFixed(1)} ${endY.toFixed(1)}`,
+    );
+  });
 };
 
 const alignEndpointDiscoveryBeams = () => {
@@ -1434,6 +1491,16 @@ const restartRegistryPrintouts = () => {
   });
 };
 
+const startRegistryResultAnimation = (registry: RegistryId) => {
+  const link = registryElements.get(registry)?.link;
+  if (link) {
+    link.classList.remove('is-result-arriving');
+    void link.getBoundingClientRect();
+    link.classList.add('is-result-arriving');
+  }
+  registryResultAnimations.get(registry)?.beginElement();
+};
+
 const restartEndpointInteraction = () => {
   const animatedElements = Array.from(document.querySelectorAll<HTMLElement>(
     '.endpoint-interaction-spell, .endpoint-interaction-door__leaf, .endpoint-interaction-door__result',
@@ -1550,7 +1617,6 @@ endpointFallbackNo?.addEventListener('click', () => {
   replaceReplayedAgentQueryBranch();
   endpointInteractionPhase = transitionEndpointInteractionPhase(endpointInteractionPhase, 'decline');
   hideEndpointFallback();
-  renderEndpointInteractionAgent('bookings');
   scheduleAgentQueryEntry('bookings');
 });
 
@@ -1650,8 +1716,12 @@ const renderActivity = () => {
   if (worldScene) worldScene.dataset.step = String(projection.step);
   if (worldScene) worldScene.dataset.queryPhase = projection.agentQueryPhase;
   if (userFlowAlignmentTimer !== null) window.clearTimeout(userFlowAlignmentTimer);
-  window.requestAnimationFrame(() => { alignUserFlow(); alignAgentQueryFlow(); });
-  userFlowAlignmentTimer = window.setTimeout(() => { alignUserFlow(); alignAgentQueryFlow(); }, 450);
+  window.requestAnimationFrame(() => { alignUserFlow(); alignAgentQueryFlow(); alignRegistryFlows(); });
+  userFlowAlignmentTimer = window.setTimeout(() => {
+    alignUserFlow();
+    alignAgentQueryFlow();
+    alignRegistryFlows();
+  }, 450);
   if (endpointBeamAlignmentTimer !== null) window.clearTimeout(endpointBeamAlignmentTimer);
   if (projection.step === 8) {
     window.requestAnimationFrame(alignEndpointDiscoveryBeams);
@@ -1742,9 +1812,11 @@ const renderActivity = () => {
       node.dataset.status = state.status;
     }
     if (row) row.dataset.status = state.status;
-    link?.toggleAttribute('hidden', projection.step < 3);
-    if (link) link.classList.toggle('is-active', state.status === 'searching');
-    packet?.toggleAttribute('hidden', state.status !== 'searching');
+    const isWaitingForResult = projection.step >= 4 && state.status !== 'results';
+    link?.toggleAttribute('hidden', projection.step < 3 || isWaitingForResult);
+    if (link) link.classList.toggle('is-active', state.status === 'searching' && !isWaitingForResult);
+    if (state.status !== 'results') link?.classList.remove('is-result-arriving');
+    packet?.toggleAttribute('hidden', state.status !== 'searching' || isWaitingForResult);
     resultBatch?.toggleAttribute('hidden', state.status !== 'results' || projection.step > 6);
     const statusLabel = registryStatusLabel(state);
     if (worldStatus) worldStatus.textContent = statusLabel;
@@ -1752,13 +1824,20 @@ const renderActivity = () => {
     if (printoutStatus) printoutStatus.textContent = state.status === 'results' ? `${state.resultCount} found` : 'Streaming';
   });
 
+  // Result paths terminate at their vertically separated badges; request paths share one origin.
+  alignRegistryFlows();
+
   if (projection.step === 4 && renderedStep !== 4) {
-    registryResultAnimations.get('agentcensus')?.beginElement();
+    startRegistryResultAnimation('agentcensus');
   } else if (projection.step === 5 && renderedStep === 4) {
-    registryResultAnimations.get('a2a-registry')?.beginElement();
+    startRegistryResultAnimation('a2a-registry');
   } else if (projection.step === 5 && renderedStep !== 5) {
-    registryResultAnimations.get('agentcensus')?.beginElement();
-    registryResultAnimations.get('a2a-registry')?.beginElement();
+    startRegistryResultAnimation('agentcensus');
+    startRegistryResultAnimation('a2a-registry');
+  }
+
+  if (projection.step === 3 && renderedStep !== 3) {
+    registryRequestAnimations.forEach((animation) => animation?.beginElement());
   }
 
   if (projection.step > 0) {
@@ -2041,6 +2120,7 @@ window.addEventListener('resize', () => {
     resizeAnimationFrame = null;
     alignUserFlow();
     alignAgentQueryFlow();
+    alignRegistryFlows();
     if (worldScene?.dataset.step === '8') alignEndpointDiscoveryBeams();
   });
 });

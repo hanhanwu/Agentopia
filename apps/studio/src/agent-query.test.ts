@@ -3,11 +3,11 @@ import flightSearchSnapshot from './data/scenario-1-flight-search.snapshot.json'
 import { projectAgentQuery } from './agent-query.ts';
 
 describe('Step 8 agent-query projection', () => {
-  it('projects Fabio’s unique A2A and MCP answers with the selected MCP tool', () => {
+  it('projects the travel agent’s unique A2A and MCP answers with the selected MCP tool', () => {
     const projection = projectAgentQuery(flightSearchSnapshot, 'fabio');
 
     expect(projection).toMatchObject({
-      agentName: "Fabio's Travel Agent",
+      agentName: 'Travel Service Agent',
       accent: 'violet',
     });
     expect(projection.rows).toEqual([
@@ -24,9 +24,9 @@ describe('Step 8 agent-query projection', () => {
     ]);
   });
 
-  it('keeps Nic’s unsupported endpoint in the same display model', () => {
+  it('keeps the bookings agent’s unsupported endpoint in the same display model', () => {
     expect(projectAgentQuery(flightSearchSnapshot, 'bookings')).toMatchObject({
-      agentName: "Nic's Bookings Agent",
+      agentName: 'Bookings Service Agent',
       accent: 'orange',
       rows: [{
         protocol: 'A2A',

@@ -10,7 +10,7 @@
   "answers": [
     {
       "agentId": "nic-bookings",
-      "agentName": "Nic's Bookings Agent",
+      "agentName": "Bookings Service Agent",
       "result": "unsupported",
       "responses": [
         {
@@ -22,7 +22,7 @@
     },
     {
       "agentId": "fabio-travel",
-      "agentName": "Fabio's Travel Agent",
+      "agentName": "Travel Service Agent",
       "result": "options",
       "responses": [
         {

@@ -4,7 +4,7 @@ import fabioSnapshot from './data/scenario-1-fabio-endpoint-discovery.snapshot.j
 import { projectEndpointInteractions, transitionEndpointInteractionPhase } from './endpoint-interaction.ts';
 
 describe('Step 7 endpoint interaction projection', () => {
-  it('keeps Nic’s original Bookings outcomes with one usable MCP endpoint', () => {
+  it('keeps the original Bookings outcomes with one usable MCP endpoint', () => {
     const interactions = projectEndpointInteractions(bookingsSnapshot);
 
     expect(interactions).toHaveLength(5);
@@ -17,7 +17,7 @@ describe('Step 7 endpoint interaction projection', () => {
     ]);
   });
 
-  it('projects Fabio’s five successful claims with their interface logos', () => {
+  it('projects the travel agent’s five successful claims with their interface logos', () => {
     const interactions = projectEndpointInteractions(fabioSnapshot);
 
     expect(interactions).toHaveLength(5);

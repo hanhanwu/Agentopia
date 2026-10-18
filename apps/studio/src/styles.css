@@ -526,6 +526,8 @@ button { color: inherit; }
 .network-line--registry.network-line--a2a { stroke: #6d5f9c; }
 .network-line--registry.is-active { opacity: 1; stroke: var(--green); filter: drop-shadow(0 0 6px rgba(69,255,138,.72)); animation: dash .85s linear infinite; }
 .network-line--registry.network-line--a2a.is-active { stroke: var(--violet); filter: drop-shadow(0 0 6px rgba(170,140,255,.72)); }
+.network-line--registry.is-result-arriving { animation: registryResultLineReveal 1.35s linear both; }
+@keyframes registryResultLineReveal { from { opacity: 0; } to { opacity: .32; } }
 .network-arrow--registry { fill: var(--green); stroke: #d8ffe6; filter: drop-shadow(0 0 6px var(--green)); }
 .network-arrow--a2a { fill: var(--violet); stroke: #efeaff; filter: drop-shadow(0 0 6px var(--violet)); }
 .network-result-batch { pointer-events: none; color: var(--green); filter: drop-shadow(0 0 7px currentColor); }

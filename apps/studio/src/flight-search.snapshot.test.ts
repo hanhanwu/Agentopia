@@ -15,10 +15,10 @@ describe('Scenario 1 flight-search UI snapshot', () => {
     ]);
   });
 
-  it('keeps only display-ready Fabio options and labels simulated inventory honestly', () => {
-    const fabio = flightSearchSnapshot.answers.find(({ agentId }) => agentId === 'fabio-travel');
+  it('keeps only display-ready travel options and labels simulated inventory honestly', () => {
+    const travel = flightSearchSnapshot.answers.find(({ agentId }) => agentId === 'fabio-travel');
 
-    expect(fabio).toMatchObject({
+    expect(travel).toMatchObject({
       responses: [
         {
           protocol: 'A2A',
