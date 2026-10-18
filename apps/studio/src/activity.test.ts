@@ -134,6 +134,37 @@ describe('synchronized C3 discovery projection', () => {
     });
   });
 
+  it('keeps the selected service agent and query phase in Step 8 history', () => {
+    const ready = next({
+      schemaVersion: '1.0', eventId: 'event-10', runId: 'run-1', sequence: 10, logicalTime: 10,
+      source: 'observed', visibility: 'studio', type: 'agent.query-ready',
+      actorId: 'personal-assistant', subjectId: 'bookings-service',
+      payload: { choice: 'fabio', agentName: "Fabio's Travel Agent" },
+    });
+    const submitted = next({
+      schemaVersion: '1.0', eventId: 'event-11', runId: 'run-1', sequence: 11, logicalTime: 11,
+      source: 'observed', visibility: 'studio', type: 'agent.query-submitted',
+      actorId: 'user', subjectId: 'personal-assistant',
+      payload: { choice: 'fabio', query: 'Search for flights from San Francisco to Tokyo.' },
+    });
+    const completed = next({
+      schemaVersion: '1.0', eventId: 'event-12', runId: 'run-1', sequence: 12, logicalTime: 12,
+      source: 'reported', visibility: 'studio', type: 'agent.query-completed',
+      actorId: 'bookings-service', subjectId: 'personal-assistant',
+      payload: { choice: 'fabio', query: 'Search for flights from San Francisco to Tokyo.', responseCount: 2 },
+    });
+
+    expect(projectDiscovery([taskEvent, ready])).toMatchObject({
+      step: 10, title: 'Agent Query', agentQueryChoice: 'fabio', agentQueryPhase: 'ready',
+      mochiBubble: 'What flight should I search for?',
+    });
+    expect(projectDiscovery([taskEvent, ready, submitted, completed])).toMatchObject({
+      step: 10, agentQueryChoice: 'fabio', agentQueryPhase: 'answered',
+      agentQuery: 'Search for flights from San Francisco to Tokyo.',
+      mochiBubble: null,
+    });
+  });
+
   it('rewinds the shared state without mutating canonical history', () => {
     const events = [taskEvent, { ...taskEvent, eventId: 'event-2', sequence: 2, logicalTime: 2 }];
     expect(eventsAtCursor(events, 0)).toEqual([taskEvent]);

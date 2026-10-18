@@ -1,10 +1,12 @@
 import type { AgentId } from './agents.ts';
+import type { AgentQueryChoice } from './agent-query.ts';
 
 export type ActivitySource = 'observed' | 'reported' | 'derived' | 'simulated';
 export type RegistryId = 'agentcensus' | 'a2a-registry';
 export type RegistryStatus = 'waiting' | 'searching' | 'results' | 'no-results' | 'failed';
 export type EndpointMechanismId = 'ard' | 'dns-aid' | 'ans';
 export type EndpointInteractionOutcome = 'success' | 'failed';
+export type AgentQueryPhase = 'idle' | 'ready' | 'submitted' | 'forwarded' | 'answered';
 
 export type EndpointInteraction = {
   mechanism: EndpointMechanismId;
@@ -45,9 +47,13 @@ export type ActivityEvent =
   | (EventEnvelope & { type: 'candidates.normalized'; actorId: 'personal-assistant'; subjectId: 'personal-assistant'; payload: { reportedCount: number; uniqueCount: number } })
   | (EventEnvelope & { type: 'search.completed'; actorId: 'personal-assistant'; subjectId: 'personal-assistant'; payload: { candidates: Candidate[]; rankingMethod: string } })
   | (EventEnvelope & { type: 'endpoints.discovery-started'; actorId: 'personal-assistant'; subjectId: 'bookings-service'; payload: { domain: string; mechanisms: ['ard', 'dns-aid', 'ans'] } })
-  | (EventEnvelope & { type: 'endpoints.interaction-completed'; actorId: 'personal-assistant'; subjectId: 'bookings-service'; payload: { domain: string; interactions: EndpointInteraction[] } });
+  | (EventEnvelope & { type: 'endpoints.interaction-completed'; actorId: 'personal-assistant'; subjectId: 'bookings-service'; payload: { domain: string; interactions: EndpointInteraction[] } })
+  | (EventEnvelope & { type: 'agent.query-ready'; actorId: 'personal-assistant'; subjectId: 'bookings-service'; payload: { choice: AgentQueryChoice; agentName: string } })
+  | (EventEnvelope & { type: 'agent.query-submitted'; actorId: 'user'; subjectId: 'personal-assistant'; payload: { choice: AgentQueryChoice; query: string } })
+  | (EventEnvelope & { type: 'agent.query-forwarded'; actorId: 'personal-assistant'; subjectId: 'bookings-service'; payload: { choice: AgentQueryChoice; query: string } })
+  | (EventEnvelope & { type: 'agent.query-completed'; actorId: 'bookings-service'; subjectId: 'personal-assistant'; payload: { choice: AgentQueryChoice; query: string; responseCount: number } });
 
-export type DiscoveryStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+export type DiscoveryStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
 export type DiscoveryProjection = {
   step: DiscoveryStep;
@@ -64,6 +70,9 @@ export type DiscoveryProjection = {
   reportedCount: number | null;
   uniqueCount: number | null;
   rankingMethod: string | null;
+  agentQueryChoice: AgentQueryChoice | null;
+  agentQueryPhase: AgentQueryPhase;
+  agentQuery: string | null;
   currentEvent: ActivityEvent | null;
 };
 
@@ -85,6 +94,9 @@ const initialProjection = (): DiscoveryProjection => ({
   reportedCount: null,
   uniqueCount: null,
   rankingMethod: null,
+  agentQueryChoice: null,
+  agentQueryPhase: 'idle',
+  agentQuery: null,
   currentEvent: null,
 });
 
@@ -174,6 +186,40 @@ export const projectDiscovery = (events: readonly ActivityEvent[]): DiscoveryPro
           detail: `Mochi tested every advertised endpoint for ${event.payload.domain}.`,
           mochiState: 'interacting-endpoints', mochiStatus: 'Endpoint interaction complete',
           mochiBubble: null,
+        });
+        break;
+      case 'agent.query-ready':
+        Object.assign(projection, {
+          step: 10, title: 'Agent Query',
+          detail: `Mochi is ready to send a request to ${event.payload.agentName}.`,
+          agentQueryChoice: event.payload.choice, agentQueryPhase: 'ready',
+          mochiState: 'agent-query-ready', mochiStatus: 'Waiting for a flight request',
+          mochiBubble: 'What flight should I search for?',
+        });
+        break;
+      case 'agent.query-submitted':
+        Object.assign(projection, {
+          step: 10, title: 'Agent Query', detail: 'Your request is traveling to Mochi.',
+          query: event.payload.query, agentQuery: event.payload.query,
+          agentQueryChoice: event.payload.choice, agentQueryPhase: 'submitted',
+          mochiState: 'agent-query-receiving', mochiStatus: 'Receiving your flight request', mochiBubble: null,
+        });
+        break;
+      case 'agent.query-forwarded':
+        Object.assign(projection, {
+          step: 10, title: 'Agent Query', detail: 'Mochi sent the request to the selected service agent.',
+          query: event.payload.query, agentQuery: event.payload.query,
+          agentQueryChoice: event.payload.choice, agentQueryPhase: 'forwarded',
+          mochiState: 'agent-query-forwarding', mochiStatus: 'Contacting the selected service agent', mochiBubble: null,
+        });
+        break;
+      case 'agent.query-completed':
+        Object.assign(projection, {
+          step: 10, title: 'Agent Query',
+          detail: `Mochi received answers from ${event.payload.responseCount} unique ${event.payload.responseCount === 1 ? 'endpoint' : 'endpoints'}.`,
+          query: event.payload.query, agentQuery: event.payload.query,
+          agentQueryChoice: event.payload.choice, agentQueryPhase: 'answered',
+          mochiState: 'agent-query-answered', mochiStatus: 'Endpoint answers received', mochiBubble: null,
         });
         break;
     }

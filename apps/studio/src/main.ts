@@ -3,6 +3,8 @@ import { agents, type Agent } from './agents.ts';
 import registrySearchMock from './data/registry-search.mock.json';
 import endpointDiscoverySnapshot from './data/scenario-1-endpoint-discovery.snapshot.json';
 import fabioEndpointDiscoverySnapshot from './data/scenario-1-fabio-endpoint-discovery.snapshot.json';
+import flightSearchSnapshot from './data/scenario-1-flight-search.snapshot.json';
+import { projectAgentQuery, type AgentQueryChoice, type AgentQueryProjection } from './agent-query.ts';
 import { projectArdDiscoveryPath, type ArdNodeSemantic } from './endpoint-discovery-visual.ts';
 import {
   projectEndpointInteractions,
@@ -157,6 +159,10 @@ const discoveryMechanismName: Record<DiscoveryMechanismId, string> = {
 
 const bookingsEndpointInteractions = projectEndpointInteractions(endpointDiscoverySnapshot);
 const fabioEndpointInteractions = projectEndpointInteractions(fabioEndpointDiscoverySnapshot);
+const agentQueryProjections: Record<AgentQueryChoice, AgentQueryProjection> = {
+  bookings: projectAgentQuery(flightSearchSnapshot, 'bookings'),
+  fabio: projectAgentQuery(flightSearchSnapshot, 'fabio'),
+};
 
 const discoveryMechanismMark = (id: DiscoveryMechanismId, className = '') => {
   const artwork: Record<DiscoveryMechanismId, string> = {
@@ -275,6 +281,38 @@ type DiscoveryPathNode = {
 const escapeMarkup = (value: string) => value.replace(/[&<>"']/g, (character) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
 }[character] ?? character));
+
+const agentQueryTableRows = (projection: AgentQueryProjection, query: string) => projection.rows.map((row, index) => `
+  <tr>
+    ${index === 0 ? `<th class="agent-query-table__query" scope="rowgroup" rowspan="${projection.rows.length}">
+      <strong>${escapeMarkup(query)}</strong>
+      <small>${escapeMarkup(projection.question.route)}</small>
+    </th>` : ''}
+    <td class="agent-query-table__endpoint">
+      <strong>${escapeMarkup(row.protocol)}</strong>
+      <code>${escapeMarkup(row.endpoint.replace(/^https?:\/\//, ''))}</code>
+      ${row.selectedTool ? `<small><b>TOOL</b> ${escapeMarkup(row.selectedTool)}</small>` : ''}
+    </td>
+    <td class="agent-query-table__answer">
+      <strong>${escapeMarkup(row.heading)}</strong>
+      ${row.lines.map((line) => `<span>${escapeMarkup(line)}</span>`).join('')}
+    </td>
+  </tr>`).join('');
+
+const agentQueryTable = () => {
+  const projection = agentQueryProjections.bookings;
+  return `
+    <section class="agent-query-board" data-agent-query-board hidden>
+      <div class="agent-query-board__count"><span data-agent-query-count>${projection.rows.length}</span> UNIQUE ${projection.rows.length === 1 ? 'ENDPOINT' : 'ENDPOINTS'}</div>
+      <div class="agent-query-table-scroll">
+        <table class="agent-query-table" aria-label="Endpoint answers from ${escapeMarkup(projection.agentName)}">
+          <colgroup><col class="agent-query-table__query-column"/><col class="agent-query-table__endpoint-column"/><col class="agent-query-table__answer-column"/></colgroup>
+          <thead><tr><th>MOCHI'S QUERY</th><th>UNIQUE ENDPOINT</th><th>ANSWER</th></tr></thead>
+          <tbody data-agent-query-table-body>${agentQueryTableRows(projection, projection.question.text)}</tbody>
+        </table>
+      </div>
+    </section>`;
+};
 
 const discoveryNode = (node: DiscoveryPathNode, modifier = '') => {
   const artifact = 'artifact' in node ? node.artifact : '';
@@ -801,6 +839,11 @@ app.innerHTML = `
 
             ${endpointInteractionVisual()}
 
+            <div class="agent-query-route-labels" data-agent-query-route-labels aria-hidden="true">
+              <span class="agent-query-route-label agent-query-route-label--user">1 · USER → MOCHI</span>
+              <span class="agent-query-route-label agent-query-route-label--agent">2 · MOCHI → AGENT</span>
+            </div>
+
             <div class="discovery-domain-target" data-discovery-domain-target aria-label="Selected domain bookings.darknetian.com">
               <span class="discovery-domain-target__beam-frame" aria-hidden="true"></span>
               <small>SELECTED DOMAIN</small>
@@ -970,6 +1013,7 @@ app.innerHTML = `
                 <div class="consolidation-board__results">${consolidatedResultRows()}</div>
               </div>
               ${endpointInteractionTable()}
+              ${agentQueryTable()}
               <div class="behind-scene-current" data-behind-current>
                 <span>Current operation</span>
                 <strong data-behind-title>Interpreting request</strong>
@@ -1053,6 +1097,11 @@ const endpointInteractionTableBody = document.querySelector<HTMLElement>('[data-
 const endpointFallback = document.querySelector<HTMLElement>('[data-endpoint-fallback]');
 const endpointFallbackYes = document.querySelector<HTMLButtonElement>('[data-endpoint-fallback-yes]');
 const endpointFallbackNo = document.querySelector<HTMLButtonElement>('[data-endpoint-fallback-no]');
+const agentQueryBoard = document.querySelector<HTMLElement>('[data-agent-query-board]');
+const agentQueryTableBody = document.querySelector<HTMLTableSectionElement>('[data-agent-query-table-body]');
+const agentQueryCount = document.querySelector<HTMLElement>('[data-agent-query-count]');
+const resultLink = document.querySelector<SVGPathElement>('[data-result-link]');
+const resultPacket = document.querySelector<SVGPolygonElement>('[data-result-packet]');
 const registryResultAnimations = new Map<RegistryId, SVGAnimationElement | null>([
   ['agentcensus', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="agentcensus"]')],
   ['a2a-registry', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="a2a-registry"]')],
@@ -1088,6 +1137,8 @@ let endpointInspectionTimers: number[] = [];
 let endpointFallbackTimer: number | null = null;
 let endpointInteractionAgent: EndpointAgentChoice = 'bookings';
 let endpointInteractionPhase: EndpointInteractionPhase = 'idle';
+let agentQueryEntryTimer: number | null = null;
+let agentQueryTimers: number[] = [];
 
 const bookingCandidate: Candidate = {
   id: 'bookings-service',
@@ -1150,6 +1201,28 @@ const alignUserFlow = () => {
   userLink.setAttribute(
     'd',
     `M${startX.toFixed(1)} ${startY.toFixed(1)} C${(startX + direction * curve).toFixed(1)} ${startY.toFixed(1)} ${(endX - direction * curve).toFixed(1)} ${endY.toFixed(1)} ${endX.toFixed(1)} ${endY.toFixed(1)}`,
+  );
+};
+
+const alignAgentQueryFlow = () => {
+  if (!worldScene || !resultLink) return;
+  const mochiFrame = document.querySelector<HTMLElement>('[data-agent-id="personal-assistant"] .world-agent__beam-frame');
+  const serviceFrame = document.querySelector<HTMLElement>('[data-agent-id="bookings-service"] .world-agent__beam-frame');
+  if (!mochiFrame || !serviceFrame) return;
+  const worldBounds = worldScene.getBoundingClientRect();
+  const mochiBounds = mochiFrame.getBoundingClientRect();
+  const serviceBounds = serviceFrame.getBoundingClientRect();
+  if (worldBounds.width === 0 || worldBounds.height === 0) return;
+  const toSceneX = (value: number) => ((value - worldBounds.left) / worldBounds.width) * 600;
+  const toSceneY = (value: number) => ((value - worldBounds.top) / worldBounds.height) * 620;
+  const startX = toSceneX(mochiBounds.right);
+  const startY = toSceneY(mochiBounds.top + mochiBounds.height / 2);
+  const endX = toSceneX(serviceBounds.left);
+  const endY = toSceneY(serviceBounds.top + serviceBounds.height / 2);
+  const curve = Math.max(24, Math.abs(endX - startX) * .42);
+  resultLink.setAttribute(
+    'd',
+    `M${startX.toFixed(1)} ${startY.toFixed(1)} C${(startX + curve).toFixed(1)} ${startY.toFixed(1)} ${(endX - curve).toFixed(1)} ${endY.toFixed(1)} ${endX.toFixed(1)} ${endY.toFixed(1)}`,
   );
 };
 
@@ -1387,11 +1460,15 @@ endpointFallbackYes?.addEventListener('click', () => {
   if (worldScene) worldScene.dataset.endpointInteractionPhase = endpointInteractionPhase;
   hideEndpointFallback();
   renderEndpointInteractionAgent('fabio');
+  scheduleAgentQueryEntry('fabio');
 });
 
 endpointFallbackNo?.addEventListener('click', () => {
+  if (endpointInteractionPhase !== 'offering') return;
   endpointInteractionPhase = transitionEndpointInteractionPhase(endpointInteractionPhase, 'decline');
-  // The declined state intentionally preserves Nic's current result and prompt.
+  hideEndpointFallback();
+  renderEndpointInteractionAgent('bookings');
+  scheduleAgentQueryEntry('bookings');
 });
 
 const registryStatusLabel = (status: ReturnType<typeof projectDiscovery>['registries'][RegistryId]) => {
@@ -1431,6 +1508,42 @@ const renderCandidates = (projection: ReturnType<typeof projectDiscovery>) => {
   });
 };
 
+const renderAgentQueryChoice = (
+  choice: AgentQueryChoice,
+  query: string,
+  bookingsButton: HTMLButtonElement | undefined,
+) => {
+  const agentQuery = agentQueryProjections[choice];
+  if (worldScene) worldScene.dataset.queryAgent = choice;
+  if (bookingsButton) {
+    bookingsButton.querySelector('.avatar')?.classList.toggle('avatar--orange', choice === 'bookings');
+    bookingsButton.querySelector('.avatar')?.classList.toggle('avatar--violet', choice === 'fabio');
+    const name = bookingsButton.querySelector<HTMLElement>('.world-agent__label strong');
+    const role = bookingsButton.querySelector<HTMLElement>('.world-agent__label small');
+    if (name) name.textContent = agentQuery.agentName;
+    if (role) role.textContent = choice === 'fabio' ? 'Travel Service Agent' : 'Meeting Service Agent';
+    bookingsButton.setAttribute('aria-label', `${agentQuery.agentName}, service agent`);
+  }
+  if (agentQueryTableBody) agentQueryTableBody.innerHTML = agentQueryTableRows(agentQuery, query);
+  if (agentQueryBoard) agentQueryBoard.dataset.queryAgent = choice;
+  if (agentQueryCount) agentQueryCount.textContent = String(agentQuery.rows.length);
+  const countLabel = agentQueryBoard?.querySelector<HTMLElement>('.agent-query-board__count');
+  if (countLabel) countLabel.lastChild!.textContent = ` UNIQUE ${agentQuery.rows.length === 1 ? 'ENDPOINT' : 'ENDPOINTS'}`;
+  agentQueryBoard?.querySelector('table')?.setAttribute('aria-label', `Endpoint answers from ${agentQuery.agentName}`);
+};
+
+const restoreBookingsAgent = (bookingsButton: HTMLButtonElement | undefined) => {
+  if (worldScene) delete worldScene.dataset.queryAgent;
+  if (!bookingsButton) return;
+  bookingsButton.querySelector('.avatar')?.classList.add('avatar--orange');
+  bookingsButton.querySelector('.avatar')?.classList.remove('avatar--violet');
+  const name = bookingsButton.querySelector<HTMLElement>('.world-agent__label strong');
+  const role = bookingsButton.querySelector<HTMLElement>('.world-agent__label small');
+  if (name) name.textContent = agents['bookings-service'].name;
+  if (role) role.textContent = agents['bookings-service'].shortRole;
+  bookingsButton.setAttribute('aria-label', `Select ${agents['bookings-service'].name}, ${agents['bookings-service'].role}`);
+};
+
 const renderActivity = () => {
   if (shouldRestoreDevReplay && activityEvents.length > 0) {
     window.sessionStorage.setItem(DEV_REPLAY_STORAGE_KEY, JSON.stringify(activityEvents));
@@ -1439,6 +1552,7 @@ const renderActivity = () => {
   const projection = projectDiscovery(displayedEvents);
   const liveProjection = projectDiscovery(activityEvents);
   const isComposerPaused = liveProjection.step > 0 && liveProjection.step < 7;
+  const isAgentQueryLocked = liveProjection.step === 10 && liveProjection.agentQueryPhase !== 'ready';
   const displayStep = displayStepNumber(projection.step);
   const hasSelectedCandidate = projection.step >= 7 && projection.candidates.length > 0;
   const mochiProjection = projectMochi(displayedEvents);
@@ -1448,9 +1562,10 @@ const renderActivity = () => {
   worldScene?.classList.toggle('is-searching', projection.step > 0);
   worldScene?.classList.toggle('has-candidate', hasSelectedCandidate);
   if (worldScene) worldScene.dataset.step = String(projection.step);
+  if (worldScene) worldScene.dataset.queryPhase = projection.agentQueryPhase;
   if (userFlowAlignmentTimer !== null) window.clearTimeout(userFlowAlignmentTimer);
-  window.requestAnimationFrame(alignUserFlow);
-  userFlowAlignmentTimer = window.setTimeout(alignUserFlow, 450);
+  window.requestAnimationFrame(() => { alignUserFlow(); alignAgentQueryFlow(); });
+  userFlowAlignmentTimer = window.setTimeout(() => { alignUserFlow(); alignAgentQueryFlow(); }, 450);
   if (endpointBeamAlignmentTimer !== null) window.clearTimeout(endpointBeamAlignmentTimer);
   if (projection.step === 8) {
     window.requestAnimationFrame(alignEndpointDiscoveryBeams);
@@ -1458,7 +1573,7 @@ const renderActivity = () => {
   }
   chatForm?.classList.toggle('is-paused', isComposerPaused);
   chatForm?.setAttribute('aria-busy', String(isComposerPaused));
-  if (chatInput) chatInput.disabled = isComposerPaused;
+  if (chatInput) chatInput.disabled = isComposerPaused || isAgentQueryLocked;
   if (chatField) chatField.hidden = isComposerPaused;
   if (chatPaused) chatPaused.hidden = !isComposerPaused;
   if (chatSend) chatSend.hidden = isComposerPaused;
@@ -1485,11 +1600,14 @@ const renderActivity = () => {
   const isConsolidating = projection.step === 6;
   const isDiscoveringEndpoints = projection.step === 8;
   const isInteractingEndpoints = projection.step === 9;
+  const isAgentQuery = projection.step === 10;
+  chatForm?.classList.toggle('is-agent-query-ready', isAgentQuery && projection.agentQueryPhase === 'ready');
   if (searchPrintouts) searchPrintouts.hidden = !isRegistryWork;
   if (searchPrintouts) searchPrintouts.dataset.state = projection.step === 5 ? 'results' : 'searching';
   if (consolidationBoard) consolidationBoard.hidden = !isConsolidating;
   if (endpointPathStage) endpointPathStage.hidden = !isDiscoveringEndpoints;
   if (endpointInteractionBoard) endpointInteractionBoard.hidden = !isInteractingEndpoints;
+  if (agentQueryBoard) agentQueryBoard.hidden = !isAgentQuery || projection.agentQueryPhase !== 'answered';
   endpointInteractionVisualElement?.setAttribute('aria-hidden', String(!isInteractingEndpoints));
   if (isDiscoveringEndpoints && renderedStep !== 8) startEndpointInspection();
   if (!isDiscoveringEndpoints && renderedStep === 8) clearEndpointInspection();
@@ -1509,18 +1627,27 @@ const renderActivity = () => {
     mochiButton.setAttribute('aria-label', `Mochi, Personal Agent. ${mochiProjection.status}`);
   }
   if (bookingsButton) bookingsButton.setAttribute('aria-hidden', String(!hasSelectedCandidate));
+  if (isAgentQuery && projection.agentQueryChoice) {
+    renderAgentQueryChoice(
+      projection.agentQueryChoice,
+      projection.agentQuery ?? agentQueryProjections[projection.agentQueryChoice].question.text,
+      bookingsButton,
+    );
+  } else {
+    restoreBookingsAgent(bookingsButton);
+  }
   if (mochiBubble) {
     mochiBubble.textContent = mochiProjection.bubble ?? '';
     mochiBubble.hidden = mochiProjection.bubble === null;
   }
 
-  userLink?.classList.toggle('is-active', projection.step === 1);
-  userArrow?.toggleAttribute('hidden', projection.step !== 1);
-  const resultLink = document.querySelector<SVGPathElement>('[data-result-link]');
-  const resultPacket = document.querySelector<SVGPolygonElement>('[data-result-packet]');
-  resultLink?.classList.toggle('is-visible', hasSelectedCandidate);
-  resultLink?.classList.toggle('is-active', projection.step === 7);
-  resultPacket?.toggleAttribute('hidden', projection.step !== 7);
+  const queryHasReachedMochi = isAgentQuery && ['submitted', 'forwarded', 'answered'].includes(projection.agentQueryPhase);
+  const queryIsForwarded = isAgentQuery && ['forwarded', 'answered'].includes(projection.agentQueryPhase);
+  userLink?.classList.toggle('is-active', projection.step === 1 || queryHasReachedMochi);
+  userArrow?.toggleAttribute('hidden', projection.step !== 1 && projection.agentQueryPhase !== 'submitted');
+  resultLink?.classList.toggle('is-visible', hasSelectedCandidate && !isAgentQuery || queryIsForwarded);
+  resultLink?.classList.toggle('is-active', projection.step === 7 || queryIsForwarded);
+  resultPacket?.toggleAttribute('hidden', projection.step !== 7 && projection.agentQueryPhase !== 'forwarded');
 
   (['agentcensus', 'a2a-registry'] as RegistryId[]).forEach((registry) => {
     const state = projection.registries[registry];
@@ -1571,6 +1698,9 @@ const renderActivity = () => {
         && event.payload.registry === 'agentcensus'
         && nextEvent?.type === 'registry.results-returned'
         && nextEvent.payload.registry === 'a2a-registry') return;
+      if (event.type === 'agent.query-submitted'
+        || event.type === 'agent.query-forwarded'
+        || event.type === 'agent.query-completed') return;
 
       const eventProjection = projectSkynet(activityEvents.slice(0, index + 1));
       if (!eventProjection) return;
@@ -1584,12 +1714,15 @@ const renderActivity = () => {
         ? 'Request Delivered & Understood'
         : isMergedRegistryResponse ? 'Registry Results Received' : eventProjection.title;
       const currentIndex = eventCursor ?? activityEvents.length - 1;
+      const isAgentQueryTimeline = event.type === 'agent.query-ready';
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'event-history__item';
-      button.classList.toggle('is-current', isMergedHandoff || isMergedRegistryResponse
-        ? currentIndex === index || currentIndex === index - 1
-        : currentIndex === index);
+      button.classList.toggle('is-current', isAgentQueryTimeline
+        ? currentIndex >= index && projectDiscovery(activityEvents.slice(0, currentIndex + 1)).step === 10
+        : isMergedHandoff || isMergedRegistryResponse
+          ? currentIndex === index || currentIndex === index - 1
+          : currentIndex === index);
       button.innerHTML = '<span class="event-history__sequence"></span><span class="event-history__copy"><strong></strong><small></small></span><i></i>';
       button.querySelector<HTMLElement>('.event-history__sequence')!.textContent = String(timelineStep).padStart(2, '0');
       button.querySelector('strong')!.textContent = title;
@@ -1650,6 +1783,24 @@ const renderActivity = () => {
           return;
         }
 
+        if (event.type === 'agent.query-ready') {
+          eventCursor = index;
+          renderActivity();
+          const submittedIndex = activityEvents.findIndex((candidate, candidateIndex) => (
+            candidateIndex > index && candidate.type === 'agent.query-submitted'
+          ));
+          const forwardedIndex = activityEvents.findIndex((candidate, candidateIndex) => (
+            candidateIndex > index && candidate.type === 'agent.query-forwarded'
+          ));
+          const completedIndex = activityEvents.findIndex((candidate, candidateIndex) => (
+            candidateIndex > index && candidate.type === 'agent.query-completed'
+          ));
+          if (submittedIndex >= 0) queueTimelineReplay(700, () => { eventCursor = submittedIndex; renderActivity(); });
+          if (forwardedIndex >= 0) queueTimelineReplay(2300, () => { eventCursor = forwardedIndex; renderActivity(); });
+          if (completedIndex >= 0) queueTimelineReplay(4000, () => { eventCursor = completedIndex; renderActivity(); });
+          return;
+        }
+
         eventCursor = Math.max(0, index - 1);
         renderActivity();
         queueTimelineReplay(STEP_REPLAY_LEAD_DELAY, () => {
@@ -1680,12 +1831,72 @@ const appendActivityEvent = (event: ActivityEvent) => {
   renderActivity();
 };
 
+function scheduleAgentQueryEntry(choice: AgentQueryChoice) {
+  if (agentQueryEntryTimer !== null) window.clearTimeout(agentQueryEntryTimer);
+  const projection = agentQueryProjections[choice];
+  agentQueryEntryTimer = window.setTimeout(() => {
+    agentQueryEntryTimer = null;
+    eventCursor = null;
+    const parentEventId = activityEvents.at(-1)?.eventId;
+    appendActivityEvent({
+      ...nextEnvelope(), type: 'agent.query-ready', source: 'observed',
+      actorId: 'personal-assistant', subjectId: 'bookings-service', causalParentId: parentEventId,
+      payload: { choice, agentName: projection.agentName },
+    });
+    if (chatInput) {
+      chatInput.value = projection.question.text;
+      chatInput.focus();
+      chatInput.setSelectionRange(chatInput.value.length, chatInput.value.length);
+    }
+    syncSearchComposer();
+  }, prefersReducedMotion ? 250 : 1600);
+}
+
+const clearAgentQueryTimers = () => {
+  agentQueryTimers.forEach((timer) => window.clearTimeout(timer));
+  agentQueryTimers = [];
+};
+
+const submitAgentQuery = (query: string, choice: AgentQueryChoice) => {
+  clearAgentQueryTimers();
+  let parentEventId = activityEvents.at(-1)?.eventId;
+  const submitted: ActivityEvent = {
+    ...nextEnvelope(), type: 'agent.query-submitted', source: 'observed',
+    actorId: 'user', subjectId: 'personal-assistant', causalParentId: parentEventId,
+    payload: { choice, query },
+  };
+  parentEventId = submitted.eventId;
+  appendActivityEvent(submitted);
+
+  agentQueryTimers.push(window.setTimeout(() => {
+    const forwarded: ActivityEvent = {
+      ...nextEnvelope(), type: 'agent.query-forwarded', source: 'observed',
+      actorId: 'personal-assistant', subjectId: 'bookings-service', causalParentId: parentEventId,
+      payload: { choice, query },
+    };
+    parentEventId = forwarded.eventId;
+    appendActivityEvent(forwarded);
+  }, replayDelay(1600)));
+
+  agentQueryTimers.push(window.setTimeout(() => {
+    const completed: ActivityEvent = {
+      ...nextEnvelope(), type: 'agent.query-completed', source: 'reported',
+      actorId: 'bookings-service', subjectId: 'personal-assistant', causalParentId: parentEventId,
+      payload: { choice, query, responseCount: agentQueryProjections[choice].rows.length },
+    };
+    appendActivityEvent(completed);
+  }, replayDelay(3300)));
+};
+
 const schedule = (delay: number, callback: () => void) => {
   scheduledTimers.push(window.setTimeout(callback, prefersReducedMotion ? Math.min(delay, 350) : delay));
 };
 
 const sendTaskToMochi = (message: string) => {
   clearTimelineReplay();
+  clearAgentQueryTimers();
+  if (agentQueryEntryTimer !== null) window.clearTimeout(agentQueryEntryTimer);
+  agentQueryEntryTimer = null;
   stopEndpointInteractionExperience();
   scheduledTimers.forEach((timer) => window.clearTimeout(timer));
   scheduledTimers = [];
@@ -1729,15 +1940,18 @@ returnLiveButton?.addEventListener('click', () => {
 const syncSearchComposer = () => {
   const liveProjection = projectDiscovery(activityEvents);
   const isComposerPaused = liveProjection.step > 0 && liveProjection.step < 7;
+  const isAgentQueryLocked = liveProjection.step === 10 && liveProjection.agentQueryPhase !== 'ready';
   const query = chatInput?.value.trim() ?? '';
   const hasSearchSubject = query.length > 0 && query.toLowerCase() !== 'search for';
-  if (chatSend) chatSend.disabled = isComposerPaused || !hasSearchSubject;
-  chatForm?.classList.toggle('is-ready', !isComposerPaused && hasSearchSubject);
+  if (chatSend) chatSend.disabled = isComposerPaused || isAgentQueryLocked || !hasSearchSubject;
+  chatForm?.classList.toggle('is-ready', !isComposerPaused && !isAgentQueryLocked && hasSearchSubject);
+  chatForm?.classList.toggle('is-agent-query-ready', liveProjection.step === 10 && liveProjection.agentQueryPhase === 'ready');
 };
 
 chatInput?.addEventListener('input', syncSearchComposer);
 window.addEventListener('resize', () => {
   alignUserFlow();
+  alignAgentQueryFlow();
   if (worldScene?.dataset.step === '8') alignEndpointDiscoveryBeams();
 });
 chatForm?.addEventListener('submit', (event) => {
@@ -1746,6 +1960,12 @@ chatForm?.addEventListener('submit', (event) => {
   if (liveProjection.step > 0 && liveProjection.step < 7) return;
   const message = chatInput?.value.trim() ?? '';
   if (!message || message.toLowerCase() === 'search for') return chatInput?.focus();
+  if (liveProjection.step === 10) {
+    if (liveProjection.agentQueryPhase !== 'ready' || !liveProjection.agentQueryChoice) return;
+    submitAgentQuery(message, liveProjection.agentQueryChoice);
+    syncSearchComposer();
+    return;
+  }
   sendTaskToMochi(message);
   if (chatInput) {
     chatInput.value = '';

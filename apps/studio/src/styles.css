@@ -1153,9 +1153,88 @@ button { color: inherit; }
 .endpoint-interaction-record__result--failed b { color: var(--red); }
 .endpoint-interaction-record__result--failed small { color: #a86f79; }
 
+/* Step 8 — send one user query through Mochi to the service agent selected in Step 7. */
+.avatar--violet { color: var(--violet); filter: drop-shadow(0 0 9px rgba(170,140,255,.52)); animation-delay: -.8s; }
+.avatar--violet .squid-body { fill: #291f3b; }
+.avatar--violet .squid-eye { fill: #f1ebff; }
+.world-scene[data-step='10'] .world-coordinates,
+.world-scene[data-step='10'] .world-zone,
+.world-scene[data-step='10'] .service-agent-field,
+.world-scene[data-step='10'] .registry-node,
+.world-scene[data-step='10'] .intent-chip,
+.world-scene[data-step='10'] .discovery-domain-target { visibility: hidden; opacity: 0; }
+.world-scene[data-step='10'] .network-line--registry,
+.world-scene[data-step='10'] .network-arrow--registry,
+.world-scene[data-step='10'] .network-result-batch { display: none; }
+.world-scene[data-step='10'] .network-line--user,
+.world-scene[data-step='10'] .network-line--result { opacity: 0; }
+.world-scene[data-step='10'][data-query-phase='ready'] .network-line--user,
+.world-scene[data-step='10'][data-query-phase='ready'] .network-line--result { transition: none; }
+.world-scene[data-step='10'] .network-line--user.is-active { opacity: 1; }
+.world-scene[data-step='10'] .network-line--result.is-visible { opacity: .52; }
+.world-scene[data-step='10'] .network-line--result.is-active { opacity: 1; }
+.world-scene[data-step='10'][data-query-agent='fabio'] .network-line--result { stroke: var(--violet); filter: drop-shadow(0 0 7px rgba(170,140,255,.72)); }
+.world-scene[data-step='10'][data-query-agent='fabio'] .network-arrow--result { fill: var(--violet); stroke: #f0ebff; filter: drop-shadow(0 0 6px var(--violet)); }
+.world-scene[data-step='10'] .user-node { left: 5%; top: 70%; bottom: auto; visibility: visible; opacity: 1; }
+.world-scene[data-step='10'] .world-agent--assistant { z-index: 13; left: 38%; top: 43%; transform: scale(.92); transform-origin: center; }
+.world-scene[data-step='10'] .world-agent--assistant .mochi-inspection-magnifier { display: none; }
+.world-scene[data-step='10'] .world-agent--bookings { z-index: 12; right: 2%; top: 37%; color: var(--orange); opacity: 1; visibility: visible; translate: 0; scale: .9; }
+.world-scene[data-step='10'][data-query-agent='fabio'] .world-agent--bookings { color: var(--violet); }
+.world-scene[data-step='10'] .world-agent--bookings .world-agent__label { min-width: 180px; border-color: currentColor; }
+.world-scene[data-step='10'] .world-agent--bookings .world-agent__status { background: var(--green); box-shadow: 0 0 10px var(--green); }
+.world-scene[data-step='10'] .world-agent--assistant .agent-bubble { bottom: 174px; min-width: 235px; max-width: 260px; }
+.agent-query-route-labels { position: absolute; z-index: 14; inset: 0; visibility: hidden; opacity: 0; pointer-events: none; }
+.world-scene[data-step='10'] .agent-query-route-labels { visibility: visible; opacity: 1; }
+.agent-query-route-label { position: absolute; padding: 6px 9px; border: 1px solid currentColor; border-radius: 999px; background: rgba(5,15,14,.92); font: 800 8px/1 ui-monospace,SFMono-Regular,Menlo,monospace; white-space: nowrap; opacity: 0; }
+.agent-query-route-label--user { left: 21%; top: 68%; color: var(--green); }
+.agent-query-route-label--agent { left: 59%; top: 43%; color: var(--orange); }
+.world-scene[data-step='10'][data-query-agent='fabio'] .agent-query-route-label--agent { color: var(--violet); }
+.world-scene[data-step='10'][data-query-phase='submitted'] .agent-query-route-label--user,
+.world-scene[data-step='10'][data-query-phase='forwarded'] .agent-query-route-label,
+.world-scene[data-step='10'][data-query-phase='answered'] .agent-query-route-label { opacity: 1; }
+.chat-composer.is-agent-query-ready { border-color: rgba(69,255,138,.82); animation: agentQueryComposerPulse 1.5s ease-in-out infinite; }
+@keyframes agentQueryComposerPulse { 0%,100% { box-shadow: 0 0 0 2px rgba(69,255,138,.06),0 16px 36px rgba(0,0,0,.18); } 50% { box-shadow: 0 0 0 5px rgba(69,255,138,.16),0 0 25px rgba(69,255,138,.2); } }
+
+[data-discovery-analysis][data-step='10'] .search-evidence-grid { grid-template-columns: 1fr; }
+[data-discovery-analysis][data-step='10'] .registry-ledger { display: none; }
+[data-discovery-analysis][data-step='10'] .timeline-card { grid-column: 1 / -1; }
+[data-discovery-analysis][data-step='10'] .timeline-card .event-history__list { display: grid; grid-template-rows: repeat(4,minmax(0,auto)); grid-auto-flow: column; grid-auto-columns: minmax(0,1fr); column-gap: 18px; max-height: none; overflow: visible; }
+.agent-query-board { --agent-query-accent: var(--violet); position: relative; min-width: 0; margin-top: 10px; padding-top: 20px; color: var(--agent-query-accent); }
+.agent-query-board[data-query-agent='bookings'] { --agent-query-accent: var(--orange); }
+.agent-query-board__count { position: absolute; top: 0; right: 0; color: currentColor; font: 800 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing: .04em; }
+.agent-query-table-scroll { min-width: 0; overflow-x: auto; border: 1px solid #244052; border-radius: 8px; }
+.agent-query-table { width: 100%; min-width: 580px; border-collapse: collapse; table-layout: fixed; background: rgba(8,20,30,.8); color: #d8ecf4; font: 12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace; }
+.agent-query-table__query-column { width: 32%; }
+.agent-query-table__endpoint-column { width: 35%; }
+.agent-query-table__answer-column { width: 33%; }
+.agent-query-table th,
+.agent-query-table td { padding: 12px 14px; border-right: 1px solid #24394a; border-bottom: 1px solid #24394a; vertical-align: middle; }
+.agent-query-table tr > :last-child { border-right: 0; }
+.agent-query-table tbody tr:last-child > td,
+.agent-query-table tbody tr:last-child > th { border-bottom: 0; }
+.agent-query-table thead th { color: #588198; background: #0a1823; font-size: 12px; font-weight: 800; letter-spacing: .06em; text-align: center; text-transform: uppercase; }
+.agent-query-table tbody tr { background: rgba(170,140,255,.035); }
+.agent-query-table__query { border-left: 3px solid var(--agent-query-accent); color: #eef8ff; text-align: left; }
+.agent-query-table__query strong,
+.agent-query-table__query small,
+.agent-query-table__endpoint strong,
+.agent-query-table__endpoint code,
+.agent-query-table__endpoint small,
+.agent-query-table__answer strong,
+.agent-query-table__answer span { display: block; }
+.agent-query-table__query strong { font-size: 12px; line-height: 1.45; }
+.agent-query-table__query small { margin-top: 12px; color: #6f9ab0; font-size: 12px; font-weight: 500; }
+.agent-query-table__endpoint strong { color: color-mix(in srgb,var(--agent-query-accent) 78%,#f1f8ff); }
+.agent-query-table__endpoint code { margin-top: 7px; overflow-wrap: anywhere; color: #b7ccda; font: 600 12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace; }
+.agent-query-table__endpoint small { margin-top: 10px; color: color-mix(in srgb,var(--agent-query-accent) 74%,#f1f8ff); font-size: 10px; }
+.agent-query-table__endpoint small b { margin-right: 6px; color: var(--agent-query-accent); font-size: 9px; }
+.agent-query-table__answer strong { color: #f1edff; }
+.agent-query-table__answer span { margin-top: 7px; color: color-mix(in srgb,var(--agent-query-accent) 68%,#e8f5ff); }
+
 @media (max-width: 1180px) {
   .endpoint-interaction-row { width: 72%; }
   .endpoint-interaction-table { overflow-x: auto; }
+  .agent-query-table-scroll { overflow-x: auto; }
 }
 
 @media (max-width: 680px) {
@@ -1165,6 +1244,8 @@ button { color: inherit; }
   .endpoint-interaction-spell { left: 5.5%; }
   .endpoint-fallback__prompt { left: 12%; width: 190px; }
   .endpoint-interaction-board { overflow-x: auto; }
+  .world-scene[data-step='10'] .world-agent--assistant { left: 34%; }
+  .world-scene[data-step='10'] .world-agent--bookings { right: -3%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1172,4 +1253,5 @@ button { color: inherit; }
   .world-scene[data-step='9'] .endpoint-interaction-door__leaf { animation: none; transform: translateX(-28px) skewY(-7deg) scaleX(.62); }
   .world-scene[data-step='9'] .endpoint-interaction-door__result { opacity: 1; animation: none; }
   .endpoint-fallback__prompt { animation: none; }
+  .chat-composer.is-agent-query-ready { animation: none; box-shadow: 0 0 0 3px rgba(69,255,138,.12); }
 }
