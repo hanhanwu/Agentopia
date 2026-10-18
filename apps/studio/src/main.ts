@@ -40,9 +40,9 @@ type ServiceVariant = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 const INTENT_DERIVATION_DELAY = 4800;
 const UNDERSTOOD_HOLD_DELAY = 2000;
 const REGISTRY_SEARCH_DELAY = INTENT_DERIVATION_DELAY + UNDERSTOOD_HOLD_DELAY;
-const STEP_REPLAY_LEAD_DELAY = 700;
 const REGISTRY_RESULTS_DELAY = 19500;
-const CONSOLIDATION_START_DELAY = REGISTRY_RESULTS_DELAY + STEP_REPLAY_LEAD_DELAY;
+const REGISTRY_RESULT_SETTLE_DELAY = 1350;
+const CONSOLIDATION_START_DELAY = REGISTRY_RESULTS_DELAY + REGISTRY_RESULT_SETTLE_DELAY;
 const DEFAULT_RESULT_FLOW_PATH = 'M390 230 C447 230 478 275 526 318';
 const REGISTRY_ARROW_LENGTH = 7;
 const REGISTRY_REQUEST_ORIGIN_GAP = 18;
@@ -1898,12 +1898,6 @@ const renderActivity = () => {
           queueTimelineReplay(INTENT_DERIVATION_DELAY, () => {
             eventCursor = index;
             renderActivity();
-            queueTimelineReplay(UNDERSTOOD_HOLD_DELAY, () => {
-              if (activityEvents[index + 1]?.type !== 'registries.search-started') return;
-              eventCursor = index + 1;
-              renderActivity();
-              restartRegistryPrintouts();
-            });
           });
           return;
         }
@@ -1917,9 +1911,25 @@ const renderActivity = () => {
         }
 
         if (event.type === 'registries.search-started') {
+          const isReplayingCurrentStep = renderedStep === 3;
           eventCursor = index;
           renderActivity();
           restartRegistryPrintouts();
+          if (isReplayingCurrentStep) {
+            registryRequestAnimations.forEach((animation) => animation?.beginElement());
+          }
+          return;
+        }
+
+        if (event.type === 'candidates.normalized') {
+          eventCursor = Math.max(0, index - 1);
+          renderActivity();
+          startRegistryResultAnimation('agentcensus');
+          startRegistryResultAnimation('a2a-registry');
+          queueTimelineReplay(REGISTRY_RESULT_SETTLE_DELAY, () => {
+            eventCursor = index;
+            renderActivity();
+          });
           return;
         }
 
@@ -1957,12 +1967,8 @@ const renderActivity = () => {
           return;
         }
 
-        eventCursor = Math.max(0, index - 1);
+        eventCursor = index;
         renderActivity();
-        queueTimelineReplay(STEP_REPLAY_LEAD_DELAY, () => {
-          eventCursor = index;
-          renderActivity();
-        });
       });
       eventHistoryList.append(button);
     });
