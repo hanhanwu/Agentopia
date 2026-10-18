@@ -3,6 +3,16 @@ import type { AgentId } from './agents.ts';
 export type ActivitySource = 'observed' | 'reported' | 'derived' | 'simulated';
 export type RegistryId = 'agentcensus' | 'a2a-registry';
 export type RegistryStatus = 'waiting' | 'searching' | 'results' | 'no-results' | 'failed';
+export type EndpointMechanismId = 'ard' | 'dns-aid' | 'ans';
+export type EndpointInteractionOutcome = 'success' | 'failed';
+
+export type EndpointInteraction = {
+  mechanism: EndpointMechanismId;
+  endpoint: string;
+  attempts: string[];
+  outcome: EndpointInteractionOutcome;
+  status: string;
+};
 
 export type Candidate = {
   id: string;
@@ -34,9 +44,10 @@ export type ActivityEvent =
   | (EventEnvelope & { type: 'registry.no-results'; actorId: RegistryId; subjectId: 'personal-assistant'; payload: { registry: RegistryId; resultCount: 0 } })
   | (EventEnvelope & { type: 'candidates.normalized'; actorId: 'personal-assistant'; subjectId: 'personal-assistant'; payload: { reportedCount: number; uniqueCount: number } })
   | (EventEnvelope & { type: 'search.completed'; actorId: 'personal-assistant'; subjectId: 'personal-assistant'; payload: { candidates: Candidate[]; rankingMethod: string } })
-  | (EventEnvelope & { type: 'endpoints.discovery-started'; actorId: 'personal-assistant'; subjectId: 'bookings-service'; payload: { domain: string; mechanisms: ['ard', 'dns-aid', 'ans'] } });
+  | (EventEnvelope & { type: 'endpoints.discovery-started'; actorId: 'personal-assistant'; subjectId: 'bookings-service'; payload: { domain: string; mechanisms: ['ard', 'dns-aid', 'ans'] } })
+  | (EventEnvelope & { type: 'endpoints.interaction-completed'; actorId: 'personal-assistant'; subjectId: 'bookings-service'; payload: { domain: string; interactions: EndpointInteraction[] } });
 
-export type DiscoveryStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+export type DiscoveryStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export type DiscoveryProjection = {
   step: DiscoveryStep;
@@ -155,6 +166,14 @@ export const projectDiscovery = (events: readonly ActivityEvent[]): DiscoveryPro
           detail: `Mochi is checking ARD, DNS-AID, and ANS for ${event.payload.domain}.`,
           mochiState: 'discovering-endpoints', mochiStatus: 'Discovering agent endpoints',
           mochiBubble: 'Checking every discovery path…',
+        });
+        break;
+      case 'endpoints.interaction-completed':
+        Object.assign(projection, {
+          step: 9, title: 'Endpoint Interaction',
+          detail: `Mochi tested every advertised endpoint for ${event.payload.domain}.`,
+          mochiState: 'interacting-endpoints', mochiStatus: 'Endpoint interaction complete',
+          mochiBubble: null,
         });
         break;
     }

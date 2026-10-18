@@ -106,6 +106,34 @@ describe('synchronized C3 discovery projection', () => {
     });
   });
 
+  it('records endpoint interaction outcomes as the seventh visible step', () => {
+    const endpointInteractionEvent = next({
+      schemaVersion: '1.0', eventId: 'event-9', runId: 'run-1', sequence: 9, logicalTime: 9,
+      source: 'observed', visibility: 'studio', type: 'endpoints.interaction-completed',
+      actorId: 'personal-assistant', subjectId: 'bookings-service',
+      payload: {
+        domain: candidate.domain,
+        interactions: [{
+          mechanism: 'ard', endpoint: `https://${candidate.domain}/mcp`, attempts: ['MCP initialize'],
+          outcome: 'success', status: 'HTTP 200',
+        }],
+      },
+    });
+
+    expect(projectDiscovery([taskEvent, endpointInteractionEvent])).toMatchObject({
+      step: 9,
+      title: 'Endpoint Interaction',
+      mochiState: 'interacting-endpoints',
+      mochiStatus: 'Endpoint interaction complete',
+      mochiBubble: null,
+    });
+    expect(projectSkynet([taskEvent, endpointInteractionEvent])).toMatchObject({
+      step: 9,
+      title: 'Endpoint Interaction',
+      source: 'observed',
+    });
+  });
+
   it('rewinds the shared state without mutating canonical history', () => {
     const events = [taskEvent, { ...taskEvent, eventId: 'event-2', sequence: 2, logicalTime: 2 }];
     expect(eventsAtCursor(events, 0)).toEqual([taskEvent]);

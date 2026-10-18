@@ -10,6 +10,7 @@ import {
   projectSkynet,
   type Candidate,
   type ActivityEvent,
+  type EndpointInteraction,
   type RegistryId,
 } from './activity.ts';
 
@@ -136,6 +137,7 @@ const SEARCH_COMPLETE_DELAY = CONSOLIDATION_START_DELAY
   + CONSOLIDATION_ROW_DURATION
   + STEP_4_TO_5_GAP;
 const ENDPOINT_DISCOVERY_DELAY = SEARCH_COMPLETE_DELAY + 3500;
+const ENDPOINT_INTERACTION_DELAY = ENDPOINT_DISCOVERY_DELAY + 19000;
 
 type DiscoveryMechanismId = (typeof endpointDiscoverySnapshot.mechanisms)[number]['id'];
 
@@ -144,6 +146,14 @@ const discoveryMechanismName: Record<DiscoveryMechanismId, string> = {
   'dns-aid': 'DNS-AID',
   ans: 'ANS',
 };
+
+const endpointInteractions: EndpointInteraction[] = [
+  { mechanism: 'ard', endpoint: 'https://bookings.darknetian.com/a2a', attempts: ['A2A message/send'], outcome: 'failed', status: 'HTTP 429' },
+  { mechanism: 'ard', endpoint: 'https://bookings.darknetian.com/mcp', attempts: ['MCP initialize'], outcome: 'success', status: 'HTTP 200' },
+  { mechanism: 'ard', endpoint: 'https://bookings.darknetian.com/ask', attempts: ['HTTPS POST'], outcome: 'failed', status: 'HTTP 429' },
+  { mechanism: 'dns-aid', endpoint: 'https://bookings.darknetian.com/', attempts: ['MCP initialize'], outcome: 'failed', status: 'HTTP 404' },
+  { mechanism: 'ans', endpoint: 'https://bookings.darknetian.com/', attempts: ['MCP initialize'], outcome: 'failed', status: 'HTTP 404' },
+];
 
 const discoveryMechanismMark = (id: DiscoveryMechanismId, className = '') => {
   const artwork: Record<DiscoveryMechanismId, string> = {
@@ -164,6 +174,74 @@ const discoveryMechanismMark = (id: DiscoveryMechanismId, className = '') => {
 
   return `<svg class="mechanism-mark mechanism-mark--${id} ${className}" viewBox="-90 -90 180 180" aria-hidden="true">${artwork[id]}</svg>`;
 };
+
+type EndpointInterfaceId = keyof typeof endpointInterfaceLogo;
+
+const endpointInteractionDoor = (interfaceId: EndpointInterfaceId, outcome: 'success' | 'failed') => `
+  <span class="endpoint-interaction-door endpoint-interaction-door--${interfaceId}" role="img" aria-label="${interfaceId.toUpperCase()} endpoint ${outcome}">
+    <span class="endpoint-interaction-door__result endpoint-interaction-door__result--${outcome}" aria-hidden="true">
+      ${outcome === 'success'
+        ? `<svg viewBox="0 0 276 270">${serviceAgentArtwork(1)}</svg>`
+        : '<i></i>'}
+    </span>
+    <span class="ard-endpoint-door ard-endpoint-door--${interfaceId} endpoint-interaction-door__leaf">
+      <img src="${endpointInterfaceLogo[interfaceId]}" alt="" />
+    </span>
+  </span>`;
+
+const endpointInteractionVisual = () => `
+  <div class="endpoint-interaction-visual" data-endpoint-interaction-visual aria-hidden="true">
+    <div class="endpoint-interaction-spell">
+      <strong>Open, Sesame!</strong>
+      <svg viewBox="0 0 80 58" aria-hidden="true"><path d="M39 57C58 44 21 33 40 16" /></svg>
+    </div>
+    <section class="endpoint-interaction-row endpoint-interaction-row--ard">
+      <div class="endpoint-interaction-door-block">
+        ${endpointInteractionDoor('a2a', 'failed')}
+        ${endpointInteractionDoor('mcp', 'success')}
+        ${endpointInteractionDoor('openapi', 'failed')}
+      </div>
+      <span class="endpoint-interaction-mechanism">
+        ${discoveryMechanismMark('ard')}
+        <strong>ARD</strong>
+      </span>
+    </section>
+    <section class="endpoint-interaction-row endpoint-interaction-row--dns-aid">
+      <div class="endpoint-interaction-door-block">${endpointInteractionDoor('mcp', 'failed')}</div>
+      <span class="endpoint-interaction-mechanism">
+        ${discoveryMechanismMark('dns-aid')}
+        <strong>DNS-AID</strong>
+      </span>
+    </section>
+    <section class="endpoint-interaction-row endpoint-interaction-row--ans">
+      <div class="endpoint-interaction-door-block">${endpointInteractionDoor('mcp', 'failed')}</div>
+      <span class="endpoint-interaction-mechanism">
+        ${discoveryMechanismMark('ans')}
+        <strong>ANS</strong>
+      </span>
+    </section>
+  </div>`;
+
+const endpointInteractionTable = () => `
+  <section class="endpoint-interaction-board" data-endpoint-interaction-board hidden>
+    <h4>Endpoint interaction attempts</h4>
+    <div class="endpoint-interaction-table" role="table" aria-label="Endpoint interaction attempts">
+      <div class="endpoint-interaction-table__header" role="row">
+        <span>Mechanism</span><span>Endpoint</span><span>Attempt</span><span>Result</span>
+      </div>
+      ${endpointInteractions.map((interaction) => `
+        <div class="endpoint-interaction-record endpoint-interaction-record--${interaction.mechanism}" role="row">
+          <strong role="cell">${discoveryMechanismName[interaction.mechanism]}</strong>
+          <code role="cell">${interaction.endpoint}</code>
+          <div role="cell">${interaction.attempts.length > 1
+            ? `<ul>${interaction.attempts.map((attempt) => `<li>${attempt}</li>`).join('')}</ul>`
+            : `<span>${interaction.attempts[0]}</span>`}</div>
+          <p class="endpoint-interaction-record__result endpoint-interaction-record__result--${interaction.outcome}" role="cell">
+            <b>${interaction.outcome.toUpperCase()}</b><small>${interaction.status}</small>
+          </p>
+        </div>`).join('')}
+    </div>
+  </section>`;
 
 type EndpointMechanism = (typeof endpointDiscoverySnapshot.mechanisms)[number];
 type DiscoveryPathNode = {
@@ -699,6 +777,8 @@ app.innerHTML = `
               </div>
             </div>
 
+            ${endpointInteractionVisual()}
+
             <div class="discovery-domain-target" data-discovery-domain-target aria-label="Selected domain bookings.darknetian.com">
               <span class="discovery-domain-target__beam-frame" aria-hidden="true"></span>
               <small>SELECTED DOMAIN</small>
@@ -867,6 +947,7 @@ app.innerHTML = `
                 <div class="consolidation-board__columns"><span>Rank</span><span>Agent</span><span>Domain</span><span>Source</span><span>Relevance</span></div>
                 <div class="consolidation-board__results">${consolidatedResultRows()}</div>
               </div>
+              ${endpointInteractionTable()}
               <div class="behind-scene-current" data-behind-current>
                 <span>Current operation</span>
                 <strong data-behind-title>Interpreting request</strong>
@@ -943,6 +1024,7 @@ const behindCurrent = document.querySelector<HTMLElement>('[data-behind-current]
 const endpointPathStage = document.querySelector<HTMLElement>('[data-endpoint-path-stage]');
 const endpointPathTabs = document.querySelector<HTMLElement>('[data-endpoint-path-tabs]');
 const endpointPathButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-endpoint-path-select]'));
+const endpointInteractionBoard = document.querySelector<HTMLElement>('[data-endpoint-interaction-board]');
 const registryResultAnimations = new Map<RegistryId, SVGAnimationElement | null>([
   ['agentcensus', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="agentcensus"]')],
   ['a2a-registry', document.querySelector<SVGAnimationElement>('[data-registry-result-animation="a2a-registry"]')],
@@ -1178,7 +1260,8 @@ const displayStepNumber = (step: ReturnType<typeof projectDiscovery>['step']) =>
     : step === 2 ? 1
       : step <= 4 ? step - 1
         : step === 5 ? 3
-          : step === 8 ? 6 : step - 2
+          : step === 8 ? 6
+            : step === 9 ? 7 : step - 2
 );
 
 const clearTimelineReplay = () => {
@@ -1198,6 +1281,15 @@ const restartRegistryPrintouts = () => {
     void row.offsetWidth;
     row.style.animationName = '';
   });
+};
+
+const restartEndpointInteraction = () => {
+  const animatedElements = Array.from(document.querySelectorAll<HTMLElement>(
+    '.endpoint-interaction-spell, .endpoint-interaction-door__leaf, .endpoint-interaction-door__result',
+  ));
+  animatedElements.forEach((element) => { element.style.animation = 'none'; });
+  void worldScene?.offsetWidth;
+  animatedElements.forEach((element) => { element.style.removeProperty('animation'); });
 };
 
 const registryStatusLabel = (status: ReturnType<typeof projectDiscovery>['registries'][RegistryId]) => {
@@ -1290,10 +1382,12 @@ const renderActivity = () => {
   const isRegistryWork = projection.step >= 3 && projection.step <= 5;
   const isConsolidating = projection.step === 6;
   const isDiscoveringEndpoints = projection.step === 8;
+  const isInteractingEndpoints = projection.step === 9;
   if (searchPrintouts) searchPrintouts.hidden = !isRegistryWork;
   if (searchPrintouts) searchPrintouts.dataset.state = projection.step === 5 ? 'results' : 'searching';
   if (consolidationBoard) consolidationBoard.hidden = !isConsolidating;
   if (endpointPathStage) endpointPathStage.hidden = !isDiscoveringEndpoints;
+  if (endpointInteractionBoard) endpointInteractionBoard.hidden = !isInteractingEndpoints;
   if (isDiscoveringEndpoints && renderedStep !== 8) startEndpointInspection();
   if (!isDiscoveringEndpoints && renderedStep === 8) clearEndpointInspection();
   if (behindCurrent) behindCurrent.hidden = isRegistryWork || isConsolidating || projection.step >= 7;
@@ -1443,6 +1537,13 @@ const renderActivity = () => {
           return;
         }
 
+        if (event.type === 'endpoints.interaction-completed') {
+          eventCursor = index;
+          renderActivity();
+          window.requestAnimationFrame(restartEndpointInteraction);
+          return;
+        }
+
         eventCursor = Math.max(0, index - 1);
         renderActivity();
         queueTimelineReplay(STEP_REPLAY_LEAD_DELAY, () => {
@@ -1509,6 +1610,7 @@ const sendTaskToMochi = (message: string) => {
   addStep(CONSOLIDATION_START_DELAY, () => ({ ...nextEnvelope(), type: 'candidates.normalized', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { reportedCount: 8, uniqueCount: 8 } }));
   addStep(SEARCH_COMPLETE_DELAY, () => ({ ...nextEnvelope(), type: 'search.completed', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { candidates: [bookingCandidate], rankingMethod: 'Relevance to the derived intent using reported registry metadata' } }));
   addStep(ENDPOINT_DISCOVERY_DELAY, () => ({ ...nextEnvelope(), type: 'endpoints.discovery-started', source: 'reported', actorId: 'personal-assistant', subjectId: 'bookings-service', causalParentId: parentEventId, payload: { domain: bookingCandidate.domain, mechanisms: ['ard', 'dns-aid', 'ans'] } }));
+  addStep(ENDPOINT_INTERACTION_DELAY, () => ({ ...nextEnvelope(), type: 'endpoints.interaction-completed', source: 'observed', actorId: 'personal-assistant', subjectId: 'bookings-service', causalParentId: parentEventId, payload: { domain: bookingCandidate.domain, interactions: endpointInteractions } }));
 };
 
 returnLiveButton?.addEventListener('click', () => {
