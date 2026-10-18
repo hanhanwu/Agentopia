@@ -603,9 +603,7 @@ button { color: inherit; }
 .world-scene[data-inspection-phase='beams'] .inspection-beam__cone { animation: inspectionConeIn .7s ease-out 1s forwards; }
 .world-scene[data-inspection-phase='beams'] .mechanism-beam { animation: mechanismBeamIn .75s ease-out 2s forwards, dash .8s linear 2.75s infinite; }
 .world-scene[data-inspection-phase='beams'] .mechanism-beam-origin { animation: mechanismBeamOriginIn .2s ease-out 2s forwards; }
-.world-scene[data-inspection-phase='beams'] .mechanism-orbit { animation: mechanismOrbitIn .48s cubic-bezier(.2,.9,.25,1.35) 2.85s forwards; }
-.world-scene[data-inspection-phase='beams'] .mechanism-orbit--dns-aid { animation-delay: 3.07s; }
-.world-scene[data-inspection-phase='beams'] .mechanism-orbit--ans { animation-delay: 3.29s; }
+.world-scene[data-inspection-phase='beams'] .mechanism-orbit { animation: mechanismOrbitIn .48s cubic-bezier(.2,.9,.25,1.35) 2s forwards; }
 .world-scene[data-inspection-phase='ard'] .endpoint-discovery-visual__beams,
 .world-scene[data-inspection-phase='dns-aid'] .endpoint-discovery-visual__beams,
 .world-scene[data-inspection-phase='ans'] .endpoint-discovery-visual__beams { opacity: 0; }

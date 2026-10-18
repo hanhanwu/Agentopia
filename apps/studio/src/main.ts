@@ -40,8 +40,9 @@ type ServiceVariant = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 const INTENT_DERIVATION_DELAY = 4800;
 const UNDERSTOOD_HOLD_DELAY = 2000;
 const REGISTRY_SEARCH_DELAY = INTENT_DERIVATION_DELAY + UNDERSTOOD_HOLD_DELAY;
-const CONSOLIDATION_START_DELAY = 27000;
 const STEP_REPLAY_LEAD_DELAY = 700;
+const REGISTRY_RESULTS_DELAY = 19500;
+const CONSOLIDATION_START_DELAY = REGISTRY_RESULTS_DELAY + STEP_REPLAY_LEAD_DELAY;
 const DEFAULT_RESULT_FLOW_PATH = 'M390 230 C447 230 478 275 526 318';
 const REGISTRY_ARROW_LENGTH = 7;
 const REGISTRY_REQUEST_ORIGIN_GAP = 18;
@@ -757,7 +758,7 @@ app.innerHTML = `
             </div>
 
             <div class="intent-chip" data-intent-chip hidden>
-              <span>Intent</span><strong data-world-intent>Meeting scheduling</strong>
+              <span>Intent</span><strong data-world-intent>Flight Booking</strong>
             </div>
 
             <div class="user-node" aria-label="You, task requester">
@@ -1155,7 +1156,7 @@ const endpointBeamElements = new Map<DiscoveryMechanismId, {
   path: document.querySelector<SVGPathElement>(`[data-mechanism-beam="${mechanism}"]`),
 }]));
 
-const DEV_REPLAY_STORAGE_KEY = 'agentopia.dev.activity-events';
+const DEV_REPLAY_STORAGE_KEY = 'agentopia.dev.activity-events.v2';
 const shouldRestoreDevReplay = ['127.0.0.1', 'localhost'].includes(window.location.hostname);
 const activityEvents: ActivityEvent[] = [];
 let runId = 'run-c3-1';
@@ -1203,7 +1204,7 @@ const bookingCandidate: Candidate = {
   id: 'bookings-service',
   name: 'Bookings',
   domain: 'bookings.darknetian.com',
-  capability: 'Meeting scheduling',
+  capability: 'Flight booking',
   sources: ['agentcensus'],
   matchReason: 'Its reported scheduling capability directly matches the requested intent.',
 };
@@ -1227,7 +1228,7 @@ const mockCandidatesFor = (registryId: RegistryId): Candidate[] => {
       id: `${registryId}-mock-${index + 1}`,
       name: record.agentName,
       domain: record.domain,
-      capability: 'Meeting scheduling (mock search record)',
+      capability: 'Flight booking (mock search record)',
       sources: [registryId],
       matchReason: `Temporary mock relevance: ${record.relevanceScore}%.`,
     };
@@ -1698,8 +1699,9 @@ const renderActivity = () => {
   const displayedEvents = eventsAtCursor(activityEvents, eventCursor);
   const projection = projectDiscovery(displayedEvents);
   const liveProjection = projectDiscovery(activityEvents);
-  const isComposerPaused = liveProjection.step > 0 && liveProjection.step < 7;
-  const isAgentQueryLocked = liveProjection.step === 10 && liveProjection.agentQueryPhase !== 'ready';
+  const isComposerPaused = liveProjection.step > 0 && liveProjection.step < 10;
+  const isAgentQueryInFlight = liveProjection.step === 10
+    && (liveProjection.agentQueryPhase === 'submitted' || liveProjection.agentQueryPhase === 'forwarded');
   const displayStep = displayStepNumber(projection.step);
   const hasSelectedCandidate = projection.step >= 7 && projection.candidates.length > 0;
   const mochiProjection = projectMochi(displayedEvents);
@@ -1723,8 +1725,8 @@ const renderActivity = () => {
     endpointBeamAlignmentTimer = window.setTimeout(alignEndpointDiscoveryBeams, 650);
   }
   chatForm?.classList.toggle('is-paused', isComposerPaused);
-  chatForm?.setAttribute('aria-busy', String(isComposerPaused));
-  if (chatInput) chatInput.disabled = isComposerPaused || isAgentQueryLocked;
+  chatForm?.setAttribute('aria-busy', String(isComposerPaused || isAgentQueryInFlight));
+  if (chatInput) chatInput.disabled = isComposerPaused || isAgentQueryInFlight;
   if (chatField) chatField.hidden = isComposerPaused;
   if (chatPaused) chatPaused.hidden = !isComposerPaused;
   if (chatSend) chatSend.hidden = isComposerPaused;
@@ -1768,7 +1770,7 @@ const renderActivity = () => {
   if (syncPhase) syncPhase.dataset.step = String(displayStep);
 
   if (intentChip) intentChip.hidden = projection.step < 2 || projection.step >= 7;
-  setText('[data-world-intent]', projection.intent ?? 'Meeting scheduling');
+  setText('[data-world-intent]', projection.intent ?? 'Flight Booking');
 
   if (mochiButton) {
     mochiButton.dataset.activityState = mochiProjection.state;
@@ -1922,12 +1924,10 @@ const renderActivity = () => {
         }
 
         if (event.type === 'endpoints.discovery-started') {
-          eventCursor = Math.max(0, index - 1);
+          const isReplayingCurrentStep = renderedStep === 8;
+          eventCursor = index;
           renderActivity();
-          queueTimelineReplay(STEP_REPLAY_LEAD_DELAY, () => {
-            eventCursor = index;
-            renderActivity();
-          });
+          if (isReplayingCurrentStep) window.requestAnimationFrame(startEndpointInspection);
           return;
         }
 
@@ -2075,9 +2075,9 @@ const sendTaskToMochi = (message: string) => {
     appendActivityEvent(nextEvent);
   });
 
-  addStep(INTENT_DERIVATION_DELAY, () => ({ ...nextEnvelope(), type: 'search.intent-derived', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { intent: 'meeting scheduling', candidateType: 'service agent' } }));
-  addStep(REGISTRY_SEARCH_DELAY, () => ({ ...nextEnvelope(), type: 'registries.search-started', source: 'simulated', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { query: 'meeting scheduling', registries: ['agentcensus', 'a2a-registry'] } }));
-  schedule(19500, () => {
+  addStep(INTENT_DERIVATION_DELAY, () => ({ ...nextEnvelope(), type: 'search.intent-derived', source: 'derived', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { intent: 'Flight Booking', candidateType: 'service agent' } }));
+  addStep(REGISTRY_SEARCH_DELAY, () => ({ ...nextEnvelope(), type: 'registries.search-started', source: 'simulated', actorId: 'personal-assistant', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { query: 'flight booking', registries: ['agentcensus', 'a2a-registry'] } }));
+  schedule(REGISTRY_RESULTS_DELAY, () => {
     const censusEvent: ActivityEvent = { ...nextEnvelope(), type: 'registry.results-returned', source: 'reported', actorId: 'agentcensus', subjectId: 'personal-assistant', causalParentId: parentEventId, payload: { registry: 'agentcensus', candidates: agentCensusSearchCandidates, resultCount: agentCensusSearchCandidates.length } };
     const a2aEvent: ActivityEvent = { ...nextEnvelope(), type: 'registry.results-returned', source: 'reported', actorId: 'a2a-registry', subjectId: 'personal-assistant', causalParentId: censusEvent.eventId, payload: { registry: 'a2a-registry', candidates: a2aSearchCandidates, resultCount: a2aSearchCandidates.length } };
     parentEventId = a2aEvent.eventId;
@@ -2098,12 +2098,13 @@ returnLiveButton?.addEventListener('click', () => {
 
 const syncSearchComposer = () => {
   const liveProjection = projectDiscovery(activityEvents);
-  const isComposerPaused = liveProjection.step > 0 && liveProjection.step < 7;
-  const isAgentQueryLocked = liveProjection.step === 10 && liveProjection.agentQueryPhase !== 'ready';
+  const isComposerPaused = liveProjection.step > 0 && liveProjection.step < 10;
+  const isAgentQueryInFlight = liveProjection.step === 10
+    && (liveProjection.agentQueryPhase === 'submitted' || liveProjection.agentQueryPhase === 'forwarded');
   const query = chatInput?.value.trim() ?? '';
   const hasSearchSubject = query.length > 0 && query.toLowerCase() !== 'search for';
-  if (chatSend) chatSend.disabled = isComposerPaused || isAgentQueryLocked || !hasSearchSubject;
-  chatForm?.classList.toggle('is-ready', !isComposerPaused && !isAgentQueryLocked && hasSearchSubject);
+  if (chatSend) chatSend.disabled = isComposerPaused || isAgentQueryInFlight || !hasSearchSubject;
+  chatForm?.classList.toggle('is-ready', !isComposerPaused && !isAgentQueryInFlight && hasSearchSubject);
   chatForm?.classList.toggle('is-agent-query-ready', liveProjection.step === 10 && liveProjection.agentQueryPhase === 'ready');
 };
 
@@ -2122,14 +2123,20 @@ window.addEventListener('resize', () => {
 chatForm?.addEventListener('submit', (event) => {
   event.preventDefault();
   const liveProjection = projectDiscovery(activityEvents);
-  if (liveProjection.step > 0 && liveProjection.step < 7) return;
+  if (liveProjection.step > 0 && liveProjection.step < 10) return;
   const message = chatInput?.value.trim() ?? '';
   if (!message || message.toLowerCase() === 'search for') return chatInput?.focus();
   if (liveProjection.step === 10) {
-    if (liveProjection.agentQueryPhase !== 'ready' || !liveProjection.agentQueryChoice) return;
-    submitAgentQuery(message, liveProjection.agentQueryChoice);
-    syncSearchComposer();
-    return;
+    if (liveProjection.agentQueryPhase === 'ready' && liveProjection.agentQueryChoice) {
+      submitAgentQuery(message, liveProjection.agentQueryChoice);
+      if (chatInput) {
+        chatInput.value = '';
+        chatInput.placeholder = 'Message';
+      }
+      syncSearchComposer();
+      return;
+    }
+    if (liveProjection.agentQueryPhase !== 'answered') return;
   }
   sendTaskToMochi(message);
   if (chatInput) {
