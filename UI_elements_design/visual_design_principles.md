@@ -26,6 +26,62 @@
 - Do not duplicate one artifact as two visual steps. For example, if a DNS SVCB
   card represents the returned hint, it is the DNS hint.
 
+## Cross-step continuity is the default
+
+- Treat a new numbered step as a state change inside the existing product, not
+  as a new screen to redesign. Anything the request does not explicitly change
+  must remain identical to the preceding step.
+- Before designing or implementing a step, compare it with the immediately
+  preceding live step and write a short `unchanged` / `new or changed` list.
+  The `unchanged` list is binding. New CSS and markup may cover only the second
+  list.
+- Use this precedence when deciding appearance: the same live component in the
+  preceding step, then the shared production component, then this document,
+  then a new design. Do not invent a variant merely because the new step needs
+  different content.
+- Preserve these product-shell invariants across every desktop step:
+  - Agentopia and Skynet remain equal-width columns. Keep `.studio` at two
+    `minmax(0, 1fr)` tracks (50:50). Step-specific selectors must not change the
+    panel ratio. Below the existing responsive breakpoint, preserve the shared
+    stacking behavior rather than creating step-specific breakpoints.
+  - Keep the Agentopia and Skynet panel headings, padding, borders, and internal
+    content bounds unchanged.
+  - Use the existing `.sync-phase` component for the Skynet top step label.
+    Change only the step number, title, detail, and existing state modifier.
+    Do not create a new badge, banner, or typography treatment for one step.
+  - Use the existing `.timeline-card`, `.event-history__heading`, and
+    `.event-history__item` markup and styles. Add the new event to that timeline;
+    do not create a step-specific timeline layout or visual language unless the
+    user explicitly approves one.
+  - Render Mochi and other recurring agents with the existing `.world-agent`,
+    `.avatar`, and `.world-agent__label` components. The bordered name-and-role
+    tag is part of agent identity and must remain present and styled identically
+    unless the user explicitly asks to change it.
+- A step-specific selector may position or animate a shared component when the
+  story requires it, but it must not silently restyle that component's label,
+  typography, border, background, or internal structure.
+- Keep a small visual-difference budget: the new step should introduce only the
+  new evidence, state, and animation needed to explain that step. Reuse the
+  surrounding layout and persistent controls without embellishment.
+
+## Step state and replay behavior
+
+- Entering or replaying a step must start at that step's own clean initial
+  state. Clear transient visuals from earlier and later steps before its first
+  frame is shown.
+- A timeline click replays only the selected step. It must not briefly show the
+  magnifier, domain, message flight, or other animation belonging to a previous
+  step.
+- Persistent controls and context—the two-panel shell, top step label, timeline,
+  agent identity tags, and established card frames—remain visible unless the
+  selected step's approved design explicitly removes them.
+- When a step's animation completes, its final state remains visible until the
+  user changes or replays the step. For example, opened doors stay open.
+- Animate connected visuals from their semantic anchor. Speech begins at the
+  character's mouth; connectors meet component centerlines; opening door leaves
+  retain their frames. Check the first visible frame, motion path, and final
+  frame for overlap or unintended occlusion.
+
 ## Reuse existing UI components
 
 - Treat the live component already used in `apps/studio` as the source of truth
@@ -81,14 +137,22 @@
 
 Before requesting approval and again before handing off an implementation:
 
-1. Record which production renderer, CSS classes, and assets each visible
+1. Record the preceding step's `unchanged` / `new or changed` list and confirm
+   that no unrequested persistent component was redesigned.
+2. Record which production renderer, CSS classes, and assets each visible
    component maps to.
-2. Compare the review SVG and live UI values for `viewBox`, rendered size,
+3. Compare the review SVG and live UI values for `viewBox`, rendered size,
    typography, padding, gaps, border radius, stroke width, and color.
-3. Confirm that shared components differ only in approved data or color inputs.
-4. Confirm that every connector is straight or intentionally curved and meets
+4. Confirm that shared components differ only in approved data or color inputs.
+5. Confirm the desktop shell is still 50:50 and the existing responsive behavior
+   is unchanged.
+6. Compare the top step label, timeline, and every recurring agent identity tag
+   directly against the preceding live step.
+7. Confirm that every connector is straight or intentionally curved and meets
    both components without a gap or overlap.
-5. Confirm that labels do not alter icon centering or connector alignment.
-6. Test the real domain and endpoint strings at the panel's minimum width.
-7. Run the production build and relevant tests after integration. XML
+8. Confirm that labels do not alter icon centering or connector alignment.
+9. Replay the new step from its timeline item and confirm that no prior-step
+   visual appears before the new step begins.
+10. Test the real domain and endpoint strings at the panel's minimum width.
+11. Run the production build and relevant tests after integration. XML
    validation of the review SVG alone is not visual-parity validation.
