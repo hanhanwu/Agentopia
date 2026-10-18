@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "scenarioId": "one-agent-different-doors",
+  "question": {
+    "speaker": "Mochi",
+    "text": "Search for flights from San Francisco to Tokyo on November 15, 2026.",
+    "route": "San Francisco (SFO) → Tokyo (TYO)",
+    "departureDate": "November 15, 2026"
+  },
+  "answers": [
+    {
+      "agentId": "nic-bookings",
+      "agentName": "Nic's Bookings Agent",
+      "result": "unsupported",
+      "headline": "I can't help with flight searches.",
+      "message": "I can only handle your meeting requests."
+    },
+    {
+      "agentId": "fabio-travel",
+      "agentName": "Fabio's Travel Agent",
+      "result": "options",
+      "headline": "I found two simulated flight options.",
+      "message": "Compare the cheapest and fastest options below.",
+      "inventoryNotice": "Simulation only — not live airline inventory.",
+      "options": [
+        {
+          "label": "Cheapest",
+          "price": "€250",
+          "airline": "Simulation Airways",
+          "flightNumbers": [
+            "SIM 001",
+            "SIM 002"
+          ],
+          "route": "SFO → SIM → TYO",
+          "departure": "8:00 AM",
+          "arrival": "1:00 PM",
+          "duration": "5 hr",
+          "stops": "1 stop",
+          "layover": "2 hr at SIM"
+        },
+        {
+          "label": "Fastest",
+          "price": "€320",
+          "airline": "Simulation Airways",
+          "flightNumbers": [
+            "SIM 010"
+          ],
+          "route": "SFO → TYO",
+          "departure": "9:00 AM",
+          "arrival": "11:00 AM",
+          "duration": "2 hr",
+          "stops": "Nonstop"
+        }
+      ]
+    }
+  ]
+}
