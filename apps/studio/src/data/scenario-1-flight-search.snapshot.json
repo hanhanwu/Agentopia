@@ -12,15 +12,31 @@
       "agentId": "nic-bookings",
       "agentName": "Nic's Bookings Agent",
       "result": "unsupported",
-      "headline": "I can't help with flight searches.",
-      "message": "I can only handle your meeting requests."
+      "responses": [
+        {
+          "protocol": "A2A",
+          "endpoint": "https://bookings.darknetian.com/a2a",
+          "answer": "I can't search for flights. I can only handle your meeting requests."
+        }
+      ]
     },
     {
       "agentId": "fabio-travel",
       "agentName": "Fabio's Travel Agent",
       "result": "options",
-      "headline": "I found two simulated flight options.",
-      "message": "Compare the cheapest and fastest options below.",
+      "responses": [
+        {
+          "protocol": "A2A",
+          "endpoint": "https://travel.agenthaven.dev/a2a",
+          "answer": "I found two simulated options: €250 with one stop, or €320 nonstop."
+        },
+        {
+          "protocol": "MCP",
+          "endpoint": "https://travel.agenthaven.dev/mcp",
+          "selectedTool": "search_flights",
+          "answer": "I used search_flights and found two simulated options: €250 with one stop, or €320 nonstop."
+        }
+      ],
       "inventoryNotice": "Simulation only — not live airline inventory.",
       "options": [
         {

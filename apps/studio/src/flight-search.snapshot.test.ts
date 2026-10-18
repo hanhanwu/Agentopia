@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import flightSearchSnapshot from './data/scenario-1-flight-search.snapshot.json';
 
 describe('Scenario 1 flight-search UI snapshot', () => {
-  it('provides one clear question and one concise answer per agent', () => {
+  it('provides one clear question and concise endpoint responses per agent', () => {
     expect(flightSearchSnapshot.question).toEqual({
       speaker: 'Mochi',
       text: 'Search for flights from San Francisco to Tokyo on November 15, 2026.',
@@ -19,6 +19,19 @@ describe('Scenario 1 flight-search UI snapshot', () => {
     const fabio = flightSearchSnapshot.answers.find(({ agentId }) => agentId === 'fabio-travel');
 
     expect(fabio).toMatchObject({
+      responses: [
+        {
+          protocol: 'A2A',
+          endpoint: 'https://travel.agenthaven.dev/a2a',
+          answer: 'I found two simulated options: €250 with one stop, or €320 nonstop.',
+        },
+        {
+          protocol: 'MCP',
+          endpoint: 'https://travel.agenthaven.dev/mcp',
+          selectedTool: 'search_flights',
+          answer: 'I used search_flights and found two simulated options: €250 with one stop, or €320 nonstop.',
+        },
+      ],
       inventoryNotice: 'Simulation only — not live airline inventory.',
       options: [
         { label: 'Cheapest', price: '€250', route: 'SFO → SIM → TYO', duration: '5 hr' },
@@ -30,7 +43,6 @@ describe('Scenario 1 flight-search UI snapshot', () => {
   it('does not expose Lab-only transport or signed-quote data to the UI', () => {
     const serialized = JSON.stringify(flightSearchSnapshot);
     [
-      'endpoint',
       'httpStatus',
       'request_id',
       'correlation_id',
