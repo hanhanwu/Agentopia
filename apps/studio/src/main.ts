@@ -528,6 +528,93 @@ const endpointDiscoveryPathStage = () => `
     </section>
   </div>`;
 
+const publicationTipWorld = () => `
+  <section class="publication-tip-world" data-publication-tip-world hidden aria-label="Agent Development Tip, DNS-AID Publication">
+    <div class="publication-blackboard">
+      <strong>Agent Development Tip</strong>
+      <span>— DNS-AID Publication</span>
+    </div>
+  </section>`;
+
+const publicationServiceAgent = (accent: 'orange' | 'violet') => `
+  <svg class="publication-path-card__agent publication-path-card__agent--${accent}" viewBox="0 0 276 270" aria-hidden="true">
+    ${serviceAgentArtwork(1)}
+  </svg>`;
+
+const publicationPathConnector = (accent: 'orange' | 'violet', modifier = '') => `
+  <i class="publication-path-connector publication-path-connector--${accent} ${modifier}" aria-hidden="true"></i>`;
+
+const publicationTipInspector = () => {
+  const orangeMechanism = endpointDiscoverySnapshot.mechanisms.find(({ id }) => id === 'dns-aid') as unknown as EndpointMechanism;
+  const purpleMechanism = fabioEndpointDiscoverySnapshot.mechanisms.find(({ id }) => id === 'dns-aid') as unknown as EndpointMechanism;
+  const orangeDomain = orangeMechanism.path.nodes[0];
+  const purpleDomain = purpleMechanism.path.nodes[0];
+  const orangeSvcb = orangeMechanism.path.nodes.find(({ id }) => id === 'dns-aid-current');
+  const purpleSvcb = purpleMechanism.path.nodes.find(({ id }) => id === 'dns-aid-current');
+  const orangeClaim = orangeMechanism.claims[0];
+  if (!orangeSvcb || !purpleSvcb || !orangeClaim) throw new Error('The publication tip requires both DNS-AID paths.');
+
+  return `
+    <section class="publication-tip-inspector" data-publication-tip-inspector hidden aria-label="DNS-AID publication comparison">
+      <article class="publication-tip-explanation">
+        <span class="publication-tip-explanation__idea" aria-hidden="true">
+          <svg viewBox="-4 -16 80 88"><path d="M25 40c-6-5-9-11-9-18C16 10 24 2 36 2s20 8 20 20c0 7-3 13-9 18-3 3-5 7-5 12H30c0-5-2-9-5-12Z"/><path d="M30 59h12M33 65h6M36-6v-7M6 22h-7M73 22h-7M13 0 7-6M59 0l6-6"/></svg>
+        </span>
+        <div>
+          <h3>Why the 2nd implementation is better?</h3>
+          <ul>
+            <li class="publication-tip-explanation__orange"><strong>Orange agent:</strong><span class="publication-tip-explanation__lead"> SVCB advertises MCP at the domain root.</span><span>It supplies no endpoint path. Discovery calls “/” and receives 404.</span></li>
+            <li class="publication-tip-explanation__violet"><strong>Purple agent:</strong><span class="publication-tip-explanation__lead"> SVCB points to an agent card instead.</span><span>The card publishes exact /a2a and /mcp endpoint URLs.</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="publication-path-card publication-path-card--orange">
+        <h3>DNS-AID · ROOT-ONLY PUBLICATION</h3>
+        ${publicationServiceAgent('orange')}
+        <div class="publication-path publication-path--orange">
+          <div class="publication-domain">${discoveryNode(orangeDomain, 'discovery-path-node--domain')}</div>
+          ${publicationPathConnector('orange')}
+          <div class="publication-svcb">${dnsAidDiscoveryNode(orangeSvcb)}<small>DNS SVCB</small></div>
+          ${publicationPathConnector('orange')}
+          <article class="publication-endpoint publication-endpoint--mcp" aria-label="MCP endpoint ${escapeMarkup(orangeClaim.endpoint)}">
+            <img src="${endpointInterfaceLogo.mcp}" alt="" aria-hidden="true"/>
+            <span><strong>MCP</strong><code>${escapeMarkup(orangeClaim.endpoint)}</code></span>
+          </article>
+          ${publicationPathConnector('orange')}
+          <div class="publication-status publication-status--error" role="img" aria-label="HTTP 404"><i aria-hidden="true"></i><strong>404</strong></div>
+        </div>
+      </article>
+
+      <article class="publication-path-card publication-path-card--violet">
+        <h3>DNS-AID · AGENT-CARD PUBLICATION</h3>
+        ${publicationServiceAgent('violet')}
+        <div class="publication-path publication-path--violet">
+          <div class="publication-domain">${discoveryNode(purpleDomain, 'discovery-path-node--domain')}</div>
+          ${publicationPathConnector('violet')}
+          <div class="publication-svcb">${dnsAidDiscoveryNode(purpleSvcb)}<small>DNS SVCB</small></div>
+          ${publicationPathConnector('violet')}
+          <div class="publication-agent-card" role="img" aria-label="Observed agent card with two exact URLs">
+            <svg viewBox="0 0 52 62" aria-hidden="true"><path d="M3 3h31l15 15v41H3Z"/><path d="M34 3v15h15M12 31h28M12 42h28"/></svg>
+            <span><strong>AGENT CARD</strong><small>OBSERVED</small><small>2 EXACT URLS</small></span>
+          </div>
+          <div class="publication-endpoint-stack">
+            ${purpleMechanism.claims.map((claim) => `
+              <div class="publication-endpoint-row">
+                ${publicationPathConnector('violet', 'publication-path-connector--branch')}
+                <article class="publication-endpoint publication-endpoint--${claim.protocol}" aria-label="${escapeMarkup(claim.protocol.toUpperCase())} endpoint ${escapeMarkup(claim.endpoint)}">
+                  <img src="${endpointInterfaceLogo[claim.protocol as 'a2a' | 'mcp']}" alt="" aria-hidden="true"/>
+                  <span><strong>${escapeMarkup(claim.protocol.toUpperCase())}</strong><code>${escapeMarkup(new URL(claim.endpoint).pathname)}</code></span>
+                </article>
+                ${publicationPathConnector('violet')}
+                <div class="publication-status publication-status--success" role="img" aria-label="HTTP 200"><strong>200</strong></div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </article>
+    </section>`;
+};
+
 const consolidatedResultRows = () => consolidatedSearchRecords.map((record, index) => `
   <div
     class="consolidated-result consolidated-result--${record.registryId === 'agentcensus' ? 'census' : 'a2a'}"
@@ -736,6 +823,8 @@ app.innerHTML = `
               <span data-world-step>STEP 1</span>
               <strong data-world-phase-title>Request Received</strong>
             </div>
+
+            ${publicationTipWorld()}
 
             <div class="registry-node registry-node--census" data-registry-node="agentcensus" data-status="waiting">
               <svg viewBox="-70 -70 140 140" aria-hidden="true">
@@ -1025,6 +1114,7 @@ app.innerHTML = `
               <div class="candidate-results" data-candidate-results></div>
             </section>
           </div>
+          ${publicationTipInspector()}
         </div>
       </aside>
     </main>
@@ -1076,6 +1166,8 @@ const chatSend = document.querySelector<HTMLButtonElement>('[data-chat-send]');
 const chatField = document.querySelector<HTMLElement>('[data-chat-field]');
 const chatPaused = document.querySelector<HTMLElement>('[data-chat-paused]');
 const worldScene = document.querySelector<HTMLElement>('.world-scene');
+const publicationTipWorldElement = document.querySelector<HTMLElement>('[data-publication-tip-world]');
+const publicationTipInspectorElement = document.querySelector<HTMLElement>('[data-publication-tip-inspector]');
 const mochiBubble = document.querySelector<HTMLElement>('[data-mochi-bubble]');
 const userLink = document.querySelector<SVGPathElement>('[data-user-link]');
 const userArrow = document.querySelector<SVGPolygonElement>('[data-user-arrow]');
@@ -1699,6 +1791,7 @@ const renderActivity = () => {
   const displayedEvents = eventsAtCursor(activityEvents, eventCursor);
   const projection = projectDiscovery(displayedEvents);
   const liveProjection = projectDiscovery(activityEvents);
+  const isPublicationTip = projection.agentQueryPhase === 'suggestion';
   const isComposerPaused = liveProjection.step > 0 && liveProjection.step < 10;
   const isAgentQueryInFlight = liveProjection.step === 10
     && (liveProjection.agentQueryPhase === 'submitted' || liveProjection.agentQueryPhase === 'forwarded');
@@ -1712,6 +1805,9 @@ const renderActivity = () => {
   worldScene?.classList.toggle('has-candidate', hasSelectedCandidate);
   if (worldScene) worldScene.dataset.step = String(projection.step);
   if (worldScene) worldScene.dataset.queryPhase = projection.agentQueryPhase;
+  worldScene?.setAttribute('aria-label', isPublicationTip
+    ? 'Mochi presenting an agent development tip about DNS-AID publication'
+    : 'Mochi searching AgentCensus and A2A Registry for service agents');
   if (userFlowAlignmentTimer !== null) window.clearTimeout(userFlowAlignmentTimer);
   window.requestAnimationFrame(() => { alignUserFlow(); alignAgentQueryFlow(); alignRegistryFlows(); });
   userFlowAlignmentTimer = window.setTimeout(() => {
@@ -1725,13 +1821,14 @@ const renderActivity = () => {
     endpointBeamAlignmentTimer = window.setTimeout(alignEndpointDiscoveryBeams, 650);
   }
   chatForm?.classList.toggle('is-paused', isComposerPaused);
+  if (chatForm) chatForm.hidden = isPublicationTip;
   chatForm?.setAttribute('aria-busy', String(isComposerPaused || isAgentQueryInFlight));
   if (chatInput) chatInput.disabled = isComposerPaused || isAgentQueryInFlight;
   if (chatField) chatField.hidden = isComposerPaused;
   if (chatPaused) chatPaused.hidden = !isComposerPaused;
   if (chatSend) chatSend.hidden = isComposerPaused;
 
-  if (worldPhase) worldPhase.hidden = projection.step === 0;
+  if (worldPhase) worldPhase.hidden = projection.step === 0 || isPublicationTip;
   setText('[data-world-step]', `STEP ${displayStep}`);
   setText('[data-world-phase-title]', projection.title);
   setText('[data-skynet-step]', `STEP ${displayStep}`);
@@ -1745,9 +1842,11 @@ const renderActivity = () => {
     intakeEvidence.setAttribute('aria-label', projection.step === 2 ? 'Mochi understood your request' : 'Your request is traveling to Mochi');
   }
   if (discoveryAnalysis) {
-    discoveryAnalysis.hidden = projection.step < 3;
+    discoveryAnalysis.hidden = projection.step < 3 || isPublicationTip;
     discoveryAnalysis.dataset.step = String(projection.step);
   }
+  if (publicationTipWorldElement) publicationTipWorldElement.hidden = !isPublicationTip;
+  if (publicationTipInspectorElement) publicationTipInspectorElement.hidden = !isPublicationTip;
   const isRegistryWork = projection.step >= 3 && projection.step <= 5;
   const isConsolidating = projection.step === 6;
   const isDiscoveringEndpoints = projection.step === 8;
@@ -1858,7 +1957,8 @@ const renderActivity = () => {
         && nextEvent.payload.registry === 'a2a-registry') return;
       if (event.type === 'agent.query-submitted'
         || event.type === 'agent.query-forwarded'
-        || event.type === 'agent.query-completed') return;
+        || event.type === 'agent.query-completed'
+        || event.type === 'publication.tip-shown') return;
 
       const eventProjection = projectSkynet(activityEvents.slice(0, index + 1));
       if (!eventProjection) return;
@@ -2049,7 +2149,15 @@ const submitAgentQuery = (query: string, choice: AgentQueryChoice) => {
       actorId: 'bookings-service', subjectId: 'personal-assistant', causalParentId: parentEventId,
       payload: { choice, query, responseCount: agentQueryProjections[choice].rows.length },
     };
+    parentEventId = completed.eventId;
     appendActivityEvent(completed);
+    agentQueryTimers.push(window.setTimeout(() => {
+      appendActivityEvent({
+        ...nextEnvelope(), type: 'publication.tip-shown', source: 'derived',
+        actorId: 'personal-assistant', subjectId: 'bookings-service', causalParentId: parentEventId,
+        payload: {},
+      });
+    }, prefersReducedMotion ? 800 : 2600));
   }, replayDelay(3300)));
 };
 

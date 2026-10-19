@@ -163,6 +163,16 @@ describe('synchronized C3 discovery projection', () => {
       agentQuery: 'Search for flights from San Francisco to Tokyo.',
       mochiBubble: null,
     });
+
+    const suggestion = next({
+      schemaVersion: '1.0', eventId: 'event-13', runId: 'run-1', sequence: 13, logicalTime: 13,
+      source: 'derived', visibility: 'studio', type: 'publication.tip-shown',
+      actorId: 'personal-assistant', subjectId: 'bookings-service', payload: {},
+    });
+    expect(projectDiscovery([taskEvent, ready, submitted, completed, suggestion])).toMatchObject({
+      step: 10, title: 'Agent Publication Tip', agentQueryChoice: 'fabio', agentQueryPhase: 'suggestion',
+      mochiState: 'publication-tip', mochiBubble: null,
+    });
   });
 
   it('rewinds the shared state without mutating canonical history', () => {

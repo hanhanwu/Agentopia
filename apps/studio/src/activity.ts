@@ -6,7 +6,7 @@ export type RegistryId = 'agentcensus' | 'a2a-registry';
 export type RegistryStatus = 'waiting' | 'searching' | 'results' | 'no-results' | 'failed';
 export type EndpointMechanismId = 'ard' | 'dns-aid' | 'ans';
 export type EndpointInteractionOutcome = 'success' | 'failed';
-export type AgentQueryPhase = 'idle' | 'ready' | 'submitted' | 'forwarded' | 'answered';
+export type AgentQueryPhase = 'idle' | 'ready' | 'submitted' | 'forwarded' | 'answered' | 'suggestion';
 
 export type EndpointInteraction = {
   mechanism: EndpointMechanismId;
@@ -51,7 +51,8 @@ export type ActivityEvent =
   | (EventEnvelope & { type: 'agent.query-ready'; actorId: 'personal-assistant'; subjectId: 'bookings-service'; payload: { choice: AgentQueryChoice; agentName: string } })
   | (EventEnvelope & { type: 'agent.query-submitted'; actorId: 'user'; subjectId: 'personal-assistant'; payload: { choice: AgentQueryChoice; query: string } })
   | (EventEnvelope & { type: 'agent.query-forwarded'; actorId: 'personal-assistant'; subjectId: 'bookings-service'; payload: { choice: AgentQueryChoice; query: string } })
-  | (EventEnvelope & { type: 'agent.query-completed'; actorId: 'bookings-service'; subjectId: 'personal-assistant'; payload: { choice: AgentQueryChoice; query: string; responseCount: number } });
+  | (EventEnvelope & { type: 'agent.query-completed'; actorId: 'bookings-service'; subjectId: 'personal-assistant'; payload: { choice: AgentQueryChoice; query: string; responseCount: number } })
+  | (EventEnvelope & { type: 'publication.tip-shown'; actorId: 'personal-assistant'; subjectId: 'bookings-service'; payload: Record<string, never> });
 
 export type DiscoveryStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
@@ -220,6 +221,14 @@ export const projectDiscovery = (events: readonly ActivityEvent[]): DiscoveryPro
           query: event.payload.query, agentQuery: event.payload.query,
           agentQueryChoice: event.payload.choice, agentQueryPhase: 'answered',
           mochiState: 'agent-query-answered', mochiStatus: 'Endpoint answers received', mochiBubble: null,
+        });
+        break;
+      case 'publication.tip-shown':
+        Object.assign(projection, {
+          step: 10, title: 'Agent Publication Tip',
+          detail: 'DNS-AID works best when its SVCB record leads discovery to exact agent interface URLs.',
+          agentQueryPhase: 'suggestion',
+          mochiState: 'publication-tip', mochiStatus: 'Sharing an agent development tip', mochiBubble: null,
         });
         break;
     }
