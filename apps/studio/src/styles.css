@@ -1268,13 +1268,37 @@ button { color: inherit; }
 .world-scene[data-query-phase='suggestion'] .world-agent--assistant .mochi-inspection-magnifier { display: none; }
 
 .publication-tip-inspector {
+  position: relative;
   flex: 1 1 auto;
   display: grid;
   min-width: 0;
-  min-height: 790px;
+  min-height: 850px;
   grid-template-rows: 174px 260px 300px;
   gap: 18px;
   padding-top: 30px;
+}
+.publication-tip-back {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  min-width: 112px;
+  padding: 10px 16px;
+  border: 1px solid var(--cyan-bright);
+  border-radius: 6px;
+  background: #081a29;
+  color: var(--cyan-bright);
+  box-shadow: 0 0 14px rgba(40,169,255,.24);
+  cursor: pointer;
+  font: 850 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.publication-tip-back:hover,
+.publication-tip-back:focus-visible {
+  background: var(--cyan);
+  color: #031019;
+  box-shadow: 0 0 20px rgba(40,169,255,.5);
+  outline: none;
 }
 .publication-tip-explanation,
 .publication-path-card { position: relative; min-width: 0; border-radius: 10px; background: #07111a; }

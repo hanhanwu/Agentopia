@@ -157,6 +157,7 @@ const SEARCH_COMPLETE_DELAY = CONSOLIDATION_START_DELAY
   + STEP_4_TO_5_GAP;
 const ENDPOINT_DISCOVERY_DELAY = SEARCH_COMPLETE_DELAY + 3500;
 const ENDPOINT_INTERACTION_DELAY = ENDPOINT_DISCOVERY_DELAY + 19000;
+const PUBLICATION_TIP_DELAY = 3000;
 
 type DiscoveryMechanismId = EndpointInteraction['mechanism'];
 
@@ -613,6 +614,7 @@ const publicationTipInspector = () => {
           </div>
         </div>
       </article>
+      <button class="publication-tip-back" type="button" data-publication-tip-back aria-label="Back to Step 8">Back &gt;&gt;</button>
     </section>`;
 };
 
@@ -1196,6 +1198,7 @@ const endpointFallbackNo = document.querySelector<HTMLButtonElement>('[data-endp
 const agentQueryBoard = document.querySelector<HTMLElement>('[data-agent-query-board]');
 const agentQueryTableBody = document.querySelector<HTMLTableSectionElement>('[data-agent-query-table-body]');
 const agentQueryCount = document.querySelector<HTMLElement>('[data-agent-query-count]');
+const publicationTipBack = document.querySelector<HTMLButtonElement>('[data-publication-tip-back]');
 const resultLink = document.querySelector<SVGPathElement>('[data-result-link]');
 const resultPacket = document.querySelector<SVGPolygonElement>('[data-result-packet]');
 const registryLogos = new Map<RegistryId, SVGSVGElement | null>([
@@ -2161,7 +2164,7 @@ const submitAgentQuery = (query: string, choice: AgentQueryChoice) => {
         actorId: 'personal-assistant', subjectId: 'bookings-service', causalParentId: parentEventId,
         payload: {},
       });
-    }, prefersReducedMotion ? 800 : 2600));
+    }, PUBLICATION_TIP_DELAY));
   }, replayDelay(3300)));
 };
 
@@ -2211,6 +2214,14 @@ const sendTaskToMochi = (message: string) => {
 returnLiveButton?.addEventListener('click', () => {
   clearTimelineReplay();
   eventCursor = null;
+  renderActivity();
+});
+
+publicationTipBack?.addEventListener('click', () => {
+  clearTimelineReplay();
+  const publicationTipIndex = activityEvents.findIndex(({ type }) => type === 'publication.tip-shown');
+  if (publicationTipIndex < 1) return;
+  eventCursor = publicationTipIndex - 1;
   renderActivity();
 });
 
