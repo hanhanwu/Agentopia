@@ -6,6 +6,8 @@
 
 ## Run the Studio UI
 
+Use Node.js 20.19 or newer (Node.js 22.12+ is also supported), then run:
+
 ```bash
 npm install
 npm run dev

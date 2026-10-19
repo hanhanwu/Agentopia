@@ -18,6 +18,7 @@ import {
   projectDiscovery,
   projectMochi,
   projectSkynet,
+  REGISTRY_IDS,
   type Candidate,
   type ActivityEvent,
   type EndpointInteraction,
@@ -1230,7 +1231,7 @@ const registryElements = new Map<RegistryId, {
   worldStatus: HTMLElement | null;
   skynetStatus: HTMLElement | null;
   printoutStatus: HTMLElement | null;
-}>((['agentcensus', 'a2a-registry'] as const).map((registry) => [registry, {
+}>(REGISTRY_IDS.map((registry) => [registry, {
   node: document.querySelector<HTMLElement>(`[data-registry-node="${registry}"]`),
   row: document.querySelector<HTMLElement>(`[data-skynet-registry="${registry}"]`),
   link: document.querySelector<SVGPathElement>(`[data-registry-link="${registry}"]`),
@@ -1388,7 +1389,7 @@ const alignRegistryFlows = () => {
   const mochiEdgeX = toSceneX(mochiBounds.right);
   const startY = toSceneY(mochiBounds.top + mochiBounds.height / 2);
 
-  (['agentcensus', 'a2a-registry'] as const).forEach((registry) => {
+  REGISTRY_IDS.forEach((registry) => {
     const path = registryElements.get(registry)?.link;
     const registryNode = registryElements.get(registry)?.node;
     const logo = registryLogos.get(registry);
@@ -1710,7 +1711,10 @@ endpointFallbackNo?.addEventListener('click', () => {
 
 const registryStatusLabel = (status: ReturnType<typeof projectDiscovery>['registries'][RegistryId]) => {
   if (status.status === 'searching') return 'Searching…';
-  if (status.status === 'results') return `${status.resultCount ?? 0} result`;
+  if (status.status === 'results') {
+    const resultCount = status.resultCount ?? 0;
+    return `${resultCount} ${resultCount === 1 ? 'result' : 'results'}`;
+  }
   if (status.status === 'no-results') return '0 results';
   if (status.status === 'failed') return 'Failed';
   return 'Waiting';
@@ -1898,7 +1902,7 @@ const renderActivity = () => {
   resultLink?.classList.toggle('is-active', projection.step === 7 || queryIsForwarded);
   resultPacket?.toggleAttribute('hidden', projection.step !== 7 && projection.agentQueryPhase !== 'forwarded');
 
-  (['agentcensus', 'a2a-registry'] as RegistryId[]).forEach((registry) => {
+  REGISTRY_IDS.forEach((registry) => {
     const state = projection.registries[registry];
     const elements = registryElements.get(registry);
     if (!elements) return;

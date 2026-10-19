@@ -74,6 +74,41 @@ describe('synchronized C3 discovery projection', () => {
     expect(settled.mochiBubble).toContain('A2A Registry');
   });
 
+  it('waits for both registries regardless of response order', () => {
+    const searchEvent: ActivityEvent = {
+      ...taskEvent, eventId: 'event-2', sequence: 2, logicalTime: 2, source: 'simulated',
+      type: 'registries.search-started', actorId: 'personal-assistant', subjectId: 'personal-assistant',
+      payload: { query: 'meeting scheduling', registries: ['agentcensus', 'a2a-registry'] },
+    };
+    const a2aEvent: ActivityEvent = {
+      ...taskEvent, eventId: 'event-3', sequence: 3, logicalTime: 3, source: 'reported',
+      type: 'registry.no-results', actorId: 'a2a-registry', subjectId: 'personal-assistant',
+      payload: { registry: 'a2a-registry', resultCount: 0 },
+    };
+    const censusEvent: ActivityEvent = {
+      ...taskEvent, eventId: 'event-4', sequence: 4, logicalTime: 4, source: 'reported',
+      type: 'registry.results-returned', actorId: 'agentcensus', subjectId: 'personal-assistant',
+      payload: { registry: 'agentcensus', candidates: [candidate], resultCount: 1 },
+    };
+
+    const waiting = projectDiscovery([taskEvent, searchEvent, a2aEvent]);
+    expect(waiting).toMatchObject({
+      step: 4,
+      title: 'A2A Registry Replied',
+      mochiStatus: 'Collecting registry responses',
+    });
+    expect(waiting.registries.agentcensus.status).toBe('searching');
+
+    const settled = projectDiscovery([taskEvent, searchEvent, a2aEvent, censusEvent]);
+    expect(settled).toMatchObject({
+      step: 5,
+      title: 'Registry Results Received',
+      mochiStatus: 'Registry search finished',
+    });
+    expect(settled.detail).toContain('AgentCensus returned 1 record');
+    expect(settled.detail).toContain('A2A Registry returned 0 records');
+  });
+
   it('labels the final order as derived search relevance', () => {
     const completeEvent = next({
       schemaVersion: '1.0', eventId: 'event-7', runId: 'run-1', sequence: 7, logicalTime: 7,

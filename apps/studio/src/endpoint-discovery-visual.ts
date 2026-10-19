@@ -1,5 +1,3 @@
-export type DiscoveryOutcome = 'pass' | 'absent' | 'error';
-
 export type ArdNodeSemantic =
   | 'domain'
   | 'catalog-pointer'

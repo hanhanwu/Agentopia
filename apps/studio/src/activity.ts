@@ -2,7 +2,8 @@ import type { AgentId } from './agents.ts';
 import type { AgentQueryChoice } from './agent-query.ts';
 
 export type ActivitySource = 'observed' | 'reported' | 'derived' | 'simulated';
-export type RegistryId = 'agentcensus' | 'a2a-registry';
+export const REGISTRY_IDS = ['agentcensus', 'a2a-registry'] as const;
+export type RegistryId = (typeof REGISTRY_IDS)[number];
 export type RegistryStatus = 'waiting' | 'searching' | 'results' | 'no-results' | 'failed';
 export type EndpointMechanismId = 'ard' | 'dns-aid' | 'ans';
 export type EndpointInteractionOutcome = 'success' | 'failed';
@@ -101,6 +102,49 @@ const initialProjection = (): DiscoveryProjection => ({
   currentEvent: null,
 });
 
+const registryName: Record<RegistryId, string> = {
+  agentcensus: 'AgentCensus',
+  'a2a-registry': 'A2A Registry',
+};
+
+const updateRegistryResponsePresentation = (
+  projection: DiscoveryProjection,
+  latestRegistry: RegistryId,
+) => {
+  const allRequestedRegistriesResponded = REGISTRY_IDS.every((registry) => (
+    projection.registries[registry].status !== 'searching'
+  ));
+  const resultCount = projection.registries[latestRegistry].resultCount ?? 0;
+
+  if (!allRequestedRegistriesResponded) {
+    Object.assign(projection, {
+      step: 4,
+      title: `${registryName[latestRegistry]} Replied`,
+      detail: `${registryName[latestRegistry]} returned ${resultCount} search ${resultCount === 1 ? 'record' : 'records'}.`,
+      mochiState: 'collecting-results',
+      mochiStatus: 'Collecting registry responses',
+      mochiBubble: `Received ${resultCount} from ${registryName[latestRegistry]}!`,
+    });
+    return;
+  }
+
+  const counts = REGISTRY_IDS.map((registry) => ({
+    name: registryName[registry],
+    count: projection.registries[registry].resultCount ?? 0,
+  }));
+  const receivedSummary = counts.map(({ name, count }) => `${count} from ${name}`).join(' and ');
+  Object.assign(projection, {
+    step: 5,
+    title: 'Registry Results Received',
+    detail: counts.map(({ name, count }) => (
+      `${name} returned ${count} ${count === 1 ? 'record' : 'records'}`
+    )).join(' and ') + '.',
+    mochiState: 'collecting-results',
+    mochiStatus: 'Registry search finished',
+    mochiBubble: `Received ${receivedSummary}!`,
+  });
+};
+
 export const eventsAtCursor = (
   events: readonly ActivityEvent[],
   cursor: number | null,
@@ -135,26 +179,13 @@ export const projectDiscovery = (events: readonly ActivityEvent[]): DiscoveryPro
         for (const registry of event.payload.registries) projection.registries[registry] = { status: 'searching', resultCount: null };
         break;
       case 'registry.results-returned':
-        Object.assign(projection, {
-          step: event.payload.registry === 'agentcensus' ? 4 : 5,
-          title: event.payload.registry === 'agentcensus' ? 'AgentCensus Replied' : 'Registry Results Received',
-          detail: event.payload.registry === 'agentcensus'
-            ? `AgentCensus returned ${event.payload.resultCount} search records.`
-            : `AgentCensus returned ${projection.registries.agentcensus.resultCount ?? 0} records and A2A Registry returned ${event.payload.resultCount}.`,
-          candidates: [...projection.candidates, ...event.payload.candidates], mochiState: 'collecting-results',
-          mochiStatus: event.payload.registry === 'agentcensus' ? 'Collecting registry responses' : 'Registry search finished',
-          mochiBubble: event.payload.registry === 'agentcensus'
-            ? `Received ${event.payload.resultCount} from AgentCensus!`
-            : `Received ${projection.registries.agentcensus.resultCount ?? 0} from AgentCensus and ${event.payload.resultCount} from A2A Registry!`,
-        });
+        projection.candidates = [...projection.candidates, ...event.payload.candidates];
         projection.registries[event.payload.registry] = { status: 'results', resultCount: event.payload.resultCount };
+        updateRegistryResponsePresentation(projection, event.payload.registry);
         break;
       case 'registry.no-results':
-        Object.assign(projection, {
-          step: 5, title: 'A2A Registry Replied', detail: 'A2A Registry returned successfully with no compatible candidates.',
-          mochiState: 'collecting-results', mochiStatus: 'Registry search finished', mochiBubble: 'Both sources have replied.',
-        });
         projection.registries[event.payload.registry] = { status: 'no-results', resultCount: 0 };
+        updateRegistryResponsePresentation(projection, event.payload.registry);
         break;
       case 'candidates.normalized':
         Object.assign(projection, {

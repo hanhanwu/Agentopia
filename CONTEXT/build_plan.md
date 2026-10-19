@@ -87,7 +87,7 @@ the reusable-scene approach; do not build the full SDK yet.
 
 ### Current action plan
 
-- [ ] Finish [Scenario 1 — One Agent, Different Doors](game_scenarios.md#game-scenario-1--one-agent-different-doors)
+- [x] Finish [Scenario 1 — One Agent, Different Doors](game_scenarios.md#game-scenario-1--one-agent-different-doors)
   in Agentopia using mock data first.
 - [ ] In Agentopia_Lab, explore MCP Registry versus AgentCensus MCP server data,
   and PAP's `poppy.json` versus MCP/A2A's `ai-catalog.json`.
