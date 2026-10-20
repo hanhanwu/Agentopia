@@ -21,9 +21,6 @@ npm run dev
 for pid in $(lsof -tiTCP:8678 -sTCP:LISTEN); do kill "$pid"; done
 ```
 
-## Portable visualization
+## Portable Visualization
 
-Select steps to preview their animations immediately. Previewing does not generate
-a GIF. Click **Submit** to choose a save location and generate the downloadable
-GIF. Playback continues while the export runs. After saving, copy the Markdown or
-HTML below the preview and upload the GIF alongside the page that embeds it.
+![Portable visualization](demo/portable_gif.gif)
