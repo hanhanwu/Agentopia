@@ -1,6 +1,8 @@
+import { portableExportPlugin } from './apps/studio/server/portable-export.ts';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  plugins: [portableExportPlugin()],
   optimizeDeps: {
     entries: ['index.html'],
   },

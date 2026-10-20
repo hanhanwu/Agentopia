@@ -89,12 +89,7 @@ the reusable-scene approach; do not build the full SDK yet.
 
 - [x] Finish [Scenario 1 — One Agent, Different Doors](game_scenarios.md#game-scenario-1--one-agent-different-doors)
   in Agentopia using mock data first.
-- [ ] In Agentopia_Lab, explore MCP Registry versus AgentCensus MCP server data,
-  and PAP's `poppy.json` versus MCP/A2A's `ai-catalog.json`.
-- [ ] Add evidence-backed visualizations to Agentopia when the exploration
-  produces useful insights.
-- [ ] Implement initial portable visualization.
-- [ ] Replace Scenario 1's mock data with real collected data.
+- [ ] Implement portable visualization, with Agentopia logo, and different reference can use same visualization, changes can be made on all the references in one place.
 
 ### Remember to Check
 

@@ -1,3 +1,6 @@
+import { mountPortableVisualization } from './portable-visualization.ts';
+import { createFrameClock } from './portable-capture.ts';
+import { sceneEventIndex, type PortableSceneId } from './portable-scenes.ts';
 import './styles.css';
 import { agents, type Agent } from './agents.ts';
 import registrySearchMock from './data/registry-search.mock.json';
@@ -30,6 +33,8 @@ const endpointInterfaceLogo = {
   mcp: new URL('../../../UI_elements_design/discovery/official-marks/mcp.svg', import.meta.url).href,
   openapi: new URL('../../../UI_elements_design/discovery/official-marks/openapi.svg', import.meta.url).href,
 } as const;
+
+const isPortableCapture = new URLSearchParams(window.location.search).has('portable-capture');
 
 const app = document.querySelector<HTMLDivElement>('#app');
 
@@ -614,7 +619,10 @@ const publicationTipInspector = () => {
           </div>
         </div>
       </article>
-      <button class="publication-tip-back" type="button" data-publication-tip-back aria-label="Back to Step 8">Back &gt;&gt;</button>
+      <div class="publication-tip-navigation">
+        <button class="publication-tip-back" type="button" data-publication-tip-back aria-label="Back to Step 8">&lt;&lt; Back</button>
+        <button class="publication-tip-back" type="button" data-publication-portable>Portable Visualization &gt;&gt;</button>
+      </div>
     </section>`;
 };
 
@@ -1139,6 +1147,7 @@ const finishIntro = () => {
   appShell?.removeAttribute('aria-hidden');
   window.setTimeout(() => worldIntro?.remove(), prefersReducedMotion ? 20 : 420);
   window.setTimeout(() => {
+    if (isPortableCapture) return;
     chatInput?.focus();
     const end = chatInput?.value.length ?? 0;
     chatInput?.setSelectionRange(end, end);
@@ -1253,7 +1262,7 @@ const endpointBeamElements = new Map<DiscoveryMechanismId, {
 }]));
 
 const DEV_REPLAY_STORAGE_KEY = 'agentopia.dev.activity-events.v2';
-const shouldRestoreDevReplay = ['127.0.0.1', 'localhost'].includes(window.location.hostname);
+const shouldRestoreDevReplay = !isPortableCapture && ['127.0.0.1', 'localhost'].includes(window.location.hostname);
 const activityEvents: ActivityEvent[] = [];
 let runId = 'run-c3-1';
 let runSequence = 1;
@@ -1797,7 +1806,7 @@ const renderActivity = () => {
   }
   const displayedEvents = eventsAtCursor(activityEvents, eventCursor);
   const projection = projectDiscovery(displayedEvents);
-  const liveProjection = projectDiscovery(activityEvents);
+  const liveProjection = isPortableCapture ? projection : projectDiscovery(activityEvents);
   const isPublicationTip = projection.agentQueryPhase === 'suggestion';
   const isComposerPaused = liveProjection.step > 0 && liveProjection.step < 10;
   const isAgentQueryInFlight = liveProjection.step === 10
@@ -2079,7 +2088,7 @@ const renderActivity = () => {
       });
       eventHistoryList.append(button);
     });
-    eventHistoryList.querySelector<HTMLElement>('.is-current')?.scrollIntoView({ block: 'nearest' });
+    if (!isPortableCapture) eventHistoryList.querySelector<HTMLElement>('.is-current')?.scrollIntoView({ block: 'nearest' });
   }
 
   const newerEventCount = eventCursor === null ? 0 : activityEvents.length - eventCursor - 1;
@@ -2281,3 +2290,67 @@ if (restoredDevReplay) {
 }
 syncSearchComposer();
 renderActivity();
+
+
+if (isPortableCapture) {
+  document.documentElement.classList.add('portable-capture');
+  window.clearTimeout(introTimer);
+  window.agentopiaCapture = {
+    load(events: ActivityEvent[], scene: PortableSceneId) {
+      if (scene === 'intro') return;
+      if (appShell) appShell.style.transition = 'none';
+      finishIntro();
+      worldIntro?.remove();
+      const index = sceneEventIndex(events, scene);
+      if (index < 0) throw new Error(`Scene ${scene} has no recorded events.`);
+      activityEvents.splice(0, activityEvents.length, ...events);
+      eventCursor = index;
+      if (chatInput) {
+        const query = events.find((event) => event.type === 'agent.query-submitted');
+        chatInput.value = scene === 'step-8' && query?.type === 'agent.query-submitted' ? query.payload.query : '';
+        chatInput.placeholder = 'Message';
+      }
+      renderedStep = 0;
+      renderActivity();
+      if (scene === 'step-1') {
+        const understood = events.findIndex(({ type }) => type === 'search.intent-derived');
+        if (understood >= 0) queueTimelineReplay(INTENT_DERIVATION_DELAY, () => {
+          eventCursor = understood; renderActivity();
+        });
+      }
+      if (scene === 'step-7') {
+        const choice = events.find((event) => event.type === 'agent.query-ready');
+        // Orange doors finish at 6s; hold them open for 2s before switching agents.
+        queueTimelineReplay(8000, () => {
+          if (choice?.type === 'agent.query-ready' && choice.payload.choice === 'fabio') {
+            clearEndpointFallbackTimer();
+            hideEndpointFallback();
+            renderEndpointInteractionAgent('fabio');
+            scheduleEndpointInteractionTableReveal('fabio');
+          } else hideEndpointFallback();
+        });
+      }
+      if (scene === 'step-8') {
+        const phases = ['agent.query-submitted', 'agent.query-forwarded', 'agent.query-completed'];
+        phases.forEach((type, offset) => {
+          const phaseIndex = events.findIndex((event, candidateIndex) => candidateIndex > index && event.type === type);
+          if (phaseIndex >= 0) queueTimelineReplay([700, 2300, 4000][offset], () => {
+            eventCursor = phaseIndex; renderActivity();
+          });
+        });
+      }
+      document.querySelectorAll<HTMLButtonElement>('button').forEach((button) => button.blur());
+    },
+    frame: createFrameClock(),
+  };
+} else {
+  const portable = mountPortableVisualization(() => [...activityEvents], () => {
+    if (appShell) appShell.hidden = false;
+    document.querySelector<HTMLButtonElement>('[data-publication-portable]')?.focus();
+  });
+  document.querySelector('[data-publication-portable]')?.addEventListener('click', () => {
+    clearTimelineReplay();
+    if (appShell) appShell.hidden = true;
+    portable.show();
+  });
+}

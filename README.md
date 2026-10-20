@@ -13,15 +13,17 @@ npm install
 npm run dev
 ```
 
-The Studio always runs at [http://127.0.0.1:8678](http://127.0.0.1:8678). The port is strict: startup fails if `8678` is already in use rather than silently selecting another port.
+* The Studio always runs at [http://127.0.0.1:8678](http://127.0.0.1:8678).
 
-During local development, the current scenario step is kept in the browser tab.
-After Vite reloads for a code change, Studio skips the intro and replays that
-step instead of starting the whole scenario again. Close the tab to start with
-a fresh session.
-
-To stop every process listening on port `8678`:
+* To stop every process listening on port `8678`:
 
 ```bash
 for pid in $(lsof -tiTCP:8678 -sTCP:LISTEN); do kill "$pid"; done
 ```
+
+## Portable visualization
+
+Select steps to preview their animations immediately. Previewing does not generate
+a GIF. Click **Submit** to choose a save location and generate the downloadable
+GIF. Playback continues while the export runs. After saving, copy the Markdown or
+HTML below the preview and upload the GIF alongside the page that embeds it.

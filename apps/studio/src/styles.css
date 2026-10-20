@@ -1420,3 +1420,59 @@ button { color: inherit; }
   .endpoint-interaction-board { animation: none; }
   .chat-composer.is-agent-query-ready { animation: none; box-shadow: 0 0 0 3px rgba(69,255,138,.12); }
 }
+
+/* Approved portable-visualization-v2.svg (1700px target, 1000px desktop minimum).
+   Changed: portable page only uses 2:5 columns, no outer SKYNET heading, top-aligned preview
+   heading, side-by-side compact code cards, and 15px step/action text. Source scenes and
+   exports retain their layout, artwork and behavior. Shared colors/padding stay.
+   Preview ratio1700:950; code gap18px/min-height108px/max-width440px; rows min-height52px,
+   line-height18px and gap10px. Narrow rows/cards/actions wrap to fit. */
+.publication-tip-navigation { position: absolute; right: 0; bottom: 0; display: flex; gap: 16px; }
+.publication-tip-navigation .publication-tip-back { position: static; min-height: 40px; text-transform: none; }
+.portable-studio { display: grid; min-width: 1000px; min-height: 1050px; grid-template-columns: minmax(0, 2fr) minmax(0, 5fr); }
+.portable-studio .world-panel { padding: 24px; }
+.portable-studio .inspector-panel { padding: 24px 28px 30px; }
+.portable-selection, .portable-code { border: 1px solid #1c2e3f; border-radius: 10px; background: #07111a; }
+.portable-selection { margin-top: 24px; min-height: 720px; padding: 18px 19px 24px; }
+.portable-selection h3 { margin: 0; color: var(--cyan-bright); font: 850 16px/20px ui-monospace,SFMono-Regular,Menlo,monospace; }
+.portable-selection__heading { margin: 16px 0 16px; padding: 0; border: 0; }
+.portable-selection__heading span { color: #8aa5b8; font-size: 12px; letter-spacing: normal; text-transform: none; }
+.portable-selection__heading small { color: #ffd166; font: 500 11px ui-monospace,SFMono-Regular,Menlo,monospace; }
+.portable-steps { display: grid; gap: 10px; }
+.portable-step { display: flex; gap: 16px; min-height: 52px; padding: 8px 16px; border: 1px solid #245979; border-radius: 6px; background: #081a29; color: var(--cyan-bright); font: 700 15px/18px ui-monospace,SFMono-Regular,Menlo,monospace; }
+.portable-step > span { min-width: 0; }
+.portable-step:hover { background: #0b2234; }
+.portable-step input { appearance: none; flex: 0 0 20px; width: 20px; height: 20px; margin: 0; border: 1px solid var(--cyan-bright); border-radius: 4px; background: #06121d; cursor: pointer; }
+.portable-step:has(input:checked) { background: #211c0e; border-color: #ffd166; color: #ffd166; }
+.portable-step input:checked { background: #302710; border-color: #ffd166; box-shadow: 0 0 8px #ffd16666; }
+.portable-step input:checked::after { content: ''; display: block; width: 6px; height: 11px; margin: 1px 0 0 6px; border: solid #ffd166; border-width: 0 2px 2px 0; transform: rotate(40deg); }
+.portable-step:focus-within { outline: 2px solid var(--cyan-bright); outline-offset: 3px; }
+.portable-step:has(input:disabled) { opacity: .4; cursor: default; }
+.portable-actions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; margin-top: 24px; }
+.portable-actions .publication-tip-back { font-size: 15px; }
+.portable-studio .publication-tip-back { position: static; min-height: 40px; text-transform: none; }
+.portable-actions [data-portable-submit] { min-width: 124px; margin-left: auto; }
+.publication-tip-back:disabled { opacity: .4; cursor: default; box-shadow: none; }
+.publication-tip-back:disabled:hover { background: #081a29; color: var(--cyan-bright); }
+.portable-preview-heading { margin: 0 0 22px; font: 850 14px/18px ui-monospace,SFMono-Regular,Menlo,monospace; }
+.portable-preview { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1700 / 950; max-height: max(240px, calc(100dvh - 230px)); border: 1px solid #294333; border-radius: 10px; overflow: hidden; background: #030b12; }
+.portable-preview img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; }
+.portable-studio [data-portable-codes] { display: grid; width: 100%; max-width: 898px; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 12px; }
+.portable-code { position: relative; min-width: 0; min-height: 108px; padding: 12px; }
+.portable-code h3 { margin: 0; font: 800 14px/20px ui-monospace,SFMono-Regular,Menlo,monospace; }
+.portable-code .publication-tip-back { position: absolute; top: 8px; right: 12px; bottom: auto; height: 40px; min-width: 68px; letter-spacing: normal; text-transform: none; }
+.portable-code pre { margin: 20px 0 0; color: #b5d4e5; font: 500 13px/20px ui-monospace,SFMono-Regular,Menlo,monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+.portable-save-status { color: #8aa5b8; font: 500 12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; }
+.portable-capture { overflow: hidden; }
+.portable-capture .publication-tip-navigation, .portable-capture .world-intro__skip, .portable-capture [data-publication-tip-back] { visibility: hidden; }
+/* Export frames use a stable viewport; timeline overflow never scrolls the page. */
+.portable-capture .event-history__list { scroll-behavior: auto; }
+
+/* Immediate preview reuses the approved viewport; only Submit starts GIF encoding. */
+.portable-live-preview { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.portable-live-preview iframe { position: absolute; width: 1920px; height: 1080px; border: 0; transform-origin: top left; pointer-events: none; }
+.portable-preview-empty { color: #8aa5b8; font: 500 13px ui-monospace,SFMono-Regular,Menlo,monospace; }
+.portable-preview:has(img:not([hidden]), .portable-live-preview:not([hidden])) .portable-preview-empty { display: none; }
+.portable-render-status { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 12px; color: #8aa5b8; font: 500 12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; }
+.portable-render-status:has([data-portable-status]:empty) { display: none; }
+.portable-render-status progress { width: 140px; accent-color: #ffd166; }
