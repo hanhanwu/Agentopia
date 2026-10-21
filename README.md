@@ -24,3 +24,5 @@ for pid in $(lsof -tiTCP:8678 -sTCP:LISTEN); do kill "$pid"; done
 ## Portable Visualization
 
 ![Portable visualization](demo/portable_gif.gif)
+
+👉 [Enter the exhibition >>](demo/exhibition.md)
