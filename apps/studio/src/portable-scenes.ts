@@ -1,7 +1,9 @@
 import type { ActivityEvent } from './activity.ts';
 
+export const INTRO_DURATION_MS = 17300;
+
 export const portableScenes = [
-  { id: 'intro', label: 'Intro', duration: 17300, event: null },
+  { id: 'intro', label: 'Intro', duration: INTRO_DURATION_MS, event: null },
   { id: 'step-1', label: 'Step 1 · Request & intent', duration: 6800, event: 'task.requested' },
   { id: 'step-2', label: 'Step 2 · Registry search', duration: 8000, event: 'registries.search-started' },
   { id: 'step-3', label: 'Step 3 · Registry results', duration: 3500, event: 'registry.results-returned' },
@@ -25,9 +27,13 @@ export function orderScenes(ids: unknown): PortableSceneId[] {
 export function sceneEventIndex(events: ActivityEvent[], id: PortableSceneId): number {
   const scene = portableScenes.find((candidate) => candidate.id === id)!;
   // Both registry responses belong to displayed Step 3.
-  return scene.event === 'registry.results-returned'
-    ? events.map(({ type }) => type).lastIndexOf(scene.event)
-    : events.findIndex(({ type }) => type === scene.event);
+  if (scene.event === 'registry.results-returned') {
+    for (let index = events.length - 1; index >= 0; index--) {
+      if (events[index].type === scene.event) return index;
+    }
+    return -1;
+  }
+  return events.findIndex(({ type }) => type === scene.event);
 }
 
 export function embedCodes(filename: string) {

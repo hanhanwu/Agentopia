@@ -1,6 +1,8 @@
+export { resolveTrustInput } from './trust-input.ts';
+export type { SubjectType } from './trust-input.ts';
+
 export const OUTCOME_GROUPS = ['failed', 'passed', 'skipped', 'unknown'] as const;
 export type OutcomeGroup = typeof OUTCOME_GROUPS[number];
-export type SubjectType = 'agent' | 'mcp';
 export type TrustRule = {
   id: string; name: string; category: string; outcome: string;
   configured_weight: number; weight: number; earned: number; possible: number;
@@ -20,21 +22,6 @@ export type TrustReport = {
   rules: Record<OutcomeGroup, TrustRule[]>;
   observations: Record<string, unknown>;
 };
-
-export function resolveTrustInput(type: SubjectType, input: string):
-  { status: 'ready'; endpoint: string } | { status: 'invalid' | 'unavailable'; message: string } {
-  const identifier = input.trim();
-  if (!identifier) return { status: 'invalid', message: 'Enter an MCP endpoint.' };
-  if (type === 'agent') return { status: 'unavailable', message: 'Agent scoring is not available yet.' };
-  let endpoint: URL;
-  try { endpoint = new URL(identifier); } catch {
-    return { status: 'invalid', message: 'Enter an HTTP(S) MCP endpoint.' };
-  }
-  if (!['http:', 'https:'].includes(endpoint.protocol) || endpoint.username || endpoint.password || endpoint.hash || endpoint.port === '0') {
-    return { status: 'invalid', message: 'Enter an HTTP(S) MCP endpoint without credentials or a fragment.' };
-  }
-  return { status: 'ready', endpoint: endpoint.href };
-}
 
 const isRecord = (value: unknown): value is Record<string, unknown> => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 const nonnegative = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value >= 0;
@@ -88,14 +75,17 @@ export async function fetchTrustReport(endpoint: string, signal: AbortSignal): P
 }
 
 export function categorySummaries(report: TrustReport) {
-  return ['Protocol', 'Primitives', 'Security & Auth', 'Readiness'].map(category => {
-    const rules = OUTCOME_GROUPS.flatMap(group => report.rules[group]).filter(rule => rule.category === category);
-    return {
-      category, earned: rules.reduce((sum, rule) => sum + rule.earned, 0),
-      possible: rules.reduce((sum, rule) => sum + rule.possible, 0),
-      configured: rules.reduce((sum, rule) => sum + rule.configured_weight, 0),
-      passed: report.rules.passed.filter(rule => rule.category === category).length,
-      total: rules.length,
-    };
-  });
+  const categories = new Map(['Protocol', 'Primitives', 'Security & Auth', 'Readiness'].map(category => [
+    category, { category, earned: 0, possible: 0, configured: 0, passed: 0, total: 0 },
+  ]));
+  for (const group of OUTCOME_GROUPS) {
+    for (const rule of report.rules[group]) {
+      const summary = categories.get(rule.category);
+      if (!summary) continue;
+      summary.earned += rule.earned; summary.possible += rule.possible;
+      summary.configured += rule.configured_weight; summary.total++;
+      if (group === 'passed') summary.passed++;
+    }
+  }
+  return [...categories.values()];
 }

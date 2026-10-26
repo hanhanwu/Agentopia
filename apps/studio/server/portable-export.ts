@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { LocalAPIError, readJSON, requireLocalRequest, sendJSON as send } from './local-api.ts';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import type { Browser } from 'playwright';
@@ -141,37 +142,19 @@ export function portableExportPlugin(): Plugin {
       const address = server.httpServer?.address() as AddressInfo | null;
       if (!address) { res.writeHead(503).end(); return; }
       const origin = `http://127.0.0.1:${address.port}`;
-      void handle(req, res, origin).catch(() => {
-        if (!res.headersSent) send(res, 500, { error: 'GIF export request failed.' });
+      void handle(req, res, origin).catch(error => {
+        if (!res.headersSent) send(res, error instanceof LocalAPIError ? error.status : 500, { error: error instanceof LocalAPIError ? error.message : 'GIF export request failed.' });
       });
     });
   };
-  const send = (res: ServerResponse, status: number, data: unknown) => {
-    res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
-    res.end(JSON.stringify(data));
-  };
   const handle = async (req: IncomingMessage, res: ServerResponse, origin: string) => {
-    // This is a local export service. Do not accept cross-site render jobs or file downloads.
-    if (req.headers['sec-fetch-site'] === 'cross-site') { send(res, 403, { error: 'Same-origin requests only.' }); return; }
-    if (req.headers.origin) {
-      const supplied = new URL(req.headers.origin);
-      if (!['127.0.0.1', 'localhost', '[::1]'].includes(supplied.hostname) || supplied.port !== new URL(origin).port) {
-        send(res, 403, { error: 'Same-origin requests only.' }); return;
-      }
-    }
+    requireLocalRequest(req);
     const path = req.url!.split('?')[0];
     if (path === '/api/portable' && req.method === 'POST') {
       if (jobs.size >= 8) { send(res, 429, { error: 'Export queue is full. Retry shortly.' }); return; }
-      if (!req.headers['content-type']?.startsWith('application/json')) { send(res, 415, { error: 'Expected JSON.' }); return; }
-      const chunks: Buffer[] = [];
-      let size = 0;
-      for await (const chunk of req) {
-        size += Buffer.byteLength(chunk);
-        if (size > MAX_BODY) { send(res, 413, { error: 'Scenario data is too large.' }); return; }
-        chunks.push(Buffer.from(chunk));
-      }
+      const body = await readJSON(req, MAX_BODY);
       let input: ReturnType<typeof validateExport>;
-      try { input = validateExport(JSON.parse(Buffer.concat(chunks).toString('utf8'))); }
+      try { input = validateExport(body); }
       catch (error) { send(res, 400, { error: error instanceof Error ? error.message : 'Invalid export request.' }); return; }
       const job: Job = { id: randomUUID(), state: 'queued', progress: 0, created: Date.now(), abort: new AbortController() };
       jobs.set(job.id, job);

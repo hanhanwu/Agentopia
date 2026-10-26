@@ -46,10 +46,10 @@ agent-specific evidence and policy.
 - **Agentopia (public):** product workspace for the UI, reusable visualizations,
   and the user-facing assessment flow.
 - **Production scoring boundary:** a versioned, installable scoring package and
-  backend service must connect the proven Lab engine to Agentopia. Deployment
+  backend service connects the proven Lab engine to Agentopia locally. Deployment
   must not depend on developer-local paths, private notebook imports, saved
   research caches, or the `Agentopia/tmp/mcpscore` comparison checkout. Decide
-  where to publish/package the reusable engine before wiring the public build.
+  where to publish the reusable engine before deploying a hosted service.
 
 ## Visual design workflow
 
@@ -67,8 +67,8 @@ do not integrate them into the application before user approval.
 2. **Choose evidence-backed insights.** Keep only findings that are clear,
    useful, and supported by the collected data.
 3. **Deliver in Agentopia.** Turn selected insights into inspectable product
-   features and visualizations. The next feature is a pasted-input assessment
-   backed by MCP V1, followed by an independently defined agent-scoring path.
+   features and visualizations. Local MCP V1 assessment is available; hosted
+   scoring and an independently defined agent-scoring path are next.
 
 ```text
 Agentopia_Lab: collect → explore → analyze → select insights
@@ -86,6 +86,12 @@ Agentopia:                             assessments + visualizations
   categories, 100 default decisions and 184 configured maximum points.
 - [x] Exercise the Python assessment API and notebook workflow, including
   automated reasons, grouped rule outcomes and a silent JSON inspection export.
+- [x] Implement the desktop home screen, trust form, and existing walkthrough route.
+- [x] Connect live MCP scoring through a local, bounded Python worker with
+  four outcome filters, evidence details, and JSON download.
+
+Remaining: publish the engine for deployment, host a caller-scoped scoring
+service, add evidence-backed remediation, and define separate agent scoring.
 
 
 ## Long-term: portable visualizations

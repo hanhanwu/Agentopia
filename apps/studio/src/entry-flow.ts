@@ -4,9 +4,8 @@ import {
   type OutcomeGroup, type SubjectType, type TrustReport, type TrustRule,
 } from './trust-score.ts';
 
-const escapeHTML = (value: unknown) => String(value).replace(/[&<>"']/g, char => (
-  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!
-));
+import { escapeMarkup as escapeHTML } from './markup.ts';
+
 const monoJSON = (value: unknown) => `<pre>${escapeHTML(JSON.stringify(value, null, 2))}</pre>`;
 const groupName = (group: OutcomeGroup) => group[0].toUpperCase() + group.slice(1);
 const shield = '<path d="M16 3 27 7v9c0 7-11 13-11 13S5 23 5 16V7Z M10 16l4 4 8-9"/>';
@@ -154,9 +153,9 @@ export function mountEntryFlow(options: {
     report.querySelectorAll<HTMLButtonElement>('[data-outcome]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.outcome === activeGroup)));
   }
 
-  function showStatus(message: string, identifier = '', state = 'error') {
+  function showStatus(message: string, state = 'error') {
     report.dataset.state = state;
-    report.innerHTML = `<div class="trust-unavailable"><h3 id="trust-report-message">${escapeHTML(message)}</h3>${identifier ? `<p>${escapeHTML(identifier)}</p>` : ''}</div>`;
+    report.innerHTML = `<div class="trust-unavailable"><h3 id="trust-report-message">${escapeHTML(message)}</h3></div>`;
   }
 
   host.querySelector('[data-open-trust]')!.addEventListener('click', () => {
@@ -186,12 +185,12 @@ export function mountEntryFlow(options: {
     const result = resolveTrustInput(subject, input.value);
     if (result.status !== 'ready') {
       if (result.status === 'invalid') input.setAttribute('aria-invalid', 'true');
-      showStatus(result.message, '', result.status); return;
+      showStatus(result.message, result.status); return;
     }
     const controller = new AbortController(); pending = controller;
     const deadline = window.setTimeout(() => controller.abort(new Error('The assessment timed out. Try again.')), 100000);
     submit.disabled = true;
-    showStatus('Calculating the Trust Score...', '', 'loading'); report.setAttribute('aria-busy', 'true');
+    showStatus('Calculating the Trust Score...', 'loading'); report.setAttribute('aria-busy', 'true');
     try {
       const data = await fetchTrustReport(result.endpoint, controller.signal);
       if (pending === controller) { activeGroup = 'failed'; renderReport(data); }

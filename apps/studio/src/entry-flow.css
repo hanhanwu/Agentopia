@@ -33,12 +33,11 @@
 .trust-input { width: 100%; min-width: 0; height: 72px; padding: 0 17px; border: 1px solid #8f7841; border-radius: 10px; outline: none; background: #050c08; color: #effff2; font: 500 16px ui-monospace, SFMono-Regular, Menlo, monospace; }
 .trust-input::placeholder { color: #858c88; opacity: 1; }
 .trust-input:focus { border-color: #edca72; box-shadow: 0 0 0 2px #edca721a; }
-.trust-input:invalid:not(:placeholder-shown) { border-color: #ff657a; }
 .trust-submit { height: 84px; font-size: 28px; }
 .trust-report { width: 500px; margin: 78px auto 0; padding-bottom: 80px; }
 .trust-report__header h3 { margin: 0; color: #c9efff; font-size: 28px; font-weight: 700; line-height: 34px; letter-spacing: 0; }
 .trust-report__status { margin: 12px 0 0; color: #61c7ff; font: 700 14px/18px ui-monospace, SFMono-Regular, Menlo, monospace; }
-.trust-report__endpoint { margin: 12px 0 0; color: #a7cadf; font: 500 18px/24px ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
+.trust-report__endpoint { margin: 12px 0 0; color: #a7cadf; font: 500 18px/24px ui-monospace, SFMono-Regular, Menlo, monospace; white-space: normal; overflow-wrap: anywhere; }
 .trust-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 12px; }
 .trust-metric { position: relative; height: 176px; padding: 18px 24px; border: 1px solid #1c2e3f; border-radius: 10px; background: #07111a; }
 .trust-metric h4 { margin: 0; color: #8aa5b8; font-size: 18px; line-height: 22px; font-weight: 600; white-space: nowrap; }
@@ -75,8 +74,6 @@
 .trust-metadata > dl { padding: 0 19px 16px; }
 .trust-unavailable { padding-top: 110px; }
 .trust-unavailable h3 { margin: 0; color: #c9efff; font-size: 28px; line-height: 1.3; }
-.trust-unavailable p { color: #8aa5b8; font: 16px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
-.trust-unavailable .gold-button { min-height: 50px; margin-top: 28px; padding: 12px 20px; font-size: 16px; }
 .world-intro.is-choice-intro .world-intro__logo { display: none; }
 .world-intro.is-choice-intro .intro-world { animation: introWorldIn .35s ease forwards, introWorldExit .8s 16.5s cubic-bezier(.4,0,.2,1) forwards; }
 .walkthrough-home { position: absolute; top: 23px; left: calc(50% - 200px); z-index: 30; min-height: 34px; padding: 0 12px; font-size: 12px; }
@@ -86,4 +83,3 @@
 .trust-report[data-state='loading'] .trust-unavailable h3::before { content: ''; display: inline-block; width: 22px; height: 22px; margin-right: 16px; border: 2px solid #29445b; border-top-color: #61c7ff; border-radius: 50%; vertical-align: -2px; animation: trust-scoring 1s linear infinite; }
 @keyframes trust-scoring { to { transform: rotate(360deg); } }
 .trust-input[aria-invalid='true'] { border-color: #ff657a; }
-.trust-report__endpoint { white-space: normal; overflow-wrap: anywhere; }

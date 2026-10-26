@@ -1,8 +1,9 @@
 import { mountPortableVisualization } from './portable-visualization.ts';
 import { createFrameClock } from './portable-capture.ts';
-import { sceneEventIndex, type PortableSceneId } from './portable-scenes.ts';
+import { INTRO_DURATION_MS, sceneEventIndex, type PortableSceneId } from './portable-scenes.ts';
 import './styles.css';
 import { mountEntryFlow } from './entry-flow.ts';
+import { escapeMarkup } from './markup.ts';
 import { agents, type Agent } from './agents.ts';
 import registrySearchMock from './data/registry-search.mock.json';
 import endpointDiscoverySnapshot from './data/scenario-1-endpoint-discovery.snapshot.json';
@@ -293,10 +294,6 @@ type DiscoveryPathNode = {
   outcome: string;
   artifact?: string;
 };
-
-const escapeMarkup = (value: string) => value.replace(/[&<>"']/g, (character) => ({
-  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-}[character] ?? character));
 
 const agentQueryTableRows = (projection: AgentQueryProjection, query: string) => projection.rows.map((row, index) => `
   <tr>
@@ -1164,7 +1161,7 @@ const bindIntroSkip = () => {
   });
 };
 if (isPortableCapture) {
-  introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 17300);
+  introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : INTRO_DURATION_MS);
   bindIntroSkip();
 }
 window.addEventListener('keydown', (event) => {
@@ -2401,7 +2398,7 @@ if (!isPortableCapture) {
       const introHome = makeHomeButton('walkthrough-intro-home');
       worldIntro?.prepend(introHome);
       bindIntroSkip();
-      introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 17300);
+      introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : INTRO_DURATION_MS);
       introHome.focus({ preventScroll: true });
     },
   });

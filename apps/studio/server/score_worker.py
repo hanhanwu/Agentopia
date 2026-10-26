@@ -14,7 +14,7 @@ class InvalidTarget(ValueError):
     pass
 
 
-def public_addresses(url):
+def endpoint_parts(url):
     try:
         parts = urlsplit(url)
         if (parts.scheme not in {'http', 'https'} or not parts.hostname
@@ -23,6 +23,11 @@ def public_addresses(url):
         port = parts.port or (443 if parts.scheme == 'https' else 80)
     except ValueError:
         raise InvalidTarget('Enter an HTTP(S) MCP endpoint without credentials or a fragment.') from None
+    return parts, port
+
+
+def public_addresses(url):
+    parts, port = endpoint_parts(url)
     addresses = sorted({entry[4][0] for entry in socket.getaddrinfo(
         parts.hostname, port, type=socket.SOCK_STREAM)})
     if not addresses:
@@ -43,8 +48,8 @@ class PublicHTTPTransport(HTTPTransport):
 
     def request(self, label, method='POST', body=None, headers=None, **kwargs):
         target = kwargs.get('url') or self.endpoint
-        parts = urlsplit(target)
-        key = (parts.hostname, parts.port or (443 if parts.scheme == 'https' else 80))
+        parts, port = endpoint_parts(target)
+        key = (parts.hostname, port)
         if key not in self.destinations:
             host, port, addresses = public_addresses(target)
             self.destinations[(host, port)] = addresses[0]
@@ -69,7 +74,7 @@ def main():
         if not isinstance(payload, dict) or not isinstance(payload.get('endpoint'), str):
             raise InvalidTarget('Enter an HTTP(S) MCP endpoint.')
         result = run(payload['endpoint'])
-    except (InvalidTarget, ValueError):
+    except ValueError:
         result = {'error': {'status': 400, 'message': 'Enter a valid, publicly reachable HTTP(S) MCP endpoint without credentials or a fragment.'}}
     except socket.gaierror:
         result = {'error': {'status': 502, 'message': 'The MCP endpoint could not be resolved.'}}

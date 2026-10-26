@@ -3,30 +3,22 @@ import { existsSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { resolve } from 'node:path';
 import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
+import { resolveTrustInput } from '../src/trust-input.ts';
+import { LocalAPIError as TrustScoreError, readJSON, requireLocalRequest, sendJSON } from './local-api.ts';
+export { LocalAPIError as TrustScoreError } from './local-api.ts';
 
 const API_PATH = '/api/trust-score/v1';
 const MAX_BODY = 8192;
 const MAX_REPORT = 4 * 1024 * 1024;
 
-export class TrustScoreError extends Error {
-  constructor(public status: number, message: string) { super(message); }
-}
-
 export function validateTrustScoreRequest(body: unknown): string {
   if (!body || typeof body !== 'object') throw new TrustScoreError(400, 'Enter an MCP endpoint.');
   const { type, identifier } = body as Record<string, unknown>;
-  if (type === 'agent') throw new TrustScoreError(422, 'Agent scoring is not available yet.');
-  if (type !== 'mcp' || typeof identifier !== 'string' || identifier.length > 2048) {
-    throw new TrustScoreError(400, 'Enter an HTTP(S) MCP endpoint.');
-  }
-  let url: URL;
-  try { url = new URL(identifier.trim()); } catch {
-    throw new TrustScoreError(400, 'Enter an HTTP(S) MCP endpoint.');
-  }
-  if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.hash || url.port === '0') {
-    throw new TrustScoreError(400, 'Enter an HTTP(S) MCP endpoint without credentials or a fragment.');
-  }
-  return url.href;
+  if (type !== 'agent' && type !== 'mcp') throw new TrustScoreError(400, 'Choose Agent or MCP Server.');
+  if (type === 'mcp' && typeof identifier !== 'string') throw new TrustScoreError(400, 'Enter an MCP endpoint.');
+  const result = resolveTrustInput(type, typeof identifier === 'string' ? identifier : '');
+  if (result.status !== 'ready') throw new TrustScoreError(result.status === 'unavailable' ? 422 : 400, result.message);
+  return result.endpoint;
 }
 
 export function runScoreWorker(root: string, endpoint: string, signal: AbortSignal): Promise<unknown> {
@@ -78,53 +70,24 @@ export function runScoreWorker(root: string, endpoint: string, signal: AbortSign
 export function createTrustScoreHandler(root: string, run = runScoreWorker) {
   let active = 0;
   const controllers = new Set<AbortController>();
-  const send = (res: ServerResponse, status: number, body: unknown) => {
-    if (res.destroyed) return;
-    res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
-    res.end(JSON.stringify(body));
-  };
   return {
     close() { for (const controller of controllers) controller.abort(); },
     async handle(req: IncomingMessage, res: ServerResponse) {
       try {
-        // A local Studio bridge, never an unauthenticated public scoring proxy.
-        const remote = req.socket.remoteAddress;
-        const host = new URL(`http://${req.headers.host || 'invalid'}`);
-        const localNames = ['127.0.0.1', 'localhost', '[::1]'];
-        if (!['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(remote || '') || !localNames.includes(host.hostname)) {
-          throw new TrustScoreError(403, 'Local Studio requests only.');
-        }
-        if (req.headers['sec-fetch-site'] === 'cross-site') throw new TrustScoreError(403, 'Same-origin requests only.');
-        if (req.headers.origin) {
-          const origin = new URL(req.headers.origin);
-          if (!localNames.includes(origin.hostname) || origin.port !== host.port || origin.protocol !== host.protocol) {
-            throw new TrustScoreError(403, 'Same-origin requests only.');
-          }
-        }
+        requireLocalRequest(req);
         if (req.method !== 'POST') throw new TrustScoreError(405, 'Use POST to assess an MCP endpoint.');
         if (active >= 2) throw new TrustScoreError(429, 'Two assessments are already running. Try again shortly.');
-        if (!req.headers['content-type']?.startsWith('application/json')) throw new TrustScoreError(415, 'Expected JSON.');
-        const chunks: Buffer[] = [];
-        let size = 0;
-        for await (const chunk of req) {
-          size += Buffer.byteLength(chunk);
-          if (size > MAX_BODY) throw new TrustScoreError(413, 'The request is too large.');
-          chunks.push(Buffer.from(chunk));
-        }
-        let body: unknown;
-        try { body = JSON.parse(Buffer.concat(chunks).toString('utf8')); }
-        catch { throw new TrustScoreError(400, 'Invalid JSON request.'); }
-        const endpoint = validateTrustScoreRequest(body);
+        const endpoint = validateTrustScoreRequest(await readJSON(req, MAX_BODY));
         // Recheck after the asynchronous body read before claiming a worker slot.
         if (active >= 2) throw new TrustScoreError(429, 'Two assessments are already running. Try again shortly.');
         const controller = new AbortController();
         const cancel = () => { if (!res.writableEnded) controller.abort(); };
         controllers.add(controller); active++; res.once('close', cancel);
-        try { send(res, 200, await run(root, endpoint, controller.signal)); }
+        try { sendJSON(res, 200, await run(root, endpoint, controller.signal)); }
         finally { active--; controllers.delete(controller); res.removeListener('close', cancel); }
       } catch (error) {
         const failure = error instanceof TrustScoreError ? error : new TrustScoreError(500, 'The assessment could not be completed.');
-        send(res, failure.status, { error: failure.message });
+        sendJSON(res, failure.status, { error: failure.message });
       }
     },
   };

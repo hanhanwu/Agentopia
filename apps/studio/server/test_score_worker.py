@@ -1,6 +1,5 @@
 """Hermetic checks for the local scoring bridge's outbound boundary."""
 import importlib.util
-import ipaddress
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -41,6 +40,15 @@ class ScoreWorkerTests(unittest.TestCase):
         with patch.object(worker.socket, 'getaddrinfo', return_value=[address('127.0.0.1')]), patch.object(worker.HTTPTransport, 'request') as request:
             with self.assertRaises(worker.InvalidTarget):
                 transport.request('metadata', 'GET', url='https://private.example/metadata', anonymous=True)
+            request.assert_not_called()
+
+    def test_cached_hosts_still_validate_each_metadata_url(self):
+        with patch.object(worker.socket, 'getaddrinfo', return_value=[address('8.8.8.8')]):
+            transport = worker.PublicHTTPTransport('https://mcp.example/mcp')
+        with patch.object(worker.HTTPTransport, 'request') as request:
+            for url in ['https://token@mcp.example/metadata', 'https://mcp.example/metadata#fragment']:
+                with self.subTest(url=url), self.assertRaises(worker.InvalidTarget):
+                    transport.request('metadata', 'GET', url=url, anonymous=True)
             request.assert_not_called()
 
     def test_invalid_destinations_are_rejected_before_dns(self):

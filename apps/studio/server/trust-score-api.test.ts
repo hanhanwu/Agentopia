@@ -44,6 +44,8 @@ describe('local trust-score HTTP bridge', () => {
       [{ headers: { host: 'evil.example', 'content-type': 'application/json' } }, 403],
       [{ headers: { host: 'localhost:8678', origin: 'https://evil.example', 'content-type': 'application/json' } }, 403],
       [{ headers: { host: 'localhost:8678', 'sec-fetch-site': 'cross-site' } }, 403],
+      [{ headers: { host: 'localhost:8678', origin: 'null', 'content-type': 'application/json' } }, 403],
+      [{ headers: { host: '[', 'content-type': 'application/json' } }, 403],
       [{ method: 'GET' }, 405],
     ] as const) {
       const response = new ResponseBuffer(); await handler.handle(request(undefined, overrides), asResponse(response));

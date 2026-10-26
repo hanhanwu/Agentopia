@@ -4,51 +4,50 @@
 
 ![Agentopia game UI demo](demo/agentopia_v0_demo.gif)
 
-## Run the Studio UI
+## Run Studio
 
-Use Node.js 20.19 or newer (Node.js 22.12+ is also supported), then run:
+Requires Node.js 20.19+ or 22.12+.
 
 ```bash
 npm install
 npm run dev
 ```
 
-* The Studio always runs at [http://127.0.0.1:8678](http://127.0.0.1:8678).
+Open [localhost:8678](http://127.0.0.1:8678). Stop the server with `Ctrl+C`.
 
 After the logo, choose **Check Trust Score** or **Understand Agents’ World**.
-Enter a public HTTP(S) MCP endpoint and click **Check Trust Score** to collect a
-fresh assessment through the local Python scoring bridge. Skynet shows the
-weighted points, rule pass rate, four outcome groups, expandable evidence, and
-JSON download. It remains empty before submission. Loading and error messages
-appear only on Skynet. Agent scoring is not implemented yet.
+The walkthrough and its intro both provide a **Home** button.
 
-The scorer must be installed in the Python environment used by Studio. For this
-workspace, use the notebook environment:
+## MCP scoring
+
+Install the scorer in Studio's Python environment (Python 3.11+):
 
 ```bash
 .venv/bin/python -m pip install -e ../Agentopia_Lab/Scoring_System/score_mcp_servers
 ```
 
-Studio uses `.venv/bin/python` when present, otherwise `python3`. Set
-`AGENTOPIA_SCORER_PYTHON` to an absolute interpreter path to override it. Runtime
-code imports the installed `score_mcp_servers` package; it does not import
-notebooks or require a Lab checkout path. Install the scoring package on any
-machine that runs the bridge.
+Studio uses `.venv/bin/python`, otherwise `python3`. Override it with
+`AGENTOPIA_SCORER_PYTHON`. Runtime imports the installed package, not notebooks
+or research caches. Other machines need the scoring package installed too.
 
-The local bridge is available in `npm run dev` and `npm run preview` at
-`POST /api/trust-score/v1`, with JSON `{ "type": "mcp", "identifier": "https://example.com/mcp" }`.
-Responses use `{ "schema_version": "1.0", "source": "live", "report": ... }`.
-It allows two assessments at a time, limits each worker to 90 seconds, pins
-public target addresses, and cancels work when the browser disconnects. It is
-restricted to local, same-origin Studio requests. A standalone static deployment
-needs a separately hosted scoring service; this does not deploy a public API.
+Submit a public HTTP(S) MCP endpoint to collect a fresh assessment. Skynet shows
+weighted points, rule pass rate, Passed/Failed/Skipped/Unknown counts, evidence,
+and JSON download. It stays empty until submission. All status messages appear
+on Skynet. Agent scoring is not implemented.
 
-The walkthrough remains available through **Understand Agents’ World**.
+The local API runs in dev and preview: `POST /api/trust-score/v1` accepts
+`{"type":"mcp","identifier":"https://example.com/mcp"}` and returns
+`{"schema_version":"1.0","source":"live","report":...}`.
+It permits two workers, imposes a 90-second deadline, pins public destination
+addresses, and cancels disconnected requests. Only local, same-origin requests
+are accepted. Static hosting requires a separate scoring service.
 
-* To stop every process listening on port `8678`:
+## Checks
 
 ```bash
-for pid in $(lsof -tiTCP:8678 -sTCP:LISTEN); do kill "$pid"; done
+npm run build
+npm test
+.venv/bin/python -m unittest discover -s apps/studio/server -p 'test_score_worker.py'
 ```
 
 ## Portable Visualization
