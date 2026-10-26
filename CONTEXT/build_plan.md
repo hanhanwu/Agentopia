@@ -1,5 +1,7 @@
 # Agentopia + Skynet Build Plan
 
+Updated 2026-10-25.
+
 ## Goal
 
 Build an open-source, observable world of AI agents that makes the emerging
@@ -32,15 +34,22 @@ The working loop is:
 discover → collect evidence → analyze patterns → visualize gaps → reproduce
 ```
 
-Keep the experience playful, but the conclusions rigorous. Do not design scores
-or visualizations before the evidence supports them.
+Keep the experience playful and the conclusions grounded in inspectable evidence.
+The MCP scoring V1 research implementation now supplies a tested starting point
+for an assessment feature. Broader claims about agent behavior still require
+agent-specific evidence and policy.
 
 ## Repository roles
 
 - **Agentopia_Lab (private):** research workspace for data collection,
   exploration, analysis, schemas, evidence, and experiments.
-- **Agentopia (public):** product workspace for presenting proven insights as
-  understandable, playful visualizations.
+- **Agentopia (public):** product workspace for the UI, reusable visualizations,
+  and the user-facing assessment flow.
+- **Production scoring boundary:** a versioned, installable scoring package and
+  backend service must connect the proven Lab engine to Agentopia. Deployment
+  must not depend on developer-local paths, private notebook imports, saved
+  research caches, or the `Agentopia/tmp/mcpscore` comparison checkout. Decide
+  where to publish/package the reusable engine before wiring the public build.
 
 ## Visual design workflow
 
@@ -57,14 +66,27 @@ do not integrate them into the application before user approval.
    for now and holds the raw evidence, experiments, and research notes.
 2. **Choose evidence-backed insights.** Keep only findings that are clear,
    useful, and supported by the collected data.
-3. **Visualize in Agentopia.** Turn selected insights into simple, engaging,
-   and inspectable visualizations in the public Agentopia experience.
+3. **Deliver in Agentopia.** Turn selected insights into inspectable product
+   features and visualizations. The next feature is a pasted-input assessment
+   backed by MCP V1, followed by an independently defined agent-scoring path.
 
 ```text
 Agentopia_Lab: collect → explore → analyze → select insights
                                                    ↓
-Agentopia:                                  visualize insights
+Agentopia:                             assessments + visualizations
 ```
+
+## Current progress
+
+- [x] Finish [Scenario 1 — One Agent, Different Doors](game_scenarios.md#game-scenario-1--one-agent-different-doors)
+  in Agentopia using mock data first.
+- [x] Implement portable visualization with Agentopia branding and shared
+  components so changes propagate to the references that reuse them.
+- [x] Complete MCP scoring V1 in Agentopia_Lab: engine/package 0.5.1, four
+  categories, 100 default decisions and 184 configured maximum points.
+- [x] Exercise the Python assessment API and notebook workflow, including
+  automated reasons, grouped rule outcomes and a silent JSON inspection export.
+
 
 ## Long-term: portable visualizations
 
@@ -82,16 +104,11 @@ Keep this future possible without building a component platform too early:
    embeds second, and an open-source component library or SDK later.
 
 Portable outputs should support pinned evidence snapshots, responsive layouts,
-reduced motion, and privacy-conscious embeds. For now, Scenario 1 should prove
-the reusable-scene approach; do not build the full SDK yet.
+reduced motion, and privacy-conscious embeds. Build on the completed Scenario 1
+and portable visualization work. Defer the full SDK until additional scenarios
+establish what should be shared.
 
-### Current action plan
-
-- [x] Finish [Scenario 1 — One Agent, Different Doors](game_scenarios.md#game-scenario-1--one-agent-different-doors)
-  in Agentopia using mock data first.
-- [ ] Implement portable visualization, with Agentopia logo, and different reference can use same visualization, changes can be made on all the references in one place.
-
-### Remember to Check
+## Research watchlist
 
 - Discovery: DNS-AID and ARD
 - Identity: ANS and SPIFFE
@@ -101,7 +118,7 @@ the reusable-scene approach; do not build the full SDK yet.
 - Traceability: SCITT
 - Trust: the open Trust Index
 
-### Discovery visualization contract
+## Discovery visualization contract
 
 Preserve the complete discovery evidence graph, but derive simplified visual
 routes from explicit node semantics, graph edges, and observed outcomes. Never
