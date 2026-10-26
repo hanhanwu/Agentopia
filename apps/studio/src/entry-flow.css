@@ -33,7 +33,9 @@
 .trust-input { width: 100%; min-width: 0; height: 72px; padding: 0 17px; border: 1px solid #8f7841; border-radius: 10px; outline: none; background: #050c08; color: #effff2; font: 500 16px ui-monospace, SFMono-Regular, Menlo, monospace; }
 .trust-input::placeholder { color: #858c88; opacity: 1; }
 .trust-input:focus { border-color: #edca72; box-shadow: 0 0 0 2px #edca721a; }
-.trust-submit { height: 84px; font-size: 28px; }
+.trust-submit-slot { min-height: 84px; }
+.trust-submit { width: 100%; height: 84px; font-size: 28px; }
+.trust-subject.is-inactive { opacity: .4; }
 .trust-report { width: 500px; margin: 78px auto 0; padding-bottom: 80px; }
 .trust-report__header h3 { margin: 0; color: #c9efff; font-size: 28px; font-weight: 700; line-height: 34px; letter-spacing: 0; }
 .trust-report__status { margin: 12px 0 0; color: #61c7ff; font: 700 14px/18px ui-monospace, SFMono-Regular, Menlo, monospace; }

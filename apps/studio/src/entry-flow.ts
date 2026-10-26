@@ -52,12 +52,12 @@ export function mountEntryFlow(options: {
               <button class="gold-button trust-subject" type="button" data-subject="agent" aria-pressed="false">
                 <svg viewBox="0 0 276 270" aria-hidden="true">${serviceArtwork(4)}</svg><span>Agent</span>
               </button>
-              <button class="gold-button trust-subject" type="button" data-subject="mcp" aria-pressed="true">
+              <button class="gold-button trust-subject" type="button" data-subject="mcp" aria-pressed="false">
                 <img src="${mcpLogo}" alt=""/><span>MCP Server</span>
               </button>
             </div>
             <input class="trust-input" name="identifier" aria-label="Identifier" placeholder="Example: https://server.com/mcp" autocomplete="off" spellcheck="false" required/>
-            <button class="gold-button trust-submit" type="submit">Check Trust Score</button>
+            <div class="trust-submit-slot"><button class="gold-button trust-submit" type="submit" hidden disabled>Check Trust Score</button></div>
           </form>
         </div>
       </section>
@@ -74,16 +74,26 @@ export function mountEntryFlow(options: {
   const input = form.querySelector<HTMLInputElement>('.trust-input')!;
   const submit = form.querySelector<HTMLButtonElement>('.trust-submit')!;
   const report = host.querySelector<HTMLElement>('.trust-report')!;
-  let subject: SubjectType = 'mcp';
+  let subject: SubjectType | null = null;
   let activeGroup: OutcomeGroup = 'failed';
   let reportData: TrustReport | null = null;
   let pending: AbortController | null = null;
 
+  function updateForm() {
+    form.querySelectorAll<HTMLButtonElement>('[data-subject]').forEach(button => {
+      button.classList.toggle('is-inactive', subject !== null && button.dataset.subject !== subject);
+      button.setAttribute('aria-pressed', String(button.dataset.subject === subject));
+    });
+    submit.hidden = subject === null || input.value.trim().length === 0;
+    submit.disabled = submit.hidden || pending !== null;
+  }
+
   function clearReport() {
-    pending?.abort(); pending = null; submit.disabled = false;
+    pending?.abort(); pending = null;
     reportData = null; report.setAttribute('aria-busy', 'false');
     report.replaceChildren();
     report.dataset.state = 'empty';
+    updateForm();
   }
 
   function showPortal(focus = true) {
@@ -159,9 +169,8 @@ export function mountEntryFlow(options: {
   }
 
   host.querySelector('[data-open-trust]')!.addEventListener('click', () => {
-    subject = 'mcp'; activeGroup = 'failed'; input.value = ''; input.removeAttribute('aria-invalid');
+    subject = null; activeGroup = 'failed'; input.value = ''; input.removeAttribute('aria-invalid');
     input.placeholder = 'Example: https://server.com/mcp';
-    form.querySelectorAll<HTMLButtonElement>('[data-subject]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.subject === 'mcp')));
     clearReport();
     portal.hidden = true; screen.hidden = false; input.focus({ preventScroll: true });
   });
@@ -170,10 +179,10 @@ export function mountEntryFlow(options: {
   });
   host.querySelector('[data-trust-home]')!.addEventListener('click', () => { clearReport(); showPortal(); });
   form.querySelectorAll<HTMLButtonElement>('[data-subject]').forEach(button => button.addEventListener('click', () => {
-    subject = button.dataset.subject as SubjectType;
+    const selected = button.dataset.subject as SubjectType;
+    subject = subject === selected ? null : selected;
     input.value = ''; input.removeAttribute('aria-invalid');
-    input.placeholder = subject === 'mcp' ? 'Example: https://server.com/mcp' : 'Example: agent.example.com';
-    form.querySelectorAll<HTMLButtonElement>('[data-subject]').forEach(control => control.setAttribute('aria-pressed', String(control === button)));
+    input.placeholder = subject === 'agent' ? 'Example: agent.example.com' : 'Example: https://server.com/mcp';
     clearReport();
     input.focus({ preventScroll: true });
   }));
@@ -181,7 +190,9 @@ export function mountEntryFlow(options: {
     input.removeAttribute('aria-invalid'); clearReport();
   });
   form.addEventListener('submit', async event => {
-    event.preventDefault(); clearReport();
+    event.preventDefault();
+    if (subject === null || !input.value.trim() || pending !== null) return;
+    clearReport();
     const result = resolveTrustInput(subject, input.value);
     if (result.status !== 'ready') {
       if (result.status === 'invalid') input.setAttribute('aria-invalid', 'true');
@@ -189,7 +200,7 @@ export function mountEntryFlow(options: {
     }
     const controller = new AbortController(); pending = controller;
     const deadline = window.setTimeout(() => controller.abort(new Error('The assessment timed out. Try again.')), 100000);
-    submit.disabled = true;
+    updateForm();
     showStatus('Calculating the Trust Score...', 'loading'); report.setAttribute('aria-busy', 'true');
     try {
       const data = await fetchTrustReport(result.endpoint, controller.signal);
@@ -203,7 +214,7 @@ export function mountEntryFlow(options: {
       }
     } finally {
       window.clearTimeout(deadline);
-      if (pending === controller) { pending = null; submit.disabled = false; report.setAttribute('aria-busy', 'false'); }
+      if (pending === controller) { pending = null; updateForm(); report.setAttribute('aria-busy', 'false'); }
     }
   });
   report.addEventListener('click', event => {
