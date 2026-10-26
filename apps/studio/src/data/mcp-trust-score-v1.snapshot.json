@@ -1,0 +1,3930 @@
+{
+  "subject": {
+    "endpoint": "https://omnitravel.ai/mcp",
+    "name": "https://omnitravel.ai/mcp"
+  },
+  "engine_version": "0.5.1",
+  "observations": {
+    "control": {
+      "evidence_ids": [
+        "e7"
+      ],
+      "state": "observed"
+    },
+    "discovery": {
+      "evidence_ids": [
+        "e1"
+      ],
+      "reason": "rpc_error",
+      "state": "unknown"
+    },
+    "get_stream": {
+      "control_id": "e7",
+      "evidence_ids": [
+        "e14"
+      ],
+      "state": "observed"
+    },
+    "invalid_request": {
+      "control_id": "e7",
+      "evidence_ids": [
+        "e13"
+      ],
+      "modern": false,
+      "state": "observed"
+    },
+    "legacy_revision": {
+      "evidence_ids": [
+        "e5"
+      ],
+      "state": "observed",
+      "value": "2025-11-25"
+    },
+    "metadata": {
+      "evidence_ids": [
+        "e5"
+      ],
+      "state": "observed",
+      "value": {
+        "capabilities": {
+          "tools": {
+            "listChanged": true
+          }
+        },
+        "instructions": "Directory of MCP servers, agent skills and APIs for the travel industry, published by OmniTravel. Use search_travel_tools to find tools by topic (hotel ID mapping, room type mapping, rates, scraping, browser automation), get_tool_details for the full record including setup documentation, and list_categories to see how the directory is organised.",
+        "protocolVersion": "2025-11-25",
+        "serverInfo": {
+          "name": "travelmcp-directory",
+          "version": "1.0.0"
+        }
+      }
+    },
+    "modern_support": {
+      "evidence_ids": [
+        "e1"
+      ],
+      "state": "unknown",
+      "value": false
+    },
+    "notification": {
+      "control_id": "e5",
+      "evidence_ids": [
+        "e6"
+      ],
+      "state": "observed"
+    },
+    "primitives.pagination_cache_scope_consistent": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Revision predates cacheScope pagination contract",
+      "state": "observed"
+    },
+    "primitives.prompts_argument_names_present": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e9"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.prompts_argument_names_unique": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e9"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.prompts_arguments_documented": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e9"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.prompts_description_present": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e9"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.prompts_names_unique": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e9"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.resource_templates_annotations_valid": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.resource_templates_description_present": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.resource_templates_mime_types_valid": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.resource_templates_names_present": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.resource_templates_unique": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.resource_templates_uri_templates_valid": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.resources_annotations_valid": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e10"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.resources_description_present": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e10"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.resources_mime_types_valid": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e10"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.resources_names_present": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e10"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.resources_sizes_valid": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e10"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.resources_uris_unique": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e10"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.resources_uris_valid": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e10"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No catalog entries",
+      "state": "observed"
+    },
+    "primitives.skills_digest_integrity": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Skills extension not declared",
+      "state": "observed"
+    },
+    "primitives.skills_directory_read": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Skills extension not declared",
+      "state": "observed"
+    },
+    "primitives.skills_entries_well_formed": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Skills extension not declared",
+      "state": "observed"
+    },
+    "primitives.skills_frontmatter_matches": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Skills extension not declared",
+      "state": "observed"
+    },
+    "primitives.skills_get_supported": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Skills extension not declared",
+      "state": "observed"
+    },
+    "primitives.skills_get_unknown_rejected": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Skills extension not declared",
+      "state": "observed"
+    },
+    "primitives.skills_list_supported": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Skills extension not declared",
+      "state": "observed"
+    },
+    "primitives.skills_name_matches_uri": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Skills extension not declared",
+      "state": "observed"
+    },
+    "primitives.skills_name_valid": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Skills extension not declared",
+      "state": "observed"
+    },
+    "primitives.skills_references_resolve": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Skills extension not declared",
+      "state": "observed"
+    },
+    "primitives.skills_resources_capability": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Skills extension not declared",
+      "state": "observed"
+    },
+    "primitives.skills_resources_manifest": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Skills extension not declared",
+      "state": "observed"
+    },
+    "primitives.skills_within_limits": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e5"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Skills extension not declared",
+      "state": "observed"
+    },
+    "primitives.tools_annotations_destructive_declared": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No applicable entries or optional fields observed",
+      "state": "observed"
+    },
+    "primitives.tools_annotations_hints_consistent": {
+      "applicability": "applicable",
+      "checked": 3,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "pass",
+      "reason": "Read-only hints do not also declare destruction",
+      "state": "observed"
+    },
+    "primitives.tools_annotations_present": {
+      "applicability": "applicable",
+      "checked": 3,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "pass",
+      "reason": "Behavior hints declared",
+      "state": "observed"
+    },
+    "primitives.tools_at_least_one": {
+      "applicability": "applicable",
+      "checked": 1,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "pass",
+      "reason": "At least one tool observed",
+      "state": "observed"
+    },
+    "primitives.tools_description_present_in_all": {
+      "applicability": "applicable",
+      "checked": 3,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "pass",
+      "reason": "Descriptions are nonblank; quality untested",
+      "state": "observed"
+    },
+    "primitives.tools_execution_consistent": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No applicable entries or optional fields observed",
+      "state": "observed"
+    },
+    "primitives.tools_input_properties_documented": {
+      "applicability": "applicable",
+      "checked": 5,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "pass",
+      "reason": "Direct input properties have descriptions",
+      "state": "observed"
+    },
+    "primitives.tools_input_schema_valid": {
+      "applicability": "applicable",
+      "checked": 3,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "pass",
+      "reason": "JSON Schema structural validity; no tool calls",
+      "state": "observed"
+    },
+    "primitives.tools_mcp_headers_not_sensitive": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Revision predates MCP header annotations",
+      "state": "observed"
+    },
+    "primitives.tools_mcp_headers_primitive_types": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Revision predates MCP header annotations",
+      "state": "observed"
+    },
+    "primitives.tools_mcp_headers_statically_reachable": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Revision predates MCP header annotations",
+      "state": "observed"
+    },
+    "primitives.tools_mcp_headers_unique": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Revision predates MCP header annotations",
+      "state": "observed"
+    },
+    "primitives.tools_mcp_headers_valid_names": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "Revision predates MCP header annotations",
+      "state": "observed"
+    },
+    "primitives.tools_name_present_in_all": {
+      "applicability": "applicable",
+      "checked": 3,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "pass",
+      "reason": "Tool names are nonblank",
+      "state": "observed"
+    },
+    "primitives.tools_names_unique": {
+      "applicability": "applicable",
+      "checked": 1,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "pass",
+      "reason": "Tool names are unique",
+      "state": "observed"
+    },
+    "primitives.tools_names_valid_format": {
+      "applicability": "applicable",
+      "checked": 3,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "pass",
+      "reason": "Tool name format",
+      "state": "observed"
+    },
+    "primitives.tools_output_schema_root_object": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No applicable entries or optional fields observed",
+      "state": "observed"
+    },
+    "primitives.tools_output_schema_valid": {
+      "applicability": "not_applicable",
+      "checked": 0,
+      "evaluator_version": "2.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_indices": [],
+      "outcome": "skipped",
+      "reason": "No applicable entries or optional fields observed",
+      "state": "observed"
+    },
+    "prompts": {
+      "control_id": "e7",
+      "count": 0,
+      "evidence_ids": [
+        "e9"
+      ],
+      "reason": "rpc_error",
+      "state": "absent"
+    },
+    "readiness.cache_metadata": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.header_validation": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.meta_validation": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.missing_method_header_rejected": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.missing_protocol_version_rejected": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.no_session_id": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.prompt_name_header_mismatch_rejected": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.resource_name_header_mismatch_rejected": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.response_content_type": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.result_type": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.server_discover": {
+      "applicability": "applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1"
+      ],
+      "outcome": "fail",
+      "reason": "Discovery must return usable capabilities and supportedVersions including the target revision",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.skills_list_cache_hints": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.stateless_request": {
+      "applicability": "applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e4"
+      ],
+      "outcome": "fail",
+      "reason": "A stateless list request must return a usable catalog without initialization/session headers",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.supported_versions": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.tool_schema_dialect": {
+      "applicability": "unknown",
+      "checked": 3,
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e8"
+      ],
+      "failed_locations": [],
+      "informational": {
+        "locations": [],
+        "network_reference_count": 0,
+        "weight": 0
+      },
+      "missing_schemas": 0,
+      "outcome": "unknown",
+      "reason": "Validate observed default/2020-12 tool schemas; other dialects and incomplete data are unassessed. Network refs are informational and never fetched.",
+      "state": "observed",
+      "target_revision": "2026-07-28",
+      "unknown_dialects": 3
+    },
+    "readiness.unknown_method_error": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "readiness.unsupported_version_error": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e4"
+      ],
+      "outcome": "skipped",
+      "reason": "Requires observed modern support",
+      "state": "observed",
+      "target_revision": "2026-07-28"
+    },
+    "resources": {
+      "control_id": "e7",
+      "count": 0,
+      "evidence_ids": [
+        "e10"
+      ],
+      "reason": "rpc_error",
+      "state": "absent"
+    },
+    "revision": {
+      "evidence_ids": [
+        "e5"
+      ],
+      "state": "observed",
+      "value": "2025-11-25"
+    },
+    "security.auth_challenge": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e5"
+      ],
+      "outcome": "skipped",
+      "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+      "state": "observed"
+    },
+    "security.catalog_credentials": {
+      "applicability": "applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e5",
+        "e8",
+        "e9",
+        "e10"
+      ],
+      "locations": [],
+      "match_classes": [],
+      "outcome": "pass",
+      "reason": "No supported patterns matched; scope is limited to collected text",
+      "scan_complete": true,
+      "state": "observed",
+      "strings_scanned": 100
+    },
+    "security.catalog_hidden_unicode": {
+      "applicability": "applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e5",
+        "e8",
+        "e9",
+        "e10"
+      ],
+      "locations": [],
+      "match_classes": [],
+      "outcome": "pass",
+      "reason": "No supported patterns matched; scope is limited to collected text",
+      "scan_complete": true,
+      "state": "observed",
+      "strings_scanned": 100
+    },
+    "security.catalog_injection_phrasing": {
+      "applicability": "applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e5",
+        "e8",
+        "e9",
+        "e10"
+      ],
+      "locations": [],
+      "match_classes": [],
+      "outcome": "pass",
+      "reason": "No supported patterns matched; scope is limited to collected text",
+      "scan_complete": true,
+      "state": "observed",
+      "strings_scanned": 100
+    },
+    "security.challenge_metadata": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e5"
+      ],
+      "outcome": "skipped",
+      "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+      "state": "observed"
+    },
+    "security.error_leaks": {
+      "applicability": "applicable",
+      "bytes_scanned": 1023,
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e11"
+      ],
+      "match_classes": [
+        "internal_path_or_stack"
+      ],
+      "outcome": "fail",
+      "reason": "Captured malformed-request body scanned for exposure patterns; no parse-error code requirement",
+      "state": "observed"
+    },
+    "security.invalid_token_rejected": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e5"
+      ],
+      "outcome": "skipped",
+      "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+      "state": "observed"
+    },
+    "security.issuer_metadata": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e5"
+      ],
+      "outcome": "skipped",
+      "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+      "state": "observed"
+    },
+    "security.issuer_urls": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e5"
+      ],
+      "outcome": "skipped",
+      "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+      "state": "observed"
+    },
+    "security.metadata_tls": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e5"
+      ],
+      "outcome": "skipped",
+      "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+      "state": "observed"
+    },
+    "security.origin_validation": {
+      "applicability": "applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e7",
+        "e12"
+      ],
+      "outcome": "fail",
+      "reason": "Foreign-Origin twin compared with successful control; 403 required on modern revisions",
+      "state": "observed"
+    },
+    "security.pkce_advertised": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e5"
+      ],
+      "outcome": "skipped",
+      "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+      "state": "observed"
+    },
+    "security.resource_metadata": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e5"
+      ],
+      "outcome": "skipped",
+      "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+      "state": "observed"
+    },
+    "security.scopes": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e5"
+      ],
+      "outcome": "skipped",
+      "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+      "state": "observed"
+    },
+    "security.skills_credentials": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [],
+      "locations": [],
+      "match_classes": [],
+      "outcome": "skipped",
+      "reason": "No supported patterns matched; scope is limited to collected text",
+      "scan_complete": false,
+      "state": "observed",
+      "strings_scanned": 0
+    },
+    "security.skills_hidden_unicode": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [],
+      "locations": [],
+      "match_classes": [],
+      "outcome": "skipped",
+      "reason": "No supported patterns matched; scope is limited to collected text",
+      "scan_complete": false,
+      "state": "observed",
+      "strings_scanned": 0
+    },
+    "security.skills_injection_phrasing": {
+      "applicability": "not_applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [],
+      "locations": [],
+      "match_classes": [],
+      "outcome": "skipped",
+      "reason": "No supported patterns matched; scope is limited to collected text",
+      "scan_complete": false,
+      "state": "observed",
+      "strings_scanned": 0
+    },
+    "security.tls": {
+      "applicability": "applicable",
+      "evaluator_version": "1.0.0",
+      "evidence_ids": [
+        "e1",
+        "e5"
+      ],
+      "outcome": "pass",
+      "reason": "Observed endpoint certificate verification and negotiated TLS version",
+      "state": "observed"
+    },
+    "session_delete": {
+      "evidence_ids": [
+        "e5",
+        "e7"
+      ],
+      "reason": "No issued session ID",
+      "state": "not_applicable"
+    },
+    "tools": {
+      "count": 3,
+      "evidence_ids": [
+        "e8"
+      ],
+      "state": "observed"
+    },
+    "transport": {
+      "evidence_ids": [
+        "e5"
+      ],
+      "state": "observed",
+      "value": "streamable-http"
+    }
+  },
+  "observed_at": "2026-10-26T01:08:55.838240+00:00",
+  "policy": {
+    "id": "agentopia-mcp-v1",
+    "sha256": "5a3bfc6279ea476ce633cd0cfc9bdc467df796f0b5bd128ae6f0718987efcab6",
+    "version": "1.2.0"
+  },
+  "rules": {
+    "failed": [
+      {
+        "applicability": "applicable",
+        "basis": "https://www.jsonrpc.org/specification#error_object",
+        "category": "Protocol",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://www.jsonrpc.org/specification#error_object",
+          "id": "protocol.invalid_request_code",
+          "name": "Invalid request diagnostic code",
+          "number": 13,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e13",
+          "e7"
+        ],
+        "id": "protocol.invalid_request_code",
+        "name": "Invalid request diagnostic code",
+        "number": 13,
+        "observation_keys": [
+          "invalid_request"
+        ],
+        "outcome": "fail",
+        "possible": 1,
+        "reason": "Observed error code -32700; accepted codes [-32600]",
+        "weight": 1
+      },
+      {
+        "applicability": "applicable",
+        "basis": "Observed transport or bounded text-pattern security check",
+        "category": "Security & Auth",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "Observed transport or bounded text-pattern security check",
+          "id": "security.error_leaks",
+          "name": "Error response exposure patterns",
+          "number": 2,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e11"
+        ],
+        "id": "security.error_leaks",
+        "name": "Error response exposure patterns",
+        "number": 2,
+        "observation_keys": [
+          "security.error_leaks"
+        ],
+        "outcome": "fail",
+        "possible": 2,
+        "reason": "Captured malformed-request body scanned for exposure patterns; no parse-error code requirement",
+        "weight": 2
+      },
+      {
+        "applicability": "applicable",
+        "basis": "Observed transport or bounded text-pattern security check",
+        "category": "Security & Auth",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "Observed transport or bounded text-pattern security check",
+          "id": "security.origin_validation",
+          "name": "Foreign Origin refused",
+          "number": 3,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e7",
+          "e12"
+        ],
+        "id": "security.origin_validation",
+        "name": "Foreign Origin refused",
+        "number": 3,
+        "observation_keys": [
+          "security.origin_validation"
+        ],
+        "outcome": "fail",
+        "possible": 3,
+        "reason": "Foreign-Origin twin compared with successful control; 403 required on modern revisions",
+        "weight": 3
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/discover",
+        "category": "Readiness",
+        "configured_weight": 5,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/discover",
+          "id": "readiness.server_discover",
+          "name": "Server discover",
+          "number": 1,
+          "weight": 5
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1"
+        ],
+        "id": "readiness.server_discover",
+        "name": "Server discover",
+        "number": 1,
+        "observation_keys": [
+          "readiness.server_discover"
+        ],
+        "outcome": "fail",
+        "possible": 5,
+        "reason": "Discovery must return usable capabilities and supportedVersions including the target revision",
+        "weight": 5
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+        "category": "Readiness",
+        "configured_weight": 5,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+          "id": "readiness.stateless_request",
+          "name": "Stateless request",
+          "number": 2,
+          "weight": 5
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e4"
+        ],
+        "id": "readiness.stateless_request",
+        "name": "Stateless request",
+        "number": 2,
+        "observation_keys": [
+          "readiness.stateless_request"
+        ],
+        "outcome": "fail",
+        "possible": 5,
+        "reason": "A stateless list request must return a usable catalog without initialization/session headers",
+        "weight": 5
+      }
+    ],
+    "passed": [
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#version-negotiation",
+        "category": "Protocol",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#version-negotiation",
+          "id": "protocol.recognized_version",
+          "name": "Recognized protocol revision",
+          "number": 1,
+          "weight": 3
+        },
+        "earned": 3,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "protocol.recognized_version",
+        "name": "Recognized protocol revision",
+        "number": 1,
+        "observation_keys": [
+          "revision"
+        ],
+        "outcome": "pass",
+        "possible": 3,
+        "reason": "Observed revision 2025-11-25; compared with policy registry",
+        "weight": 3
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#initialization",
+        "category": "Protocol",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#initialization",
+          "id": "protocol.server_name",
+          "name": "Server name present",
+          "number": 4,
+          "weight": 1
+        },
+        "earned": 1,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "protocol.server_name",
+        "name": "Server name present",
+        "number": 4,
+        "observation_keys": [
+          "metadata"
+        ],
+        "outcome": "pass",
+        "possible": 1,
+        "reason": "Checked nonempty name; content accuracy is not validated",
+        "weight": 1
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#initialization",
+        "category": "Protocol",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#initialization",
+          "id": "protocol.server_version",
+          "name": "Server version present",
+          "number": 5,
+          "weight": 1
+        },
+        "earned": 1,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "protocol.server_version",
+        "name": "Server version present",
+        "number": 5,
+        "observation_keys": [
+          "metadata"
+        ],
+        "outcome": "pass",
+        "possible": 1,
+        "reason": "Checked nonempty version; content accuracy is not validated",
+        "weight": 1
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#initialization",
+        "category": "Protocol",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#initialization",
+          "id": "protocol.instructions",
+          "name": "Instructions present",
+          "number": 6,
+          "weight": 1
+        },
+        "earned": 1,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "protocol.instructions",
+        "name": "Instructions present",
+        "number": 6,
+        "observation_keys": [
+          "metadata"
+        ],
+        "outcome": "pass",
+        "possible": 1,
+        "reason": "Checked nonempty instructions; content accuracy is not validated",
+        "weight": 1
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2025-11-25/server/tools#capabilities",
+        "category": "Protocol",
+        "configured_weight": 5,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2025-11-25/server/tools#capabilities",
+          "id": "protocol.tools_consistency",
+          "name": "Tools declaration matches listing",
+          "number": 7,
+          "weight": 5
+        },
+        "earned": 5,
+        "evidence_ids": [
+          "e5",
+          "e8"
+        ],
+        "id": "protocol.tools_consistency",
+        "name": "Tools declaration matches listing",
+        "number": 7,
+        "observation_keys": [
+          "metadata",
+          "tools"
+        ],
+        "outcome": "pass",
+        "possible": 5,
+        "reason": "Declared=True; complete tools/list returned 3 entries",
+        "weight": 5
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http",
+        "category": "Protocol",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http",
+          "id": "protocol.streamable_http",
+          "name": "Streamable HTTP transport",
+          "number": 10,
+          "weight": 1
+        },
+        "earned": 1,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "protocol.streamable_http",
+        "name": "Streamable HTTP transport",
+        "number": 10,
+        "observation_keys": [
+          "transport"
+        ],
+        "outcome": "pass",
+        "possible": 1,
+        "reason": "Transport established from completed protocol exchange",
+        "weight": 1
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#sending-messages-to-the-server",
+        "category": "Protocol",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#sending-messages-to-the-server",
+          "id": "protocol.notification_acceptance",
+          "name": "Notification accepted correctly",
+          "number": 11,
+          "weight": 3
+        },
+        "earned": 3,
+        "evidence_ids": [
+          "e6",
+          "e5"
+        ],
+        "id": "protocol.notification_acceptance",
+        "name": "Notification accepted correctly",
+        "number": 11,
+        "observation_keys": [
+          "notification"
+        ],
+        "outcome": "pass",
+        "possible": 3,
+        "reason": "Acceptance requires HTTP 202 and exactly zero body bytes",
+        "weight": 3
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://www.jsonrpc.org/specification#error_object",
+        "category": "Protocol",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://www.jsonrpc.org/specification#error_object",
+          "id": "protocol.invalid_request_rejected",
+          "name": "Invalid request rejected",
+          "number": 12,
+          "weight": 3
+        },
+        "earned": 3,
+        "evidence_ids": [
+          "e13",
+          "e7"
+        ],
+        "id": "protocol.invalid_request_rejected",
+        "name": "Invalid request rejected",
+        "number": 12,
+        "observation_keys": [
+          "invalid_request"
+        ],
+        "outcome": "pass",
+        "possible": 3,
+        "reason": "Invalid numeric-method request refused",
+        "weight": 3
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#listening-for-messages-from-the-server",
+        "category": "Protocol",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#listening-for-messages-from-the-server",
+          "id": "protocol.get_stream",
+          "name": "Legacy GET stream contract",
+          "number": 14,
+          "weight": 1
+        },
+        "earned": 1,
+        "evidence_ids": [
+          "e14",
+          "e7"
+        ],
+        "id": "protocol.get_stream",
+        "name": "Legacy GET stream contract",
+        "number": 14,
+        "observation_keys": [
+          "get_stream"
+        ],
+        "outcome": "pass",
+        "possible": 1,
+        "reason": "GET must open an SSE stream or return HTTP 405",
+        "weight": 1
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_at_least_one",
+          "name": "tools at least one",
+          "number": 1,
+          "weight": 1
+        },
+        "earned": 1,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_at_least_one",
+        "name": "tools at least one",
+        "number": 1,
+        "observation_keys": [
+          "primitives.tools_at_least_one"
+        ],
+        "outcome": "pass",
+        "possible": 1,
+        "reason": "At least one tool observed",
+        "weight": 1
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_name_present_in_all",
+          "name": "tools name present in all",
+          "number": 2,
+          "weight": 1
+        },
+        "earned": 1,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_name_present_in_all",
+        "name": "tools name present in all",
+        "number": 2,
+        "observation_keys": [
+          "primitives.tools_name_present_in_all"
+        ],
+        "outcome": "pass",
+        "possible": 1,
+        "reason": "Tool names are nonblank",
+        "weight": 1
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_names_unique",
+          "name": "tools names unique",
+          "number": 3,
+          "weight": 3
+        },
+        "earned": 3,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_names_unique",
+        "name": "tools names unique",
+        "number": 3,
+        "observation_keys": [
+          "primitives.tools_names_unique"
+        ],
+        "outcome": "pass",
+        "possible": 3,
+        "reason": "Tool names are unique",
+        "weight": 3
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_names_valid_format",
+          "name": "tools names valid format",
+          "number": 4,
+          "weight": 1
+        },
+        "earned": 1,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_names_valid_format",
+        "name": "tools names valid format",
+        "number": 4,
+        "observation_keys": [
+          "primitives.tools_names_valid_format"
+        ],
+        "outcome": "pass",
+        "possible": 1,
+        "reason": "Tool name format",
+        "weight": 1
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_description_present_in_all",
+          "name": "tools description present in all",
+          "number": 5,
+          "weight": 3
+        },
+        "earned": 3,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_description_present_in_all",
+        "name": "tools description present in all",
+        "number": 5,
+        "observation_keys": [
+          "primitives.tools_description_present_in_all"
+        ],
+        "outcome": "pass",
+        "possible": 3,
+        "reason": "Descriptions are nonblank; quality untested",
+        "weight": 3
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_input_schema_valid",
+          "name": "tools input schema valid",
+          "number": 6,
+          "weight": 3
+        },
+        "earned": 3,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_input_schema_valid",
+        "name": "tools input schema valid",
+        "number": 6,
+        "observation_keys": [
+          "primitives.tools_input_schema_valid"
+        ],
+        "outcome": "pass",
+        "possible": 3,
+        "reason": "JSON Schema structural validity; no tool calls",
+        "weight": 3
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_annotations_present",
+          "name": "tools annotations present",
+          "number": 8,
+          "weight": 1
+        },
+        "earned": 1,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_annotations_present",
+        "name": "tools annotations present",
+        "number": 8,
+        "observation_keys": [
+          "primitives.tools_annotations_present"
+        ],
+        "outcome": "pass",
+        "possible": 1,
+        "reason": "Behavior hints declared",
+        "weight": 1
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_input_properties_documented",
+          "name": "tools input properties documented",
+          "number": 15,
+          "weight": 1
+        },
+        "earned": 1,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_input_properties_documented",
+        "name": "tools input properties documented",
+        "number": 15,
+        "observation_keys": [
+          "primitives.tools_input_properties_documented"
+        ],
+        "outcome": "pass",
+        "possible": 1,
+        "reason": "Direct input properties have descriptions",
+        "weight": 1
+      },
+      {
+        "applicability": "applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_annotations_hints_consistent",
+          "name": "tools annotations hints consistent",
+          "number": 18,
+          "weight": 1
+        },
+        "earned": 1,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_annotations_hints_consistent",
+        "name": "tools annotations hints consistent",
+        "number": 18,
+        "observation_keys": [
+          "primitives.tools_annotations_hints_consistent"
+        ],
+        "outcome": "pass",
+        "possible": 1,
+        "reason": "Read-only hints do not also declare destruction",
+        "weight": 1
+      },
+      {
+        "applicability": "applicable",
+        "basis": "Observed transport or bounded text-pattern security check",
+        "category": "Security & Auth",
+        "configured_weight": 5,
+        "definition": {
+          "basis": "Observed transport or bounded text-pattern security check",
+          "id": "security.tls",
+          "name": "Verified HTTPS/TLS",
+          "number": 1,
+          "weight": 5
+        },
+        "earned": 5,
+        "evidence_ids": [
+          "e1",
+          "e5"
+        ],
+        "id": "security.tls",
+        "name": "Verified HTTPS/TLS",
+        "number": 1,
+        "observation_keys": [
+          "security.tls"
+        ],
+        "outcome": "pass",
+        "possible": 5,
+        "reason": "Observed endpoint certificate verification and negotiated TLS version",
+        "weight": 5
+      },
+      {
+        "applicability": "applicable",
+        "basis": "Observed transport or bounded text-pattern security check",
+        "category": "Security & Auth",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "Observed transport or bounded text-pattern security check",
+          "id": "security.catalog_hidden_unicode",
+          "name": "Catalog hidden Unicode patterns",
+          "number": 13,
+          "weight": 1
+        },
+        "earned": 1,
+        "evidence_ids": [
+          "e5",
+          "e8",
+          "e9",
+          "e10"
+        ],
+        "id": "security.catalog_hidden_unicode",
+        "name": "Catalog hidden Unicode patterns",
+        "number": 13,
+        "observation_keys": [
+          "security.catalog_hidden_unicode"
+        ],
+        "outcome": "pass",
+        "possible": 1,
+        "reason": "No supported patterns matched; scope is limited to collected text",
+        "weight": 1
+      },
+      {
+        "applicability": "applicable",
+        "basis": "Observed transport or bounded text-pattern security check",
+        "category": "Security & Auth",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "Observed transport or bounded text-pattern security check",
+          "id": "security.catalog_credentials",
+          "name": "Catalog credential patterns",
+          "number": 14,
+          "weight": 3
+        },
+        "earned": 3,
+        "evidence_ids": [
+          "e5",
+          "e8",
+          "e9",
+          "e10"
+        ],
+        "id": "security.catalog_credentials",
+        "name": "Catalog credential patterns",
+        "number": 14,
+        "observation_keys": [
+          "security.catalog_credentials"
+        ],
+        "outcome": "pass",
+        "possible": 3,
+        "reason": "No supported patterns matched; scope is limited to collected text",
+        "weight": 3
+      },
+      {
+        "applicability": "applicable",
+        "basis": "Observed transport or bounded text-pattern security check",
+        "category": "Security & Auth",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "Observed transport or bounded text-pattern security check",
+          "id": "security.catalog_injection_phrasing",
+          "name": "Catalog injection phrasing",
+          "number": 15,
+          "weight": 1
+        },
+        "earned": 1,
+        "evidence_ids": [
+          "e5",
+          "e8",
+          "e9",
+          "e10"
+        ],
+        "id": "security.catalog_injection_phrasing",
+        "name": "Catalog injection phrasing",
+        "number": 15,
+        "observation_keys": [
+          "security.catalog_injection_phrasing"
+        ],
+        "outcome": "pass",
+        "possible": 1,
+        "reason": "No supported patterns matched; scope is limited to collected text",
+        "weight": 1
+      }
+    ],
+    "skipped": [
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/discover",
+        "category": "Protocol",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/discover",
+          "id": "protocol.version_consistency",
+          "name": "Discovery includes negotiated revision",
+          "number": 3,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5",
+          "e1"
+        ],
+        "id": "protocol.version_consistency",
+        "name": "Discovery includes negotiated revision",
+        "number": 3,
+        "observation_keys": [
+          "legacy_revision",
+          "discovery"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires both successful legacy negotiation and modern discovery",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2025-11-25/server/prompts#capabilities",
+        "category": "Protocol",
+        "configured_weight": 5,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2025-11-25/server/prompts#capabilities",
+          "id": "protocol.prompts_consistency",
+          "name": "Prompts declaration matches listing",
+          "number": 8,
+          "weight": 5
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5",
+          "e9",
+          "e7"
+        ],
+        "id": "protocol.prompts_consistency",
+        "name": "Prompts declaration matches listing",
+        "number": 8,
+        "observation_keys": [
+          "metadata",
+          "prompts"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Optional feature absent in both declaration and listing",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2025-11-25/server/resources#capabilities",
+        "category": "Protocol",
+        "configured_weight": 5,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2025-11-25/server/resources#capabilities",
+          "id": "protocol.resources_consistency",
+          "name": "Resources declaration matches listing",
+          "number": 9,
+          "weight": 5
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5",
+          "e10",
+          "e7"
+        ],
+        "id": "protocol.resources_consistency",
+        "name": "Resources declaration matches listing",
+        "number": 9,
+        "observation_keys": [
+          "metadata",
+          "resources"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Optional feature absent in both declaration and listing",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#session-management",
+        "category": "Protocol",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#session-management",
+          "id": "protocol.session_delete",
+          "name": "Legacy session deletion contract",
+          "number": 15,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5",
+          "e7"
+        ],
+        "id": "protocol.session_delete",
+        "name": "Legacy session deletion contract",
+        "number": 15,
+        "observation_keys": [
+          "session_delete"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No issued session ID",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_output_schema_valid",
+          "name": "tools output schema valid",
+          "number": 7,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_output_schema_valid",
+        "name": "tools output schema valid",
+        "number": 7,
+        "observation_keys": [
+          "primitives.tools_output_schema_valid"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No applicable entries or optional fields observed",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_execution_consistent",
+          "name": "tools execution consistent",
+          "number": 9,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_execution_consistent",
+        "name": "tools execution consistent",
+        "number": 9,
+        "observation_keys": [
+          "primitives.tools_execution_consistent"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No applicable entries or optional fields observed",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_mcp_headers_valid_names",
+          "name": "tools mcp headers valid names",
+          "number": 10,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_mcp_headers_valid_names",
+        "name": "tools mcp headers valid names",
+        "number": 10,
+        "observation_keys": [
+          "primitives.tools_mcp_headers_valid_names"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Revision predates MCP header annotations",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_mcp_headers_unique",
+          "name": "tools mcp headers unique",
+          "number": 11,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_mcp_headers_unique",
+        "name": "tools mcp headers unique",
+        "number": 11,
+        "observation_keys": [
+          "primitives.tools_mcp_headers_unique"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Revision predates MCP header annotations",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_mcp_headers_primitive_types",
+          "name": "tools mcp headers primitive types",
+          "number": 12,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_mcp_headers_primitive_types",
+        "name": "tools mcp headers primitive types",
+        "number": 12,
+        "observation_keys": [
+          "primitives.tools_mcp_headers_primitive_types"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Revision predates MCP header annotations",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_mcp_headers_statically_reachable",
+          "name": "tools mcp headers statically reachable",
+          "number": 13,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_mcp_headers_statically_reachable",
+        "name": "tools mcp headers statically reachable",
+        "number": 13,
+        "observation_keys": [
+          "primitives.tools_mcp_headers_statically_reachable"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Revision predates MCP header annotations",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_mcp_headers_not_sensitive",
+          "name": "tools mcp headers not sensitive",
+          "number": 14,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_mcp_headers_not_sensitive",
+        "name": "tools mcp headers not sensitive",
+        "number": 14,
+        "observation_keys": [
+          "primitives.tools_mcp_headers_not_sensitive"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Revision predates MCP header annotations",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2025-11-25/server/tools",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2025-11-25/server/tools",
+          "id": "primitives.tools_output_schema_root_object",
+          "name": "tools output schema root object",
+          "number": 16,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_output_schema_root_object",
+        "name": "tools output schema root object",
+        "number": 16,
+        "observation_keys": [
+          "primitives.tools_output_schema_root_object"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No applicable entries or optional fields observed",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "primitives.tools_annotations_destructive_declared",
+          "name": "tools annotations destructive declared",
+          "number": 17,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "primitives.tools_annotations_destructive_declared",
+        "name": "tools annotations destructive declared",
+        "number": 17,
+        "observation_keys": [
+          "primitives.tools_annotations_destructive_declared"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No applicable entries or optional fields observed",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/prompts",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/prompts",
+          "id": "primitives.prompts_argument_names_unique",
+          "name": "prompts argument names unique",
+          "number": 19,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e9"
+        ],
+        "id": "primitives.prompts_argument_names_unique",
+        "name": "prompts argument names unique",
+        "number": 19,
+        "observation_keys": [
+          "primitives.prompts_argument_names_unique"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/prompts",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/prompts",
+          "id": "primitives.prompts_argument_names_present",
+          "name": "prompts argument names present",
+          "number": 20,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e9"
+        ],
+        "id": "primitives.prompts_argument_names_present",
+        "name": "prompts argument names present",
+        "number": 20,
+        "observation_keys": [
+          "primitives.prompts_argument_names_present"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/prompts",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/prompts",
+          "id": "primitives.prompts_description_present",
+          "name": "prompts description present",
+          "number": 21,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e9"
+        ],
+        "id": "primitives.prompts_description_present",
+        "name": "prompts description present",
+        "number": 21,
+        "observation_keys": [
+          "primitives.prompts_description_present"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/prompts",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/prompts",
+          "id": "primitives.prompts_arguments_documented",
+          "name": "prompts arguments documented",
+          "number": 22,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e9"
+        ],
+        "id": "primitives.prompts_arguments_documented",
+        "name": "prompts arguments documented",
+        "number": 22,
+        "observation_keys": [
+          "primitives.prompts_arguments_documented"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/prompts",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/prompts",
+          "id": "primitives.prompts_names_unique",
+          "name": "prompts names unique",
+          "number": 23,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e9"
+        ],
+        "id": "primitives.prompts_names_unique",
+        "name": "prompts names unique",
+        "number": 23,
+        "observation_keys": [
+          "primitives.prompts_names_unique"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+          "id": "primitives.resources_uris_valid",
+          "name": "resources uris valid",
+          "number": 24,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e10"
+        ],
+        "id": "primitives.resources_uris_valid",
+        "name": "resources uris valid",
+        "number": 24,
+        "observation_keys": [
+          "primitives.resources_uris_valid"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+          "id": "primitives.resources_names_present",
+          "name": "resources names present",
+          "number": 25,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e10"
+        ],
+        "id": "primitives.resources_names_present",
+        "name": "resources names present",
+        "number": 25,
+        "observation_keys": [
+          "primitives.resources_names_present"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+          "id": "primitives.resources_sizes_valid",
+          "name": "resources sizes valid",
+          "number": 26,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e10"
+        ],
+        "id": "primitives.resources_sizes_valid",
+        "name": "resources sizes valid",
+        "number": 26,
+        "observation_keys": [
+          "primitives.resources_sizes_valid"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+          "id": "primitives.resources_mime_types_valid",
+          "name": "resources mime types valid",
+          "number": 27,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e10"
+        ],
+        "id": "primitives.resources_mime_types_valid",
+        "name": "resources mime types valid",
+        "number": 27,
+        "observation_keys": [
+          "primitives.resources_mime_types_valid"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+          "id": "primitives.resources_annotations_valid",
+          "name": "resources annotations valid",
+          "number": 28,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e10"
+        ],
+        "id": "primitives.resources_annotations_valid",
+        "name": "resources annotations valid",
+        "number": 28,
+        "observation_keys": [
+          "primitives.resources_annotations_valid"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+          "id": "primitives.resources_description_present",
+          "name": "resources description present",
+          "number": 29,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e10"
+        ],
+        "id": "primitives.resources_description_present",
+        "name": "resources description present",
+        "number": 29,
+        "observation_keys": [
+          "primitives.resources_description_present"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+          "id": "primitives.resources_uris_unique",
+          "name": "resources uris unique",
+          "number": 30,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e10"
+        ],
+        "id": "primitives.resources_uris_unique",
+        "name": "resources uris unique",
+        "number": 30,
+        "observation_keys": [
+          "primitives.resources_uris_unique"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+          "id": "primitives.resource_templates_uri_templates_valid",
+          "name": "resource templates uri templates valid",
+          "number": 31,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.resource_templates_uri_templates_valid",
+        "name": "resource templates uri templates valid",
+        "number": 31,
+        "observation_keys": [
+          "primitives.resource_templates_uri_templates_valid"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+          "id": "primitives.resource_templates_unique",
+          "name": "resource templates unique",
+          "number": 32,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.resource_templates_unique",
+        "name": "resource templates unique",
+        "number": 32,
+        "observation_keys": [
+          "primitives.resource_templates_unique"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+          "id": "primitives.resource_templates_names_present",
+          "name": "resource templates names present",
+          "number": 33,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.resource_templates_names_present",
+        "name": "resource templates names present",
+        "number": 33,
+        "observation_keys": [
+          "primitives.resource_templates_names_present"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+          "id": "primitives.resource_templates_mime_types_valid",
+          "name": "resource templates mime types valid",
+          "number": 34,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.resource_templates_mime_types_valid",
+        "name": "resource templates mime types valid",
+        "number": 34,
+        "observation_keys": [
+          "primitives.resource_templates_mime_types_valid"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+          "id": "primitives.resource_templates_annotations_valid",
+          "name": "resource templates annotations valid",
+          "number": 35,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.resource_templates_annotations_valid",
+        "name": "resource templates annotations valid",
+        "number": 35,
+        "observation_keys": [
+          "primitives.resource_templates_annotations_valid"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/resources",
+          "id": "primitives.resource_templates_description_present",
+          "name": "resource templates description present",
+          "number": 36,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.resource_templates_description_present",
+        "name": "resource templates description present",
+        "number": 36,
+        "observation_keys": [
+          "primitives.resource_templates_description_present"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No catalog entries",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/utilities/caching",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/utilities/caching",
+          "id": "primitives.pagination_cache_scope_consistent",
+          "name": "pagination cache scope consistent",
+          "number": 37,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.pagination_cache_scope_consistent",
+        "name": "pagination cache scope consistent",
+        "number": 37,
+        "observation_keys": [
+          "primitives.pagination_cache_scope_consistent"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Revision predates cacheScope pagination contract",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+        "category": "Primitives",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+          "id": "primitives.skills_list_supported",
+          "name": "skills list supported",
+          "number": 38,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.skills_list_supported",
+        "name": "skills list supported",
+        "number": 38,
+        "observation_keys": [
+          "primitives.skills_list_supported"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Skills extension not declared",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+        "category": "Primitives",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+          "id": "primitives.skills_get_supported",
+          "name": "skills get supported",
+          "number": 39,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.skills_get_supported",
+        "name": "skills get supported",
+        "number": 39,
+        "observation_keys": [
+          "primitives.skills_get_supported"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Skills extension not declared",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+          "id": "primitives.skills_get_unknown_rejected",
+          "name": "skills get unknown rejected",
+          "number": 40,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.skills_get_unknown_rejected",
+        "name": "skills get unknown rejected",
+        "number": 40,
+        "observation_keys": [
+          "primitives.skills_get_unknown_rejected"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Skills extension not declared",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+        "category": "Primitives",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+          "id": "primitives.skills_directory_read",
+          "name": "skills directory read",
+          "number": 41,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.skills_directory_read",
+        "name": "skills directory read",
+        "number": 41,
+        "observation_keys": [
+          "primitives.skills_directory_read"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Skills extension not declared",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+          "id": "primitives.skills_resources_capability",
+          "name": "skills resources capability",
+          "number": 42,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.skills_resources_capability",
+        "name": "skills resources capability",
+        "number": 42,
+        "observation_keys": [
+          "primitives.skills_resources_capability"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Skills extension not declared",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+        "category": "Primitives",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+          "id": "primitives.skills_entries_well_formed",
+          "name": "skills entries well formed",
+          "number": 43,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.skills_entries_well_formed",
+        "name": "skills entries well formed",
+        "number": 43,
+        "observation_keys": [
+          "primitives.skills_entries_well_formed"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Skills extension not declared",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+        "category": "Primitives",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+          "id": "primitives.skills_resources_manifest",
+          "name": "skills resources manifest",
+          "number": 44,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.skills_resources_manifest",
+        "name": "skills resources manifest",
+        "number": 44,
+        "observation_keys": [
+          "primitives.skills_resources_manifest"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Skills extension not declared",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+          "id": "primitives.skills_name_matches_uri",
+          "name": "skills name matches uri",
+          "number": 45,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.skills_name_matches_uri",
+        "name": "skills name matches uri",
+        "number": 45,
+        "observation_keys": [
+          "primitives.skills_name_matches_uri"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Skills extension not declared",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+          "id": "primitives.skills_name_valid",
+          "name": "skills name valid",
+          "number": 46,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.skills_name_valid",
+        "name": "skills name valid",
+        "number": 46,
+        "observation_keys": [
+          "primitives.skills_name_valid"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Skills extension not declared",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+          "id": "primitives.skills_digest_integrity",
+          "name": "skills digest integrity",
+          "number": 47,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.skills_digest_integrity",
+        "name": "skills digest integrity",
+        "number": 47,
+        "observation_keys": [
+          "primitives.skills_digest_integrity"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Skills extension not declared",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+        "category": "Primitives",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+          "id": "primitives.skills_frontmatter_matches",
+          "name": "skills frontmatter matches",
+          "number": 48,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.skills_frontmatter_matches",
+        "name": "skills frontmatter matches",
+        "number": 48,
+        "observation_keys": [
+          "primitives.skills_frontmatter_matches"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Skills extension not declared",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+          "id": "primitives.skills_references_resolve",
+          "name": "skills references resolve",
+          "number": 49,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.skills_references_resolve",
+        "name": "skills references resolve",
+        "number": 49,
+        "observation_keys": [
+          "primitives.skills_references_resolve"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Skills extension not declared",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+        "category": "Primitives",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "MCP Skills Extension SEP-2640; Agent Skills specification",
+          "id": "primitives.skills_within_limits",
+          "name": "skills within limits",
+          "number": 50,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e5"
+        ],
+        "id": "primitives.skills_within_limits",
+        "name": "skills within limits",
+        "number": 50,
+        "observation_keys": [
+          "primitives.skills_within_limits"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Skills extension not declared",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+        "category": "Security & Auth",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+          "id": "security.auth_challenge",
+          "name": "Authentication challenge present",
+          "number": 4,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e5"
+        ],
+        "id": "security.auth_challenge",
+        "name": "Authentication challenge present",
+        "number": 4,
+        "observation_keys": [
+          "security.auth_challenge"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+        "category": "Security & Auth",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+          "id": "security.resource_metadata",
+          "name": "Protected resource metadata identifies endpoint",
+          "number": 5,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e5"
+        ],
+        "id": "security.resource_metadata",
+        "name": "Protected resource metadata identifies endpoint",
+        "number": 5,
+        "observation_keys": [
+          "security.resource_metadata"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+        "category": "Security & Auth",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+          "id": "security.issuer_urls",
+          "name": "Advertised issuer URLs are valid HTTPS identifiers",
+          "number": 6,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e5"
+        ],
+        "id": "security.issuer_urls",
+        "name": "Advertised issuer URLs are valid HTTPS identifiers",
+        "number": 6,
+        "observation_keys": [
+          "security.issuer_urls"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+        "category": "Security & Auth",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+          "id": "security.challenge_metadata",
+          "name": "Challenge metadata reference works",
+          "number": 7,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e5"
+        ],
+        "id": "security.challenge_metadata",
+        "name": "Challenge metadata reference works",
+        "number": 7,
+        "observation_keys": [
+          "security.challenge_metadata"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+        "category": "Security & Auth",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+          "id": "security.metadata_tls",
+          "name": "Metadata fetched with verified HTTPS",
+          "number": 8,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e5"
+        ],
+        "id": "security.metadata_tls",
+        "name": "Metadata fetched with verified HTTPS",
+        "number": 8,
+        "observation_keys": [
+          "security.metadata_tls"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+        "category": "Security & Auth",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+          "id": "security.scopes",
+          "name": "Authorization scopes advertised",
+          "number": 9,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e5"
+        ],
+        "id": "security.scopes",
+        "name": "Authorization scopes advertised",
+        "number": 9,
+        "observation_keys": [
+          "security.scopes"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+        "category": "Security & Auth",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+          "id": "security.issuer_metadata",
+          "name": "Issuer discovery metadata usable",
+          "number": 10,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e5"
+        ],
+        "id": "security.issuer_metadata",
+        "name": "Issuer discovery metadata usable",
+        "number": 10,
+        "observation_keys": [
+          "security.issuer_metadata"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+        "category": "Security & Auth",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+          "id": "security.pkce_advertised",
+          "name": "Issuer advertises PKCE S256",
+          "number": 11,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e5"
+        ],
+        "id": "security.pkce_advertised",
+        "name": "Issuer advertises PKCE S256",
+        "number": 11,
+        "observation_keys": [
+          "security.pkce_advertised"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+        "category": "Security & Auth",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://www.rfc-editor.org/rfc/rfc9728.html",
+          "id": "security.invalid_token_rejected",
+          "name": "Fabricated token denied protected discovery",
+          "number": 12,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e5"
+        ],
+        "id": "security.invalid_token_rejected",
+        "name": "Fabricated token denied protected discovery",
+        "number": 12,
+        "observation_keys": [
+          "security.invalid_token_rejected"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Anonymous protocol discovery works; OAuth gate checks do not apply",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "Observed transport or bounded text-pattern security check",
+        "category": "Security & Auth",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "Observed transport or bounded text-pattern security check",
+          "id": "security.skills_hidden_unicode",
+          "name": "Skills hidden Unicode patterns",
+          "number": 16,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [],
+        "id": "security.skills_hidden_unicode",
+        "name": "Skills hidden Unicode patterns",
+        "number": 16,
+        "observation_keys": [
+          "security.skills_hidden_unicode"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No supported patterns matched; scope is limited to collected text",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "Observed transport or bounded text-pattern security check",
+        "category": "Security & Auth",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "Observed transport or bounded text-pattern security check",
+          "id": "security.skills_credentials",
+          "name": "Skills credential patterns",
+          "number": 17,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [],
+        "id": "security.skills_credentials",
+        "name": "Skills credential patterns",
+        "number": 17,
+        "observation_keys": [
+          "security.skills_credentials"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No supported patterns matched; scope is limited to collected text",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "Observed transport or bounded text-pattern security check",
+        "category": "Security & Auth",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "Observed transport or bounded text-pattern security check",
+          "id": "security.skills_injection_phrasing",
+          "name": "Skills injection phrasing",
+          "number": 18,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [],
+        "id": "security.skills_injection_phrasing",
+        "name": "Skills injection phrasing",
+        "number": 18,
+        "observation_keys": [
+          "security.skills_injection_phrasing"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "No supported patterns matched; scope is limited to collected text",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/discover",
+        "category": "Readiness",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/discover",
+          "id": "readiness.supported_versions",
+          "name": "Supported versions",
+          "number": 3,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.supported_versions",
+        "name": "Supported versions",
+        "number": 3,
+        "observation_keys": [
+          "readiness.supported_versions"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+        "category": "Readiness",
+        "configured_weight": 3,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+          "id": "readiness.meta_validation",
+          "name": "Meta validation",
+          "number": 4,
+          "weight": 3
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.meta_validation",
+        "name": "Meta validation",
+        "number": 4,
+        "observation_keys": [
+          "readiness.meta_validation"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+        "category": "Readiness",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+          "id": "readiness.header_validation",
+          "name": "Header validation",
+          "number": 5,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.header_validation",
+        "name": "Header validation",
+        "number": 5,
+        "observation_keys": [
+          "readiness.header_validation"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+        "category": "Readiness",
+        "configured_weight": 0,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+          "id": "readiness.missing_protocol_version_rejected",
+          "name": "Missing protocol version rejected",
+          "number": 6,
+          "weight": 0
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.missing_protocol_version_rejected",
+        "name": "Missing protocol version rejected",
+        "number": 6,
+        "observation_keys": [
+          "readiness.missing_protocol_version_rejected"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+        "category": "Readiness",
+        "configured_weight": 0,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+          "id": "readiness.missing_method_header_rejected",
+          "name": "Missing method header rejected",
+          "number": 7,
+          "weight": 0
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.missing_method_header_rejected",
+        "name": "Missing method header rejected",
+        "number": 7,
+        "observation_keys": [
+          "readiness.missing_method_header_rejected"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+        "category": "Readiness",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+          "id": "readiness.resource_name_header_mismatch_rejected",
+          "name": "Resource name header mismatch rejected",
+          "number": 8,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.resource_name_header_mismatch_rejected",
+        "name": "Resource name header mismatch rejected",
+        "number": 8,
+        "observation_keys": [
+          "readiness.resource_name_header_mismatch_rejected"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+        "category": "Readiness",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+          "id": "readiness.prompt_name_header_mismatch_rejected",
+          "name": "Prompt name header mismatch rejected",
+          "number": 9,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.prompt_name_header_mismatch_rejected",
+        "name": "Prompt name header mismatch rejected",
+        "number": 9,
+        "observation_keys": [
+          "readiness.prompt_name_header_mismatch_rejected"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+        "category": "Readiness",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+          "id": "readiness.cache_metadata",
+          "name": "Cache metadata",
+          "number": 10,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.cache_metadata",
+        "name": "Cache metadata",
+        "number": 10,
+        "observation_keys": [
+          "readiness.cache_metadata"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/skills",
+        "category": "Readiness",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/skills",
+          "id": "readiness.skills_list_cache_hints",
+          "name": "Skills list cache hints",
+          "number": 11,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.skills_list_cache_hints",
+        "name": "Skills list cache hints",
+        "number": 11,
+        "observation_keys": [
+          "readiness.skills_list_cache_hints"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+        "category": "Readiness",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+          "id": "readiness.result_type",
+          "name": "Result type",
+          "number": 12,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.result_type",
+        "name": "Result type",
+        "number": 12,
+        "observation_keys": [
+          "readiness.result_type"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+        "category": "Readiness",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+          "id": "readiness.response_content_type",
+          "name": "Response content type",
+          "number": 13,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.response_content_type",
+        "name": "Response content type",
+        "number": 13,
+        "observation_keys": [
+          "readiness.response_content_type"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+        "category": "Readiness",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+          "id": "readiness.unsupported_version_error",
+          "name": "Unsupported version error",
+          "number": 14,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.unsupported_version_error",
+        "name": "Unsupported version error",
+        "number": 14,
+        "observation_keys": [
+          "readiness.unsupported_version_error"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+        "category": "Readiness",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+          "id": "readiness.unknown_method_error",
+          "name": "Unknown method error",
+          "number": 15,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.unknown_method_error",
+        "name": "Unknown method error",
+        "number": 15,
+        "observation_keys": [
+          "readiness.unknown_method_error"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      },
+      {
+        "applicability": "not_applicable",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+        "category": "Readiness",
+        "configured_weight": 2,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+          "id": "readiness.no_session_id",
+          "name": "No session id",
+          "number": 16,
+          "weight": 2
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ],
+        "id": "readiness.no_session_id",
+        "name": "No session id",
+        "number": 16,
+        "observation_keys": [
+          "readiness.no_session_id"
+        ],
+        "outcome": "skipped",
+        "possible": 0,
+        "reason": "Requires observed modern support",
+        "weight": 0
+      }
+    ],
+    "unknown": [
+      {
+        "applicability": "unknown",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/versioning",
+        "category": "Protocol",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/basic/versioning",
+          "id": "protocol.latest_version",
+          "name": "Latest protocol support",
+          "number": 2,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e1",
+          "e5"
+        ],
+        "id": "protocol.latest_version",
+        "name": "Latest protocol support",
+        "number": 2,
+        "observation_keys": [
+          "discovery",
+          "revision"
+        ],
+        "outcome": "unknown",
+        "possible": 0,
+        "reason": "Latest support could not be established or ruled out",
+        "weight": 0
+      },
+      {
+        "applicability": "unknown",
+        "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+        "category": "Readiness",
+        "configured_weight": 1,
+        "definition": {
+          "basis": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+          "id": "readiness.tool_schema_dialect",
+          "name": "Tool schema dialect",
+          "number": 17,
+          "weight": 1
+        },
+        "earned": 0,
+        "evidence_ids": [
+          "e8"
+        ],
+        "id": "readiness.tool_schema_dialect",
+        "name": "Tool schema dialect",
+        "number": 17,
+        "observation_keys": [
+          "readiness.tool_schema_dialect"
+        ],
+        "outcome": "unknown",
+        "possible": 0,
+        "reason": "Validate observed default/2020-12 tool schemas; other dialects and incomplete data are unassessed. Network refs are informational and never fetched.",
+        "weight": 0
+      }
+    ]
+  },
+  "scored_at": "2026-10-26T01:09:03.278026+00:00",
+  "status": "partial",
+  "summary": {
+    "assessed_maximum": 60,
+    "configured_maximum": 184,
+    "failed_rules": 5,
+    "pass_percentage": 22,
+    "passed_rules": 22,
+    "skipped_rules": 71,
+    "total_rules": 100,
+    "total_score": 44,
+    "unknown_rules": 2
+  }
+}

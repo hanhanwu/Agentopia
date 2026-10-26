@@ -2,6 +2,19 @@
 
 Follow this file for every Agentopia UI design or implementation task.
 
+## Current scope: desktop only
+
+- Design and implement for desktop only until the user explicitly requests
+  mobile support.
+- Do not create mobile mockups, mobile variants, mobile-specific layouts or
+  styles, or perform mobile viewport QA as part of desktop UI work.
+- Use the requested desktop viewport or the preceding desktop reference size
+  for design and visual verification. A minimum-width check, when applicable,
+  means the minimum desktop width specified for the task; it does not require
+  a mobile version or a 320px viewport check.
+- Preserve existing responsive CSS and breakpoints without extending or
+  redesigning them. Their presence does not put mobile work in scope.
+
 ## Mandatory workflow
 
 1. **Inspect before editing**
@@ -17,7 +30,8 @@ Follow this file for every Agentopia UI design or implementation task.
    - Freeze every property the user did not ask to change.
 3. **Design first**
    - Create or update the review SVG in `UI_elements_design/draft/`.
-   - Render and inspect it at the target size and minimum supported width.
+   - Render and inspect it at the target desktop size and any explicitly
+     specified minimum desktop width.
    - Do not implement it until the user approves the design.
 4. **Implement from the approved measurements**
    - Reuse existing renderers, classes, and official assets.
@@ -65,7 +79,8 @@ A new step is a state change, not a new product screen. Keep everything in the
 `unchanged` list identical to the preceding step.
 
 - Keep desktop Agentopia and Skynet panels at 50:50 with two
-  `minmax(0, 1fr)` tracks. Preserve the existing responsive breakpoint.
+  `minmax(0, 1fr)` tracks. Leave existing responsive breakpoints unchanged;
+  mobile design remains out of scope.
 - Keep shared panel headings, padding, borders, and content bounds unchanged.
 - Reuse `.sync-phase`, `.timeline-card`, `.event-history__heading`, and
   `.event-history__item` unless the approved design explicitly removes them.
@@ -173,7 +188,8 @@ unrequested resizing.
 Before showing a design or handing off an implementation, every applicable item
 must pass:
 
-- The result was rendered and inspected at the target and minimum widths.
+- The result was rendered and inspected at the target desktop size and any
+  explicitly specified minimum desktop width.
 - The review SVG and live UI match in geometry, type, spacing, assets, and data.
 - The latest request changed only authorized properties.
 - Every box fully contains its real content.
@@ -184,8 +200,8 @@ must pass:
 - Official marks are present, undistorted, and centered.
 - Paths do not collide with headings, agents, badges, or card edges.
 - The full path uses the intended card width without unintended empty space.
-- The desktop shell, responsive behavior, and unchanged components remain
-  intact.
+- The desktop shell and unchanged components remain intact; existing responsive
+  CSS and breakpoints were left unchanged unless explicitly requested.
 - Step replay begins cleanly and ends in the correct persistent state.
 - The production build and relevant tests pass.
 

@@ -1,8 +1,9 @@
 import { portableExportPlugin } from './apps/studio/server/portable-export.ts';
 import { defineConfig } from 'vite';
+import { trustScorePlugin } from './apps/studio/server/trust-score-api.ts';
 
 export default defineConfig({
-  plugins: [portableExportPlugin()],
+  plugins: [portableExportPlugin(), trustScorePlugin()],
   optimizeDeps: {
     entries: ['index.html'],
   },

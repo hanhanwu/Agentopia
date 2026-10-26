@@ -2,6 +2,7 @@ import { mountPortableVisualization } from './portable-visualization.ts';
 import { createFrameClock } from './portable-capture.ts';
 import { sceneEventIndex, type PortableSceneId } from './portable-scenes.ts';
 import './styles.css';
+import { mountEntryFlow } from './entry-flow.ts';
 import { agents, type Agent } from './agents.ts';
 import registrySearchMock from './data/registry-search.mock.json';
 import endpointDiscoverySnapshot from './data/scenario-1-endpoint-discovery.snapshot.json';
@@ -640,6 +641,7 @@ const consolidatedResultRows = () => consolidatedSearchRecords.map((record, inde
 `).join('');
 
 app.innerHTML = `
+  ${isPortableCapture ? '' : '<template data-walkthrough-intro>'}
   <section
     class="world-intro"
     data-world-intro
@@ -767,6 +769,7 @@ app.innerHTML = `
     </div>
   </section>
 
+  ${isPortableCapture ? '' : '</template>'}
   <div class="app-shell is-intro-pending" data-app-shell inert aria-hidden="true">
     <main class="studio" aria-label="Agentopia Studio preview">
       <section class="world-panel" aria-label="Agentopia world">
@@ -1132,9 +1135,8 @@ app.innerHTML = `
   </div>
 `;
 
-const worldIntro = document.querySelector<HTMLElement>('[data-world-intro]');
+let worldIntro = document.querySelector<HTMLElement>('[data-world-intro]');
 const appShell = document.querySelector<HTMLElement>('[data-app-shell]');
-const introSkip = document.querySelector<HTMLButtonElement>('[data-intro-skip]');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let introFinished = false;
 
@@ -1154,13 +1156,19 @@ const finishIntro = () => {
   }, prefersReducedMotion ? 30 : 450);
 };
 
-const introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 17300);
-introSkip?.addEventListener('click', () => {
-  window.clearTimeout(introTimer);
-  finishIntro();
-});
+let introTimer = 0;
+const bindIntroSkip = () => {
+  worldIntro?.querySelector('[data-intro-skip]')?.addEventListener('click', () => {
+    window.clearTimeout(introTimer);
+    finishIntro();
+  });
+};
+if (isPortableCapture) {
+  introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 17300);
+  bindIntroSkip();
+}
 window.addEventListener('keydown', (event) => {
-  if (event.key !== 'Escape' || introFinished) return;
+  if (event.key !== 'Escape' || introFinished || !worldIntro) return;
   window.clearTimeout(introTimer);
   finishIntro();
 });
@@ -2353,4 +2361,50 @@ if (isPortableCapture) {
     if (appShell) appShell.hidden = true;
     portable.show();
   });
+}
+
+
+if (!isPortableCapture) {
+  const returnHome = () => {
+    window.clearTimeout(introTimer);
+    worldIntro?.remove();
+    worldIntro = null;
+    if (appShell) appShell.hidden = true;
+    entry.showPortal();
+  };
+  const makeHomeButton = (className: string) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `gold-button ${className}`;
+    button.textContent = '← Home';
+    button.addEventListener('click', returnHome);
+    return button;
+  };
+  // Preserve the walkthrough DOM and playback machinery, but start its intro only after choosing it.
+  const entry = mountEntryFlow({
+    root: app,
+    serviceArtwork: serviceAgentArtwork,
+    mcpLogo: endpointInterfaceLogo.mcp,
+    onWorld() {
+      appShell?.removeAttribute('hidden');
+      if (introFinished) {
+        appShell?.removeAttribute('inert');
+        appShell?.removeAttribute('aria-hidden');
+        chatInput?.focus({ preventScroll: true });
+        return;
+      }
+      const template = document.querySelector<HTMLTemplateElement>('[data-walkthrough-intro]');
+      if (!template) return;
+      app.prepend(template.content.cloneNode(true));
+      worldIntro = document.querySelector<HTMLElement>('[data-world-intro]');
+      worldIntro?.classList.add('is-choice-intro');
+      const introHome = makeHomeButton('walkthrough-intro-home');
+      worldIntro?.prepend(introHome);
+      bindIntroSkip();
+      introTimer = window.setTimeout(finishIntro, prefersReducedMotion ? 80 : 17300);
+      introHome.focus({ preventScroll: true });
+    },
+  });
+  if (appShell) appShell.hidden = true;
+  appShell?.append(makeHomeButton('walkthrough-home'));
 }
