@@ -35,6 +35,14 @@ describe('DeepInfra Reason generation', () => {
     const evidence = JSON.parse(body.messages[1].content);
     expect(evidence.rules).toHaveLength(27);
     expect(evidence.rules.find((rule: {id:string}) => rule.id === 'protocol.invalid_request_code').reason).toContain('-32700');
+    for (const group of ['passed', 'failed'] as const) {
+      for (const rule of r.rules[group]) {
+        const supplied = evidence.rules.find((item: {id:string}) => item.id === rule.id);
+        expect(supplied.definition).toEqual({basis:rule.basis});
+      }
+    }
+    expect(evidence.rules.map((rule: {id:string}) => rule.id).sort()).toEqual([...r.rules.passed,...r.rules.failed].map(rule => rule.id).sort());
+    expect(evidence.rules.every((rule: {outcome:string}) => ['passed','failed'].includes(rule.outcome))).toBe(true);
     expect(options.body).not.toContain('configured_weight');expect(options.body).not.toContain('test-secret');
     expect(r.presentation.tips).toHaveLength(5);
     const html = trustPDFHTML(r);expect(html).toContain(r.presentation.passed[0].text);
