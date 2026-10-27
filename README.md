@@ -15,6 +15,11 @@ npm run dev
 
 Open [localhost:8678](http://127.0.0.1:8678). Stop the server with `Ctrl+C`.
 
+To kill all the process in port 8678:
+```bash
+for pid in $(lsof -tiTCP:8678 -sTCP:LISTEN); do kill "$pid"; done
+```
+
 
 ## Portable Visualization
 

@@ -1,3 +1,6 @@
+import { parseTrustResponse } from '../src/trust-score.ts';
+import { buildTrustPresentation } from './trust-presentation.ts';
+import { createTrustPDFHandler } from './trust-pdf.ts';
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
@@ -83,7 +86,14 @@ export function createTrustScoreHandler(root: string, run = runScoreWorker) {
         const controller = new AbortController();
         const cancel = () => { if (!res.writableEnded) controller.abort(); };
         controllers.add(controller); active++; res.once('close', cancel);
-        try { sendJSON(res, 200, await run(root, endpoint, controller.signal)); }
+        try {
+          const payload = await run(root, endpoint, controller.signal);
+          let report;
+          try { report = parseTrustResponse(payload); }
+          catch { throw new TrustScoreError(502, 'The scorer returned an invalid report.'); }
+          report.presentation = buildTrustPresentation(report);
+          sendJSON(res, 200, { schema_version: '1.0', source: 'live', report });
+        }
         finally { active--; controllers.delete(controller); res.removeListener('close', cancel); }
       } catch (error) {
         const failure = error instanceof TrustScoreError ? error : new TrustScoreError(500, 'The assessment could not be completed.');
@@ -96,8 +106,10 @@ export function createTrustScoreHandler(root: string, run = runScoreWorker) {
 export function trustScorePlugin(): Plugin {
   const install = (server: ViteDevServer | PreviewServer) => {
     const handler = createTrustScoreHandler(server.config.root);
-    server.httpServer?.once('close', () => handler.close());
+    const pdf = createTrustPDFHandler();
+    server.httpServer?.once('close', () => { handler.close(); pdf.close(); });
     server.middlewares.use((req, res, next) => {
+      if (req.url?.split('?')[0] === `${API_PATH}/pdf`) { void pdf.handle(req, res); return; }
       if (req.url?.split('?')[0] !== API_PATH) { next(); return; }
       void handler.handle(req, res);
     });

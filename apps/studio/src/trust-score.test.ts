@@ -1,3 +1,4 @@
+import { buildTrustPresentation } from '../server/trust-presentation.ts';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { categorySummaries, OUTCOME_GROUPS, resolveTrustInput, parseTrustResponse, fetchTrustReport, type TrustReport } from './trust-score.ts';
 
@@ -49,7 +50,7 @@ describe('MCP trust report presentation boundary', () => {
 
 
 describe('live report response contract', () => {
-  const response = () => ({ schema_version: '1.0', source: 'live', report: structuredClone(savedTrustReport) });
+  const response = () => ({ schema_version: '1.0', source: 'live', report: { ...structuredClone(savedTrustReport), presentation: buildTrustPresentation(savedTrustReport) } });
 
   it('maps fresh response data without substituting the bundled snapshot', () => {
     const payload = response();
@@ -66,6 +67,14 @@ describe('live report response contract', () => {
     for (const payload of [{}, { ...response(), source: 'saved' }, wrongCount, wrongScore]) {
       expect(() => parseTrustResponse(payload)).toThrow('invalid report');
     }
+  });
+
+  it('rejects points attributed to skipped/unknown outcomes even with consistent totals', () => {
+    const payload = response();
+    const rule = payload.report.rules.skipped.find(rule => rule.configured_weight > 0)!;
+    rule.earned = 1; rule.possible = 1;
+    payload.report.summary.total_score++; payload.report.summary.assessed_maximum++;
+    expect(() => parseTrustResponse(payload)).toThrow('invalid report');
   });
 
   it('posts the entered endpoint to the API and propagates its result', async () => {

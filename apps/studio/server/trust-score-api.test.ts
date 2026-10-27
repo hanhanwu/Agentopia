@@ -1,3 +1,6 @@
+import snapshot from '../src/data/mcp-trust-score-v1.snapshot.json';
+import { buildTrustPresentation } from './trust-presentation.ts';
+const workerResult = () => ({ schema_version: '1.0', source: 'live', report: structuredClone(snapshot) });
 import { Readable, Writable } from 'node:stream';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { describe, expect, it, vi } from 'vitest';
@@ -28,13 +31,22 @@ describe('local trust-score HTTP bridge', () => {
     }
   });
 
-  it('returns the worker result unchanged for a valid local request', async () => {
-    const result = { schema_version: '1.0', source: 'live', report: { subject: { endpoint: 'https://example.com/mcp' } } };
+  it('validates the worker report and attaches evidence-linked presentation', async () => {
+    const result = workerResult();
     const run = vi.fn().mockResolvedValue(result);
     const response = new ResponseBuffer();
     await createTrustScoreHandler('/project', run).handle(request(), asResponse(response));
-    expect(response.status).toBe(200); expect(response.json()).toEqual(result);
+    expect(response.status).toBe(200); expect(response.json().report.presentation).toEqual(buildTrustPresentation(snapshot));
+    expect(response.json().report.rules).toEqual(snapshot.rules);
     expect(run).toHaveBeenCalledWith('/project', 'https://example.com/mcp', expect.any(AbortSignal));
+  });
+
+  it('rejects invalid worker data with a generic upstream error', async () => {
+    const run = vi.fn().mockResolvedValue({ report: { internal_path: '/private/scorer' } });
+    const response = new ResponseBuffer();
+    await createTrustScoreHandler('/project', run).handle(request(), asResponse(response));
+    expect(response.status).toBe(502);
+    expect(response.json()).toEqual({ error: 'The scorer returned an invalid report.' });
   });
 
   it('rejects cross-site, remote, wrong-origin and oversized requests before spawning a worker', async () => {
@@ -66,13 +78,13 @@ describe('local trust-score HTTP bridge', () => {
 
   it('limits concurrent workers and frees slots when jobs complete', async () => {
     const release: Array<() => void> = [];
-    const run = vi.fn().mockImplementation(() => new Promise(resolve => release.push(() => resolve({ source: 'live' }))));
+    const run = vi.fn().mockImplementation(() => new Promise(resolve => release.push(() => resolve(workerResult()))));
     const handler = createTrustScoreHandler('/project', run);
     const jobs = [new ResponseBuffer(), new ResponseBuffer()].map(res => handler.handle(request(), asResponse(res)));
     await tick();
     const busy = new ResponseBuffer(); await handler.handle(request(), asResponse(busy)); expect(busy.status).toBe(429);
     release.forEach(resolve => resolve()); await Promise.all(jobs);
-    run.mockResolvedValue({ source: 'live' }); const next = new ResponseBuffer();
+    run.mockResolvedValue(workerResult()); const next = new ResponseBuffer();
     await handler.handle(request(), asResponse(next)); expect(next.status).toBe(200);
   });
 

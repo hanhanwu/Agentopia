@@ -88,10 +88,11 @@ Agentopia:                             assessments + visualizations
   automated reasons, grouped rule outcomes and a silent JSON inspection export.
 - [x] Implement the desktop home screen, trust form, and existing walkthrough route.
 - [x] Connect live MCP scoring through a local, bounded Python worker with
-  four outcome filters, evidence details, and JSON download.
+  four outcome counts, configured-maximum gauge, evidence-linked Reason /
+  Improvement Tips, and a bounded PDF export of the current assessment.
 
 Remaining: publish the engine for deployment, host a caller-scoped scoring
-service, add evidence-backed remediation, and define separate agent scoring.
+service, apply the deferred privacy restrictions, and define separate agent scoring.
 
 
 ## Long-term: portable visualizations

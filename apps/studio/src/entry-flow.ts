@@ -1,12 +1,12 @@
 import './entry-flow.css';
 import {
-  categorySummaries, fetchTrustReport, OUTCOME_GROUPS, resolveTrustInput,
-  type OutcomeGroup, type SubjectType, type TrustReport, type TrustRule,
+  fetchTrustReport, OUTCOME_GROUPS, resolveTrustInput,
+  type OutcomeGroup, type SubjectType, type TrustReport,
 } from './trust-score.ts';
 
 import { escapeMarkup as escapeHTML } from './markup.ts';
 
-const monoJSON = (value: unknown) => `<pre>${escapeHTML(JSON.stringify(value, null, 2))}</pre>`;
+import { projectTrustScore, quarter, RATING_COLORS } from './trust-projection.ts';
 const groupName = (group: OutcomeGroup) => group[0].toUpperCase() + group.slice(1);
 const shield = '<path d="M16 3 27 7v9c0 7-11 13-11 13S5 23 5 16V7Z M10 16l4 4 8-9"/>';
 const globe = '<circle cx="16" cy="16" r="12"/><ellipse cx="16" cy="16" rx="5" ry="12"/><path d="M4 16h24"/>';
@@ -56,7 +56,7 @@ export function mountEntryFlow(options: {
                 <img src="${mcpLogo}" alt=""/><span>MCP Server</span>
               </button>
             </div>
-            <input class="trust-input" name="identifier" aria-label="Identifier" placeholder="Example: https://server.com/mcp" autocomplete="off" spellcheck="false" required/>
+            <div class="trust-input-slot"><input class="trust-input" name="identifier" aria-label="Identifier" placeholder="Example: https://server.com/mcp" autocomplete="off" spellcheck="false" required hidden disabled/></div>
             <div class="trust-submit-slot"><button class="gold-button trust-submit" type="submit" hidden disabled>Check Trust Score</button></div>
           </form>
         </div>
@@ -75,7 +75,8 @@ export function mountEntryFlow(options: {
   const submit = form.querySelector<HTMLButtonElement>('.trust-submit')!;
   const report = host.querySelector<HTMLElement>('.trust-report')!;
   let subject: SubjectType | null = null;
-  let activeGroup: OutcomeGroup = 'failed';
+  let gaugeFrame = 0;
+  let exportPending: AbortController | null = null;
   let reportData: TrustReport | null = null;
   let pending: AbortController | null = null;
 
@@ -84,12 +85,15 @@ export function mountEntryFlow(options: {
       button.classList.toggle('is-inactive', subject !== null && button.dataset.subject !== subject);
       button.setAttribute('aria-pressed', String(button.dataset.subject === subject));
     });
+    input.hidden = subject === null;
+    input.disabled = subject === null;
     submit.hidden = subject === null || input.value.trim().length === 0;
     submit.disabled = submit.hidden || pending !== null;
   }
 
   function clearReport() {
     pending?.abort(); pending = null;
+    cancelAnimationFrame(gaugeFrame); exportPending?.abort(); exportPending = null;
     reportData = null; report.setAttribute('aria-busy', 'false');
     report.replaceChildren();
     report.dataset.state = 'empty';
@@ -102,65 +106,67 @@ export function mountEntryFlow(options: {
   }
   const splashTimer = window.setTimeout(() => showPortal(false), window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1300);
 
-  const detailField = (name: string, value: unknown) => `<div><dt>${escapeHTML(name)}</dt><dd>${escapeHTML(value)}</dd></div>`;
-  const observedTime = (value: string) => new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'medium', timeStyle: 'long', timeZone: 'America/Los_Angeles',
-  }).format(new Date(value));
-
-  function ruleMarkup(rule: TrustRule) {
-    const observations = Object.fromEntries(rule.observation_keys.map(key => [key, reportData!.observations[key] ?? null]));
-    return `<details class="trust-rule">
-      <summary><span>${escapeHTML(rule.name)}</span><b>${rule.earned} / ${rule.possible}</b></summary>
-      <p>${escapeHTML(rule.reason)}</p>
-      <dl>${detailField('Rule', rule.id)}${detailField('Category', rule.category)}
-        ${detailField('Configured weight', rule.configured_weight)}${detailField('Effective weight', rule.weight)}
-        ${detailField('Applicability', rule.applicability)}${detailField('Outcome', rule.outcome)}
-        ${detailField('Evidence IDs', rule.evidence_ids.join(', ') || 'None')}
-      </dl>
-      <details><summary>Definition & specification basis</summary>${monoJSON(rule.definition)}<p>${escapeHTML(rule.basis)}</p></details>
-      <details><summary>Referenced observations</summary>${monoJSON(observations)}</details>
-    </details>`;
-  }
-
   function renderReport(data: TrustReport) {
     reportData = data;
-    const { summary, subject: target, policy } = data;
+    const { summary, subject: target, presentation } = data;
+    const view = projectTrustScore(summary.total_score, summary.configured_maximum, data.status);
+    const list = (group: 'passed' | 'failed' | 'tips') => presentation?.[group].length
+      ? presentation[group].map(item => `<p>${escapeHTML(item.text)}</p>`).join('')
+      : `<p>${escapeHTML(presentation?.[`${group}_empty`] ?? 'No assessment details available.')}</p>`;
     report.dataset.state = 'ready';
     report.innerHTML = `
-      <header class="trust-report__header">
-        <h3>MCP Trust Score</h3><p class="trust-report__status">LIVE · ${escapeHTML(data.status.toUpperCase())}</p>
-        <p class="trust-report__endpoint">${escapeHTML(target.endpoint)}</p>
-      </header>
-      <div class="trust-metrics">
-        <section class="trust-metric"><h4>Weighted points</h4><p class="trust-metric__value">${summary.total_score}<span>/ ${summary.assessed_maximum}</span></p><p class="trust-metric__context">Configured max ${summary.configured_maximum}</p></section>
-        <section class="trust-metric"><h4>Rule pass rate</h4><p class="trust-metric__value">${summary.pass_percentage === null ? '—' : `${summary.pass_percentage}%`}</p><p class="trust-metric__context">${summary.passed_rules} / ${summary.total_rules} rules</p></section>
+      <header class="trust-report__header"><p class="trust-report__endpoint">${escapeHTML(target.endpoint)}</p></header>
+      <div class="trust-report__body">
+      <svg class="trust-score-gauge" viewBox="0 0 500 314" role="img" aria-label="${escapeHTML(`Score ${view.score ?? 'unavailable'} of ${view.maximum} configured points. ${view.rating ?? ''}. ${data.status} assessment. Assessed maximum ${summary.assessed_maximum}. ${(data.limitations ?? []).join(' ')}`)}">
+        <defs><path id="score-arc" d="M78 272 A172 172 0 0 1 422 272" pathLength="100"/></defs>
+        <path d="M64 272 A186 186 0 0 1 436 272 A14 14 0 0 1 408 272 A158 158 0 0 0 92 272 A14 14 0 0 1 64 272 Z" fill="none" stroke="#7d9cae" stroke-opacity=".55" stroke-width="1.5"/>
+        <g fill="none" stroke-linecap="round" class="trust-liquid" visibility="hidden">
+          <use href="#score-arc" class="trust-liquid__fill" stroke-width="28"/>
+          <use href="#score-arc" class="trust-liquid__sheen" transform="translate(0 -5)" stroke="white" stroke-opacity=".23" stroke-width="3"/>
+        </g>
+        <g fill="none" stroke="#8aa5b8" stroke-opacity=".8" stroke-width="1.5">
+          <path d="M138.2771 160.2771 L118.4781 140.4781 M250 114 L250 86 M361.7229 160.2771 L381.5219 140.4781"/>
+        </g>
+        <g fill="#8aa5b8" font-size="14" font-weight="600" text-anchor="middle">
+          <text x="48.5943" y="180.575">Poor</text><text x="166.575" y="62.5943">Fair</text>
+          <text x="333.425" y="62.5943">Good</text><text x="451.4057" y="180.575">Very Good</text>
+        </g>
+        <text x="250" y="238" text-anchor="middle" fill="#c9efff" font-size="68" font-weight="750">${view.score ?? '—'}</text>
+        <text x="250" y="286" text-anchor="middle" fill="#61c7ff" font-size="36" font-weight="600">${view.rating ?? ''}</text>
+        <g fill="#8aa5b8" font-size="18" font-weight="600" text-anchor="middle"><text x="78" y="312">0</text><text x="422" y="312">${view.maximum}</text></g>
+      </svg>
+      <div class="trust-outcomes" aria-label="Rule outcomes">${OUTCOME_GROUPS.map(group => `
+        <div class="trust-outcome trust-outcome--${group}"><strong>${summary[`${group}_rules`]}</strong><span>${groupName(group)}</span></div>`).join('')}
       </div>
-      <div class="trust-outcomes" role="group" aria-label="Rule outcomes">${OUTCOME_GROUPS.map(group => `
-        <button type="button" class="trust-outcome trust-outcome--${group}" data-outcome="${group}" aria-pressed="${group === activeGroup}" aria-controls="trust-rule-list">
-          <strong>${summary[`${group}_rules`]}</strong><span>${groupName(group)}</span>
-        </button>`).join('')}
-      </div>
-      <details class="trust-disclosure trust-categories"><summary>Categories</summary>
-        <div class="trust-category-row trust-category-row--header"><span>Category</span><span>Points</span><span>Passed</span></div>
-        ${categorySummaries(data).map(category => `<div class="trust-category-row"><strong>${escapeHTML(category.category)}</strong><span>${category.earned} / ${category.possible}</span><span>${category.passed} / ${category.total}</span><small>Configured maximum ${category.configured}</small></div>`).join('')}
-      </details>
-      <details class="trust-disclosure trust-rules"><summary>Rule details</summary><div id="trust-rule-list"></div></details>
-      <div class="trust-report__footer"><details class="trust-disclosure trust-metadata"><summary>Report details</summary>
-        <dl>${detailField('Source', 'Direct MCP endpoint assessment')}${detailField('Subject', target.name)}
-          ${detailField('Endpoint', target.endpoint)}${detailField('Assessment', data.status)}
-          ${detailField('Collection status', data.collection_status ?? 'Not reported')}
-          ${detailField('Observed', observedTime(data.observed_at))}${detailField('Scored', observedTime(data.scored_at))}
-          ${detailField('Engine', data.engine_version)}${detailField('Policy', `${policy.id} / ${policy.version}`)}${detailField('Policy SHA-256', policy.sha256)}${detailField('Collection limits', (data.limitations ?? []).join(' '))}
-        </dl>
-      </details><button class="gold-button trust-download" type="button" data-download-report>↓ JSON</button></div>`;
-    renderRules();
-  }
-
-  function renderRules() {
-    const list = report.querySelector<HTMLElement>('#trust-rule-list');
-    if (!list || !reportData) return;
-    list.innerHTML = `<h4>${groupName(activeGroup)} · ${reportData.rules[activeGroup].length}</h4>${reportData.rules[activeGroup].map(ruleMarkup).join('')}`;
-    report.querySelectorAll<HTMLButtonElement>('[data-outcome]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.outcome === activeGroup)));
+      <details class="trust-disclosure trust-reason"><summary>Reason</summary><div class="trust-disclosure__content">
+        <section class="trust-reason__passed" aria-label="Passed checks">${list('passed')}</section>
+        <section class="trust-reason__failed" aria-label="Failed checks">${list('failed')}</section>
+      </div></details>
+      <details class="trust-disclosure trust-tips"><summary>Improvement Tips</summary><div class="trust-disclosure__content">${list('tips')}</div></details>
+      <div class="trust-report__footer"><button class="gold-button trust-download" type="button" data-download-report>↓ PDF</button></div>
+      <p class="trust-export-error" role="status" hidden></p></div>`;
+    cancelAnimationFrame(gaugeFrame);
+    const liquid = report.querySelector<SVGGElement>('.trust-liquid')!;
+    const fill = report.querySelector<SVGUseElement>('.trust-liquid__fill')!;
+    const sheen = report.querySelector<SVGUseElement>('.trust-liquid__sheen')!;
+    const draw = (progress: number) => {
+      liquid.setAttribute('visibility', progress > 0 ? 'visible' : 'hidden');
+      fill.setAttribute('stroke', RATING_COLORS[quarter(progress)]);
+      for (const path of [fill, sheen]) {
+        path.setAttribute('stroke-dasharray', '100 100');
+        path.setAttribute('stroke-dashoffset', String(100 - progress * 100));
+      }
+    };
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced || !view.ratio) draw(view.ratio);
+    else {
+      const start = performance.now();
+      const animate = (now: number) => {
+        const t = Math.min(1, (now - start) / 2400); draw(t * view.ratio);
+        if (t < 1) gaugeFrame = requestAnimationFrame(animate);
+      };
+      draw(0); gaugeFrame = requestAnimationFrame(animate);
+    }
   }
 
   function showStatus(message: string, state = 'error') {
@@ -169,10 +175,11 @@ export function mountEntryFlow(options: {
   }
 
   host.querySelector('[data-open-trust]')!.addEventListener('click', () => {
-    subject = null; activeGroup = 'failed'; input.value = ''; input.removeAttribute('aria-invalid');
+    subject = null; input.value = ''; input.removeAttribute('aria-invalid');
     input.placeholder = 'Example: https://server.com/mcp';
     clearReport();
-    portal.hidden = true; screen.hidden = false; input.focus({ preventScroll: true });
+    portal.hidden = true; screen.hidden = false;
+    form.querySelector<HTMLButtonElement>('[data-subject]')!.focus({ preventScroll: true });
   });
   host.querySelector('[data-open-world]')!.addEventListener('click', () => {
     window.clearTimeout(splashTimer); host.hidden = true; onWorld();
@@ -204,7 +211,7 @@ export function mountEntryFlow(options: {
     showStatus('Calculating the Trust Score...', 'loading'); report.setAttribute('aria-busy', 'true');
     try {
       const data = await fetchTrustReport(result.endpoint, controller.signal);
-      if (pending === controller) { activeGroup = 'failed'; renderReport(data); }
+      if (pending === controller) { renderReport(data); }
     } catch (error) {
       if (pending === controller) {
         const message = controller.signal.aborted ? 'The assessment timed out. Try again.'
@@ -217,17 +224,29 @@ export function mountEntryFlow(options: {
       if (pending === controller) { pending = null; updateForm(); report.setAttribute('aria-busy', 'false'); }
     }
   });
-  report.addEventListener('click', event => {
-    const target = event.target as Element;
-    const outcome = target.closest<HTMLButtonElement>('[data-outcome]');
-    if (outcome) {
-      activeGroup = outcome.dataset.outcome as OutcomeGroup; renderRules();
-      report.querySelector<HTMLDetailsElement>('.trust-rules')!.open = true;
-    }
-    if (target.closest('[data-download-report]') && reportData) {
-      const url = URL.createObjectURL(new Blob([JSON.stringify(reportData, null, 2) + '\n'], { type: 'application/json' }));
-      const link = document.createElement('a'); link.href = url; link.download = 'agentopia-mcp-trust-score-v1.json';
+  report.addEventListener('click', async event => {
+    const button = (event.target as Element).closest<HTMLButtonElement>('[data-download-report]');
+    if (!button || !reportData || exportPending) return;
+    const data = reportData;
+    const controller = new AbortController(); exportPending = controller;
+    const errorText = report.querySelector<HTMLElement>('.trust-export-error')!;
+    errorText.hidden = true; button.disabled = true; button.textContent = 'Exporting…';
+    const deadline = window.setTimeout(() => controller.abort(), 40000);
+    try {
+      const response = await fetch('/api/trust-score/v1/pdf', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ schema_version: '1.0', source: 'live', report: data }), signal: controller.signal });
+      if (!response.ok || !response.headers.get('content-type')?.startsWith('application/pdf')) throw new Error('The PDF could not be exported. Try again.');
+      const blob = await response.blob();
+      if (await blob.slice(0, 5).text() !== '%PDF-') throw new Error('Invalid PDF response. Try again.');
+      if (exportPending !== controller || reportData !== data) return;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a'); link.href = url; link.download = 'agentopia-mcp-trust-score.pdf';
       link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      if (exportPending === controller) { errorText.textContent = 'PDF export failed. Please try again.'; errorText.hidden = false; }
+    } finally {
+      window.clearTimeout(deadline);
+      if (exportPending === controller) { exportPending = null; button.disabled = false; button.textContent = '↓ PDF'; }
     }
   });
   return { showPortal };
