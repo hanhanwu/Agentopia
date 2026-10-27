@@ -111,7 +111,8 @@ export function mountEntryFlow(options: {
     const { summary, subject: target, presentation } = data;
     const view = projectTrustScore(summary.total_score, summary.configured_maximum, data.status);
     const list = (group: 'passed' | 'failed' | 'tips') => presentation?.[group].length
-      ? presentation[group].map(item => `<p>${escapeHTML(item.text)}</p>`).join('')
+      ? group === 'tips' ? presentation[group].map(item => `<p>${escapeHTML(item.text)}</p>`).join('')
+        : `<ul>${presentation[group].map(item => `<li>${escapeHTML(item.text)}</li>`).join('')}</ul>`
       : `<p>${escapeHTML(presentation?.[`${group}_empty`] ?? 'No assessment details available.')}</p>`;
     report.dataset.state = 'ready';
     report.innerHTML = `
@@ -206,7 +207,7 @@ export function mountEntryFlow(options: {
       showStatus(result.message, result.status); return;
     }
     const controller = new AbortController(); pending = controller;
-    const deadline = window.setTimeout(() => controller.abort(new Error('The assessment timed out. Try again.')), 100000);
+    const deadline = window.setTimeout(() => controller.abort(new Error('The assessment timed out. Try again.')), 125000);
     updateForm();
     showStatus('Calculating the Trust Score...', 'loading'); report.setAttribute('aria-busy', 'true');
     try {

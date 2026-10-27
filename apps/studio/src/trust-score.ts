@@ -69,20 +69,33 @@ export function parseTrustResponse(payload: unknown): TrustReport {
       || rules.some(rule => rule.earned > rule.possible || rule.possible > rule.configured_weight)) return invalid();
   if (report.presentation !== undefined) {
     const presentation = report.presentation;
-    if (!isRecord(presentation) || presentation.version !== '1.0'
+    if (!isRecord(presentation) || !['1.0', '1.1'].includes(String(presentation.version))
         || !['passed_empty', 'failed_empty', 'tips_empty'].every(key => typeof presentation[key] === 'string')) return invalid();
+    if (presentation.version === '1.1') {
+      if (!Array.isArray(presentation.passed) || !Array.isArray(presentation.failed)
+          || presentation.passed.length + presentation.failed.length > 5) return invalid();
+      const hasRules = (groups.passed as TrustRule[]).length + (groups.failed as TrustRule[]).length > 0;
+      if (hasRules ? presentation.reason_source !== 'deepinfra' || typeof presentation.reason_model !== 'string' || !presentation.reason_model.trim()
+          : presentation.reason_source !== 'none' || presentation.reason_model !== null) return invalid();
+    }
     for (const group of ['passed', 'failed', 'tips']) {
       const items = presentation[group];
       const sourceRules = groups[group === 'tips' ? 'failed' : group] as TrustRule[];
-      if (!Array.isArray(items) || items.length > sourceRules.length) return invalid();
+      const isReasonSummary = presentation.version === '1.1' && group !== 'tips';
+      if (!Array.isArray(items) || (!isReasonSummary && items.length > sourceRules.length)) return invalid();
       for (const item of items) {
         if (!isRecord(item) || typeof item.text !== 'string' || !item.text.trim()
             || !strings(item.rule_ids) || !item.rule_ids.length || !strings(item.evidence_ids)) return invalid();
+        if (presentation.version === '1.1' && group !== 'tips'
+            && (item.text.trim().split(/\s+/u).length > 20 || /[\r\n]/u.test(item.text) || /^\s*[-*•]\s+/u.test(item.text))) return invalid();
         const contributing = sourceRules.filter(rule => (item.rule_ids as string[]).includes(rule.id));
         if (contributing.length !== item.rule_ids.length
             || item.evidence_ids.some(id => !contributing.some(rule => rule.evidence_ids.includes(id)))) return invalid();
       }
-      if (sourceRules.some(rule => !items.some(item => (item as {rule_ids: string[]}).rule_ids.includes(rule.id)))) return invalid();
+      // Reason selects representative findings; detailed rules and tips retain exhaustive coverage.
+      if (isReasonSummary) {
+        if (Boolean(sourceRules.length) !== Boolean(items.length)) return invalid();
+      } else if (sourceRules.some(rule => !items.some(item => (item as {rule_ids: string[]}).rule_ids.includes(rule.id)))) return invalid();
     }
   }
   if (report.limitations !== undefined && !strings(report.limitations)) return invalid();

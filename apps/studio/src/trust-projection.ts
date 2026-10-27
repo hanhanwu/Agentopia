@@ -9,6 +9,6 @@ export function projectTrustScore(score: number, maximum: number, status: string
 }
 export type PresentationItem = { text: string; rule_ids: string[]; evidence_ids: string[] };
 export type TrustPresentation = {
-  version: '1.0'; passed: PresentationItem[]; failed: PresentationItem[]; tips: PresentationItem[];
+  version: '1.0' | '1.1'; reason_source?: 'deepinfra' | 'none'; reason_model?: string | null; passed: PresentationItem[]; failed: PresentationItem[]; tips: PresentationItem[];
   passed_empty: string; failed_empty: string; tips_empty: string;
 };

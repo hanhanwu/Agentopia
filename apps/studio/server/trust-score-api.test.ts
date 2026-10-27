@@ -4,7 +4,9 @@ const workerResult = () => ({ schema_version: '1.0', source: 'live', report: str
 import { Readable, Writable } from 'node:stream';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { describe, expect, it, vi } from 'vitest';
-import { createTrustScoreHandler, TrustScoreError, validateTrustScoreRequest } from './trust-score-api.ts';
+import { createTrustScoreHandler as createHandler, TrustScoreError, validateTrustScoreRequest } from './trust-score-api.ts';
+
+const createTrustScoreHandler = (root: string, run: Parameters<typeof createHandler>[1]) => createHandler(root, run, async report => buildTrustPresentation(report));
 
 function request(body: unknown = { type: 'mcp', identifier: 'https://example.com/mcp' }, overrides: Record<string, unknown> = {}) {
   return Object.assign(Readable.from([JSON.stringify(body)]), {
@@ -39,6 +41,15 @@ describe('local trust-score HTTP bridge', () => {
     expect(response.status).toBe(200); expect(response.json().report.presentation).toEqual(buildTrustPresentation(snapshot));
     expect(response.json().report.rules).toEqual(snapshot.rules);
     expect(run).toHaveBeenCalledWith('/project', 'https://example.com/mcp', expect.any(AbortSignal));
+  });
+
+  it('reports LLM failure without returning a deterministic Reason fallback', async () => {
+    const summarize = vi.fn().mockRejectedValue(new TrustScoreError(502, 'DeepInfra could not generate the Reason summary. Try again.'));
+    const response = new ResponseBuffer();
+    await createHandler('/project', vi.fn().mockResolvedValue(workerResult()), summarize).handle(request(), asResponse(response));
+    expect(response.status).toBe(502);
+    expect(response.json()).toEqual({ error: 'DeepInfra could not generate the Reason summary. Try again.' });
+    expect(summarize).toHaveBeenCalledWith(expect.objectContaining({summary:snapshot.summary}), expect.any(AbortSignal));
   });
 
   it('rejects invalid worker data with a generic upstream error', async () => {

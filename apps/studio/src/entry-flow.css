@@ -55,6 +55,8 @@
 .trust-disclosure > summary:focus-visible { outline: 2px solid #61c7ff; outline-offset: 4px; }
 .trust-reason { margin-top: 24px; }.trust-tips { margin-top: 16px; }
 .trust-disclosure__content { padding: 0 19px 16px; font-size: 14px; font-weight: 500; line-height: 22px; overflow-wrap: anywhere; }
+.trust-disclosure__content ul { margin: 0; padding-left: 18px; }
+.trust-disclosure__content li + li { margin-top: 8px; }
 .trust-disclosure__content p { margin: 0 0 12px; }.trust-disclosure__content p:last-child { margin-bottom: 0; }
 .trust-reason__passed, .trust-reason__failed { border-left: 2px solid #45ff8a66; padding-left: 12px; }
 .trust-reason__failed { border-color: #ff657a66; margin-top: 16px; }

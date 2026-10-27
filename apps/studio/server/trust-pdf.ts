@@ -9,7 +9,7 @@ import { LocalAPIError, readJSON, requireLocalRequest, sendJSON } from './local-
 const esc = (value: unknown) => escapeMarkup(String(value));
 export function trustPDFHTML(report: TrustReport) {
   const view = projectTrustScore(report.summary.total_score, report.summary.configured_maximum, report.status);
-  const presentation = buildTrustPresentation(report);
+  const presentation = report.presentation ?? buildTrustPresentation(report);
   const items = (group: 'passed' | 'failed' | 'tips') => presentation[group].length
     ? `<ul>${presentation[group].map(item => `<li>${esc(item.text)}<small>Rules: ${esc(item.rule_ids.join(', '))}; evidence: ${esc(item.evidence_ids.join(', '))}</small></li>`).join('')}</ul>`
     : `<p>${esc(presentation[`${group}_empty`])}</p>`;
