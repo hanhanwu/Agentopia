@@ -110,7 +110,9 @@ export function mountEntryFlow(options: {
   function renderReport(data: TrustReport) {
     reportData = data;
     const { summary, subject: target, presentation } = data;
-    const view = projectTrustScore(summary.total_score, summary.configured_maximum, data.status);
+    const view = presentation?.score_display ?? projectTrustScore(summary.total_score, summary.configured_maximum, data.status);
+    // Persist the exact rendered projection for export, including older assessments.
+    if (presentation) presentation.score_display = view;
     const list = (group: 'passed' | 'failed' | 'tips') => presentation?.[group].length
       ? group === 'tips' ? presentation[group].map(item => `<p>${escapeHTML(item.text)}</p>`).join('')
         : `<ul>${presentation[group].map(item => `<li>${escapeHTML(item.text)}</li>`).join('')}</ul>`

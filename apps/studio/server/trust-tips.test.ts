@@ -79,7 +79,7 @@ describe('ranked improvement families', () => {
     expect(r.summary).toEqual(before.summary);expect(r.rules).toEqual(before.rules);
     expect(parseTrustResponse(envelope(r)).presentation).toEqual(r.presentation);
     expect(r.presentation!.tips_source).toBe('deepinfra');
-    expect(trustPDFHTML(r)).toContain('points after fixes and reassessment');
+    expect(trustPDFHTML(r)).toContain('Total potential gain');
     for(const mutate of [
       (p: TrustPresentation)=>{p.tips_gain!+=1;},
       (p: TrustPresentation)=>{(p.tips[0] as ImprovementTip).estimated_gain=99;},

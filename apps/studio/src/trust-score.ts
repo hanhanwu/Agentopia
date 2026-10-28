@@ -78,6 +78,14 @@ export function parseTrustResponse(payload: unknown): TrustReport {
       if (hasRules ? presentation.reason_source !== 'deepinfra' || typeof presentation.reason_model !== 'string' || !presentation.reason_model.trim()
           : presentation.reason_source !== 'none' || presentation.reason_model !== null) return invalid();
     }
+    if (presentation.score_display !== undefined) {
+      const display = presentation.score_display;
+      if (!isRecord(display) || !nonnegative(display.ratio) || display.ratio > 1
+          || display.maximum !== summary.configured_maximum || typeof display.color !== 'string'
+          || !/^#[0-9a-f]{6}$/iu.test(display.color)
+          || (display.score !== null && display.score !== summary.total_score)
+          || (display.rating !== null && !['Poor', 'Fair', 'Good', 'Very Good'].includes(String(display.rating)))) return invalid();
+    }
     const rankedTips = presentation.tips_version === '1.0';
     if (presentation.tips_version !== undefined && !rankedTips) return invalid();
     if (rankedTips) {
@@ -103,6 +111,17 @@ export function parseTrustResponse(payload: unknown): TrustReport {
         const gain = contributors.filter(rule => rule.outcome === 'fail').reduce((sum, rule) => sum + rule.configured_weight, 0);
         if (gain ? !close(tip.estimated_gain, gain) : tip.estimated_gain !== null) return invalid();
         if (tip.verification_required !== contributors.some(rule => rule.outcome !== 'fail')) return invalid();
+        if (tip.family_name !== undefined && typeof tip.family_name !== 'string') return invalid();
+        if (tip.rule_details !== undefined) {
+          if (!Array.isArray(tip.rule_details) || tip.rule_details.length !== contributors.length) return invalid();
+          const seenDetails = new Set<string>();
+          for (const detail of tip.rule_details) {
+            if (!isRecord(detail) || typeof detail.rule_id !== 'string' || seenDetails.has(detail.rule_id)
+                || typeof detail.action !== 'string' || !detail.action.trim()) return invalid();
+            if (!contributors.some(rule => rule.id === detail.rule_id)) return invalid();
+            seenDetails.add(detail.rule_id);
+          }
+        }
         total += gain;
       }
       if (!close(presentation.tips_gain, total)) return invalid();

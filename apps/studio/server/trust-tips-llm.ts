@@ -1,5 +1,5 @@
 import type { TrustReport } from '../src/trust-score.ts';
-import type { TrustPresentation } from '../src/trust-projection.ts';
+import { projectTrustScore, type TrustPresentation } from '../src/trust-projection.ts';
 import { boundedJSON, summarizeTrustReason, type DeepInfraConfig } from './trust-reason-llm.ts';
 import { parseTipGuidance, selectImprovementTips } from './trust-tips.ts';
 
@@ -45,6 +45,6 @@ export async function summarizeTrustPresentation(report: TrustReport, config: De
   };
   try {
     const [reason, tips] = await Promise.all([summarizeTrustReason(report, config, requestSignal, fetcher), tipsJob()]);
-    return { ...reason, tips_version: '1.0', tips_empty: 'No actionable improvement opportunities were established from the available evidence.', ...tips };
+    return { ...reason, score_display: projectTrustScore(report.summary.total_score, report.summary.configured_maximum, report.status), tips_version: '1.0', tips_empty: 'No actionable improvement opportunities were established from the available evidence.', ...tips };
   } finally { controller.abort(); }
 }

@@ -95,6 +95,11 @@ Agentopia:                             assessments + visualizations
   conditional point gains in a keyboard-scrollable disclosure and PDF.
   Applicable skipped checks support verification without estimated points;
   unknown checks are excluded from improvement tips.
+- [x] Export the cached score projection and improvement guidance in
+  a simplified PDF with a score overview followed by an actions table for up to
+  five selected families, cached remediation actions, and potential gains.
+  Rule tables, reason summaries, and technical appendices are omitted. Export
+  performs no LLM calls or reassessment.
 
 Remaining: publish the engine for deployment, host a caller-scoped scoring
 service, apply the deferred privacy restrictions, and define separate agent scoring.

@@ -45,7 +45,7 @@ describe('DeepInfra Reason generation', () => {
     expect(evidence.rules.every((rule: {outcome:string}) => ['passed','failed'].includes(rule.outcome))).toBe(true);
     expect(options.body).not.toContain('configured_weight');expect(options.body).not.toContain('test-secret');
     expect(r.presentation.tips).toHaveLength(5);
-    const html = trustPDFHTML(r);expect(html).toContain(r.presentation.passed[0].text);
+    const html = trustPDFHTML(r);expect(html).not.toContain(r.presentation.passed[0].text);expect(html).toContain(r.presentation.tips[0].text);
     expect(html).not.toContain('additional checks passed');
   });
   it('accepts a concise selection of supporting IDs without requiring every raw rule in Reason', async () => {

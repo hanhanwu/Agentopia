@@ -1,36 +1,16 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { chromium, type Browser } from 'playwright';
-import { parseTrustResponse, OUTCOME_GROUPS, type TrustReport } from '../src/trust-score.ts';
-import { type ImprovementTip, projectTrustScore } from '../src/trust-projection.ts';
-import { escapeMarkup } from '../src/markup.ts';
-import { buildTrustPresentation } from './trust-presentation.ts';
+import { parseTrustResponse, type TrustReport } from '../src/trust-score.ts';
 import { LocalAPIError, readJSON, requireLocalRequest, sendJSON } from './local-api.ts';
 
-const esc = (value: unknown) => escapeMarkup(String(value));
-export function trustPDFHTML(report: TrustReport) {
-  const view = projectTrustScore(report.summary.total_score, report.summary.configured_maximum, report.status);
-  const presentation = report.presentation ?? buildTrustPresentation(report);
-  const items = (group: 'passed' | 'failed' | 'tips') => presentation[group].length
-    ? `<ul>${presentation[group].map(item => `<li>${esc(item.text)}${group === 'tips' && presentation.tips_version ? `<small>${(item as ImprovementTip).estimated_gain ? `Up to +${esc((item as ImprovementTip).estimated_gain)} points after fixes and reassessment.` : 'Gain pending verification.'}${(item as ImprovementTip).verification_required ? ' Further verification required.' : ''}</small>` : ''}<small>Rules: ${esc(item.rule_ids.join(', '))}; evidence: ${esc(item.evidence_ids.join(', '))}</small></li>`).join('')}</ul>`
-    : `<p>${esc(presentation[`${group}_empty`])}</p>`;
-  return `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>Agentopia assessment</title><style>
-    @page { size: A4; margin: 18mm; } body { font: 11px/1.55 Arial,sans-serif; color:#142839; }
-    h1 { font-size:26px; } h2 { margin-top:24px; font-size:18px; } h3 { font-size:13px; }
-    p,li,pre,small { overflow-wrap:anywhere; } pre { white-space:pre-wrap; font:9px/1.5 monospace; }
-    small { display:block; color:#425b70; } h2,h3 { break-after:avoid; } li { margin-bottom:8px; }
-    .rule { border-top:1px solid #c6d2dc; padding-top:8px; } .endpoint { font-family:monospace; }
-    </style></head><body><h1>Agentopia MCP Trust Assessment</h1>
-    <p class="endpoint">${esc(report.subject.endpoint)}</p><p>Score: ${esc(view.score ?? '—')} / ${esc(report.summary.configured_maximum)} configured points · ${esc(view.rating ?? 'Unavailable')}</p>
-    <p>Assessed maximum: ${esc(report.summary.assessed_maximum)}. Configured maximum: ${esc(report.summary.configured_maximum)}. Rule pass percentage: ${esc(report.summary.pass_percentage ?? '—')}%.</p>
-    <p>${OUTCOME_GROUPS.map(group => `${group}: ${report.summary[`${group}_rules`]}`).join(' · ')}</p>
-    <p>Assessment status: ${esc(report.status)}. Collection status: ${esc(report.collection_status ?? 'Not reported')}.</p>
-    <p>This exports the supplied current assessment; it does not recollect or independently authenticate it. Structural and protocol checks do not establish tool execution, task competence, or comprehensive security. Skipped and unknown checks are not passes. The rating uses equal quarters of configured points.</p>
-    <h2>Limitations</h2><ul>${(report.limitations ?? []).map(value => `<li>${esc(value)}</li>`).join('') || '<li>No additional collection limitations reported.</li>'}</ul>
-    <h2>Reason — passed</h2>${items('passed')}<h2>Reason — failed</h2>${items('failed')}<h2>Improvement Tips</h2>${presentation.tips_version ? `<p>Potential gain from displayed tips: up to +${esc(presentation.tips_gain)} points after fixes and reassessment. Applicable skipped checks carry no estimated gain. Unknown checks are excluded from improvement tips.</p>` : ''}${items('tips')}
-    <h2>Provenance</h2><pre>${esc(JSON.stringify({subject: report.subject, observed_at: report.observed_at, scored_at: report.scored_at, engine_version: report.engine_version, policy: report.policy}, null, 2))}</pre>
-    <h2>Complete rule evidence</h2>${OUTCOME_GROUPS.map(group => `<h2>${esc(group)}</h2>${report.rules[group].map(rule => `<section class="rule"><h3>${esc(rule.name)} · ${esc(rule.id)}</h3><p>${esc(rule.reason)}</p><pre>${esc(JSON.stringify(rule, null, 2))}</pre></section>`).join('')}`).join('')}
-    <h2>Observations</h2><pre>${esc(JSON.stringify(report.observations, null, 2))}</pre></body></html>`;
-}
+import { trustPDFHTML } from './trust-pdf-layout.ts';
+export { trustPDFHTML };
+
+// Chromium headers are isolated from document CSS and repeat on every printed page.
+const PDF_HEADER = `<div style="width:calc(100% - 26mm);margin:0 13mm;padding:9px 12px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;background:#030b12;border-bottom:1px solid #45ff8a;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+  <span style="font-family:'Avenir Next Condensed','Helvetica Neue',Arial,sans-serif;font-size:25px;line-height:1;font-style:italic;font-weight:600;letter-spacing:1.6px;transform:skewX(-10deg) scaleX(.94);transform-origin:left center;color:#45ff8a;text-shadow:1px 1px 0 #17502a">AGENTOPIA</span>
+  <span style="font:600 10px/1.4 Arial,Helvetica,sans-serif;letter-spacing:1px;color:#8aa5b8">MCP TRUST ASSESSMENT</span>
+</div>`;
 
 /** No endpoint navigation, scripts, remote assets, or browser installation during export. */
 export async function renderTrustPDF(report: TrustReport, signal: AbortSignal): Promise<Buffer> {
@@ -52,7 +32,7 @@ export async function renderTrustPDF(report: TrustReport, signal: AbortSignal): 
     await page.setContent(trustPDFHTML(report), { timeout: 10000, waitUntil: 'load' });
     signal.throwIfAborted();
     return await page.pdf({ format: 'A4', printBackground: true, displayHeaderFooter: true,
-      headerTemplate: '<span></span>', footerTemplate: '<div style="font:9px Arial;width:100%;text-align:center"><span class="pageNumber"></span> / <span class="totalPages"></span></div>' });
+      headerTemplate: PDF_HEADER, footerTemplate: '<div style="font:9px Arial;width:100%;text-align:center;color:#8aa5b8"><span class="pageNumber"></span> / <span class="totalPages"></span></div>' });
   } finally { signal.removeEventListener('abort', close); await browser?.close().catch(() => {}); }
 }
 export function createTrustPDFHandler(render = renderTrustPDF) {
