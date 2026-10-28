@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import snapshot from '../src/data/mcp-trust-score-v1.snapshot.json';
 import type { ImprovementTip } from '../src/trust-projection.ts';
 import { projectTrustScore } from '../src/trust-projection.ts';
-import { buildTrustPresentation } from './trust-presentation.ts';
+import { legacyTrustPresentation } from './trust-test-fixtures.ts';
 import { selectImprovementTips, parseTipGuidance } from './trust-tips.ts';
 import { parseTrustResponse, type TrustReport } from '../src/trust-score.ts';
 import { createTrustPDFHandler, trustPDFHTML } from './trust-pdf.ts';
@@ -52,7 +52,7 @@ describe('bounded report PDF export', () => {
     const report=payload().report;
     const candidates=selectImprovementTips(report);
     const tips=parseTipGuidance(JSON.stringify({tips:candidates.map(tip=>({family_id:tip.family_id,text:'Correct the recorded behavior and repeat the check.'}))}),candidates);
-    report.presentation={...buildTrustPresentation(report),score_display:projectTrustScore(report.summary.total_score,report.summary.configured_maximum,report.status),
+    report.presentation={...legacyTrustPresentation(report),score_display:projectTrustScore(report.summary.total_score,report.summary.configured_maximum,report.status),
       tips_version:'1.0',tips_source:'deepinfra',tips_model:'test',tips_gain:16,tips};
     const original=structuredClone(report);
     const html=trustPDFHTML(report);
@@ -83,7 +83,7 @@ describe('bounded report PDF export', () => {
   });
   it('caps historical guidance at five families without adding more suggestions', () => {
     const report=payload().report;
-    report.presentation={...buildTrustPresentation(report)};
+    report.presentation={...legacyTrustPresentation(report)};
     const tip=report.presentation.tips[0];
     report.presentation.tips=Array.from({length:7},(_,index)=>({...tip,text:`Action ${index + 1}`}));
     const html=trustPDFHTML(report);

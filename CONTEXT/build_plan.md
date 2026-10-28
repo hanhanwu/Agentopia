@@ -1,6 +1,6 @@
 # Agentopia + Skynet Build Plan
 
-Updated 2026-10-25.
+Updated 2026-10-27.
 
 ## Goal
 
@@ -78,6 +78,9 @@ Agentopia:                             assessments + visualizations
 
 ## Current progress
 
+Maintenance commands and repository boundaries are documented in
+[maintenance.md](maintenance.md).
+
 - [x] Finish [Scenario 1 — One Agent, Different Doors](game_scenarios.md#game-scenario-1--one-agent-different-doors)
   in Agentopia using mock data first.
 - [x] Implement portable visualization with Agentopia branding and shared
@@ -98,12 +101,12 @@ Agentopia:                             assessments + visualizations
 - [x] Export the cached score projection and improvement guidance in
   a simplified PDF with a score overview followed by an actions table for up to
   five selected families, cached remediation actions, and potential gains.
-  Rule tables, reason summaries, and technical appendices are omitted. Export
-  performs no LLM calls or reassessment.
+  Rule tables, reason summaries, and technical appendices are omitted. A shared
+  green Agentopia header repeats on a full dark page background. Export performs
+  no LLM calls or reassessment.
 
 Remaining: publish the engine for deployment, host a caller-scoped scoring
 service, apply the deferred privacy restrictions, and define separate agent scoring.
-
 
 ## Long-term: portable visualizations
 

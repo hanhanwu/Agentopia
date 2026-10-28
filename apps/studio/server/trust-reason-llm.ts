@@ -1,17 +1,9 @@
-import { loadEnv } from 'vite';
 import { parseTrustResponse, type TrustReport, type TrustRule } from '../src/trust-score.ts';
 import type { PresentationItem, TrustPresentation } from '../src/trust-projection.ts';
-import { buildTrustPresentation } from './trust-presentation.ts';
+import { emptyTrustPresentation } from './trust-presentation.ts';
 import { LocalAPIError } from './local-api.ts';
 
-const ENDPOINT = 'https://api.deepinfra.com/v1/openai/chat/completions';
-export type DeepInfraConfig = { model: string; apiKey: string; maxAttempts?: 1 | 2 };
-export function loadDeepInfraConfig(root: string | false, mode = 'development'): DeepInfraConfig {
-  // Empty prefix is intentional here on the server only; never assign this object to Vite's client env/define.
-  const env = root === false ? process.env : loadEnv(mode, root, '');
-  return { model: env.LLM_MODEL?.trim() ?? '', apiKey: env.deepinfra_api_key?.trim() ?? '',
-    maxAttempts: env.DEEPINFRA_REASON_RETRIES === '1' ? 2 : 1 };
-}
+import { requestDeepInfraJSON, type DeepInfraConfig, type DeepInfraMessage } from './deepinfra.ts';
 
 const SYSTEM = `TASK
 Explain the MCP assessment's passed and failed checks for a beginner who has never used MCP or written code.
@@ -40,21 +32,6 @@ FORMAT
 - outcome must be "passed" or "failed"; rule_ids must come from the input.
 - At most 5 bullets TOTAL; at most 20 whitespace-separated words per text.
 - No bullet characters, markup, line breaks, or repeated claims in text.`;
-
-export async function boundedJSON(response: Response): Promise<unknown> {
-  if (!response.body) throw new Error('Empty response');
-  const reader = response.body.getReader();
-  const chunks: Uint8Array[] = []; let size = 0;
-  try {
-    while (true) {
-      const { done, value } = await reader.read(); if (done) break;
-      size += value.length;
-      if (size > 65536) { await reader.cancel(); throw new Error('Oversized response'); }
-      chunks.push(value);
-    }
-    return JSON.parse(Buffer.concat(chunks).toString('utf8'));
-  } finally { reader.releaseLock(); }
-}
 
 function parseBullets(content: string, report: TrustReport): Pick<TrustPresentation, 'passed' | 'failed'> {
   // Repair presentation-only differences locally; never rewrite claims or invent provenance.
@@ -98,7 +75,7 @@ function definitionContext(rule: TrustRule): Record<string, unknown> {
 
 /** One paid request by default. An optional repair attempt shares the same 30s budget. */
 export async function summarizeTrustReason(report: TrustReport, config: DeepInfraConfig, signal: AbortSignal, fetcher: typeof fetch = fetch): Promise<TrustPresentation> {
-  const base = buildTrustPresentation(report);
+  const base = { ...emptyTrustPresentation(report), tips_version: '1.0' as const, tips_source: 'none' as const, tips_model: null, tips_gain: 0 };
   if (!report.rules.passed.length && !report.rules.failed.length) {
     return { ...base, version: '1.1', reason_source: 'none', reason_model: null };
   }
@@ -109,23 +86,15 @@ export async function summarizeTrustReason(report: TrustReport, config: DeepInfr
   }))) });
   if (Buffer.byteLength(evidence) > 200000) throw new LocalAPIError(502, 'The rule evidence exceeds the Reason summary limit.');
   const boundedSignal = AbortSignal.any([signal, AbortSignal.timeout(30000)]);
-  const messages: { role: 'system' | 'user' | 'assistant'; content: string }[] = [
+  const messages: DeepInfraMessage[] = [
     { role: 'system', content: SYSTEM }, { role: 'user', content: evidence },
   ];
   const maxAttempts = config.maxAttempts === 2 ? 2 : 1;
   try {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       boundedSignal.throwIfAborted();
-      const response = await fetcher(ENDPOINT, { method: 'POST', signal: boundedSignal, redirect: 'error',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}` },
-        body: JSON.stringify({ model: config.model, temperature: 0, max_tokens: 4096,
-          response_format: { type: 'json_object' }, messages }),
-      });
-      if (!response.ok) {
-        await response.body?.cancel();
-        throw new LocalAPIError(502, 'DeepInfra could not generate the Reason summary. Try again.');
-      }
-      const payload = await boundedJSON(response) as { choices?: { finish_reason?: string; message?: { content?: unknown } }[] };
+      const payload = await requestDeepInfraJSON(config, messages, boundedSignal, 4096,
+        'DeepInfra could not generate the Reason summary. Try again.', fetcher) as { choices?: { message?: { content?: unknown } }[] };
       const diagnostic = (value: unknown) => JSON.stringify(value, null, 2).replaceAll(config.apiKey, '[REDACTED]');
       console.info('[Agentopia][DeepInfra] Reason response', diagnostic({ model: config.model, attempt: attempt + 1, response: payload }));
       try {

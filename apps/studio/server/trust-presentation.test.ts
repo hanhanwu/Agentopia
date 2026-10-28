@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import snapshot from '../src/data/mcp-trust-score-v1.snapshot.json';
 import { parseTrustResponse, type TrustReport } from '../src/trust-score.ts';
 import { projectTrustScore, quarter } from '../src/trust-projection.ts';
-import { buildTrustPresentation } from './trust-presentation.ts';
+import { emptyTrustPresentation } from './trust-presentation.ts';
+import { legacyTrustPresentation } from './trust-test-fixtures.ts';
 const fresh = (): TrustReport => structuredClone(snapshot);
 const envelope = (report: TrustReport) => ({ schema_version: '1.0', source: 'live', report });
 
@@ -17,33 +18,15 @@ describe('score projection and evidence-based presentation', () => {
     }
     expect([0,.24999,.25,.5,.75,1].map(quarter)).toEqual([0,0,1,2,3,3]);
   });
-  it('covers both outcome groups and every failing rule with traceable tips', () => {
-    const report = fresh(); const p = buildTrustPresentation(report); report.presentation = p;
-    expect(parseTrustResponse(envelope(report)).presentation).toEqual(p);
-    for (const group of ['passed', 'failed'] as const) {
-      expect(p[group].flatMap(item => item.rule_ids).sort()).toEqual(report.rules[group].map(rule => rule.id).sort());
-    }
-    expect(p.tips.flatMap(item => item.rule_ids).sort()).toEqual(report.rules.failed.map(rule => rule.id).sort());
-    expect(p.tips.map(item => item.text).join(' ')).toContain('-32600');
-    expect(p.tips.map(item => item.text).join(' ')).not.toContain('-32700');
-    expect(p.passed.map(item => item.text).join(' ')).toContain('do not establish successful tool execution');
-    expect(report.summary.total_score).toBe(44);
-  });
   it('does not invent failures or successes in unknown-only, skipped-only, empty or unavailable reports', () => {
     for (const status of ['partial', 'unavailable']) {
       const report = fresh(); report.status = status; report.rules.passed = []; report.rules.failed = [];
-      const p = buildTrustPresentation(report);
+      const p = emptyTrustPresentation(report);
       expect(p.passed).toEqual([]); expect(p.failed).toEqual([]); expect(p.tips).toEqual([]);
       expect(p.failed_empty).toMatch(/unassessed|unavailable/);
       report.rules.skipped = []; report.rules.unknown = [];
-      expect(buildTrustPresentation(report).tips).toEqual([]);
+      expect(emptyTrustPresentation(report).tips).toEqual([]);
     }
-  });
-  it('falls back to the recorded expectation for unmapped failures and remains deterministic', () => {
-    const report = fresh(); report.rules.failed[0].id = 'new.rule';
-    const p = buildTrustPresentation(report);
-    expect(p.tips.find(item => item.rule_ids.includes('new.rule'))?.text).toContain('recorded expectation');
-    report.rules.failed.reverse(); expect(buildTrustPresentation(report)).toEqual(p);
   });
   it('rejects malformed, incomplete, mismatched and unsupported presentations', () => {
     for (const mutate of [
@@ -53,7 +36,7 @@ describe('score projection and evidence-based presentation', () => {
       (p: Record<string, unknown>) => { p.tips_empty = null; },
       (p: Record<string, unknown>) => { p.tips = [{text:'fix',rule_ids:['security.error_leaks'],evidence_ids:['invented']}]; },
     ]) {
-      const report = fresh(); report.presentation = buildTrustPresentation(report);
+      const report = fresh(); report.presentation = legacyTrustPresentation(report);
       mutate(report.presentation as unknown as Record<string, unknown>);
       expect(() => parseTrustResponse(envelope(report))).toThrow('invalid report');
     }

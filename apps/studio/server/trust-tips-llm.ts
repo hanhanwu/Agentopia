@@ -1,6 +1,7 @@
 import type { TrustReport } from '../src/trust-score.ts';
 import { projectTrustScore, type TrustPresentation } from '../src/trust-projection.ts';
-import { boundedJSON, summarizeTrustReason, type DeepInfraConfig } from './trust-reason-llm.ts';
+import { summarizeTrustReason } from './trust-reason-llm.ts';
+import { requestDeepInfraJSON, type DeepInfraConfig } from './deepinfra.ts';
 import { parseTipGuidance, selectImprovementTips } from './trust-tips.ts';
 
 const SYSTEM = `Write brief, precise, actionable improvement guidance for an MCP server developer, in everyday language.
@@ -22,16 +23,13 @@ export async function summarizeTrustPresentation(report: TrustReport, config: De
     try {
       if (!config.model || !config.apiKey) throw new Error('Missing settings');
       requestSignal.throwIfAborted();
-      const response = await fetcher('https://api.deepinfra.com/v1/openai/chat/completions', {
-        method: 'POST', redirect: 'error', signal: AbortSignal.any([requestSignal, AbortSignal.timeout(30000)]),
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}` },
-        body: JSON.stringify({ model: config.model, temperature: 0, max_tokens: 2048, response_format: { type: 'json_object' },
-          messages: [{ role: 'system', content: SYSTEM }, { role: 'user', content: JSON.stringify({ families: candidates.map(candidate => ({
-            family_id: candidate.family_id, ...candidate.context,
-          })) }) }] }),
-      });
-      if (!response.ok) { await response.body?.cancel(); throw new Error('Provider error'); }
-      const payload = await boundedJSON(response) as { choices?: { message?: { content?: unknown } }[] };
+      const payload = await requestDeepInfraJSON(config, [
+        { role: 'system', content: SYSTEM },
+        { role: 'user', content: JSON.stringify({ families: candidates.map(candidate => ({
+          family_id: candidate.family_id, ...candidate.context,
+        })) }) },
+      ], AbortSignal.any([requestSignal, AbortSignal.timeout(30000)]), 2048,
+      'DeepInfra could not generate improvement guidance.', fetcher) as { choices?: { message?: { content?: unknown } }[] };
       const content = payload?.choices?.[0]?.message?.content;
       if (typeof content !== 'string') throw new Error('Missing content');
       const tips = parseTipGuidance(content, candidates);

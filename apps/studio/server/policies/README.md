@@ -1,7 +1,10 @@
 `improvement-rule-families-v1.json` is a bundled copy of
 `Agentopia_Lab/Scoring_System/score_mcp_servers/policies/improvement-rule-families-v1.json`.
-Keep both files in sync when revising the improvement policy. Bundling the file
-keeps Studio runnable without the sibling research checkout.
+The duplication is intentional: Studio must run without the sibling research
+checkout. From the Agentopia root, use `npm run policies:check` to detect drift
+and `npm run policies:sync` to update the bundled copy. To use another Lab
+location, append `-- /path/to/Agentopia_Lab` to either command. These commands
+are maintenance tools; the app and its build do not require the Lab checkout.
 
 The catalog supplies family membership, effort estimates, confidence, and
 remediation context. Live assessment `configured_weight` values supply ranking
@@ -20,6 +23,10 @@ bounded to 30 seconds; Tips has one attempt. Output IDs, length and completeness
 are validated, and model ordering is replaced by deterministic backend ordering.
 The model cannot choose points or priorities. If Tips fails, the assessment and
 Reason remain available with an explicit retry message and no point estimate.
+
+The Reason path creates no static fallback prose or per-rule tips; only its
+validated LLM summary is retained. Reason and Tips share the bounded provider
+transport in `server/deepinfra.ts`.
 
 The assessment caches the score display projection, family names, and per-rule
 remediation actions alongside each selected tip. Family gains and their total

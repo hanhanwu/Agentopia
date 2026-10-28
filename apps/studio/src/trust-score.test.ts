@@ -1,6 +1,6 @@
-import { buildTrustPresentation } from '../server/trust-presentation.ts';
+import { legacyTrustPresentation } from '../server/trust-test-fixtures.ts';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { categorySummaries, OUTCOME_GROUPS, resolveTrustInput, parseTrustResponse, fetchTrustReport, type TrustReport } from './trust-score.ts';
+import { OUTCOME_GROUPS, resolveTrustInput, parseTrustResponse, fetchTrustReport, type TrustReport } from './trust-score.ts';
 
 import snapshot from './data/mcp-trust-score-v1.snapshot.json';
 const savedTrustReport: TrustReport = snapshot;
@@ -31,13 +31,8 @@ describe('MCP trust report presentation boundary', () => {
   });
 
   it('preserves weighted points separately from the pass percentage', () => {
-    const categories = categorySummaries(savedTrustReport);
-    expect(categories.reduce((sum, category) => sum + category.earned, 0)).toBe(44);
-    expect(categories.reduce((sum, category) => sum + category.possible, 0)).toBe(60);
-    expect(categories.reduce((sum, category) => sum + category.configured, 0)).toBe(184);
-    expect(savedTrustReport.summary.pass_percentage).toBe(22);
-    expect(categories.find(category => category.category === 'Primitives')).toMatchObject({
-      earned: 15, possible: 15, passed: 9, total: 50,
+    expect(savedTrustReport.summary).toMatchObject({
+      total_score: 44, assessed_maximum: 60, configured_maximum: 184, pass_percentage: 22,
     });
   });
 
@@ -50,7 +45,7 @@ describe('MCP trust report presentation boundary', () => {
 
 
 describe('live report response contract', () => {
-  const response = () => ({ schema_version: '1.0', source: 'live', report: { ...structuredClone(savedTrustReport), presentation: buildTrustPresentation(savedTrustReport) } });
+  const response = () => ({ schema_version: '1.0', source: 'live', report: { ...structuredClone(savedTrustReport), presentation: legacyTrustPresentation(savedTrustReport) } });
 
   it('maps fresh response data without substituting the bundled snapshot', () => {
     const payload = response();

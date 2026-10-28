@@ -4,7 +4,7 @@ import snapshot from '../src/data/mcp-trust-score-v1.snapshot.json';
 import type { TrustReport } from '../src/trust-score.ts';
 import { parseTrustResponse } from '../src/trust-score.ts';
 import type { ImprovementTip, TrustPresentation } from '../src/trust-projection.ts';
-import { buildTrustPresentation } from './trust-presentation.ts';
+import { legacyTrustPresentation } from './trust-test-fixtures.ts';
 import { selectImprovementTips, parseTipGuidance } from './trust-tips.ts';
 import { summarizeTrustPresentation } from './trust-tips-llm.ts';
 import { trustPDFHTML } from './trust-pdf.ts';
@@ -116,7 +116,7 @@ describe('ranked improvement families', () => {
     r.summary.failed_rules--;r.summary.skipped_rules++;r.summary.assessed_maximum-=source.possible;
     const candidate=selectImprovementTips(r).find(tip=>tip.rule_ids.includes(source.id))!;
     const tips=parseTipGuidance(JSON.stringify({tips:[{family_id:candidate.family_id,text:'Repeat the check once its prerequisites are available.'}]}),[candidate]);
-    r.presentation={...buildTrustPresentation(r),tips_version:'1.0',tips_source:'deepinfra',tips_model:'test',tips_gain:0,tips};
+    r.presentation={...legacyTrustPresentation(r),tips_version:'1.0',tips_source:'deepinfra',tips_model:'test',tips_gain:0,tips};
     expect(parseTrustResponse(envelope(r)).presentation!.tips).toHaveLength(1);
     // Even an explicitly applicable unknown cannot be smuggled into a tip or PDF.
     r.rules.skipped=r.rules.skipped.filter(rule=>rule.id!==source.id);

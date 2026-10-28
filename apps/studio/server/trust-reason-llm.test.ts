@@ -21,7 +21,7 @@ describe('DeepInfra Reason generation', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
   afterEach(() => vi.restoreAllMocks());
-  it('uses configured model and server key, sends actual rule evidence without scores, and preserves tips', async () => {
+  it('uses configured model and server key, sends actual rule evidence without scores, without generating unused fallback tips', async () => {
     const fetcher = vi.fn().mockResolvedValue(response(bullets()));
     const r = report(); const original = structuredClone(r);
     r.presentation = await summarizeTrustReason(r,config,signal(),fetcher);
@@ -44,8 +44,8 @@ describe('DeepInfra Reason generation', () => {
     expect(evidence.rules.map((rule: {id:string}) => rule.id).sort()).toEqual([...r.rules.passed,...r.rules.failed].map(rule => rule.id).sort());
     expect(evidence.rules.every((rule: {outcome:string}) => ['passed','failed'].includes(rule.outcome))).toBe(true);
     expect(options.body).not.toContain('configured_weight');expect(options.body).not.toContain('test-secret');
-    expect(r.presentation.tips).toHaveLength(5);
-    const html = trustPDFHTML(r);expect(html).not.toContain(r.presentation.passed[0].text);expect(html).toContain(r.presentation.tips[0].text);
+    expect(r.presentation.tips).toEqual([]);
+    const html = trustPDFHTML(r);expect(html).not.toContain(r.presentation.passed[0].text);expect(html).toContain(r.presentation.tips_empty);
     expect(html).not.toContain('additional checks passed');
   });
   it('accepts a concise selection of supporting IDs without requiring every raw rule in Reason', async () => {
@@ -59,7 +59,7 @@ describe('DeepInfra Reason generation', () => {
     expect(r.presentation.passed).toHaveLength(1); expect(r.presentation.failed).toHaveLength(1);
     expect(r.presentation.passed[0].evidence_ids).toEqual([...r.rules.passed.find(rule => rule.id === 'security.tls')!.evidence_ids].sort());
     expect(parseTrustResponse({schema_version:'1.0',source:'live',report:r}).presentation).toEqual(r.presentation);
-    expect(r.presentation.tips.flatMap(item => item.rule_ids).sort()).toEqual(r.rules.failed.map(rule => rule.id).sort());
+    expect(r.presentation.tips).toEqual([]);
     expect(r.rules.passed).toHaveLength(22); expect(r.rules.failed).toHaveLength(5);
   });
   it('rejects overlong bullets and repairs once without silently returning the old summary', async () => {

@@ -1,5 +1,5 @@
 import { parseTrustResponse } from '../src/trust-score.ts';
-import { loadDeepInfraConfig } from './trust-reason-llm.ts';
+import { loadDeepInfraConfig } from './deepinfra.ts';
 import { summarizeTrustPresentation } from './trust-tips-llm.ts';
 import type { TrustReport } from '../src/trust-score.ts';
 import type { TrustPresentation } from '../src/trust-projection.ts';

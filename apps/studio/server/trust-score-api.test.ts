@@ -1,12 +1,12 @@
 import snapshot from '../src/data/mcp-trust-score-v1.snapshot.json';
-import { buildTrustPresentation } from './trust-presentation.ts';
+import { legacyTrustPresentation } from './trust-test-fixtures.ts';
 const workerResult = () => ({ schema_version: '1.0', source: 'live', report: structuredClone(snapshot) });
 import { Readable, Writable } from 'node:stream';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { describe, expect, it, vi } from 'vitest';
 import { createTrustScoreHandler as createHandler, TrustScoreError, validateTrustScoreRequest } from './trust-score-api.ts';
 
-const createTrustScoreHandler = (root: string, run: Parameters<typeof createHandler>[1]) => createHandler(root, run, async report => buildTrustPresentation(report));
+const createTrustScoreHandler = (root: string, run: Parameters<typeof createHandler>[1]) => createHandler(root, run, async report => legacyTrustPresentation(report));
 
 function request(body: unknown = { type: 'mcp', identifier: 'https://example.com/mcp' }, overrides: Record<string, unknown> = {}) {
   return Object.assign(Readable.from([JSON.stringify(body)]), {
@@ -38,7 +38,7 @@ describe('local trust-score HTTP bridge', () => {
     const run = vi.fn().mockResolvedValue(result);
     const response = new ResponseBuffer();
     await createTrustScoreHandler('/project', run).handle(request(), asResponse(response));
-    expect(response.status).toBe(200); expect(response.json().report.presentation).toEqual(buildTrustPresentation(snapshot));
+    expect(response.status).toBe(200); expect(response.json().report.presentation).toEqual(legacyTrustPresentation(snapshot));
     expect(response.json().report.rules).toEqual(snapshot.rules);
     expect(run).toHaveBeenCalledWith('/project', 'https://example.com/mcp', expect.any(AbortSignal));
   });

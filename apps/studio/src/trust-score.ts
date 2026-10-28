@@ -163,19 +163,3 @@ export async function fetchTrustReport(endpoint: string, signal: AbortSignal): P
   if (!report.presentation) throw new Error('The scorer returned no presentation.');
   return report;
 }
-
-export function categorySummaries(report: TrustReport) {
-  const categories = new Map(['Protocol', 'Primitives', 'Security & Auth', 'Readiness'].map(category => [
-    category, { category, earned: 0, possible: 0, configured: 0, passed: 0, total: 0 },
-  ]));
-  for (const group of OUTCOME_GROUPS) {
-    for (const rule of report.rules[group]) {
-      const summary = categories.get(rule.category);
-      if (!summary) continue;
-      summary.earned += rule.earned; summary.possible += rule.possible;
-      summary.configured += rule.configured_weight; summary.total++;
-      if (group === 'passed') summary.passed++;
-    }
-  }
-  return [...categories.values()];
-}
