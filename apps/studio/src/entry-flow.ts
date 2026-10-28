@@ -1,3 +1,4 @@
+import type { ImprovementTip } from './trust-projection.ts';
 import './entry-flow.css';
 import {
   fetchTrustReport, OUTCOME_GROUPS, resolveTrustInput,
@@ -114,6 +115,15 @@ export function mountEntryFlow(options: {
       ? group === 'tips' ? presentation[group].map(item => `<p>${escapeHTML(item.text)}</p>`).join('')
         : `<ul>${presentation[group].map(item => `<li>${escapeHTML(item.text)}</li>`).join('')}</ul>`
       : `<p>${escapeHTML(presentation?.[`${group}_empty`] ?? 'No assessment details available.')}</p>`;
+    const rankedTips = presentation?.tips_version === '1.0';
+    const gainLabel = (gain: number | null | undefined) => gain ? `Up to +${Number(gain.toFixed(2))} pts` : 'Gain pending verification';
+    const tips = rankedTips && presentation.tips.length
+      ? `<ol class="trust-tips__list">${(presentation.tips as ImprovementTip[]).map(item => `<li><div class="trust-tips__item">
+          <p>${escapeHTML(item.text)}</p><span class="trust-tips__gain">${gainLabel(item.estimated_gain)}</span>
+        </div></li>`).join('')}</ol>`
+      : list('tips');
+    const tipsBadge = rankedTips && presentation.tips.length
+      ? `<span class="trust-tips__total">${gainLabel(presentation.tips_gain)}</span>` : '';
     report.dataset.state = 'ready';
     report.innerHTML = `
       <header class="trust-report__header"><p class="trust-report__endpoint">${escapeHTML(target.endpoint)}</p></header>
@@ -143,7 +153,7 @@ export function mountEntryFlow(options: {
         <section class="trust-reason__passed" aria-label="Passed checks">${list('passed')}</section>
         <section class="trust-reason__failed" aria-label="Failed checks">${list('failed')}</section>
       </div></details>
-      <details class="trust-disclosure trust-tips"><summary>Improvement Tips</summary><div class="trust-disclosure__content">${list('tips')}</div></details>
+      <details class="trust-disclosure trust-tips"><summary><span>Improvement Tips</span>${tipsBadge}</summary><div class="trust-disclosure__content trust-tips__scroll" tabindex="0" role="region" aria-label="Improvement guidance">${tips}</div></details>
       <div class="trust-report__footer"><button class="gold-button trust-download" type="button" data-download-report>↓ PDF</button></div>
       <p class="trust-export-error" role="status" hidden></p></div>`;
     cancelAnimationFrame(gaugeFrame);

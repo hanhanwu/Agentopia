@@ -1,5 +1,6 @@
 import { parseTrustResponse } from '../src/trust-score.ts';
-import { loadDeepInfraConfig, summarizeTrustReason } from './trust-reason-llm.ts';
+import { loadDeepInfraConfig } from './trust-reason-llm.ts';
+import { summarizeTrustPresentation } from './trust-tips-llm.ts';
 import type { TrustReport } from '../src/trust-score.ts';
 import type { TrustPresentation } from '../src/trust-projection.ts';
 import { createTrustPDFHandler } from './trust-pdf.ts';
@@ -73,7 +74,7 @@ export function runScoreWorker(root: string, endpoint: string, signal: AbortSign
 }
 
 export function createTrustScoreHandler(root: string, run = runScoreWorker,
-  summarize: (report: TrustReport, signal: AbortSignal) => Promise<TrustPresentation> = (report, signal) => summarizeTrustReason(report, loadDeepInfraConfig(root), signal)) {
+  summarize: (report: TrustReport, signal: AbortSignal) => Promise<TrustPresentation> = (report, signal) => summarizeTrustPresentation(report, loadDeepInfraConfig(root), signal)) {
   let active = 0;
   const controllers = new Set<AbortController>();
   return {
@@ -95,6 +96,7 @@ export function createTrustScoreHandler(root: string, run = runScoreWorker,
           try { report = parseTrustResponse(payload); }
           catch { throw new TrustScoreError(502, 'The scorer returned an invalid report.'); }
           report.presentation = await summarize(report, controller.signal);
+          parseTrustResponse({ schema_version: '1.0', source: 'live', report });
           sendJSON(res, 200, { schema_version: '1.0', source: 'live', report });
         }
         finally { active--; controllers.delete(controller); res.removeListener('close', cancel); }
@@ -109,7 +111,7 @@ export function createTrustScoreHandler(root: string, run = runScoreWorker,
 export function trustScorePlugin(): Plugin {
   const install = (server: ViteDevServer | PreviewServer) => {
     const config = loadDeepInfraConfig(server.config.envDir, server.config.mode);
-    const handler = createTrustScoreHandler(server.config.root, runScoreWorker, (report, signal) => summarizeTrustReason(report, config, signal));
+    const handler = createTrustScoreHandler(server.config.root, runScoreWorker, (report, signal) => summarizeTrustPresentation(report, config, signal));
     const pdf = createTrustPDFHandler();
     server.httpServer?.once('close', () => { handler.close(); pdf.close(); });
     server.middlewares.use((req, res, next) => {

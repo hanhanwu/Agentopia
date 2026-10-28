@@ -76,3 +76,14 @@
 .trust-report[data-state='loading'] .trust-unavailable h3::before { content: ''; display: inline-block; width: 22px; height: 22px; margin-right: 16px; border: 2px solid #29445b; border-top-color: #61c7ff; border-radius: 50%; vertical-align: -2px; animation: trust-scoring 1s linear infinite; }
 @keyframes trust-scoring { to { transform: rotate(360deg); } }
 .trust-input[aria-invalid='true'] { border-color: #ff657a; }
+
+/* The native disclosure header stays outside the bounded, keyboard-scrollable guidance. */
+.trust-tips__total, .trust-tips__gain { color: #8ae2c0; background: #45ff8a0d; border: 1px solid #45ff8a33; border-radius: 6px; font-size: 12px; line-height: 20px; padding: 2px 8px; font-weight: 600; }
+.trust-tips__total { margin-left: auto; white-space: nowrap; }
+.trust-tips > summary > span:first-child { margin-right: 12px; }
+.trust-tips__scroll { max-height: 320px; overflow-y: auto; scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: #456278 #07111a; overscroll-behavior: contain; }
+.trust-tips__scroll:focus-visible { outline: 2px solid #61c7ff; outline-offset: -3px; }
+.trust-tips__list { margin: 0; padding-left: 24px; }
+.trust-tips__list > li { padding: 12px 0 12px 4px; border-top: 1px solid #1c2e3f; }
+.trust-tips__list > li::marker { color: #61c7ff; font-weight: 600; }
+.trust-tips__item p { margin-bottom: 8px; }

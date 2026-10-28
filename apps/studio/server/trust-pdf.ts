@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { chromium, type Browser } from 'playwright';
 import { parseTrustResponse, OUTCOME_GROUPS, type TrustReport } from '../src/trust-score.ts';
-import { projectTrustScore } from '../src/trust-projection.ts';
+import { type ImprovementTip, projectTrustScore } from '../src/trust-projection.ts';
 import { escapeMarkup } from '../src/markup.ts';
 import { buildTrustPresentation } from './trust-presentation.ts';
 import { LocalAPIError, readJSON, requireLocalRequest, sendJSON } from './local-api.ts';
@@ -11,7 +11,7 @@ export function trustPDFHTML(report: TrustReport) {
   const view = projectTrustScore(report.summary.total_score, report.summary.configured_maximum, report.status);
   const presentation = report.presentation ?? buildTrustPresentation(report);
   const items = (group: 'passed' | 'failed' | 'tips') => presentation[group].length
-    ? `<ul>${presentation[group].map(item => `<li>${esc(item.text)}<small>Rules: ${esc(item.rule_ids.join(', '))}; evidence: ${esc(item.evidence_ids.join(', '))}</small></li>`).join('')}</ul>`
+    ? `<ul>${presentation[group].map(item => `<li>${esc(item.text)}${group === 'tips' && presentation.tips_version ? `<small>${(item as ImprovementTip).estimated_gain ? `Up to +${esc((item as ImprovementTip).estimated_gain)} points after fixes and reassessment.` : 'Gain pending verification.'}${(item as ImprovementTip).verification_required ? ' Further verification required.' : ''}</small>` : ''}<small>Rules: ${esc(item.rule_ids.join(', '))}; evidence: ${esc(item.evidence_ids.join(', '))}</small></li>`).join('')}</ul>`
     : `<p>${esc(presentation[`${group}_empty`])}</p>`;
   return `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>Agentopia assessment</title><style>
     @page { size: A4; margin: 18mm; } body { font: 11px/1.55 Arial,sans-serif; color:#142839; }
@@ -26,7 +26,7 @@ export function trustPDFHTML(report: TrustReport) {
     <p>Assessment status: ${esc(report.status)}. Collection status: ${esc(report.collection_status ?? 'Not reported')}.</p>
     <p>This exports the supplied current assessment; it does not recollect or independently authenticate it. Structural and protocol checks do not establish tool execution, task competence, or comprehensive security. Skipped and unknown checks are not passes. The rating uses equal quarters of configured points.</p>
     <h2>Limitations</h2><ul>${(report.limitations ?? []).map(value => `<li>${esc(value)}</li>`).join('') || '<li>No additional collection limitations reported.</li>'}</ul>
-    <h2>Reason — passed</h2>${items('passed')}<h2>Reason — failed</h2>${items('failed')}<h2>Improvement Tips</h2>${items('tips')}
+    <h2>Reason — passed</h2>${items('passed')}<h2>Reason — failed</h2>${items('failed')}<h2>Improvement Tips</h2>${presentation.tips_version ? `<p>Potential gain from displayed tips: up to +${esc(presentation.tips_gain)} points after fixes and reassessment. Applicable skipped checks carry no estimated gain. Unknown checks are excluded from improvement tips.</p>` : ''}${items('tips')}
     <h2>Provenance</h2><pre>${esc(JSON.stringify({subject: report.subject, observed_at: report.observed_at, scored_at: report.scored_at, engine_version: report.engine_version, policy: report.policy}, null, 2))}</pre>
     <h2>Complete rule evidence</h2>${OUTCOME_GROUPS.map(group => `<h2>${esc(group)}</h2>${report.rules[group].map(rule => `<section class="rule"><h3>${esc(rule.name)} · ${esc(rule.id)}</h3><p>${esc(rule.reason)}</p><pre>${esc(JSON.stringify(rule, null, 2))}</pre></section>`).join('')}`).join('')}
     <h2>Observations</h2><pre>${esc(JSON.stringify(report.observations, null, 2))}</pre></body></html>`;

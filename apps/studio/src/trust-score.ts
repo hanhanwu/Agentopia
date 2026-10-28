@@ -78,9 +78,38 @@ export function parseTrustResponse(payload: unknown): TrustReport {
       if (hasRules ? presentation.reason_source !== 'deepinfra' || typeof presentation.reason_model !== 'string' || !presentation.reason_model.trim()
           : presentation.reason_source !== 'none' || presentation.reason_model !== null) return invalid();
     }
+    const rankedTips = presentation.tips_version === '1.0';
+    if (presentation.tips_version !== undefined && !rankedTips) return invalid();
+    if (rankedTips) {
+      if (!Array.isArray(presentation.tips) || presentation.tips.length > 5 || !nonnegative(presentation.tips_gain)
+          || !['deepinfra', 'none', 'unavailable'].includes(String(presentation.tips_source))) return invalid();
+      if (presentation.tips_source === 'deepinfra'
+          ? !presentation.tips.length || typeof presentation.tips_model !== 'string' || !presentation.tips_model.trim()
+          : presentation.tips.length !== 0 || presentation.tips_model !== null) return invalid();
+      const seenRules = new Set<string>(); const families = new Set<string>();
+      let total = 0; let previousPriority = Infinity;
+      for (const tip of presentation.tips) {
+        if (!isRecord(tip) || typeof tip.family_id !== 'string' || !tip.family_id || families.has(tip.family_id)
+            || !nonnegative(tip.priority) || tip.priority <= 0 || tip.priority > previousPriority
+            || !strings(tip.rule_ids) || !tip.rule_ids.length || typeof tip.verification_required !== 'boolean'
+            || typeof tip.text !== 'string' || tip.text.trim().split(/\s+/u).length > 35 || /[<>`\r\n]/u.test(tip.text)) return invalid();
+        families.add(tip.family_id); previousPriority = tip.priority;
+        const contributors = rules.filter(rule => (tip.rule_ids as string[]).includes(rule.id));
+        if (contributors.length !== tip.rule_ids.length || contributors.some(rule => seenRules.has(rule.id)
+            || !['fail', 'skipped'].includes(rule.outcome) || !rule.evidence_ids.length
+            || !rule.reason.trim() || rule.configured_weight <= 0
+            || rule.applicability !== 'applicable')) return invalid();
+        contributors.forEach(rule => seenRules.add(rule.id));
+        const gain = contributors.filter(rule => rule.outcome === 'fail').reduce((sum, rule) => sum + rule.configured_weight, 0);
+        if (gain ? !close(tip.estimated_gain, gain) : tip.estimated_gain !== null) return invalid();
+        if (tip.verification_required !== contributors.some(rule => rule.outcome !== 'fail')) return invalid();
+        total += gain;
+      }
+      if (!close(presentation.tips_gain, total)) return invalid();
+    }
     for (const group of ['passed', 'failed', 'tips']) {
       const items = presentation[group];
-      const sourceRules = groups[group === 'tips' ? 'failed' : group] as TrustRule[];
+      const sourceRules = group === 'tips' && rankedTips ? rules.filter(rule => rule.outcome !== 'pass') : groups[group === 'tips' ? 'failed' : group] as TrustRule[];
       const isReasonSummary = presentation.version === '1.1' && group !== 'tips';
       if (!Array.isArray(items) || (!isReasonSummary && items.length > sourceRules.length)) return invalid();
       for (const item of items) {
@@ -92,10 +121,10 @@ export function parseTrustResponse(payload: unknown): TrustReport {
         if (contributing.length !== item.rule_ids.length
             || item.evidence_ids.some(id => !contributing.some(rule => rule.evidence_ids.includes(id)))) return invalid();
       }
-      // Reason selects representative findings; detailed rules and tips retain exhaustive coverage.
+      // Reason and ranked tips select representative findings; legacy tips retain full failure coverage.
       if (isReasonSummary) {
         if (Boolean(sourceRules.length) !== Boolean(items.length)) return invalid();
-      } else if (sourceRules.some(rule => !items.some(item => (item as {rule_ids: string[]}).rule_ids.includes(rule.id)))) return invalid();
+      } else if (!(group === 'tips' && rankedTips) && sourceRules.some(rule => !items.some(item => (item as {rule_ids: string[]}).rule_ids.includes(rule.id)))) return invalid();
     }
   }
   if (report.limitations !== undefined && !strings(report.limitations)) return invalid();

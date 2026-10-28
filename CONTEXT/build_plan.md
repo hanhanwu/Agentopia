@@ -90,6 +90,11 @@ Agentopia:                             assessments + visualizations
 - [x] Connect live MCP scoring through a local, bounded Python worker with
   four outcome counts, configured-maximum gauge, evidence-linked Reason /
   Improvement Tips, and a bounded PDF export of the current assessment.
+- [x] Rank up to five eligible improvement families by live configured weights ×
+  family ease × confidence, generate concise DeepInfra guidance, and display
+  conditional point gains in a keyboard-scrollable disclosure and PDF.
+  Applicable skipped checks support verification without estimated points;
+  unknown checks are excluded from improvement tips.
 
 Remaining: publish the engine for deployment, host a caller-scoped scoring
 service, apply the deferred privacy restrictions, and define separate agent scoring.

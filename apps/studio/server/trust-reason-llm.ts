@@ -41,7 +41,7 @@ FORMAT
 - At most 5 bullets TOTAL; at most 20 whitespace-separated words per text.
 - No bullet characters, markup, line breaks, or repeated claims in text.`;
 
-async function boundedJSON(response: Response): Promise<unknown> {
+export async function boundedJSON(response: Response): Promise<unknown> {
   if (!response.body) throw new Error('Empty response');
   const reader = response.body.getReader();
   const chunks: Uint8Array[] = []; let size = 0;
