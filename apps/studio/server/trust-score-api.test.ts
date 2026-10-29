@@ -1,112 +1,52 @@
-import snapshot from '../src/data/mcp-trust-score-v1.snapshot.json';
-import { legacyTrustPresentation } from './trust-test-fixtures.ts';
-const workerResult = () => ({ schema_version: '1.0', source: 'live', report: structuredClone(snapshot) });
 import { Readable, Writable } from 'node:stream';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { describe, expect, it, vi } from 'vitest';
-import { createTrustScoreHandler as createHandler, TrustScoreError, validateTrustScoreRequest } from './trust-score-api.ts';
+import { createTrustScoreHandler } from './trust-score-api.ts';
+import { displayResponse } from '../src/trust-display.fixture.ts';
 
-const createTrustScoreHandler = (root: string, run: Parameters<typeof createHandler>[1]) => createHandler(root, run, async report => legacyTrustPresentation(report));
-
-function request(body: unknown = { type: 'mcp', identifier: 'https://example.com/mcp' }, overrides: Record<string, unknown> = {}) {
-  return Object.assign(Readable.from([JSON.stringify(body)]), {
-    socket: { remoteAddress: '127.0.0.1' }, method: 'POST', url: '/api/trust-score/v1',
-    headers: { host: '127.0.0.1:8678', origin: 'http://127.0.0.1:8678', 'content-type': 'application/json' },
-    ...overrides,
-  }) as unknown as IncomingMessage;
+function request(body:unknown={type:'mcp',identifier:'https://example.com/mcp'},url='/api/trust-score/v1') {
+  return Object.assign(Readable.from([JSON.stringify(body)]),{method:'POST',url,socket:{remoteAddress:'127.0.0.1'},
+    headers:{host:'localhost:8678','content-type':'application/json'}}) as unknown as IncomingMessage;
 }
 class ResponseBuffer extends Writable {
-  status = 0;
-  chunks: Buffer[] = [];
-  writeHead(status: number) { this.status = status; return this; }
-  _write(chunk: Buffer, _encoding: string, callback: () => void) { this.chunks.push(chunk); callback(); }
-  json() { return JSON.parse(Buffer.concat(this.chunks).toString('utf8')); }
+  status=0;chunks:Buffer[]=[];
+  writeHead(status:number) {this.status=status;return this;}
+  _write(chunk:Buffer,_encoding:string,callback:()=>void) {this.chunks.push(chunk);callback();}
+  text(){return Buffer.concat(this.chunks).toString();}
 }
-const asResponse = (response: ResponseBuffer) => response as unknown as ServerResponse;
-const tick = () => new Promise<void>(resolve => setImmediate(resolve));
+const response = (res:ResponseBuffer)=>res as unknown as ServerResponse;
 
-describe('local trust-score HTTP bridge', () => {
-  it('validates typed endpoints without treating a known endpoint as a saved result', () => {
-    expect(validateTrustScoreRequest({ type: 'mcp', identifier: ' https://example.com/mcp ' })).toBe('https://example.com/mcp');
-    for (const identifier of ['file:///tmp/file', 'https://user@example.com/mcp', 'https://example.com:0/mcp']) {
-      expect(() => validateTrustScoreRequest({ type: 'mcp', identifier })).toThrow();
-    }
+describe('assessment API boundary',()=>{
+  it('sends only endpoint input, keeps credentials server-side and strips extra response metadata',async()=>{
+    const payload=displayResponse();Object.assign(payload.report,{internal_metadata:'PRIVATE_SENTINEL'});
+    const fetcher=vi.fn().mockResolvedValue(new Response(JSON.stringify(payload)));
+    const handler=createTrustScoreHandler({url:'http://localhost:9000',token:'server-only-token'},fetcher);
+    const res=new ResponseBuffer();
+    await handler.handle(request({type:'mcp',identifier:'https://example.com/mcp',internal_metadata:'untrusted'}),response(res));
+    expect(res.status).toBe(200);expect(res.text()).not.toContain('PRIVATE_SENTINEL');expect(res.text()).not.toContain('server-only-token');
+    const [url,init]=fetcher.mock.calls[0];expect(url.pathname).toBe('/api/trust-score/v1');
+    expect(JSON.parse(init.body)).toEqual({type:'mcp',identifier:'https://example.com/mcp'});
+    expect(init.headers.Authorization).toBe('Bearer server-only-token');
   });
-
-  it('validates the worker report and attaches evidence-linked presentation', async () => {
-    const result = workerResult();
-    const run = vi.fn().mockResolvedValue(result);
-    const response = new ResponseBuffer();
-    await createTrustScoreHandler('/project', run).handle(request(), asResponse(response));
-    expect(response.status).toBe(200); expect(response.json().report.presentation).toEqual(legacyTrustPresentation(snapshot));
-    expect(response.json().report.rules).toEqual(snapshot.rules);
-    expect(run).toHaveBeenCalledWith('/project', 'https://example.com/mcp', expect.any(AbortSignal));
+  it('uses only an opaque export reference for PDF requests',async()=>{
+    const fetcher=vi.fn().mockResolvedValue(new Response('%PDF-example',{headers:{'Content-Type':'application/pdf'}}));
+    const res=new ResponseBuffer();
+    await createTrustScoreHandler({url:'http://localhost:9000'},fetcher).handle(request({export_id:'synthetic-export-reference',report:{untrusted:true}},'/api/trust-score/v1/pdf'),response(res));
+    expect(res.status).toBe(200);expect(res.text()).toBe('%PDF-example');
+    expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({export_id:'synthetic-export-reference'});
   });
-
-  it('reports LLM failure without returning a deterministic Reason fallback', async () => {
-    const summarize = vi.fn().mockRejectedValue(new TrustScoreError(502, 'DeepInfra could not generate the Reason summary. Try again.'));
-    const response = new ResponseBuffer();
-    await createHandler('/project', vi.fn().mockResolvedValue(workerResult()), summarize).handle(request(), asResponse(response));
-    expect(response.status).toBe(502);
-    expect(response.json()).toEqual({ error: 'DeepInfra could not generate the Reason summary. Try again.' });
-    expect(summarize).toHaveBeenCalledWith(expect.objectContaining({summary:snapshot.summary}), expect.any(AbortSignal));
+  it('does not return upstream error bodies or execute a local fallback',async()=>{
+    const fetcher=vi.fn().mockResolvedValue(new Response('PRIVATE_SENTINEL',{status:500}));const res=new ResponseBuffer();
+    await createTrustScoreHandler({url:'http://localhost:9000'},fetcher).handle(request(),response(res));
+    expect(res.status).toBe(502);expect(res.text()).not.toContain('PRIVATE_SENTINEL');
+    const missing=new ResponseBuffer();await createTrustScoreHandler({url:''},fetcher).handle(request(),response(missing));
+    expect(missing.status).toBe(503);expect(fetcher).toHaveBeenCalledTimes(1);
   });
-
-  it('rejects invalid worker data with a generic upstream error', async () => {
-    const run = vi.fn().mockResolvedValue({ report: { internal_path: '/private/scorer' } });
-    const response = new ResponseBuffer();
-    await createTrustScoreHandler('/project', run).handle(request(), asResponse(response));
-    expect(response.status).toBe(502);
-    expect(response.json()).toEqual({ error: 'The scorer returned an invalid report.' });
-  });
-
-  it('rejects cross-site, remote, wrong-origin and oversized requests before spawning a worker', async () => {
-    const run = vi.fn(); const handler = createTrustScoreHandler('/project', run);
-    for (const [overrides, status] of [
-      [{ socket: { remoteAddress: '8.8.8.8' } }, 403],
-      [{ headers: { host: 'evil.example', 'content-type': 'application/json' } }, 403],
-      [{ headers: { host: 'localhost:8678', origin: 'https://evil.example', 'content-type': 'application/json' } }, 403],
-      [{ headers: { host: 'localhost:8678', 'sec-fetch-site': 'cross-site' } }, 403],
-      [{ headers: { host: 'localhost:8678', origin: 'null', 'content-type': 'application/json' } }, 403],
-      [{ headers: { host: '[', 'content-type': 'application/json' } }, 403],
-      [{ method: 'GET' }, 405],
-    ] as const) {
-      const response = new ResponseBuffer(); await handler.handle(request(undefined, overrides), asResponse(response));
-      expect(response.status).toBe(status);
-    }
-    const response = new ResponseBuffer(); await handler.handle(request({ identifier: 'x'.repeat(9000) }), asResponse(response));
-    expect(response.status).toBe(413); expect(run).not.toHaveBeenCalled();
-  });
-
-  it('keeps agent scoring unavailable and reports worker failures without a snapshot fallback', async () => {
-    const run = vi.fn().mockRejectedValue(new TrustScoreError(504, 'Assessment timed out.'));
-    const handler = createTrustScoreHandler('/project', run);
-    const agent = new ResponseBuffer(); await handler.handle(request({ type: 'agent', identifier: 'agent.example' }), asResponse(agent));
-    expect(agent.status).toBe(422); expect(run).not.toHaveBeenCalled();
-    const failure = new ResponseBuffer(); await handler.handle(request(), asResponse(failure));
-    expect(failure.status).toBe(504); expect(failure.json()).toEqual({ error: 'Assessment timed out.' });
-  });
-
-  it('limits concurrent workers and frees slots when jobs complete', async () => {
-    const release: Array<() => void> = [];
-    const run = vi.fn().mockImplementation(() => new Promise(resolve => release.push(() => resolve(workerResult()))));
-    const handler = createTrustScoreHandler('/project', run);
-    const jobs = [new ResponseBuffer(), new ResponseBuffer()].map(res => handler.handle(request(), asResponse(res)));
-    await tick();
-    const busy = new ResponseBuffer(); await handler.handle(request(), asResponse(busy)); expect(busy.status).toBe(429);
-    release.forEach(resolve => resolve()); await Promise.all(jobs);
-    run.mockResolvedValue(workerResult()); const next = new ResponseBuffer();
-    await handler.handle(request(), asResponse(next)); expect(next.status).toBe(200);
-  });
-
-  it('cancels in-flight work when the browser disconnects', async () => {
-    let signal: AbortSignal | undefined;
-    const run = vi.fn().mockImplementation((_root, _endpoint, supplied: AbortSignal) => {
-      signal = supplied;
-      return new Promise((_resolve, reject) => supplied.addEventListener('abort', () => reject(new TrustScoreError(499, 'Cancelled'))));
-    });
-    const handler = createTrustScoreHandler('/project', run); const response = new ResponseBuffer();
-    const job = handler.handle(request(), asResponse(response)); await tick(); response.destroy(); await job;
-    expect(signal?.aborted).toBe(true);
+  it('rejects remote and invalid export requests before contacting the service',async()=>{
+    const fetcher=vi.fn();const handler=createTrustScoreHandler({url:'http://localhost:9000'},fetcher);
+    const req=request();Object.assign(req,{socket:{remoteAddress:'203.0.113.1'}});const remote=new ResponseBuffer();
+    await handler.handle(req,response(remote));expect(remote.status).toBe(403);
+    const invalid=new ResponseBuffer();await handler.handle(request({report:{}},'/api/trust-score/v1/pdf'),response(invalid));
+    expect(invalid.status).toBe(400);expect(fetcher).not.toHaveBeenCalled();
   });
 });

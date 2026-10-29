@@ -7,7 +7,6 @@ import {
 
 import { escapeMarkup as escapeHTML } from './markup.ts';
 
-import { projectTrustScore, quarter, RATING_COLORS } from './trust-projection.ts';
 const groupName = (group: OutcomeGroup) => group[0].toUpperCase() + group.slice(1);
 const shield = '<path d="M16 3 27 7v9c0 7-11 13-11 13S5 23 5 16V7Z M10 16l4 4 8-9"/>';
 const globe = '<circle cx="16" cy="16" r="12"/><ellipse cx="16" cy="16" rx="5" ry="12"/><path d="M4 16h24"/>';
@@ -110,9 +109,7 @@ export function mountEntryFlow(options: {
   function renderReport(data: TrustReport) {
     reportData = data;
     const { summary, subject: target, presentation } = data;
-    const view = presentation?.score_display ?? projectTrustScore(summary.total_score, summary.configured_maximum, data.status);
-    // Persist the exact rendered projection for export, including older assessments.
-    if (presentation) presentation.score_display = view;
+    const view = presentation.score_display;
     const list = (group: 'passed' | 'failed' | 'tips') => presentation?.[group].length
       ? group === 'tips' ? presentation[group].map(item => `<p>${escapeHTML(item.text)}</p>`).join('')
         : `<ul>${presentation[group].map(item => `<li>${escapeHTML(item.text)}</li>`).join('')}</ul>`
@@ -130,7 +127,7 @@ export function mountEntryFlow(options: {
     report.innerHTML = `
       <header class="trust-report__header"><p class="trust-report__endpoint">${escapeHTML(target.endpoint)}</p></header>
       <div class="trust-report__body">
-      <svg class="trust-score-gauge" viewBox="0 0 500 314" role="img" aria-label="${escapeHTML(`Score ${view.score ?? 'unavailable'} of ${view.maximum} configured points. ${view.rating ?? ''}. ${data.status} assessment. Assessed maximum ${summary.assessed_maximum}. ${(data.limitations ?? []).join(' ')}`)}">
+      <svg class="trust-score-gauge" viewBox="0 0 500 314" role="img" aria-label="${escapeHTML(`Score ${view.score ?? 'unavailable'} of ${view.maximum} configured points. ${view.rating ?? ''}. ${data.status} assessment`)}">
         <defs><path id="score-arc" d="M78 272 A172 172 0 0 1 422 272" pathLength="100"/></defs>
         <path d="M64 272 A186 186 0 0 1 436 272 A14 14 0 0 1 408 272 A158 158 0 0 0 92 272 A14 14 0 0 1 64 272 Z" fill="none" stroke="#7d9cae" stroke-opacity=".55" stroke-width="1.5"/>
         <g fill="none" stroke-linecap="round" class="trust-liquid" visibility="hidden">
@@ -164,7 +161,7 @@ export function mountEntryFlow(options: {
     const sheen = report.querySelector<SVGUseElement>('.trust-liquid__sheen')!;
     const draw = (progress: number) => {
       liquid.setAttribute('visibility', progress > 0 ? 'visible' : 'hidden');
-      fill.setAttribute('stroke', RATING_COLORS[quarter(progress)]);
+      fill.setAttribute('stroke', view.color);
       for (const path of [fill, sheen]) {
         path.setAttribute('stroke-dasharray', '100 100');
         path.setAttribute('stroke-dashoffset', String(100 - progress * 100));
@@ -247,7 +244,7 @@ export function mountEntryFlow(options: {
     const deadline = window.setTimeout(() => controller.abort(), 40000);
     try {
       const response = await fetch('/api/trust-score/v1/pdf', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ schema_version: '1.0', source: 'live', report: data }), signal: controller.signal });
+        body: JSON.stringify({ export_id: data.export_id }), signal: controller.signal });
       if (!response.ok || !response.headers.get('content-type')?.startsWith('application/pdf')) throw new Error('The PDF could not be exported. Try again.');
       const blob = await response.blob();
       if (await blob.slice(0, 5).text() !== '%PDF-') throw new Error('Invalid PDF response. Try again.');

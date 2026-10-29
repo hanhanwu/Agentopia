@@ -1,89 +1,37 @@
-import { legacyTrustPresentation } from '../server/trust-test-fixtures.ts';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { OUTCOME_GROUPS, resolveTrustInput, parseTrustResponse, fetchTrustReport, type TrustReport } from './trust-score.ts';
+import { parseTrustResponse, fetchTrustReport, resolveTrustInput } from './trust-score.ts';
 
-import snapshot from './data/mcp-trust-score-v1.snapshot.json';
-const savedTrustReport: TrustReport = snapshot;
-afterEach(() => vi.unstubAllGlobals());
+import { displayResponse } from './trust-display.fixture.ts';
+afterEach(()=>vi.unstubAllGlobals());
 
-describe('MCP trust report presentation boundary', () => {
-  it('accepts any valid HTTP MCP endpoint for live collection, never a saved-score match', () => {
-    for (const endpoint of ['https://omnitravel.ai/mcp', 'https://other.example/mcp', 'https://omnitravel.ai/other']) {
-      expect(resolveTrustInput('mcp', ` ${endpoint} `)).toEqual({ status: 'ready', endpoint });
+describe('assessment display contract',()=>{
+  it('copies only allowed display fields at every level',()=>{
+    const payload=displayResponse();
+    for (const item of [payload,payload.report,payload.report.subject,payload.report.summary,payload.report.presentation,
+      payload.report.presentation.score_display,...payload.report.presentation.passed,...payload.report.presentation.failed,...payload.report.presentation.tips]) {
+      Object.assign(item,{internal_metadata:'PRIVATE_SENTINEL'});
     }
-    expect(resolveTrustInput('agent', savedTrustReport.subject.endpoint).status).toBe('unavailable');
+    expect(JSON.stringify(parseTrustResponse(payload))).not.toContain('PRIVATE_SENTINEL');
+    expect(parseTrustResponse(payload).presentation.score_display).toEqual(displayResponse().report.presentation.score_display);
   });
-
-  it('rejects malformed URLs, non-HTTP transports, credentials and fragments', () => {
-    for (const endpoint of ['', 'not a URL', 'javascript:alert(1)', 'file:///etc/passwd',
-      'https://token@omnitravel.ai/mcp', 'https://omnitravel.ai/mcp#other']) {
-      expect(resolveTrustInput('mcp', endpoint).status).toBe('invalid');
-    }
+  it('rejects missing displays, invalid counts, unsafe colors and invalid export references',()=>{
+    for (const mutate of [
+      (p:ReturnType<typeof displayResponse>)=>{p.report.summary.failed_rules=-1;},
+      (p:ReturnType<typeof displayResponse>)=>{p.report.export_id='../invalid';},
+      (p:ReturnType<typeof displayResponse>)=>{p.report.presentation.score_display.color='url(example)';},
+      (p:ReturnType<typeof displayResponse>)=>{p.report.presentation.score_display.ratio=NaN;},
+    ]) {const payload=displayResponse();mutate(payload);expect(()=>parseTrustResponse(payload)).toThrow();}
+    expect(()=>parseTrustResponse({schema_version:'2.0',report:{}})).toThrow();
   });
-
-  it('keeps all four outcomes and the retained-rule denominator', () => {
-    const report = savedTrustReport;
-    expect(OUTCOME_GROUPS.map(group => report.rules[group].length)).toEqual([5, 22, 71, 2]);
-    const all = OUTCOME_GROUPS.flatMap(group => report.rules[group]);
-    expect(all).toHaveLength(report.summary.total_rules);
-    expect(report.summary.pass_percentage).toBe(100 * report.rules.passed.length / all.length);
-    expect([...report.rules.skipped, ...report.rules.unknown].every(rule => rule.possible === 0 && rule.earned === 0)).toBe(true);
+  it('accepts endpoint input and keeps agent assessment unavailable',()=>{
+    expect(resolveTrustInput('mcp',' https://example.com/mcp ')).toEqual({status:'ready',endpoint:'https://example.com/mcp'});
+    for(const endpoint of ['file:///tmp/input','https://user@example.com/mcp','https://example.com/mcp#fragment']) expect(resolveTrustInput('mcp',endpoint).status).toBe('invalid');
+    expect(resolveTrustInput('agent','example.com').status).toBe('unavailable');
   });
-
-  it('preserves weighted points separately from the pass percentage', () => {
-    expect(savedTrustReport.summary).toMatchObject({
-      total_score: 44, assessed_maximum: 60, configured_maximum: 184, pass_percentage: 22,
-    });
-  });
-
-  it('resolves every referenced observation without depending on notebook code', () => {
-    for (const rule of OUTCOME_GROUPS.flatMap(group => savedTrustReport.rules[group])) {
-      for (const key of rule.observation_keys) expect(savedTrustReport.observations).toHaveProperty(key.replaceAll('.', '\\.'));
-    }
-  });
-});
-
-
-describe('live report response contract', () => {
-  const response = () => ({ schema_version: '1.0', source: 'live', report: { ...structuredClone(savedTrustReport), presentation: legacyTrustPresentation(savedTrustReport) } });
-
-  it('maps fresh response data without substituting the bundled snapshot', () => {
-    const payload = response();
-    payload.report.subject.endpoint = 'https://another.example/mcp';
-    const report = parseTrustResponse(payload);
-    expect(report.subject.endpoint).toBe('https://another.example/mcp');
-    expect(report.source).toBe('live');
-    expect(report.rules.unknown).toHaveLength(2);
-  });
-
-  it('rejects invalid or contradictory response shapes', () => {
-    const wrongCount = response(); wrongCount.report.summary.unknown_rules = 0;
-    const wrongScore = response(); wrongScore.report.summary.total_score = 999;
-    for (const payload of [{}, { ...response(), source: 'saved' }, wrongCount, wrongScore]) {
-      expect(() => parseTrustResponse(payload)).toThrow('invalid report');
-    }
-  });
-
-  it('rejects points attributed to skipped/unknown outcomes even with consistent totals', () => {
-    const payload = response();
-    const rule = payload.report.rules.skipped.find(rule => rule.configured_weight > 0)!;
-    rule.earned = 1; rule.possible = 1;
-    payload.report.summary.total_score++; payload.report.summary.assessed_maximum++;
-    expect(() => parseTrustResponse(payload)).toThrow('invalid report');
-  });
-
-  it('posts the entered endpoint to the API and propagates its result', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify(response()), { status: 200 }));
-    vi.stubGlobal('fetch', fetchMock);
-    const signal = new AbortController().signal;
-    expect((await fetchTrustReport('https://omnitravel.ai/mcp', signal)).source).toBe('live');
-    expect(fetchMock).toHaveBeenCalledWith('/api/trust-score/v1', expect.objectContaining({
-      method: 'POST', body: JSON.stringify({ type: 'mcp', identifier: 'https://omnitravel.ai/mcp' }), signal,
-    }));
-  });
-
-  it('surfaces service failures instead of falling back to a saved score', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: 'Timed out' }), { status: 504 })));
-    await expect(fetchTrustReport('https://other.example/mcp', new AbortController().signal)).rejects.toThrow('Timed out');
+  it('requests a display response without a local fallback',async()=>{
+    const mock=vi.fn().mockResolvedValue(new Response(JSON.stringify(displayResponse()),{status:200}));vi.stubGlobal('fetch',mock);
+    expect((await fetchTrustReport('https://example.com/mcp',new AbortController().signal)).export_id).toBe('synthetic-export-reference');
+    mock.mockResolvedValue(new Response(JSON.stringify({error:'Service unavailable.'}),{status:503}));
+    await expect(fetchTrustReport('https://example.com/mcp',new AbortController().signal)).rejects.toThrow('Service unavailable.');
   });
 });

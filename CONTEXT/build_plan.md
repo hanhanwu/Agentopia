@@ -35,9 +35,8 @@ discover → collect evidence → analyze patterns → visualize gaps → reprod
 ```
 
 Keep the experience playful and the conclusions grounded in inspectable evidence.
-The MCP scoring V1 research implementation now supplies a tested starting point
-for an assessment feature. Broader claims about agent behavior still require
-agent-specific evidence and policy.
+Assessment implementation and data remain in the private service. The public
+product displays only the results returned through its API contract.
 
 ## Repository roles
 
@@ -45,11 +44,11 @@ agent-specific evidence and policy.
   exploration, analysis, schemas, evidence, and experiments.
 - **Agentopia (public):** product workspace for the UI, reusable visualizations,
   and the user-facing assessment flow.
-- **Production scoring boundary:** a versioned, installable scoring package and
-  backend service connects the proven Lab engine to Agentopia locally. Deployment
-  must not depend on developer-local paths, private notebook imports, saved
-  research caches, or the `Agentopia/tmp/mcpscore` comparison checkout. Decide
-  where to publish the reusable engine before deploying a hosted service.
+- **Assessment boundary:** this public repository contains the UI and an API
+  adapter only. Calculation, policies, ranking, evidence, data sources, provider
+  integrations, and their fixtures belong in a separately operated private
+  service. Accept only display-ready results and opaque export references here;
+  never bundle private assessment implementations or research exports.
 
 ## Visual design workflow
 

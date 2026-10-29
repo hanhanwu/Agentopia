@@ -10,9 +10,7 @@
     "dev": "vite --host 127.0.0.1 --port 8678 --strictPort --open",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1 --port 8678 --strictPort",
-    "test": "vitest run",
-    "policies:check": "node scripts/sync-improvement-policy.mjs --check",
-    "policies:sync": "node scripts/sync-improvement-policy.mjs"
+    "test": "vitest run"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",

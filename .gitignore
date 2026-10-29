@@ -31,3 +31,9 @@ __pycache__/
 # Local research and design work that is not part of the product build
 /tmp/
 /UI_elements_design/draft/
+
+# Assessment implementation and evidence must stay outside the public product
+/apps/studio/server/policies/
+/apps/studio/server/score_worker.py
+/apps/studio/server/test_score_worker.py
+/apps/studio/src/data/*trust*.json

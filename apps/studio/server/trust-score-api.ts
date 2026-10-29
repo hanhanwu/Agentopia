@@ -1,108 +1,83 @@
-import { parseTrustResponse } from '../src/trust-score.ts';
-import { loadDeepInfraConfig } from './deepinfra.ts';
-import { summarizeTrustPresentation } from './trust-tips-llm.ts';
-import type { TrustReport } from '../src/trust-score.ts';
-import type { TrustPresentation } from '../src/trust-projection.ts';
-import { createTrustPDFHandler } from './trust-pdf.ts';
-import { spawn } from 'node:child_process';
-import { existsSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { resolve } from 'node:path';
-import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
+import { loadEnv, type Plugin, type PreviewServer, type ViteDevServer } from 'vite';
+import { parseTrustResponse } from '../src/trust-score.ts';
 import { resolveTrustInput } from '../src/trust-input.ts';
-import { LocalAPIError as TrustScoreError, readJSON, requireLocalRequest, sendJSON } from './local-api.ts';
-export { LocalAPIError as TrustScoreError } from './local-api.ts';
+import { LocalAPIError, readJSON, requireLocalRequest, sendJSON } from './local-api.ts';
 
 const API_PATH = '/api/trust-score/v1';
-const MAX_BODY = 8192;
-const MAX_REPORT = 4 * 1024 * 1024;
+export type TrustServiceConfig = { url: string; token?: string };
 
-export function validateTrustScoreRequest(body: unknown): string {
-  if (!body || typeof body !== 'object') throw new TrustScoreError(400, 'Enter an MCP endpoint.');
-  const { type, identifier } = body as Record<string, unknown>;
-  if (type !== 'agent' && type !== 'mcp') throw new TrustScoreError(400, 'Choose Agent or MCP Server.');
-  if (type === 'mcp' && typeof identifier !== 'string') throw new TrustScoreError(400, 'Enter an MCP endpoint.');
-  const result = resolveTrustInput(type, typeof identifier === 'string' ? identifier : '');
-  if (result.status !== 'ready') throw new TrustScoreError(result.status === 'unavailable' ? 422 : 400, result.message);
-  return result.endpoint;
-}
-
-export function runScoreWorker(root: string, endpoint: string, signal: AbortSignal): Promise<unknown> {
-  return new Promise((resolveJob, reject) => {
-    if (signal.aborted) { reject(signal.reason); return; }
-    const localPython = resolve(root, '.venv/bin/python');
-    const python = process.env.AGENTOPIA_SCORER_PYTHON || (existsSync(localPython) ? localPython : 'python3');
-    const worker = spawn(python, [resolve(root, 'apps/studio/server/score_worker.py')], {
-      cwd: root, stdio: ['pipe', 'pipe', 'pipe'], shell: false,
-      env: { ...process.env, PYTHONIOENCODING: 'utf-8' },
-    });
-    let settled = false;
-    let size = 0;
-    const chunks: Buffer[] = [];
-    const finish = (error?: Error, result?: unknown) => {
-      if (settled) return;
-      settled = true; clearTimeout(deadline); signal.removeEventListener('abort', abort);
-      if (error) { worker.kill('SIGKILL'); reject(error); } else resolveJob(result);
-    };
-    const abort = () => finish(new TrustScoreError(499, 'Assessment cancelled.'));
-    // Collector category budgets do not establish an overall deadline; the worker does.
-    const deadline = setTimeout(() => finish(new TrustScoreError(504, 'The assessment timed out. Try again.')), 90000);
-    signal.addEventListener('abort', abort, { once: true });
-    worker.on('error', () => finish(new TrustScoreError(503, 'The MCP scorer could not start. Check the Python scorer installation.')));
-    worker.stdin.on('error', () => { /* The exit handler reports unavailable workers. */ });
-    worker.stdout.on('data', (chunk: Buffer) => {
-      size += chunk.length;
-      if (size > MAX_REPORT) { finish(new TrustScoreError(502, 'The assessment exceeded the report size limit.')); return; }
-      chunks.push(chunk);
-    });
-    // Drain diagnostics without returning traces, filesystem paths or target secrets.
-    worker.stderr.resume();
-    worker.on('close', code => {
-      if (settled) return;
-      if (code !== 0) { finish(new TrustScoreError(503, 'The MCP scorer is unavailable. Check the Python scorer installation.')); return; }
-      try {
-        const result = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-        if (result.error) {
-          const status = [400, 422, 502, 503, 504].includes(result.error.status) ? result.error.status : 502;
-          finish(new TrustScoreError(status, typeof result.error.message === 'string' ? result.error.message : 'Assessment failed.'));
-        } else if (result.schema_version === '1.0' && result.source === 'live' && result.report) finish(undefined, result);
-        else finish(new TrustScoreError(502, 'The scorer returned an invalid report.'));
-      } catch { finish(new TrustScoreError(502, 'The scorer returned an invalid report.')); }
-    });
-    worker.stdin.end(JSON.stringify({ endpoint }));
-  });
-}
-
-export function createTrustScoreHandler(root: string, run = runScoreWorker,
-  summarize: (report: TrustReport, signal: AbortSignal) => Promise<TrustPresentation> = (report, signal) => summarizeTrustPresentation(report, loadDeepInfraConfig(root), signal)) {
-  let active = 0;
-  const controllers = new Set<AbortController>();
+export function createTrustScoreHandler(config: TrustServiceConfig, fetcher: typeof fetch = fetch) {
+  const jobs = new Set<AbortController>();
   return {
-    close() { for (const controller of controllers) controller.abort(); },
+    close() { for (const job of jobs) job.abort(); },
     async handle(req: IncomingMessage, res: ServerResponse) {
+      let controller: AbortController | undefined;
+      let deadline: ReturnType<typeof setTimeout> | undefined;
+      const cancel = () => controller?.abort();
       try {
         requireLocalRequest(req);
-        if (req.method !== 'POST') throw new TrustScoreError(405, 'Use POST to assess an MCP endpoint.');
-        if (active >= 2) throw new TrustScoreError(429, 'Two assessments are already running. Try again shortly.');
-        const endpoint = validateTrustScoreRequest(await readJSON(req, MAX_BODY));
-        // Recheck after the asynchronous body read before claiming a worker slot.
-        if (active >= 2) throw new TrustScoreError(429, 'Two assessments are already running. Try again shortly.');
-        const controller = new AbortController();
-        const cancel = () => { if (!res.writableEnded) controller.abort(); };
-        controllers.add(controller); active++; res.once('close', cancel);
-        try {
-          const payload = await run(root, endpoint, controller.signal);
-          let report;
-          try { report = parseTrustResponse(payload); }
-          catch { throw new TrustScoreError(502, 'The scorer returned an invalid report.'); }
-          report.presentation = await summarize(report, controller.signal);
-          parseTrustResponse({ schema_version: '1.0', source: 'live', report });
-          sendJSON(res, 200, { schema_version: '1.0', source: 'live', report });
+        if (req.method !== 'POST') throw new LocalAPIError(405, 'Use POST.');
+        const body = await readJSON(req, 8192);
+        if (!body || typeof body !== 'object') throw new LocalAPIError(400, 'Invalid request.');
+        const input = body as Record<string, unknown>;
+        const pdf = req.url?.split('?')[0] === `${API_PATH}/pdf`;
+        let request: Record<string, string>;
+        if (pdf) {
+          if (typeof input.export_id !== 'string' || !/^[a-zA-Z0-9_-]{16,128}$/u.test(input.export_id)) throw new LocalAPIError(400, 'Invalid report reference.');
+          request = { export_id: input.export_id };
+        } else {
+          if (input.type !== 'mcp' && input.type !== 'agent') throw new LocalAPIError(400, 'Choose Agent or MCP Server.');
+          const result = resolveTrustInput(input.type, typeof input.identifier === 'string' ? input.identifier : '');
+          if (result.status !== 'ready') throw new LocalAPIError(result.status === 'unavailable' ? 422 : 400, result.message);
+          request = { type: 'mcp', identifier: result.endpoint };
         }
-        finally { active--; controllers.delete(controller); res.removeListener('close', cancel); }
+        if (!config.url) throw new LocalAPIError(503, 'The assessment service is not configured.');
+        const target = new URL(config.url);
+        if (!['http:', 'https:'].includes(target.protocol) || target.username || target.password || target.search || target.hash) throw new LocalAPIError(503, 'The assessment service is not configured.');
+        target.pathname = `${target.pathname.replace(/\/$/u, '')}${API_PATH}${pdf ? '/pdf' : ''}`;
+        if (jobs.size >= 2) throw new LocalAPIError(429, 'Two requests are running. Try again shortly.');
+        controller = new AbortController(); jobs.add(controller); res.once('close', cancel);
+        deadline = setTimeout(cancel, pdf ? 40000 : 125000);
+        const upstream = await fetcher(target, { method: 'POST', redirect: 'error', signal: controller.signal,
+          headers: { 'Content-Type': 'application/json', ...(config.token ? { Authorization: `Bearer ${config.token}` } : {}) },
+          body: JSON.stringify(request) });
+        if (!upstream.ok) {
+          await upstream.body?.cancel();
+          throw new LocalAPIError([400,404,410,422,429,503,504].includes(upstream.status) ? upstream.status : 502,
+            pdf ? 'The PDF could not be exported. Reassess and try again.' : 'The assessment could not be completed. Try again.');
+        }
+        // Bound responses and never pass through upstream headers or diagnostic messages.
+        const chunks: Uint8Array[] = []; let size = 0;
+        if (!upstream.body) throw new Error('Empty response');
+        const reader = upstream.body.getReader();
+        try {
+          while (true) {
+            const {done, value} = await reader.read();
+            if (done) break;
+            size += value.length;
+            if (size > (pdf ? 10 * 1024 * 1024 : 512 * 1024)) { controller.abort(); throw new Error('Oversized response'); }
+            chunks.push(value);
+          }
+        } finally { reader.releaseLock(); }
+        const bytes = Buffer.concat(chunks);
+        if (res.destroyed) return;
+        if (pdf) {
+          if (!upstream.headers.get('content-type')?.startsWith('application/pdf') || bytes.subarray(0,5).toString() !== '%PDF-') throw new Error('Invalid PDF');
+          res.writeHead(200, { 'Content-Type': 'application/pdf', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
+            'Content-Disposition': 'attachment; filename="agentopia-mcp-trust-score.pdf"' });
+          res.end(bytes);
+        } else {
+          const report = parseTrustResponse(JSON.parse(bytes.toString('utf8')));
+          sendJSON(res, 200, { schema_version: '2.0', report });
+        }
       } catch (error) {
-        const failure = error instanceof TrustScoreError ? error : new TrustScoreError(500, 'The assessment could not be completed.');
+        const failure = error instanceof LocalAPIError ? error : new LocalAPIError(502, 'The assessment service is unavailable. Try again.');
         sendJSON(res, failure.status, { error: failure.message });
+      } finally {
+        if (deadline) clearTimeout(deadline);
+        if (controller) { controller.abort(); jobs.delete(controller); }
+        res.removeListener('close', cancel);
       }
     },
   };
@@ -110,15 +85,14 @@ export function createTrustScoreHandler(root: string, run = runScoreWorker,
 
 export function trustScorePlugin(): Plugin {
   const install = (server: ViteDevServer | PreviewServer) => {
-    const config = loadDeepInfraConfig(server.config.envDir, server.config.mode);
-    const handler = createTrustScoreHandler(server.config.root, runScoreWorker, (report, signal) => summarizeTrustPresentation(report, config, signal));
-    const pdf = createTrustPDFHandler();
-    server.httpServer?.once('close', () => { handler.close(); pdf.close(); });
+    const env = loadEnv(server.config.mode, server.config.envDir, '');
+    const handler = createTrustScoreHandler({ url: env.AGENTOPIA_TRUST_SERVICE_URL ?? '', token: env.AGENTOPIA_TRUST_SERVICE_TOKEN });
+    server.httpServer?.once('close', () => handler.close());
     server.middlewares.use((req, res, next) => {
-      if (req.url?.split('?')[0] === `${API_PATH}/pdf`) { void pdf.handle(req, res); return; }
-      if (req.url?.split('?')[0] !== API_PATH) { next(); return; }
-      void handler.handle(req, res);
+      const path = req.url?.split('?')[0];
+      if (path === API_PATH || path === `${API_PATH}/pdf`) void handler.handle(req, res);
+      else next();
     });
   };
-  return { name: 'agentopia-trust-score', configureServer: install, configurePreviewServer: install };
+  return { name: 'agentopia-assessment-api', configureServer: install, configurePreviewServer: install };
 }

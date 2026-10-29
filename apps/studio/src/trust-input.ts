@@ -1,4 +1,4 @@
-/** Input rules shared by the form and HTTP bridge; DNS checks stay in the worker. */
+/** Input rules shared by the form and HTTP bridge; assessment execution stays behind the API. */
 export type SubjectType = 'agent' | 'mcp';
 
 export function resolveTrustInput(type: SubjectType, input: string):
