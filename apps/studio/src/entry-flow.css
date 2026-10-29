@@ -1,4 +1,4 @@
-/* Approved desktop review geometry: trust-entry-desktop-v1.svg and trust-score-desktop-v1.svg. */
+/* Approved desktop review geometry: trust-entry-desktop-v1.svg and trust-score-desktop-v3.svg. */
 .entry-flow { min-height: 100vh; }
 .entry-splash { position: fixed; inset: 0; z-index: 1001; overflow: hidden; background: #030a06; }
 .entry-portal { position: relative; height: 100vh; min-height: 900px; overflow: hidden; isolation: isolate; background: radial-gradient(ellipse at center, #102b1b, #050a07); }
@@ -39,7 +39,7 @@
 .trust-subject.is-inactive { opacity: .4; }
 .trust-report { width: 100%; margin: 26px 0 0; padding-bottom: 66px; }
 .trust-report__endpoint { margin: 0; color: #61c7ff; font: 500 18px/24px ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
-.trust-report__body { width: 500px; margin: 6px auto 0; }
+.trust-report__body { position: relative; left: 50%; width: 500px; margin: 6px 0 0; transform: translateX(-50%); }
 .trust-score-gauge { display: block; width: 500px; height: 314px; overflow: visible; font-family: Inter, system-ui, sans-serif; }
 .trust-outcomes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
 .trust-outcome { height: 86px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border: 1px solid #29445b; border-radius: 10px; background: #07111a; color: #8aa5b8; }
@@ -87,3 +87,42 @@
 .trust-tips__list > li { padding: 12px 0 12px 4px; border-top: 1px solid #1c2e3f; }
 .trust-tips__list > li::marker { color: #61c7ff; font-weight: 600; }
 .trust-tips__item p { margin-bottom: 8px; }
+
+/* trust-score-desktop-v3.svg implementation contract (1440x900 desktop).
+   Unchanged: 500px form/report, 244x96 selectors/12px gap, 500x72 input,
+   500x84 submit; gauge r172/stroke28; outcome116x86/12px gap; disclosure
+   500x50/r10; all vertical anchors, shared headings, palette and typography.
+   Changed: PDF118x50 left, Ask176x50 right at y748. Open: two520px panels,
+   report x530, form x9.5, dock400px at1040, composer1064,786/352x90.
+   Frame503px preserved with16px narrower outer gutters in the open state.
+   Closed: original720+720 shell. Controls are translated, never scaled. */
+.trust-layout { display: grid; grid-template-columns: minmax(0, 1fr); align-items: stretch; min-height: 900px; }
+.trust-layout.has-mochi { grid-template-columns: minmax(0, 1fr) 400px; }
+.trust-layout.has-mochi .trust-world-frame { margin-inline: -16px; }
+.trust-layout > .trust-screen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.trust-report__footer { justify-content: space-between; }
+.trust-ask-mochi { width: 176px; justify-content: flex-start; gap: 10px; padding: 0 13px; }
+.mochi-logo { display: block; flex: 0 0 auto; width: 32px; height: 32px; color: #fff; filter: drop-shadow(0 0 5px #ffffff94); }
+.mochi-logo .squid-body { fill: #161419; stroke: #fff; stroke-width: 6; }
+.mochi-logo .squid-line { stroke: #fff; stroke-width: 6; }
+.mochi-logo .squid-eye { fill: #fff; }
+.mochi-logo .squid-blush { fill: #ff91a8; opacity: .72; filter: none; }
+.mochi-chat { position: sticky; top: 0; align-self: start; height: max(100vh, 900px); min-width: 0; display: flex; flex-direction: column; padding: 24px 24px 24px 23px; border-left: 1px solid #29445b; background: #07111a; color: #a7cadf; }
+.mochi-chat__header { display: flex; align-items: center; gap: 12px; height: 76px; flex: 0 0 76px; border-bottom: 1px solid #16405b; padding-bottom: 24px; }
+.mochi-chat__header .mochi-logo { width: 44px; height: 44px; }
+.mochi-chat__header h2 { margin: 0; color: #effbff; font-size: 22px; font-weight: 600; }
+.mochi-chat__close { display: block; margin-left: auto; width: 36px; height: 36px; padding: 0; border: 1px solid #29445b; border-radius: 10px; background: #0b1a27; color: #a7cadf; cursor: pointer; }
+.mochi-chat__close svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; }
+.mochi-chat__messages { flex: 1; min-height: 0; overflow: auto; scrollbar-width: thin; scrollbar-color: #456278 #07111a; margin: 24px 0; font: 500 14px/22px system-ui, sans-serif; }
+.mochi-chat__message { padding: 16px; border: 1px solid #29445b; border-radius: 10px; background: #0b1a27; white-space: pre-wrap; overflow-wrap: anywhere; }
+.mochi-chat__message + .mochi-chat__message { margin-top: 16px; }
+.mochi-chat__message--user { margin-left: 24px; padding: 14px 16px; border-color: #31607b; background: #102737; color: #c9efff; }
+.mochi-chat__status { margin: -8px 0 12px; font-size: 13px; line-height: 20px; color: #a7cadf; }
+.mochi-chat__composer { position: relative; height: 90px; flex: 0 0 90px; border: 1px solid #456278; border-radius: 10px; background: #030b12; }
+.mochi-chat__composer textarea { display: block; width: calc(100% - 54px); height: 62px; margin: 12px 13px; padding: 0; border: 0; outline: 0; resize: none; background: transparent; color: #effbff; font: 500 14px/22px system-ui, sans-serif; }
+.mochi-chat__composer textarea::placeholder { color: #858c88; }
+.mochi-chat__composer button { position: absolute; right: 13px; bottom: 13px; width: 34px; height: 34px; padding: 0; border: 1px solid #31607b; border-radius: 8px; background: #102737; color: #61c7ff; cursor: pointer; }
+.mochi-chat__composer button:disabled { opacity: .55; cursor: default; }
+.mochi-chat__composer button svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mochi-chat button:focus-visible, .mochi-chat__messages:focus-visible { outline: 2px solid #61c7ff; outline-offset: 4px; }
+.mochi-chat__composer:focus-within { border-color: #61c7ff; }

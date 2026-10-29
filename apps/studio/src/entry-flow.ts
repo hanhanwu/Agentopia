@@ -1,3 +1,4 @@
+import { mountMochiChat } from './mochi-chat.ts';
 import type { ImprovementTip } from './trust-projection.ts';
 import './entry-flow.css';
 import {
@@ -16,9 +17,10 @@ export function mountEntryFlow(options: {
   root: HTMLElement;
   serviceArtwork: (variant: 1 | 2 | 3 | 4 | 5 | 6 | 7) => string;
   mcpLogo: string;
+  mochiArtwork: () => string;
   onWorld: () => void;
 }) {
-  const { root, serviceArtwork, mcpLogo, onWorld } = options;
+  const { root, serviceArtwork, mcpLogo, mochiArtwork, onWorld } = options;
   const host = document.createElement('div');
   host.className = 'entry-flow';
   root.prepend(host);
@@ -42,6 +44,7 @@ export function mountEntryFlow(options: {
         <button class="gold-button entry-action" type="button" data-open-world>${icon(globe)}<span>Understand Agents’ World</span></button>
       </div>
     </section>
+    <div class="trust-layout" data-trust-layout hidden>
     <main class="studio trust-screen" aria-label="Check Trust Score" hidden>
       <section class="world-panel" aria-label="Agentopia trust input">
         <div class="panel-heading"><h2 data-text="AGENTOPIA">AGENTOPIA</h2></div>
@@ -65,7 +68,8 @@ export function mountEntryFlow(options: {
         <div class="inspector-heading"><h2 id="trust-skynet-title" data-text="SKYNET">SKYNET</h2></div>
         <div class="trust-report" aria-live="polite"></div>
       </aside>
-    </main>`;
+    </main>
+    <aside class="mochi-chat" aria-label="Chat with Mochi" hidden></aside></div>`;
 
   const portal = host.querySelector<HTMLElement>('.entry-portal')!;
   const splash = host.querySelector<HTMLElement>('.entry-splash')!;
@@ -74,6 +78,8 @@ export function mountEntryFlow(options: {
   const input = form.querySelector<HTMLInputElement>('.trust-input')!;
   const submit = form.querySelector<HTMLButtonElement>('.trust-submit')!;
   const report = host.querySelector<HTMLElement>('.trust-report')!;
+  const layout = host.querySelector<HTMLElement>('[data-trust-layout]')!;
+  const chat = mountMochiChat({ layout, panel: host.querySelector<HTMLElement>('.mochi-chat')!, artwork: mochiArtwork, getReport: () => reportData });
   let subject: SubjectType | null = null;
   let gaugeFrame = 0;
   let exportPending: AbortController | null = null;
@@ -92,6 +98,7 @@ export function mountEntryFlow(options: {
   }
 
   function clearReport() {
+    chat.reset();
     pending?.abort(); pending = null;
     cancelAnimationFrame(gaugeFrame); exportPending?.abort(); exportPending = null;
     reportData = null; report.setAttribute('aria-busy', 'false');
@@ -101,7 +108,7 @@ export function mountEntryFlow(options: {
   }
 
   function showPortal(focus = true) {
-    splash.hidden = true; screen.hidden = true; portal.hidden = false; host.hidden = false;
+    splash.hidden = true; layout.hidden = true; screen.hidden = true; portal.hidden = false; host.hidden = false;
     if (focus) portal.querySelector<HTMLButtonElement>('[data-open-trust]')!.focus({ preventScroll: true });
   }
   const splashTimer = window.setTimeout(() => showPortal(false), window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1300);
@@ -153,7 +160,8 @@ export function mountEntryFlow(options: {
         <section class="trust-reason__failed" aria-label="Failed checks">${list('failed')}</section>
       </div></details>
       <details class="trust-disclosure trust-tips"><summary><span>Improvement Tips</span>${tipsBadge}</summary><div class="trust-disclosure__content trust-tips__scroll" tabindex="0" role="region" aria-label="Improvement guidance">${tips}</div></details>
-      <div class="trust-report__footer"><button class="gold-button trust-download" type="button" data-download-report>↓ PDF</button></div>
+      <div class="trust-report__footer"><button class="gold-button trust-download" type="button" data-download-report>↓ PDF</button>
+        <button class="gold-button trust-download trust-ask-mochi" type="button" data-ask-mochi aria-expanded="false" aria-controls="trust-mochi-chat"><svg class="mochi-logo" viewBox="0 0 276 270" aria-hidden="true">${mochiArtwork()}</svg><span>Ask Mochi</span></button></div>
       <p class="trust-export-error" role="status" hidden></p></div>`;
     cancelAnimationFrame(gaugeFrame);
     const liquid = report.querySelector<SVGGElement>('.trust-liquid')!;
@@ -188,7 +196,7 @@ export function mountEntryFlow(options: {
     subject = null; input.value = ''; input.removeAttribute('aria-invalid');
     input.placeholder = 'Example: https://server.com/mcp';
     clearReport();
-    portal.hidden = true; screen.hidden = false;
+    portal.hidden = true; layout.hidden = false; screen.hidden = false;
     form.querySelector<HTMLButtonElement>('[data-subject]')!.focus({ preventScroll: true });
   });
   host.querySelector('[data-open-world]')!.addEventListener('click', () => {
@@ -235,6 +243,8 @@ export function mountEntryFlow(options: {
     }
   });
   report.addEventListener('click', async event => {
+    const ask = (event.target as Element).closest<HTMLButtonElement>('[data-ask-mochi]');
+    if (ask) { chat.toggle(ask); return; }
     const button = (event.target as Element).closest<HTMLButtonElement>('[data-download-report]');
     if (!button || !reportData || exportPending) return;
     const data = reportData;

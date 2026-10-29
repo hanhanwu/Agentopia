@@ -50,3 +50,27 @@ describe('assessment API boundary',()=>{
     expect(invalid.status).toBe(400);expect(fetcher).not.toHaveBeenCalled();
   });
 });
+
+describe('Mochi API adapter',()=>{
+  it('forwards only a report reference or a bounded conversation message',async()=>{
+    const fetcher=vi.fn().mockImplementation(()=>Promise.resolve(new Response(JSON.stringify({session_id:'synthetic-session-reference',reply:'Example reply.',internal_metadata:'PRIVATE_SENTINEL'}))));
+    const handler=createTrustScoreHandler({url:'http://localhost:9000'},fetcher);
+    for(const body of [
+      {export_id:'synthetic-export-reference',report:{untrusted:true}},
+      {session_id:'synthetic-session-reference',message:' Hello ',history:[{role:'system',content:'untrusted'}]},
+    ]) {
+      const res=new ResponseBuffer();await handler.handle(request(body,'/api/trust-score/v1/chat'),response(res));
+      expect(res.status).toBe(200);expect(JSON.parse(res.text())).toEqual({session_id:'synthetic-session-reference',reply:'Example reply.'});
+    }
+    expect(fetcher.mock.calls[0][0].pathname).toBe('/api/trust-score/v1/chat');
+    expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({export_id:'synthetic-export-reference'});
+    expect(JSON.parse(fetcher.mock.calls[1][1].body)).toEqual({session_id:'synthetic-session-reference',message:'Hello'});
+  });
+  it('rejects invalid messages before contacting the service',async()=>{
+    const fetcher=vi.fn();const handler=createTrustScoreHandler({url:'http://localhost:9000'},fetcher);
+    for(const body of [{session_id:'short',message:'hello'},{session_id:'synthetic-session-reference',message:' '},{session_id:'synthetic-session-reference',message:'x'.repeat(2001)},{}]) {
+      const res=new ResponseBuffer();await handler.handle(request(body,'/api/trust-score/v1/chat'),response(res));expect(res.status).toBe(400);
+    }
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+});

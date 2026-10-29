@@ -21,9 +21,20 @@ export function createTrustScoreHandler(config: TrustServiceConfig, fetcher: typ
         const body = await readJSON(req, 8192);
         if (!body || typeof body !== 'object') throw new LocalAPIError(400, 'Invalid request.');
         const input = body as Record<string, unknown>;
-        const pdf = req.url?.split('?')[0] === `${API_PATH}/pdf`;
+        const path = req.url?.split('?')[0];
+        const pdf = path === `${API_PATH}/pdf`;
+        const chat = path === `${API_PATH}/chat`;
         let request: Record<string, string>;
-        if (pdf) {
+        if (chat) {
+          if (typeof input.session_id === 'string') {
+            if (!/^[a-zA-Z0-9_-]{16,128}$/u.test(input.session_id) || typeof input.message !== 'string'
+                || !input.message.trim() || input.message.length > 2000) throw new LocalAPIError(400, 'Invalid message.');
+            request = { session_id: input.session_id, message: input.message.trim() };
+          } else {
+            if (typeof input.export_id !== 'string' || !/^[a-zA-Z0-9_-]{16,128}$/u.test(input.export_id)) throw new LocalAPIError(400, 'Invalid assessment reference.');
+            request = { export_id: input.export_id };
+          }
+        } else if (pdf) {
           if (typeof input.export_id !== 'string' || !/^[a-zA-Z0-9_-]{16,128}$/u.test(input.export_id)) throw new LocalAPIError(400, 'Invalid report reference.');
           request = { export_id: input.export_id };
         } else {
@@ -35,17 +46,17 @@ export function createTrustScoreHandler(config: TrustServiceConfig, fetcher: typ
         if (!config.url) throw new LocalAPIError(503, 'The assessment service is not configured.');
         const target = new URL(config.url);
         if (!['http:', 'https:'].includes(target.protocol) || target.username || target.password || target.search || target.hash) throw new LocalAPIError(503, 'The assessment service is not configured.');
-        target.pathname = `${target.pathname.replace(/\/$/u, '')}${API_PATH}${pdf ? '/pdf' : ''}`;
+        target.pathname = `${target.pathname.replace(/\/$/u, '')}${API_PATH}${pdf ? '/pdf' : chat ? '/chat' : ''}`;
         if (jobs.size >= 2) throw new LocalAPIError(429, 'Two requests are running. Try again shortly.');
         controller = new AbortController(); jobs.add(controller); res.once('close', cancel);
-        deadline = setTimeout(cancel, pdf ? 40000 : 125000);
+        deadline = setTimeout(cancel, pdf ? 40000 : chat ? 35000 : 125000);
         const upstream = await fetcher(target, { method: 'POST', redirect: 'error', signal: controller.signal,
           headers: { 'Content-Type': 'application/json', ...(config.token ? { Authorization: `Bearer ${config.token}` } : {}) },
           body: JSON.stringify(request) });
         if (!upstream.ok) {
           await upstream.body?.cancel();
           throw new LocalAPIError([400,404,410,422,429,503,504].includes(upstream.status) ? upstream.status : 502,
-            pdf ? 'The PDF could not be exported. Reassess and try again.' : 'The assessment could not be completed. Try again.');
+            pdf ? 'The PDF could not be exported. Reassess and try again.' : chat ? 'Mochi could not reply. Try again.' : 'The assessment could not be completed. Try again.');
         }
         // Bound responses and never pass through upstream headers or diagnostic messages.
         const chunks: Uint8Array[] = []; let size = 0;
@@ -67,6 +78,12 @@ export function createTrustScoreHandler(config: TrustServiceConfig, fetcher: typ
           res.writeHead(200, { 'Content-Type': 'application/pdf', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
             'Content-Disposition': 'attachment; filename="agentopia-mcp-trust-score.pdf"' });
           res.end(bytes);
+        } else if (chat) {
+          const data = JSON.parse(bytes.toString('utf8')) as Record<string, unknown>;
+          if (!data || typeof data !== 'object' || typeof data.session_id !== 'string'
+              || !/^[a-zA-Z0-9_-]{16,128}$/u.test(data.session_id) || typeof data.reply !== 'string'
+              || !data.reply.trim() || data.reply.length > 6000) throw new Error('Invalid chat response');
+          sendJSON(res, 200, { session_id: data.session_id, reply: data.reply });
         } else {
           const report = parseTrustResponse(JSON.parse(bytes.toString('utf8')));
           sendJSON(res, 200, { schema_version: '2.0', report });
@@ -90,7 +107,7 @@ export function trustScorePlugin(): Plugin {
     server.httpServer?.once('close', () => handler.close());
     server.middlewares.use((req, res, next) => {
       const path = req.url?.split('?')[0];
-      if (path === API_PATH || path === `${API_PATH}/pdf`) void handler.handle(req, res);
+      if (path === API_PATH || path === `${API_PATH}/pdf` || path === `${API_PATH}/chat`) void handler.handle(req, res);
       else next();
     });
   };
