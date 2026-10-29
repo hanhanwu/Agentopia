@@ -1,15 +1,20 @@
 # Agentopia
 
-## Explain Agent Discovery -> Agent Interactions, in a Fun Way 🐙
+## Peek Behind the Scenes of AI Agents 🐙
 
 ![Agentopia game UI demo](demo/agentopia_v0_demo.gif)
 
-## Run Studio
+## Run Local Studio
 
 Requires Node.js 20.19+ or 22.12+.
 
 ```bash
 npm install
+
+cd Agentopia_Lab/Trust_Service
+npm start
+
+cd Agentopia
 npm run dev
 ```
 
