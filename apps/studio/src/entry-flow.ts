@@ -1,5 +1,4 @@
 import { mountMochiChat } from './mochi-chat.ts';
-import type { ImprovementTip } from './trust-projection.ts';
 import './entry-flow.css';
 import {
   fetchTrustReport, OUTCOME_GROUPS, resolveTrustInput,
@@ -117,14 +116,14 @@ export function mountEntryFlow(options: {
     reportData = data;
     const { summary, subject: target, presentation } = data;
     const view = presentation.score_display;
-    const list = (group: 'passed' | 'failed' | 'tips') => presentation?.[group].length
+    const list = (group: 'passed' | 'failed' | 'tips') => presentation[group].length
       ? group === 'tips' ? presentation[group].map(item => `<p>${escapeHTML(item.text)}</p>`).join('')
         : `<ul>${presentation[group].map(item => `<li>${escapeHTML(item.text)}</li>`).join('')}</ul>`
-      : `<p>${escapeHTML(presentation?.[`${group}_empty`] ?? 'No assessment details available.')}</p>`;
-    const rankedTips = presentation?.tips_version === '1.0';
+      : `<p>${escapeHTML(presentation[`${group}_empty`] ?? 'No assessment details available.')}</p>`;
+    const rankedTips = presentation.tips_version === '1.0';
     const gainLabel = (gain: number | null | undefined) => gain ? `Up to +${Number(gain.toFixed(2))} pts` : 'Gain pending verification';
     const tips = rankedTips && presentation.tips.length
-      ? `<ol class="trust-tips__list">${(presentation.tips as ImprovementTip[]).map(item => `<li><div class="trust-tips__item">
+      ? `<ol class="trust-tips__list">${presentation.tips.map(item => `<li><div class="trust-tips__item">
           <p>${escapeHTML(item.text)}</p><span class="trust-tips__gain">${gainLabel(item.estimated_gain)}</span>
         </div></li>`).join('')}</ol>`
       : list('tips');

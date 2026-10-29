@@ -1,17 +1,10 @@
+import { MAX_MESSAGE_LENGTH, parseChatRequest, parseChatResponse, type ChatRequest, type ChatResponse } from './mochi-contract.ts';
 import type { TrustReport } from './trust-score.ts';
 
-type ChatResponse = { session_id: string; reply: string };
-function parseChat(value: unknown): ChatResponse {
-  if (!value || typeof value !== 'object') throw new Error('Invalid chat response.');
-  const data = value as Record<string, unknown>;
-  if (typeof data.session_id !== 'string' || !/^[a-zA-Z0-9_-]{16,128}$/u.test(data.session_id)
-      || typeof data.reply !== 'string' || !data.reply.trim() || data.reply.length > 6000) throw new Error('Invalid chat response.');
-  return { session_id: data.session_id, reply: data.reply };
-}
-export async function requestMochi(body: { export_id: string } | { session_id: string; message: string }, signal: AbortSignal): Promise<ChatResponse> {
-  const response = await fetch('/api/trust-score/v1/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal });
+export async function requestMochi(body: ChatRequest, signal: AbortSignal): Promise<ChatResponse> {
+  const response = await fetch('/api/trust-score/v1/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(parseChatRequest(body)), signal });
   if (!response.ok) throw new Error(response.status === 410 ? 'This conversation has expired. Run a new assessment.' : 'Mochi could not reply. Try again.');
-  return parseChat(await response.json());
+  return parseChatResponse(await response.json());
 }
 
 export function mountMochiChat(options: { layout: HTMLElement; panel: HTMLElement; artwork: () => string; getReport: () => TrustReport | null }) {
@@ -21,7 +14,7 @@ export function mountMochiChat(options: { layout: HTMLElement; panel: HTMLElemen
     <button class="mochi-chat__close" type="button" aria-label="Close Mochi"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="m13 13 10 10m0-10L13 23"/></svg></button></header>
     <div class="mochi-chat__messages" role="log" aria-label="Conversation" aria-live="polite" tabindex="0"></div>
     <p class="mochi-chat__status" role="status" hidden></p>
-    <form class="mochi-chat__composer"><textarea aria-label="Message Mochi" placeholder="Message Mochi…" maxlength="2000" rows="2"></textarea>
+    <form class="mochi-chat__composer"><textarea aria-label="Message Mochi" placeholder="Message Mochi…" maxlength="${MAX_MESSAGE_LENGTH}" rows="2"></textarea>
     <button type="submit" aria-label="Send message"><svg viewBox="0 0 34 34" aria-hidden="true"><path d="M17 25V10m-5 5 5-5 5 5"/></svg></button></form>`;
   const messages = panel.querySelector<HTMLElement>('.mochi-chat__messages')!;
   const composer = panel.querySelector<HTMLFormElement>('form')!;

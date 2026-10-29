@@ -1,3 +1,4 @@
+import { isOpaqueReference, parseChatRequest, parseChatResponse } from '../src/mochi-contract.ts';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { loadEnv, type Plugin, type PreviewServer, type ViteDevServer } from 'vite';
 import { parseTrustResponse } from '../src/trust-score.ts';
@@ -26,16 +27,10 @@ export function createTrustScoreHandler(config: TrustServiceConfig, fetcher: typ
         const chat = path === `${API_PATH}/chat`;
         let request: Record<string, string>;
         if (chat) {
-          if (typeof input.session_id === 'string') {
-            if (!/^[a-zA-Z0-9_-]{16,128}$/u.test(input.session_id) || typeof input.message !== 'string'
-                || !input.message.trim() || input.message.length > 2000) throw new LocalAPIError(400, 'Invalid message.');
-            request = { session_id: input.session_id, message: input.message.trim() };
-          } else {
-            if (typeof input.export_id !== 'string' || !/^[a-zA-Z0-9_-]{16,128}$/u.test(input.export_id)) throw new LocalAPIError(400, 'Invalid assessment reference.');
-            request = { export_id: input.export_id };
-          }
+          try { request = parseChatRequest(input); }
+          catch { throw new LocalAPIError(400, 'Invalid message.'); }
         } else if (pdf) {
-          if (typeof input.export_id !== 'string' || !/^[a-zA-Z0-9_-]{16,128}$/u.test(input.export_id)) throw new LocalAPIError(400, 'Invalid report reference.');
+          if (!isOpaqueReference(input.export_id)) throw new LocalAPIError(400, 'Invalid report reference.');
           request = { export_id: input.export_id };
         } else {
           if (input.type !== 'mcp' && input.type !== 'agent') throw new LocalAPIError(400, 'Choose Agent or MCP Server.');
@@ -79,11 +74,7 @@ export function createTrustScoreHandler(config: TrustServiceConfig, fetcher: typ
             'Content-Disposition': 'attachment; filename="agentopia-mcp-trust-score.pdf"' });
           res.end(bytes);
         } else if (chat) {
-          const data = JSON.parse(bytes.toString('utf8')) as Record<string, unknown>;
-          if (!data || typeof data !== 'object' || typeof data.session_id !== 'string'
-              || !/^[a-zA-Z0-9_-]{16,128}$/u.test(data.session_id) || typeof data.reply !== 'string'
-              || !data.reply.trim() || data.reply.length > 6000) throw new Error('Invalid chat response');
-          sendJSON(res, 200, { session_id: data.session_id, reply: data.reply });
+          sendJSON(res, 200, parseChatResponse(JSON.parse(bytes.toString('utf8'))));
         } else {
           const report = parseTrustResponse(JSON.parse(bytes.toString('utf8')));
           sendJSON(res, 200, { schema_version: '2.0', report });

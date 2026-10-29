@@ -1,3 +1,4 @@
+import { isOpaqueReference } from './mochi-contract.ts';
 import type { TrustPresentation, PresentationItem, ImprovementTip } from './trust-projection.ts';
 export { resolveTrustInput } from './trust-input.ts';
 export type { SubjectType } from './trust-input.ts';
@@ -21,7 +22,7 @@ export function parseTrustResponse(payload: unknown): TrustReport {
   if (!record(payload) || payload.schema_version !== '2.0' || !record(payload.report)) return invalid();
   const report = payload.report;
   if (!record(report.subject) || typeof report.subject.endpoint !== 'string'
-      || typeof report.export_id !== 'string' || !/^[a-zA-Z0-9_-]{16,128}$/u.test(report.export_id)
+      || !isOpaqueReference(report.export_id)
       || !['complete', 'partial', 'unavailable'].includes(String(report.status))
       || !record(report.summary) || !record(report.presentation)) return invalid();
   const summary = {} as TrustReport['summary'];
