@@ -1,8 +1,15 @@
 # Agentopia
 
-## Peek Behind the Scenes of AI Agents 🐙
+## FEATURES
+### Peek Behind the Scenes of AI Agents 🐙
 
 ![Agentopia game UI demo](demo/agentopia_v0_demo.gif)
+
+### Portable Visualization
+
+![Portable visualization](demo/portable_gif.gif)
+
+👉 [Enter the exhibition >>](demo/exhibition.md)
 
 ## Run Local Studio
 
@@ -26,8 +33,3 @@ for pid in $(lsof -tiTCP:8678 -sTCP:LISTEN); do kill "$pid"; done
 ```
 
 
-## Portable Visualization
-
-![Portable visualization](demo/portable_gif.gif)
-
-👉 [Enter the exhibition >>](demo/exhibition.md)
