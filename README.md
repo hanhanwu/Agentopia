@@ -26,10 +26,3 @@ for pid in $(lsof -tiTCP:8678 -sTCP:LISTEN); do kill "$pid"; done
 ![Portable visualization](demo/portable_gif.gif)
 
 👉 [Enter the exhibition >>](demo/exhibition.md)
-
-The assessment screen connects to a separately operated service. Set
-`AGENTOPIA_TRUST_SERVICE_URL` and `AGENTOPIA_TRUST_SERVICE_TOKEN` in an ignored
-`.env.local` file on the Studio server, then restart Studio. Without a configured
-service, the screen reports that assessment is unavailable. This repository
-contains only the display contract and API adapter; assessment calculations,
-policies, data sources, and provider integrations must remain private.
