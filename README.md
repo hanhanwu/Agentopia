@@ -1,13 +1,13 @@
 # Agentopia
 
 ## Features
-### Peek Behind the Scenes of AI Agents 🐙
-
-![Agentopia game UI demo](demo/agentopia_v0_demo.gif)
-
 ### Trust Score for MCP Servers and Agents 💎
 
 ![Trust Score](demo/trust_score.gif)
+
+### Peek Behind the Scenes of AI Agents 🐙
+
+![Agentopia game UI demo](demo/agentopia_v0_demo.gif)
 
 ### Portable Visualization 🪄
 
