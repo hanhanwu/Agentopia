@@ -9,7 +9,7 @@
 
 ![Agentopia game UI demo](demo/agentopia_v0_demo.gif)
 
-### Portable Visualization 🧳
+### Portable Visualization 🍱
 
 ![Portable visualization](demo/portable_gif.gif)
 
