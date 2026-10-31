@@ -1,7 +1,7 @@
 # Agentopia
 
 ## Features
-### Trust Score for MCP Servers and Agents 🌟
+### Trust Score for MCP Servers and Agents 💎
 
 ![Trust Score](demo/trust_score.gif)
 
