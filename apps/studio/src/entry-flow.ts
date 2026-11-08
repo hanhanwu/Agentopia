@@ -9,6 +9,7 @@ import {
 import { escapeMarkup as escapeHTML } from './markup.ts';
 
 const groupName = (group: OutcomeGroup) => group[0].toUpperCase() + group.slice(1);
+const LIQUID_COLORS = ['#ff657a', '#ffad5c', '#ffd166', '#45ff8a'] as const;
 const shield = '<path d="M16 3 27 7v9c0 7-11 13-11 13S5 23 5 16V7Z M10 16l4 4 8-9"/>';
 const globe = '<circle cx="16" cy="16" r="12"/><ellipse cx="16" cy="16" rx="5" ry="12"/><path d="M4 16h24"/>';
 const icon = (paths: string) => `<svg class="entry-action__icon" viewBox="0 0 32 32" aria-hidden="true">${paths}</svg>`;
@@ -168,7 +169,7 @@ export function mountEntryFlow(options: {
     const sheen = report.querySelector<SVGUseElement>('.trust-liquid__sheen')!;
     const draw = (progress: number) => {
       liquid.setAttribute('visibility', progress > 0 ? 'visible' : 'hidden');
-      fill.setAttribute('stroke', view.color);
+      fill.setAttribute('stroke', LIQUID_COLORS[Math.min(3, Math.floor(progress * 4))]);
       for (const path of [fill, sheen]) {
         path.setAttribute('stroke-dasharray', '100 100');
         path.setAttribute('stroke-dashoffset', String(100 - progress * 100));
