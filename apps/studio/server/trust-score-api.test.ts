@@ -31,7 +31,7 @@ describe('assessment API boundary',()=>{
   it('forwards the current V2 display and rejects stale or inconsistent projections', async () => {
     const payload = displayResponse();
     payload.report.summary = {failed_rules:8, passed_rules:40, skipped_rules:4, unknown_rules:50};
-    payload.report.presentation.score_display = {score:75, maximum:186, ratio:0.4032258064516129, rating:'Fair', color:'#ffad5c'};
+    payload.report.presentation.score_display = {score:62.5, maximum:100, ratio:0.625, rating:'Good', color:'#ffd166'};
     const fetcher = vi.fn().mockImplementation(() => Promise.resolve(new Response(JSON.stringify(payload))));
     const handler = createTrustScoreHandler({url:'http://localhost:9000/private/'}, fetcher);
     const res = new ResponseBuffer();

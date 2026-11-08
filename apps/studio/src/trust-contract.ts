@@ -11,6 +11,7 @@ export type TrustReport = {
   summary: Record<`${OutcomeGroup}_rules`, number>;
   presentation: TrustPresentation;
 };
+/** Assessed-score display on a 0–100 scale, supplied by the private service. */
 export type TrustScoreDisplay = {
   ratio: number; score: number | null; maximum: number; rating: string | null; color: string;
 };

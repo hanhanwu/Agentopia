@@ -133,7 +133,7 @@ export function mountEntryFlow(options: {
     report.innerHTML = `
       <header class="trust-report__header"><p class="trust-report__endpoint">${escapeHTML(target.endpoint)}</p></header>
       <div class="trust-report__body">
-      <svg class="trust-score-gauge" viewBox="0 0 500 314" role="img" aria-label="${escapeHTML(`Score ${view.score ?? 'unavailable'} of ${view.maximum} configured points. ${view.rating ?? ''}. ${data.status} assessment`)}">
+      <svg class="trust-score-gauge" viewBox="0 0 500 314" role="img" aria-label="${escapeHTML(`Score ${view.score ?? 'unavailable'} of ${view.maximum} assessed-score points. ${view.rating ?? ''}`)}">
         <defs><path id="score-arc" d="M78 272 A172 172 0 0 1 422 272" pathLength="100"/></defs>
         <path d="M64 272 A186 186 0 0 1 436 272 A14 14 0 0 1 408 272 A158 158 0 0 0 92 272 A14 14 0 0 1 64 272 Z" fill="none" stroke="#7d9cae" stroke-opacity=".55" stroke-width="1.5"/>
         <g fill="none" stroke-linecap="round" class="trust-liquid" visibility="hidden">

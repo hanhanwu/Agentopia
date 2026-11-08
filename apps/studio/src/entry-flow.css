@@ -79,7 +79,7 @@
 
 /* The native disclosure header stays outside the bounded, keyboard-scrollable guidance. */
 .trust-tips__total, .trust-tips__gain { color: #8ae2c0; background: #45ff8a0d; border: 1px solid #45ff8a33; border-radius: 6px; font-size: 12px; line-height: 20px; padding: 2px 8px; font-weight: 600; }
-.trust-tips__total { margin-left: auto; white-space: nowrap; }
+.trust-tips__total { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 130px; width: 130px; height: 24px; margin-left: auto; padding-block: 0; white-space: nowrap; }
 .trust-tips > summary > span:first-child { margin-right: 12px; }
 .trust-tips__scroll { max-height: 320px; overflow-y: auto; scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: #456278 #07111a; overscroll-behavior: contain; }
 .trust-tips__scroll:focus-visible { outline: 2px solid #61c7ff; outline-offset: -3px; }

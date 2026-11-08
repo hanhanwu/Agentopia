@@ -26,23 +26,27 @@ describe('assessment display contract',()=>{
   it('preserves V2-sized outcomes, server-provided display values and effective tip gains', () => {
     const payload = displayResponse();
     payload.report.summary = {failed_rules:8, passed_rules:40, skipped_rules:4, unknown_rules:50};
-    payload.report.presentation.score_display = {score:75, maximum:186, ratio:0.4032258064516129, rating:'Fair', color:'#ffad5c'};
+    payload.report.presentation.score_display = {score:62.5, maximum:100, ratio:0.625, rating:'Good', color:'#ffd166'};
     payload.report.presentation.tips[0].estimated_gain = 1;
     payload.report.presentation.tips_gain = 1;
     const report = parseTrustResponse(payload);
     expect(Object.values(report.summary).reduce((sum, count) => sum + count, 0)).toBe(102);
     expect(report.presentation.score_display).toEqual(payload.report.presentation.score_display);
     expect(report.presentation.tips_gain).toBe(1);
-    // Custom deployments can return different maxima and counts without a UI policy update.
-    payload.report.presentation.score_display.maximum = 250;
-    payload.report.presentation.score_display.ratio = 0.3;
-    expect(parseTrustResponse(payload).presentation.score_display.maximum).toBe(250);
+    payload.report.presentation.score_display.maximum = 186;
+    expect(() => parseTrustResponse(payload)).toThrow();
+  });
+  it('accepts one-decimal gains whose rounded total differs from rounded members', () => {
+    const payload = displayResponse();
+    payload.report.presentation.tips = [5,8.3,8.3,3.3,1.7].map(estimated_gain => ({text:'Example action.',estimated_gain}));
+    payload.report.presentation.tips_gain = 26.7;
+    expect(parseTrustResponse(payload).presentation.tips_gain).toBe(26.7);
   });
   it('rejects stale presentation versions, inconsistent gains and overflowing displays', () => {
     for (const mutate of [
       (p: ReturnType<typeof displayResponse>) => { delete (p.report.presentation as Partial<typeof p.report.presentation>).tips_version; },
       (p: ReturnType<typeof displayResponse>) => { p.report.presentation.tips_gain = 5; },
-      (p: ReturnType<typeof displayResponse>) => { p.report.presentation.score_display.score = 21; },
+      (p: ReturnType<typeof displayResponse>) => { p.report.presentation.score_display.score = 101; },
       (p: ReturnType<typeof displayResponse>) => { p.report.presentation.score_display.maximum = 0; },
       (p: ReturnType<typeof displayResponse>) => { p.report.summary.passed_rules = 1.5; },
       (p: ReturnType<typeof displayResponse>) => { p.report.presentation.passed = Array.from({length:5}, () => ({text:'Finding.'})); },

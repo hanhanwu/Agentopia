@@ -27,8 +27,9 @@ export function parseTrustResponse(payload: unknown): TrustReport {
     summary[`${group}_rules`] = count;
   }
   const p = report.presentation, display = p.score_display;
-  if (!record(display) || !nonnegative(display.ratio) || display.ratio > 1 || !nonnegative(display.maximum)
-      || (display.score !== null && (!nonnegative(display.score) || display.maximum <= 0 || display.score > display.maximum))
+  if (!record(display) || !nonnegative(display.ratio) || display.ratio > 1 || display.maximum !== 100
+      || (display.score !== null && (!nonnegative(display.score) || display.maximum <= 0 || display.score > display.maximum
+          || Math.abs(display.score - 100 * display.ratio) > 0.05 + 1e-8))
       || (display.score === null && (display.ratio !== 0 || display.rating !== null))
       || (report.status === 'unavailable' && display.score !== null)
       || (display.rating !== null && (typeof display.rating !== 'string' || !display.rating.trim() || display.rating.length > 80))
@@ -55,7 +56,7 @@ export function parseTrustResponse(payload: unknown): TrustReport {
   }
   const totalGain = presentation.tips.reduce((sum, tip) => sum + (tip.estimated_gain ?? 0), 0);
   if (presentation.passed.length + presentation.failed.length > 5
-      || !Number.isFinite(totalGain) || Math.abs(totalGain - presentation.tips_gain) > 1e-8) return invalid();
+      || !Number.isFinite(totalGain) || Math.abs(totalGain - presentation.tips_gain) > 0.05 * (presentation.tips.length + 1) + 1e-8) return invalid();
   return { export_id: report.export_id, subject: { endpoint: report.subject.endpoint },
     status: report.status as TrustReport['status'], summary, presentation };
 }
