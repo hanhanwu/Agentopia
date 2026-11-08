@@ -5,7 +5,7 @@ import { parseTrustResponse } from '../src/trust-score.ts';
 import { resolveTrustInput } from '../src/trust-input.ts';
 import { LocalAPIError, readJSON, requireLocalRequest, sendJSON } from './local-api.ts';
 
-const API_PATH = '/api/trust-score/v1';
+import { TRUST_API, TRUST_RESPONSE_SCHEMA } from '../src/trust-contract.ts';
 export type TrustServiceConfig = { url: string; token?: string };
 
 export function createTrustScoreHandler(config: TrustServiceConfig, fetcher: typeof fetch = fetch) {
@@ -23,8 +23,9 @@ export function createTrustScoreHandler(config: TrustServiceConfig, fetcher: typ
         if (!body || typeof body !== 'object') throw new LocalAPIError(400, 'Invalid request.');
         const input = body as Record<string, unknown>;
         const path = req.url?.split('?')[0];
-        const pdf = path === `${API_PATH}/pdf`;
-        const chat = path === `${API_PATH}/chat`;
+        if (!Object.values(TRUST_API).some(route => route === path)) throw new LocalAPIError(404, 'Unknown assessment route.');
+        const pdf = path === TRUST_API.pdf;
+        const chat = path === TRUST_API.chat;
         let request: Record<string, string>;
         if (chat) {
           try { request = parseChatRequest(input); }
@@ -41,7 +42,7 @@ export function createTrustScoreHandler(config: TrustServiceConfig, fetcher: typ
         if (!config.url) throw new LocalAPIError(503, 'The assessment service is not configured.');
         const target = new URL(config.url);
         if (!['http:', 'https:'].includes(target.protocol) || target.username || target.password || target.search || target.hash) throw new LocalAPIError(503, 'The assessment service is not configured.');
-        target.pathname = `${target.pathname.replace(/\/$/u, '')}${API_PATH}${pdf ? '/pdf' : chat ? '/chat' : ''}`;
+        target.pathname = `${target.pathname.replace(/\/$/u, '')}${path}`;
         if (jobs.size >= 2) throw new LocalAPIError(429, 'Two requests are running. Try again shortly.');
         controller = new AbortController(); jobs.add(controller); res.once('close', cancel);
         deadline = setTimeout(cancel, pdf ? 40000 : chat ? 35000 : 125000);
@@ -77,7 +78,7 @@ export function createTrustScoreHandler(config: TrustServiceConfig, fetcher: typ
           sendJSON(res, 200, parseChatResponse(JSON.parse(bytes.toString('utf8'))));
         } else {
           const report = parseTrustResponse(JSON.parse(bytes.toString('utf8')));
-          sendJSON(res, 200, { schema_version: '2.0', report });
+          sendJSON(res, 200, { schema_version: TRUST_RESPONSE_SCHEMA, report });
         }
       } catch (error) {
         const failure = error instanceof LocalAPIError ? error : new LocalAPIError(502, 'The assessment service is unavailable. Try again.');
@@ -98,7 +99,7 @@ export function trustScorePlugin(): Plugin {
     server.httpServer?.once('close', () => handler.close());
     server.middlewares.use((req, res, next) => {
       const path = req.url?.split('?')[0];
-      if (path === API_PATH || path === `${API_PATH}/pdf` || path === `${API_PATH}/chat`) void handler.handle(req, res);
+      if (path === TRUST_API.assessment || path === TRUST_API.pdf || path === TRUST_API.chat) void handler.handle(req, res);
       else next();
     });
   };

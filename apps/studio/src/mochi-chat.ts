@@ -1,8 +1,9 @@
+import { TRUST_API } from './trust-contract.ts';
 import { MAX_MESSAGE_LENGTH, parseChatRequest, parseChatResponse, type ChatRequest, type ChatResponse } from './mochi-contract.ts';
 import type { TrustReport } from './trust-score.ts';
 
 export async function requestMochi(body: ChatRequest, signal: AbortSignal): Promise<ChatResponse> {
-  const response = await fetch('/api/trust-score/v1/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(parseChatRequest(body)), signal });
+  const response = await fetch(TRUST_API.chat, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(parseChatRequest(body)), signal });
   if (!response.ok) throw new Error(response.status === 410 ? 'This conversation has expired. Run a new assessment.' : 'Mochi could not reply. Try again.');
   return parseChatResponse(await response.json());
 }

@@ -28,6 +28,30 @@ describe('assessment API boundary',()=>{
     expect(JSON.parse(init.body)).toEqual({type:'mcp',identifier:'https://example.com/mcp'});
     expect(init.headers.Authorization).toBe('Bearer server-only-token');
   });
+  it('forwards the current V2 display and rejects stale or inconsistent projections', async () => {
+    const payload = displayResponse();
+    payload.report.summary = {failed_rules:8, passed_rules:40, skipped_rules:4, unknown_rules:50};
+    payload.report.presentation.score_display = {score:75, maximum:186, ratio:0.4032258064516129, rating:'Fair', color:'#ffad5c'};
+    const fetcher = vi.fn().mockImplementation(() => Promise.resolve(new Response(JSON.stringify(payload))));
+    const handler = createTrustScoreHandler({url:'http://localhost:9000/private/'}, fetcher);
+    const res = new ResponseBuffer();
+    await handler.handle(request(), response(res));
+    expect(res.status).toBe(200);
+    expect(JSON.parse(res.text())).toEqual(payload);
+    expect(fetcher.mock.calls[0][0].pathname).toBe('/private/api/trust-score/v1');
+    payload.report.presentation.tips_gain++;
+    const invalid = new ResponseBuffer();
+    await handler.handle(request(), response(invalid));
+    expect(invalid.status).toBe(502);
+    expect(invalid.text()).not.toContain('score_display');
+  });
+  it('rejects unknown routes instead of treating them as assessments', async () => {
+    const fetcher = vi.fn();
+    const res = new ResponseBuffer();
+    await createTrustScoreHandler({url:'http://localhost:9000'}, fetcher).handle(request(undefined, '/api/trust-score/v1/obsolete'), response(res));
+    expect(res.status).toBe(404);
+    expect(fetcher).not.toHaveBeenCalled();
+  });
   it('uses only an opaque export reference for PDF requests',async()=>{
     const fetcher=vi.fn().mockResolvedValue(new Response('%PDF-example',{headers:{'Content-Type':'application/pdf'}}));
     const res=new ResponseBuffer();

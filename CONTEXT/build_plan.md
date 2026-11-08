@@ -1,6 +1,6 @@
 # Agentopia + Skynet Build Plan
 
-Updated 2026-10-27.
+Updated 2026-11-07.
 
 ## Goal
 
@@ -35,8 +35,8 @@ discover → collect evidence → analyze patterns → visualize gaps → reprod
 ```
 
 Keep the experience playful and the conclusions grounded in inspectable evidence.
-Assessment implementation and data remain in the private service. The public
-product displays only the results returned through its API contract.
+Current setup and the trust-score API contract live in the
+[repository README](../README.md#trust-score-integration).
 
 ## Repository roles
 
@@ -66,8 +66,8 @@ do not integrate them into the application before user approval.
 2. **Choose evidence-backed insights.** Keep only findings that are clear,
    useful, and supported by the collected data.
 3. **Deliver in Agentopia.** Turn selected insights into inspectable product
-   features and visualizations. Local MCP V1 assessment is available; hosted
-   scoring and an independently defined agent-scoring path are next.
+   features and visualizations. Local MCP V2 assessment is connected through the private Trust Service;
+   hosted scoring and an independently defined agent-scoring path are next.
 
 ```text
 Agentopia_Lab: collect → explore → analyze → select insights
