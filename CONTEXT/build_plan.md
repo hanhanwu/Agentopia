@@ -1,6 +1,6 @@
 # Agentopia + Skynet Build Plan
 
-Updated 2026-11-07.
+Updated 2026-11-08.
 
 ## Goal
 
@@ -37,6 +37,14 @@ discover → collect evidence → analyze patterns → visualize gaps → reprod
 Keep the experience playful and the conclusions grounded in inspectable evidence.
 Current setup and the trust-score API contract live in the
 [repository README](../README.md#trust-score-integration).
+
+## Trust-score goal
+
+Help personal agents find reliable MCP servers and other agents to connect with
+and interact with. The current MCP assessment examines static prerequisites in
+Connection, Interaction and Security. It supports candidate assessment and exposes
+blockers and evidence gaps; behavioral reliability and agent scoring are future
+work. The private Lab README owns rule roles and scoring scope.
 
 ## Repository roles
 

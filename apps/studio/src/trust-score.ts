@@ -1,7 +1,7 @@
 import { isOpaqueReference } from './mochi-contract.ts';
 import {
   TRUST_API, TRUST_RESPONSE_SCHEMA, OUTCOME_GROUPS,
-  type TrustReport, type TrustPresentation, type PresentationItem, type ImprovementTip,
+  type TrustReport, type TrustPresentation,
 } from './trust-contract.ts';
 export { OUTCOME_GROUPS } from './trust-contract.ts';
 export type { TrustReport, OutcomeGroup } from './trust-contract.ts';
@@ -28,7 +28,7 @@ export function parseTrustResponse(payload: unknown): TrustReport {
   }
   const p = report.presentation, display = p.score_display;
   if (!record(display) || !nonnegative(display.ratio) || display.ratio > 1 || display.maximum !== 100
-      || (display.score !== null && (!nonnegative(display.score) || display.maximum <= 0 || display.score > display.maximum
+      || (display.score !== null && (!nonnegative(display.score) || display.score > display.maximum
           || Math.abs(display.score - 100 * display.ratio) > 0.05 + 1e-8))
       || (display.score === null && (display.ratio !== 0 || display.rating !== null))
       || (report.status === 'unavailable' && display.score !== null)
@@ -45,14 +45,14 @@ export function parseTrustResponse(payload: unknown): TrustReport {
     const items = p[group], empty = p[`${group}_empty`];
     if (!Array.isArray(items) || items.length > 5 || typeof empty !== 'string' || empty.length > 4096) return invalid();
     presentation[`${group}_empty`] = empty;
-    const clean: Array<PresentationItem | ImprovementTip> = items.map(item => {
+    for (const item of items) {
       if (!record(item) || typeof item.text !== 'string' || !item.text.trim() || item.text.length > 4096) return invalid();
-      if (group !== 'tips') return { text: item.text };
-      if (item.estimated_gain !== null && !nonnegative(item.estimated_gain)) return invalid();
-      return { text: item.text, estimated_gain: item.estimated_gain as number | null };
-    });
-    if (group === 'tips') presentation.tips = clean as ImprovementTip[];
-    else presentation[group] = clean;
+      if (group === 'tips') {
+        const gain = item.estimated_gain;
+        if (gain !== null && !nonnegative(gain)) return invalid();
+        presentation.tips.push({ text: item.text, estimated_gain: gain });
+      } else presentation[group].push({ text: item.text });
+    }
   }
   const totalGain = presentation.tips.reduce((sum, tip) => sum + (tip.estimated_gain ?? 0), 0);
   if (presentation.passed.length + presentation.failed.length > 5
