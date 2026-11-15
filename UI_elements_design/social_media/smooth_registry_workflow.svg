@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+<title id="title">Agentopia · MCP workflow</title>
+<desc id="desc">Mochi searches the MCP server registry. The registry connects to MCP Servers 1, 2, and N. Each server returns secure tokens to Mochi, which executes tools.</desc>
+<!--
+UNCHANGED: Reference topology and direction: Mochi → registry → servers 1, 2, …, N → Mochi → tools.
+Canonical Mochi paths, MCP official mark, MCP registry symbol and Agentopia wordmark construction.
+CHANGED: Add Search above the existing search icon and Secure Token above the first lock.
+All existing geometry, artwork, colors, and labels remain unchanged.
+Added role labels: Personal Agent, bright white #ffffff, system sans 18px/600, centered x=110 and x=1220, baseline y=360; outside boxes with 20px baseline-to-box gap.
+Added labels: system sans 18px/600; Search centered x=250 baseline y=415, cyan;
+Secure Token: system sans 18px/600, green, left aligned x=1084 baseline y=297 above first lock badge.
+User-requested single deliverable in social_media takes precedence over draft destination.
+MEASUREMENTS: 1600×900 desktop; header bottom 112; workflow centerline y=480.
+Mochi x=32 w=156 right=188; search connector=124; registry x=312 w=272 right=584.
+Server x=740 w=256 right=996; branch span=156; server centerlines=268,480,692; h=108.
+Return span=152; Mochi x=1148 w=144 right=1292; execution connector=80; tools x=1372 w=180 right=1552.
+Cards r=24; server r=18; card stroke=1.5; connector stroke=2; markers=8×8 with tip at endpoint.
+Type: system sans 20/650 node labels; mono 14/650 agent labels; wordmark 57.6/600 from trust-entry.
+Colors: background #071019 → #09131e → #04080e, cards #09131d, outlines #294052,
+registry #ffad5c, discovery #55e6ff, secure tokens #45ff8a. Padding >=24.
+-->
+<defs>
+ <linearGradient id="background" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071019"/><stop offset=".55" stop-color="#09131e"/><stop offset="1" stop-color="#04080e"/></linearGradient>
+ <radialGradient id="field"><stop stop-color="#16334c" stop-opacity=".22"/><stop offset="1" stop-color="#16334c" stop-opacity="0"/></radialGradient>
+ <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#263a48" stroke-opacity=".16"/></pattern>
+ <filter id="logo-glow" x="-30%" y="-50%" width="160%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#45ff8a" flood-opacity=".28"/></filter>
+ <filter id="white-glow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ffffff" flood-opacity=".3"/></filter>
+ <filter id="orange-glow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ffad5c" flood-opacity=".35"/></filter>
+ <filter id="blush"><feGaussianBlur stdDeviation="5"/></filter>
+ <marker id="arrow-cyan" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#55e6ff"/></marker>
+ <marker id="arrow-green" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#45ff8a"/></marker>
+ <!-- Reuse apps/studio/src/main.ts mochiArtwork(), .avatar, .world-agent__label. -->
+ <symbol id="mochi" viewBox="0 0 276 270">
+  <path class="squid-body" d="M48 205V140C48 65 91 25 132 25s84 40 84 115v65c0 21-15 37-34 37s-34-16-34-37c0 21-15 37-34 37s-34-16-34-37c0 21-14 37-32 37s-32-16-32-37z" />
+  <path class="squid-line" d="M85 130q47-28 95 0" />
+  <circle class="squid-eye" cx="108" cy="153" r="7" />
+  <circle class="squid-eye" cx="155" cy="153" r="7" />
+  <ellipse class="squid-blush" cx="88" cy="176" rx="15" ry="9" />
+  <ellipse class="squid-blush" cx="176" cy="176" rx="15" ry="9" />
+  <path class="squid-mark" d="M126 177l7 7 7-7-7-7z" />
+</symbol>
+ <!-- Reuse UI_elements_design/agents/registry-concepts-v1.svg #mcp-registry-mark. -->
+ <symbol id="mcp-registry" viewBox="-82 -82 164 164">
+ <circle r="73" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 9" opacity=".35"/>
+ <path d="M0-52L45-26V26L0 52-45 26V-26Z" fill="#0a1710" stroke="currentColor" stroke-width="3"/>
+ <path d="M-20 0H20M-10-15V15M10-15V15M-26-20V20M26-20V20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+ </symbol>
+ <symbol id="lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 15v2"/></g></symbol>
+ <style>
+ text {font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#eef8ff}
+ .label {font-size:20px;font-weight:650;text-anchor:middle}
+ .agent-label {font:650 14px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:1px;text-anchor:middle}
+ .card {fill:#09131d;stroke:#294052;stroke-width:1.5}
+ .discovery,.secure {fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+ .discovery {stroke:#55e6ff;marker-end:url(#arrow-cyan)}
+ .secure {stroke:#45ff8a;marker-end:url(#arrow-green)}
+ .squid-body {fill:#161419;stroke:#fff;stroke-width:7;stroke-linejoin:round}
+ .squid-line {fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;opacity:.78}
+ .squid-eye {fill:#effbff}.squid-mark {fill:#fff}.squid-blush {fill:#ff9aaa;opacity:.32;filter:url(#blush)}
+ </style>
+</defs>
+<rect width="1600" height="900" fill="url(#background)"/>
+<rect width="1600" height="900" fill="url(#grid)"/>
+<ellipse cx="820" cy="480" rx="780" ry="400" fill="url(#field)"/>
+<!-- Reuse .panel-heading h2 / trust-entry-desktop-v1.svg wordmark exactly. -->
+<g transform="translate(40 26) skewX(-10) scale(.94 1)" font-family="Avenir Next Condensed,Helvetica Neue,Arial,sans-serif" font-style="italic" font-weight="600" font-size="57.6" letter-spacing="4.32">
+ <text x="1" y="47" style="font-family:inherit;fill:#17502a">AGENTOPIA</text>
+ <text x="0" y="45" style="font-family:inherit;fill:#45ff8a" filter="url(#logo-glow)">AGENTOPIA</text>
+</g>
+<path d="M40 112H1560" stroke="#294052" stroke-opacity=".65"/>
+<!-- Connections touch the corresponding card boundaries. -->
+<path class="discovery" d="M188 480H312"/>
+<path class="discovery" d="M584 480C650 480 674 268 740 268"/>
+<path class="discovery" d="M584 480H740"/>
+<path class="discovery" d="M584 480C650 480 674 692 740 692"/>
+<path class="secure" d="M996 268C1068 268 1076 480 1148 480"/>
+<path class="secure" d="M996 480H1148"/>
+<path class="secure" d="M996 692C1068 692 1076 480 1148 480"/>
+<path class="secure" d="M1292 480H1372"/>
+<!-- Search label and icon; original icon and connector geometry preserved. -->
+<text x="250" y="415" font-size="18" font-weight="600" text-anchor="middle" style="fill:#55e6ff">Search</text>
+<g transform="translate(238 429)" fill="none" stroke="#55e6ff" stroke-width="2.2" stroke-linecap="round"><circle cx="10" cy="10" r="8"/><path d="m16 16 8 8"/></g>
+<!-- Reuse .world-agent / canonical Mochi identity. -->
+<rect class="card" x="32" y="380" width="156" height="200" rx="24"/>
+<text x="110" y="360" font-size="18" font-weight="600" text-anchor="middle" style="fill:#ffffff">Personal Agent</text>
+<use href="#mochi" x="46" y="401" width="132" height="129" filter="url(#white-glow)"/>
+<text class="agent-label" x="110" y="554">Mochi</text>
+<!-- MCP registry: canonical warm orange hexagonal outpost. -->
+<rect class="card" x="312" y="366" width="272" height="228" rx="24" style="stroke:#654a33"/>
+<use href="#mcp-registry" x="390" y="381" width="116" height="116" color="#ffad5c" filter="url(#orange-glow)"/>
+<text class="label" x="448" y="531">MCP Servers</text>
+<text class="label" x="448" y="558">Registry</text>
+<!-- Reuse official-marks/mcp.svg unchanged, embedded for portability. -->
+<g><rect class="card" x="740" y="214" width="256" height="108" rx="18"/>
+<image href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiByeD0iMjQiIGZpbGw9ImJsYWNrIi8+CjxtYXNrIGlkPSJtYXNrMF8yNDZfMTIyOSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjciIHk9IjciIHdpZHRoPSIxNjYiIGhlaWdodD0iMTY2Ij4KPHBhdGggZD0iTTE3MyA3SDdWMTczSDE3M1Y3WiIgZmlsbD0id2hpdGUiLz4KPC9tYXNrPgo8ZyBtYXNrPSJ1cmwoI21hc2swXzI0Nl8xMjI5KSI+CjxwYXRoIGQ9Ik0yMy41OTk2IDg1LjI1MzJMODYuMjAyMSAyMi42NTA3Qzk0Ljg0NTcgMTQuMDA3MSAxMDguODYgMTQuMDA3MSAxMTcuNTAzIDIyLjY1MDdDMTI2LjE0NyAzMS4yOTQyIDEyNi4xNDcgNDUuMzA4MyAxMTcuNTAzIDUzLjk1MTlMNzAuMjI1NCAxMDEuMjMiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMTEuMDY2NyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik03MC44Nzg5IDEwMC41NzhMMTE3LjUwNCA1My45NTJDMTI2LjE0OCA0NS4zMDgzIDE0MC4xNjMgNDUuMzA4MyAxNDguODA2IDUzLjk1MkwxNDkuMTMyIDU0LjI3OEMxNTcuNzc2IDYyLjkyMTYgMTU3Ljc3NiA3Ni45MzU3IDE0OS4xMzIgODUuNTc5Mkw5Mi41MTM5IDE0Mi4xOThDODkuNjMyNyAxNDUuMDc5IDg5LjYzMjcgMTQ5Ljc1IDkyLjUxMzkgMTUyLjYzMUwxMDQuMTQgMTY0LjI1NyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxMS4wNjY3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPHBhdGggZD0iTTEwMS44NTMgMzguMzAxM0w1NS41NTMgODQuNjAxMUM0Ni45MDk0IDkzLjI0NDcgNDYuOTA5NCAxMDcuMjU4IDU1LjU1MyAxMTUuOTAyQzY0LjE5NjYgMTI0LjU0NiA3OC4yMTA2IDEyNC41NDYgODYuODU0MyAxMTUuOTAyTDEzMy4xNTQgNjkuNjAyNSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxMS4wNjY3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9nPgo8L3N2Zz4K" x="764" y="242" width="52" height="52"/>
+<text x="838" y="275" font-size="20" font-weight="650">MCP Server 1</text></g>
+<!-- Reuse official-marks/mcp.svg unchanged, embedded for portability. -->
+<g><rect class="card" x="740" y="426" width="256" height="108" rx="18"/>
+<image href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiByeD0iMjQiIGZpbGw9ImJsYWNrIi8+CjxtYXNrIGlkPSJtYXNrMF8yNDZfMTIyOSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjciIHk9IjciIHdpZHRoPSIxNjYiIGhlaWdodD0iMTY2Ij4KPHBhdGggZD0iTTE3MyA3SDdWMTczSDE3M1Y3WiIgZmlsbD0id2hpdGUiLz4KPC9tYXNrPgo8ZyBtYXNrPSJ1cmwoI21hc2swXzI0Nl8xMjI5KSI+CjxwYXRoIGQ9Ik0yMy41OTk2IDg1LjI1MzJMODYuMjAyMSAyMi42NTA3Qzk0Ljg0NTcgMTQuMDA3MSAxMDguODYgMTQuMDA3MSAxMTcuNTAzIDIyLjY1MDdDMTI2LjE0NyAzMS4yOTQyIDEyNi4xNDcgNDUuMzA4MyAxMTcuNTAzIDUzLjk1MTlMNzAuMjI1NCAxMDEuMjMiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMTEuMDY2NyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik03MC44Nzg5IDEwMC41NzhMMTE3LjUwNCA1My45NTJDMTI2LjE0OCA0NS4zMDgzIDE0MC4xNjMgNDUuMzA4MyAxNDguODA2IDUzLjk1MkwxNDkuMTMyIDU0LjI3OEMxNTcuNzc2IDYyLjkyMTYgMTU3Ljc3NiA3Ni45MzU3IDE0OS4xMzIgODUuNTc5Mkw5Mi41MTM5IDE0Mi4xOThDODkuNjMyNyAxNDUuMDc5IDg5LjYzMjcgMTQ5Ljc1IDkyLjUxMzkgMTUyLjYzMUwxMDQuMTQgMTY0LjI1NyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxMS4wNjY3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPHBhdGggZD0iTTEwMS44NTMgMzguMzAxM0w1NS41NTMgODQuNjAxMUM0Ni45MDk0IDkzLjI0NDcgNDYuOTA5NCAxMDcuMjU4IDU1LjU1MyAxMTUuOTAyQzY0LjE5NjYgMTI0LjU0NiA3OC4yMTA2IDEyNC41NDYgODYuODU0MyAxMTUuOTAyTDEzMy4xNTQgNjkuNjAyNSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxMS4wNjY3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9nPgo8L3N2Zz4K" x="764" y="454" width="52" height="52"/>
+<text x="838" y="487" font-size="20" font-weight="650">MCP Server 2</text></g>
+<!-- Reuse official-marks/mcp.svg unchanged, embedded for portability. -->
+<g><rect class="card" x="740" y="638" width="256" height="108" rx="18"/>
+<image href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiByeD0iMjQiIGZpbGw9ImJsYWNrIi8+CjxtYXNrIGlkPSJtYXNrMF8yNDZfMTIyOSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjciIHk9IjciIHdpZHRoPSIxNjYiIGhlaWdodD0iMTY2Ij4KPHBhdGggZD0iTTE3MyA3SDdWMTczSDE3M1Y3WiIgZmlsbD0id2hpdGUiLz4KPC9tYXNrPgo8ZyBtYXNrPSJ1cmwoI21hc2swXzI0Nl8xMjI5KSI+CjxwYXRoIGQ9Ik0yMy41OTk2IDg1LjI1MzJMODYuMjAyMSAyMi42NTA3Qzk0Ljg0NTcgMTQuMDA3MSAxMDguODYgMTQuMDA3MSAxMTcuNTAzIDIyLjY1MDdDMTI2LjE0NyAzMS4yOTQyIDEyNi4xNDcgNDUuMzA4MyAxMTcuNTAzIDUzLjk1MTlMNzAuMjI1NCAxMDEuMjMiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMTEuMDY2NyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik03MC44Nzg5IDEwMC41NzhMMTE3LjUwNCA1My45NTJDMTI2LjE0OCA0NS4zMDgzIDE0MC4xNjMgNDUuMzA4MyAxNDguODA2IDUzLjk1MkwxNDkuMTMyIDU0LjI3OEMxNTcuNzc2IDYyLjkyMTYgMTU3Ljc3NiA3Ni45MzU3IDE0OS4xMzIgODUuNTc5Mkw5Mi41MTM5IDE0Mi4xOThDODkuNjMyNyAxNDUuMDc5IDg5LjYzMjcgMTQ5Ljc1IDkyLjUxMzkgMTUyLjYzMUwxMDQuMTQgMTY0LjI1NyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxMS4wNjY3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPHBhdGggZD0iTTEwMS44NTMgMzguMzAxM0w1NS41NTMgODQuNjAxMUM0Ni45MDk0IDkzLjI0NDcgNDYuOTA5NCAxMDcuMjU4IDU1LjU1MyAxMTUuOTAyQzY0LjE5NjYgMTI0LjU0NiA3OC4yMTA2IDEyNC41NDYgODYuODU0MyAxMTUuOTAyTDEzMy4xNTQgNjkuNjAyNSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxMS4wNjY3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9nPgo8L3N2Zz4K" x="764" y="666" width="52" height="52"/>
+<text x="838" y="699" font-size="20" font-weight="650">MCP Server N</text></g>
+<g fill="#6f8499"><circle cx="860" cy="586" r="3"/><circle cx="872" cy="586" r="3"/><circle cx="884" cy="586" r="3"/></g>
+<!-- Secure Token: 18px, right of the curve; baseline 16px above first badge top. -->
+<text x="1084" y="297" font-size="18" font-weight="600" text-anchor="start" style="fill:#45ff8a">Secure Token</text>
+<g><rect x="1052" y="313" width="40" height="40" rx="12" fill="#091b15" stroke="#315646"/><use href="#lock" x="1060" y="321" width="24" height="24" color="#45ff8a"/></g>
+<g><rect x="1052" y="460" width="40" height="40" rx="12" fill="#091b15" stroke="#315646"/><use href="#lock" x="1060" y="468" width="24" height="24" color="#45ff8a"/></g>
+<g><rect x="1052" y="607" width="40" height="40" rx="12" fill="#091b15" stroke="#315646"/><use href="#lock" x="1060" y="615" width="24" height="24" color="#45ff8a"/></g>
+<!-- Mochi remains the same agent at the receiving stage. -->
+<rect class="card" x="1148" y="380" width="144" height="200" rx="24"/>
+<text x="1220" y="360" font-size="18" font-weight="600" text-anchor="middle" style="fill:#ffffff">Personal Agent</text>
+<use href="#mochi" x="1150" y="401" width="144" height="129" filter="url(#white-glow)"/>
+<text class="agent-label" x="1220" y="554">Mochi</text>
+<!-- Tool execution node: code glyph, necessary action label only. -->
+<rect class="card" x="1372" y="380" width="180" height="200" rx="24" style="stroke:#315646"/>
+<rect x="1430" y="415" width="64" height="64" rx="18" fill="#0c211c" stroke="#315646"/>
+<g fill="none" stroke="#45ff8a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m1452 435-10 12 10 12m20-24 10 12-10 12m-7-27-7 30"/></g>
+<text class="label" x="1462" y="536">Execute Tools</text>
+</svg>
