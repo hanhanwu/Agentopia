@@ -14,7 +14,10 @@ export function renderDimensionCard(title: string, mode: string, value: Dimensio
   const list = (items: string[], className: string, label: string) => items.length
     ? `<ul class="${className}" aria-label="${label}">${items.map(text => `<li>${escapeMarkup(text)}</li>`).join('')}</ul>` : '';
   const reasons = list(value.positive_reasons, 'mochi-chat__reasons mochi-chat__reasons--positive', 'What helped the score')
-    + list(value.negative_reasons, 'mochi-chat__reasons mochi-chat__reasons--negative', 'What lowered the score');
+    + list(value.negative_reasons, 'mochi-chat__reasons mochi-chat__reasons--negative', 'What lowered the score')
+    + list(value.assessment_notes ?? [], 'mochi-chat__reasons mochi-chat__reasons--negative', 'Assessment availability')
+    + (value.guidance_status === 'unavailable'
+      ? list(['Explanations could not be generated. Run a new assessment to retry.'], 'mochi-chat__reasons mochi-chat__reasons--negative', 'Explanation availability') : '');
   return `<h3>${escapeMarkup(title)} · ${escapeMarkup(mode)}</h3>`
     + (reasons ? `<h4>Reasons</h4>${reasons}` : '')
     + (value.tips.length ? `<h4>Improvement tips</h4>${list(value.tips, 'mochi-chat__suggestions', 'Improvement tips')}` : '');

@@ -22,4 +22,21 @@ describe('dimension card sections', () => {
     const html=renderDimensionCard('<img>','Static',data);
     expect(html).not.toContain('<script>');expect(html).toContain('&lt;script&gt;');expect(html).not.toContain('<img>');
   });
+  it('shows low-score and unavailable explanations under Reasons with a red leading line', () => {
+    for (const score of [0, null]) {
+      const data=value();data.score_display={ratio:0,score,maximum:100,rating:null,color:'#7d9cae'};
+      data.assessment_notes=['Sign-in is required before the tools can be checked.'];data.tips=['Provide authorized access and reassess.'];
+      const html=renderDimensionCard('Capability','Static',data);
+      expect(html).toContain('<h4>Reasons</h4><ul class="mochi-chat__reasons mochi-chat__reasons--negative" aria-label="Assessment availability">');
+      expect(html).toContain('Sign-in is required');expect(html).toContain('Improvement tips');
+      expect(html).not.toContain('mochi-chat__assessment-notes');expect(html).not.toContain('mochi-chat__reasons--positive');
+    }
+  });
+  it('shows generation failures under Reasons with a red leading line', () => {
+    const data=value();data.guidance_status='unavailable';
+    const html=renderDimensionCard('Capability','Static',data);
+    expect(html).toContain('<h4>Reasons</h4><ul class="mochi-chat__reasons mochi-chat__reasons--negative" aria-label="Explanation availability"><li>Explanations could not be generated. Run a new assessment to retry.</li></ul>');
+    expect(html).not.toContain('mochi-chat__guidance-unavailable');
+  });
+
 });

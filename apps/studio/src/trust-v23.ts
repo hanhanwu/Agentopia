@@ -4,7 +4,7 @@ export type TrustDimension = typeof TRUST_DIMENSIONS[number];
 export type TrustMode = 'static' | 'combined';
 export const DIMENSION_LABELS: Record<TrustDimension, string> = {connection: 'Connection', interaction: 'Capability', security: 'Security'};
 export type ScoreDisplay = {ratio: number; score: number | null; maximum: number; rating: string | null; color: string};
-export type DimensionDisplay = {score_display: ScoreDisplay; positive_reasons: string[]; negative_reasons: string[]; tips: string[]; dynamic_status: string; blocked: boolean};
+export type DimensionDisplay = {assessment_notes?: string[]; guidance_status?: 'available' | 'unavailable'; score_display: ScoreDisplay; positive_reasons: string[]; negative_reasons: string[]; tips: string[]; dynamic_status: string; blocked: boolean};
 export type V23Display = {version: '2.3'; modes: Record<TrustMode, {score_display: ScoreDisplay; dimensions: Record<TrustDimension, DimensionDisplay>}>};
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const invalid = (): never => {throw new Error('The assessment service returned an invalid V2.3 display.');};
@@ -28,10 +28,13 @@ export function parseV23Display(value: unknown): V23Display {
     const dimensions = {} as V23Display['modes'][TrustMode]['dimensions'];
     for (const d of TRUST_DIMENSIONS) {
       const item = v.dimensions[d];
+      if (record(item) && item.guidance_status !== undefined && !['available','unavailable'].includes(String(item.guidance_status))) return invalid();
       if (!record(item) || typeof item.blocked !== 'boolean'
         || !['not_selected', 'static_only', 'unavailable', 'partial', 'available'].includes(String(item.dynamic_status))) return invalid();
       dimensions[d] = {score_display: display(item.score_display), positive_reasons: strings(item.positive_reasons ?? []), negative_reasons: strings(item.negative_reasons ?? []), tips: strings(item.tips),
-        blocked: item.blocked, dynamic_status: String(item.dynamic_status)};
+        blocked: item.blocked, dynamic_status: String(item.dynamic_status),
+        assessment_notes: strings(item.assessment_notes ?? []),
+        ...(item.guidance_status === undefined ? {} : {guidance_status: item.guidance_status as 'available' | 'unavailable'})};
     }
     modes[mode] = {score_display: display(v.score_display), dimensions};
   }
