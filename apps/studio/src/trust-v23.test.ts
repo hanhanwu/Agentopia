@@ -7,7 +7,7 @@ import {displayResponse} from './trust-display.fixture.ts';
 const display = (score: number | null) => ({score, ratio: (score ?? 0) / 100, maximum:100, rating:score === null ? null : 'Good', color:'#ffd166'});
 function fixture() {
   const mode = (score: number) => ({score_display:display(score), dimensions:Object.fromEntries(['connection','interaction','security'].map(d => [d, {
-    score_display:display(score), reasons:['Observed prerequisite result.'], tips:['Repeat eligible checks after changes.'], dynamic_status:'partial', blocked:true,
+    score_display:display(score), positive_reasons:['The server connected successfully.'], negative_reasons:[], tips:['Repeat eligible checks after changes.'], dynamic_status:'partial', blocked:true,
   }]))});
   return {version:'2.3', modes:{static:mode(73.3), combined:mode(71.8)}};
 }

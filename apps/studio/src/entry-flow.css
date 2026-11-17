@@ -157,6 +157,10 @@
 .mochi-chat__dimension h4 { color: #61c7ff; margin: 12px 0 8px; font-size: 14px; }
 .mochi-chat__dimension ul { margin: 0; padding-left: 18px; }
 .mochi-chat__dimension li + li { margin-top: 8px; }
+.mochi-chat__dimension .mochi-chat__reasons { list-style: none; padding-left: 0; }
+.mochi-chat__reasons li { border-left: 2px solid #45ff8a; padding-left: 12px; }
+.mochi-chat__reasons--negative li { border-left-color: #ff657a; }
+.mochi-chat__reasons + .mochi-chat__reasons { margin-top: 12px; }
 @keyframes trustMochiFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 @media (prefers-reduced-motion: reduce) { .trust-mochi-launcher .mochi-logo { animation: none; } }
 @media (max-width: 800px) {

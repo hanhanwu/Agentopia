@@ -10,6 +10,16 @@ export async function requestMochi(body: ChatRequest, signal: AbortSignal): Prom
   return parseChatResponse(await response.json());
 }
 
+export function renderDimensionCard(title: string, mode: string, value: DimensionDisplay): string {
+  const list = (items: string[], className: string, label: string) => items.length
+    ? `<ul class="${className}" aria-label="${label}">${items.map(text => `<li>${escapeMarkup(text)}</li>`).join('')}</ul>` : '';
+  const reasons = list(value.positive_reasons, 'mochi-chat__reasons mochi-chat__reasons--positive', 'What helped the score')
+    + list(value.negative_reasons, 'mochi-chat__reasons mochi-chat__reasons--negative', 'What lowered the score');
+  return `<h3>${escapeMarkup(title)} · ${escapeMarkup(mode)}</h3>`
+    + (reasons ? `<h4>Reasons</h4>${reasons}` : '')
+    + (value.tips.length ? `<h4>Improvement tips</h4>${list(value.tips, 'mochi-chat__suggestions', 'Improvement tips')}` : '');
+}
+
 export function mountMochiChat(options: { layout: HTMLElement; panel: HTMLElement; artwork: () => string; getReport: () => TrustReport | null; getMode?: () => TrustMode }) {
   const { layout, panel, artwork, getReport } = options;
   panel.id = 'trust-mochi-chat';
@@ -96,8 +106,7 @@ export function mountMochiChat(options: { layout: HTMLElement; panel: HTMLElemen
     if (refresh && panel.hidden) return;
     if (panel.hidden) toggle(button);
     opener?.setAttribute('aria-expanded', 'false'); opener = button; button.setAttribute('aria-expanded', 'true');
-    const list = (items: string[], empty: string) => `<ul>${(items.length ? items : [empty]).map(text => `<li>${escapeMarkup(text)}</li>`).join('')}</ul>`;
-    dimensionCard.innerHTML = `<h3>${escapeMarkup(title)} · ${escapeMarkup(mode)}</h3><h4>Reasons</h4>${list(value.reasons, 'No findings available.')}<h4>Improvement tips</h4>${list(value.tips, 'No improvement opportunities established.')}`;
+    dimensionCard.innerHTML = renderDimensionCard(title, mode, value);
     dimensionCard.hidden = false;
     if (!refresh) input.focus({preventScroll:true});
   }
