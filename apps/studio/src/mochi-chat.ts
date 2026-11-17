@@ -1,3 +1,5 @@
+import { type TrustMode, type DimensionDisplay } from './trust-v23.ts';
+import { escapeMarkup } from './markup.ts';
 import { TRUST_API } from './trust-contract.ts';
 import { MAX_MESSAGE_LENGTH, parseChatRequest, parseChatResponse, type ChatRequest, type ChatResponse } from './mochi-contract.ts';
 import type { TrustReport } from './trust-score.ts';
@@ -8,7 +10,7 @@ export async function requestMochi(body: ChatRequest, signal: AbortSignal): Prom
   return parseChatResponse(await response.json());
 }
 
-export function mountMochiChat(options: { layout: HTMLElement; panel: HTMLElement; artwork: () => string; getReport: () => TrustReport | null }) {
+export function mountMochiChat(options: { layout: HTMLElement; panel: HTMLElement; artwork: () => string; getReport: () => TrustReport | null; getMode?: () => TrustMode }) {
   const { layout, panel, artwork, getReport } = options;
   panel.id = 'trust-mochi-chat';
   panel.innerHTML = `<header class="mochi-chat__header"><svg class="mochi-logo" viewBox="0 0 276 270" aria-hidden="true">${artwork()}</svg><h2>Mochi</h2>
@@ -24,7 +26,10 @@ export function mountMochiChat(options: { layout: HTMLElement; panel: HTMLElemen
   const status = panel.querySelector<HTMLElement>('[role="status"]')!;
   let session: string | null = null, reference: string | null = null;
   let pending: AbortController | null = null;
-  let opener: HTMLButtonElement | null = null;
+  let opener: HTMLElement | SVGElement | null = null;
+  const dimensionCard = document.createElement('section');
+  dimensionCard.className = 'mochi-chat__dimension'; dimensionCard.hidden = true;
+  messages.before(dimensionCard);
   function append(text: string, role: 'user' | 'assistant') {
     const bubble = document.createElement('div');
     bubble.className = `mochi-chat__message mochi-chat__message--${role}`;
@@ -34,11 +39,12 @@ export function mountMochiChat(options: { layout: HTMLElement; panel: HTMLElemen
   function update() { send.disabled = !!pending || !input.value.trim(); composer.setAttribute('aria-busy', String(!!pending)); }
   function close() {
     panel.hidden = true; layout.classList.remove('has-mochi');
+    layout.querySelectorAll('[data-dimension]').forEach(el => el.setAttribute('aria-expanded', 'false'));
     opener?.setAttribute('aria-expanded', 'false'); opener?.focus({ preventScroll: true });
   }
   function reset() {
     pending?.abort(); pending = null; session = null; reference = null;
-    close(); opener = null; input.value = ''; messages.replaceChildren(); status.hidden = true; update();
+    close(); opener = null; input.value = ''; messages.replaceChildren(); clearDimension(); status.hidden = true; update();
   }
   async function exchange(message?: string) {
     const report = getReport(); if (!report || pending) return;
@@ -47,7 +53,7 @@ export function mountMochiChat(options: { layout: HTMLElement; panel: HTMLElemen
     const deadline = window.setTimeout(() => controller.abort(), 35000);
     try {
       if (!session) {
-        const result = await requestMochi({ export_id: report.export_id }, controller.signal);
+        const result = await requestMochi({ export_id: report.export_id, ...(report.v23 ? {mode: options.getMode?.() ?? 'static'} : {}) }, controller.signal);
         if (pending !== controller || getReport()?.export_id !== report.export_id) return;
         session = result.session_id;
         if (!messages.childElementCount) append(result.reply, 'assistant');
@@ -66,7 +72,7 @@ export function mountMochiChat(options: { layout: HTMLElement; panel: HTMLElemen
       }
     } finally { clearTimeout(deadline); if (pending === controller) {pending = null; update();} }
   }
-  function toggle(button: HTMLButtonElement) {
+  function toggle(button: HTMLElement | SVGElement) {
     if (!panel.hidden) {close();return;}
     const report = getReport(); if (!report) return;
     if (reference !== report.export_id) {reset();reference = report.export_id;}
@@ -85,5 +91,19 @@ export function mountMochiChat(options: { layout: HTMLElement; panel: HTMLElemen
   });
   panel.querySelector('button')!.addEventListener('click', close);
   layout.addEventListener('keydown', event => {if(event.key === 'Escape' && !panel.hidden) {event.preventDefault();close();}});
-  update(); return {toggle, reset};
+  function clearDimension() {dimensionCard.hidden = true; dimensionCard.replaceChildren();}
+  function showDimension(button: HTMLElement | SVGElement, title: string, mode: string, value: DimensionDisplay, refresh = false) {
+    if (refresh && panel.hidden) return;
+    if (panel.hidden) toggle(button);
+    opener?.setAttribute('aria-expanded', 'false'); opener = button; button.setAttribute('aria-expanded', 'true');
+    const list = (items: string[], empty: string) => `<ul>${(items.length ? items : [empty]).map(text => `<li>${escapeMarkup(text)}</li>`).join('')}</ul>`;
+    dimensionCard.innerHTML = `<h3>${escapeMarkup(title)} · ${escapeMarkup(mode)}</h3><h4>Reasons</h4>${list(value.reasons, 'No findings available.')}<h4>Improvement tips</h4>${list(value.tips, 'No improvement opportunities established.')}`;
+    dimensionCard.hidden = false;
+    if (!refresh) input.focus({preventScroll:true});
+  }
+  function modeChanged() {
+    pending?.abort(); pending = null; session = null; messages.replaceChildren(); status.hidden = true; update();
+    if (!panel.hidden) void exchange();
+  }
+  update(); return {toggle, reset, showDimension, clearDimension, modeChanged};
 }

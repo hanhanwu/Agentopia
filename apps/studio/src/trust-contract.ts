@@ -5,6 +5,7 @@ export const TRUST_RESPONSE_SCHEMA = '2.0';
 export const OUTCOME_GROUPS = ['failed', 'passed', 'skipped', 'unknown'] as const;
 export type OutcomeGroup = typeof OUTCOME_GROUPS[number];
 export type TrustReport = {
+  v23?: import('./trust-v23.ts').V23Display;
   export_id: string;
   subject: { endpoint: string };
   status: 'complete' | 'partial' | 'unavailable';

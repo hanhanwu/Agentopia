@@ -1,15 +1,13 @@
-import { TRUST_API } from './trust-contract.ts';
+import { TRUST_DIMENSIONS, DIMENSION_LABELS, type TrustDimension, type TrustMode } from './trust-v23.ts';
 import { mountMochiChat } from './mochi-chat.ts';
 import './entry-flow.css';
 import {
-  fetchTrustReport, OUTCOME_GROUPS, resolveTrustInput,
-  type OutcomeGroup, type SubjectType, type TrustReport,
+  fetchTrustReport, resolveTrustInput,
+  type SubjectType, type TrustReport,
 } from './trust-score.ts';
 
 import { escapeMarkup as escapeHTML } from './markup.ts';
 
-const groupName = (group: OutcomeGroup) => group[0].toUpperCase() + group.slice(1);
-const LIQUID_COLORS = ['#ff657a', '#ffad5c', '#ffd166', '#45ff8a'] as const;
 const shield = '<path d="M16 3 27 7v9c0 7-11 13-11 13S5 23 5 16V7Z M10 16l4 4 8-9"/>';
 const globe = '<circle cx="16" cy="16" r="12"/><ellipse cx="16" cy="16" rx="5" ry="12"/><path d="M4 16h24"/>';
 const icon = (paths: string) => `<svg class="entry-action__icon" viewBox="0 0 32 32" aria-hidden="true">${paths}</svg>`;
@@ -80,10 +78,11 @@ export function mountEntryFlow(options: {
   const submit = form.querySelector<HTMLButtonElement>('.trust-submit')!;
   const report = host.querySelector<HTMLElement>('.trust-report')!;
   const layout = host.querySelector<HTMLElement>('[data-trust-layout]')!;
-  const chat = mountMochiChat({ layout, panel: host.querySelector<HTMLElement>('.mochi-chat')!, artwork: mochiArtwork, getReport: () => reportData });
+  const chat = mountMochiChat({ layout, panel: host.querySelector<HTMLElement>('.mochi-chat')!, artwork: mochiArtwork, getReport: () => reportData, getMode: () => mode });
   let subject: SubjectType | null = null;
   let gaugeFrame = 0;
-  let exportPending: AbortController | null = null;
+  let mode: TrustMode = 'static';
+  let activeDimension: TrustDimension | null = null;
   let reportData: TrustReport | null = null;
   let pending: AbortController | null = null;
 
@@ -101,7 +100,7 @@ export function mountEntryFlow(options: {
   function clearReport() {
     chat.reset();
     pending?.abort(); pending = null;
-    cancelAnimationFrame(gaugeFrame); exportPending?.abort(); exportPending = null;
+    cancelAnimationFrame(gaugeFrame); mode = 'static'; activeDimension = null;
     reportData = null; report.setAttribute('aria-busy', 'false');
     report.replaceChildren();
     report.dataset.state = 'empty';
@@ -116,25 +115,21 @@ export function mountEntryFlow(options: {
 
   function renderReport(data: TrustReport) {
     reportData = data;
-    const { summary, subject: target, presentation } = data;
-    const view = presentation.score_display;
-    const list = (group: 'passed' | 'failed' | 'tips') => presentation[group].length
-      ? group === 'tips' ? presentation[group].map(item => `<p>${escapeHTML(item.text)}</p>`).join('')
-        : `<ul>${presentation[group].map(item => `<li>${escapeHTML(item.text)}</li>`).join('')}</ul>`
-      : `<p>${escapeHTML(presentation[`${group}_empty`] ?? 'No assessment details available.')}</p>`;
-    const gainLabel = (gain: number | null | undefined) => gain ? `Up to +${Number(gain.toFixed(2))} pts` : 'Gain pending verification';
-    const tips = presentation.tips.length
-      ? `<ol class="trust-tips__list">${presentation.tips.map(item => `<li><div class="trust-tips__item">
-          <p>${escapeHTML(item.text)}</p><span class="trust-tips__gain">${gainLabel(item.estimated_gain)}</span>
-        </div></li>`).join('')}</ol>`
-      : list('tips');
-    const tipsBadge = presentation.tips.length
-      ? `<span class="trust-tips__total">${gainLabel(presentation.tips_gain)}</span>` : '';
+    if (!data.v23) { showStatus('The assessment service needs the V2.3 update.'); return; }
+    const selected = data.v23.modes[mode];
+    const view = selected.score_display;
+    const point = (score: number | null, index: number) => {
+      const angle = (-90 + index * 120) * Math.PI / 180;
+      const radius = (score ?? 0) / 100 * 140;
+      return [250 + Math.cos(angle) * radius, 226 + Math.sin(angle) * radius];
+    };
+    const points = TRUST_DIMENSIONS.map((d, i) => point(selected.dimensions[d].score_display.score ?? 100, i));
+    const radarLabels = [[250, 50, 74], [434, 328, 352], [66, 328, 352]];
     report.dataset.state = 'ready';
     report.innerHTML = `
-      <header class="trust-report__header"><p class="trust-report__endpoint">${escapeHTML(target.endpoint)}</p></header>
+      <div class="trust-score-mode" role="status">Static${mode === 'combined' ? ' + <span>Dynamic</span>' : ''}</div>
       <div class="trust-report__body">
-      <svg class="trust-score-gauge" viewBox="0 0 500 314" role="img" aria-label="${escapeHTML(`Score ${view.score ?? 'unavailable'} of ${view.maximum} readiness points. ${view.rating ?? ''}`)}">
+      <svg class="trust-score-gauge" viewBox="0 0 500 314" role="img" aria-label="${escapeHTML(`Score ${view.score ?? 'unavailable'} of ${view.maximum}. ${view.rating ?? ''}`)}">
         <defs><path id="score-arc" d="M78 272 A172 172 0 0 1 422 272" pathLength="100"/></defs>
         <path d="M64 272 A186 186 0 0 1 436 272 A14 14 0 0 1 408 272 A158 158 0 0 0 92 272 A14 14 0 0 1 64 272 Z" fill="none" stroke="#7d9cae" stroke-opacity=".55" stroke-width="1.5"/>
         <g fill="none" stroke-linecap="round" class="trust-liquid" visibility="hidden">
@@ -152,24 +147,33 @@ export function mountEntryFlow(options: {
         <text x="250" y="286" text-anchor="middle" fill="#61c7ff" font-size="36" font-weight="600">${view.rating ?? ''}</text>
         <g fill="#8aa5b8" font-size="18" font-weight="600" text-anchor="middle"><text x="78" y="312">0</text><text x="422" y="312">${view.maximum}</text></g>
       </svg>
-      <div class="trust-outcomes" aria-label="Rule outcomes">${OUTCOME_GROUPS.map(group => `
-        <div class="trust-outcome trust-outcome--${group}"><strong>${summary[`${group}_rules`]}</strong><span>${groupName(group)}</span></div>`).join('')}
+      <div class="trust-score-pagination" role="tablist" aria-label="Score evidence">
+        ${(['static', 'combined'] as const).map(m => `<button type="button" role="tab" data-mode="${m}" aria-label="${m === 'static' ? 'Static' : 'Static + Dynamic'} scores" aria-selected="${mode === m}" tabindex="${mode === m ? 0 : -1}"><span></span></button>`).join('')}
       </div>
-      <details class="trust-disclosure trust-reason"><summary>Reason</summary><div class="trust-disclosure__content">
-        <section class="trust-reason__passed" aria-label="Passed checks">${list('passed')}</section>
-        <section class="trust-reason__failed" aria-label="Failed checks">${list('failed')}</section>
-      </div></details>
-      <details class="trust-disclosure trust-tips"><summary><span>Improvement Tips</span>${tipsBadge}</summary><div class="trust-disclosure__content trust-tips__scroll" tabindex="0" role="region" aria-label="Improvement guidance">${tips}</div></details>
-      <div class="trust-report__footer"><button class="gold-button trust-download" type="button" data-download-report>↓ PDF</button>
-        <button class="gold-button trust-download trust-ask-mochi" type="button" data-ask-mochi aria-expanded="false" aria-controls="trust-mochi-chat"><svg class="mochi-logo" viewBox="0 0 276 270" aria-hidden="true">${mochiArtwork()}</svg><span>Ask Mochi</span></button></div>
-      <p class="trust-export-error" role="status" hidden></p></div>`;
+      <svg class="trust-radar" viewBox="0 0 500 380" aria-label="Connection, Capability and Security scores" style="--score-color:${view.color}">
+        <g fill="none" stroke="#29445b" stroke-width="1">${[35,70,105,140].map(r => `<circle cx="250" cy="226" r="${r}"/>`).join('')}
+        ${TRUST_DIMENSIONS.map((_, i) => {const [x,y] = point(100, i); return `<path d="M250 226L${x} ${y}"/>`;}).join('')}</g>
+        ${TRUST_DIMENSIONS.every(d => selected.dimensions[d].score_display.score !== null) ? `<polygon class="trust-radar__area" points="${points.map(p => p.join(',')).join(' ')}"/>` : ''}
+        ${TRUST_DIMENSIONS.map((d, i) => {
+          const value = selected.dimensions[d].score_display.score;
+          const [x,y] = points[i], [lx,ly,vy] = radarLabels[i];
+          return `<text class="trust-radar__label" x="${lx}" y="${ly}">${DIMENSION_LABELS[d]}</text><text class="trust-radar__value" x="${lx}" y="${vy}">${value === null ? '—' : value.toFixed(1)}</text>
+          <g role="button" tabindex="0" data-dimension="${d}" aria-label="${DIMENSION_LABELS[d]} ${value ?? 'unavailable'}: reasons and improvement tips" aria-controls="trust-mochi-chat" aria-expanded="${activeDimension === d && layout.classList.contains('has-mochi')}">
+            <circle class="trust-radar__hit" cx="${x}" cy="${y}" r="22"/>
+            <circle class="trust-radar__point" cx="${x}" cy="${y}" r="4" ${value === null ? 'style="fill:#030b12;stroke:#7d9cae"' : ''}/>
+          </g>`;
+        }).join('')}
+      </svg>
+      </div>
+      <button class="trust-mochi-launcher" type="button" data-ask-mochi aria-label="Ask Mochi" aria-expanded="false" aria-controls="trust-mochi-chat"><svg class="mochi-logo" viewBox="0 0 276 270" aria-hidden="true">${mochiArtwork()}</svg></button>`;
+    if (activeDimension) refreshDimension();
     cancelAnimationFrame(gaugeFrame);
     const liquid = report.querySelector<SVGGElement>('.trust-liquid')!;
     const fill = report.querySelector<SVGUseElement>('.trust-liquid__fill')!;
     const sheen = report.querySelector<SVGUseElement>('.trust-liquid__sheen')!;
     const draw = (progress: number) => {
       liquid.setAttribute('visibility', progress > 0 ? 'visible' : 'hidden');
-      fill.setAttribute('stroke', LIQUID_COLORS[Math.min(3, Math.floor(progress * 4))]);
+      fill.setAttribute('stroke', view.color);
       for (const path of [fill, sheen]) {
         path.setAttribute('stroke-dasharray', '100 100');
         path.setAttribute('stroke-dashoffset', String(100 - progress * 100));
@@ -242,32 +246,51 @@ export function mountEntryFlow(options: {
       if (pending === controller) { pending = null; updateForm(); report.setAttribute('aria-busy', 'false'); }
     }
   });
-  report.addEventListener('click', async event => {
-    const ask = (event.target as Element).closest<HTMLButtonElement>('[data-ask-mochi]');
-    if (ask) { chat.toggle(ask); return; }
-    const button = (event.target as Element).closest<HTMLButtonElement>('[data-download-report]');
-    if (!button || !reportData || exportPending) return;
-    const data = reportData;
-    const controller = new AbortController(); exportPending = controller;
-    const errorText = report.querySelector<HTMLElement>('.trust-export-error')!;
-    errorText.hidden = true; button.disabled = true; button.textContent = 'Exporting…';
-    const deadline = window.setTimeout(() => controller.abort(), 40000);
-    try {
-      const response = await fetch(TRUST_API.pdf, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ export_id: data.export_id }), signal: controller.signal });
-      if (!response.ok || !response.headers.get('content-type')?.startsWith('application/pdf')) throw new Error('The PDF could not be exported. Try again.');
-      const blob = await response.blob();
-      if (await blob.slice(0, 5).text() !== '%PDF-') throw new Error('Invalid PDF response. Try again.');
-      if (exportPending !== controller || reportData !== data) return;
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a'); link.href = url; link.download = 'agentopia-mcp-trust-score.pdf';
-      link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch {
-      if (exportPending === controller) { errorText.textContent = 'PDF export failed. Please try again.'; errorText.hidden = false; }
-    } finally {
-      window.clearTimeout(deadline);
-      if (exportPending === controller) { exportPending = null; button.disabled = false; button.textContent = '↓ PDF'; }
-    }
+  function refreshDimension(opener?: HTMLElement | SVGElement) {
+    if (!activeDimension || !reportData?.v23) return;
+    const element = opener ?? report.querySelector<SVGGElement>(`[data-dimension="${activeDimension}"]`)!;
+    chat.showDimension(element, DIMENSION_LABELS[activeDimension], mode === 'static' ? 'Static' : 'Static + Dynamic', reportData.v23.modes[mode].dimensions[activeDimension], !opener);
+  }
+  function selectMode(next: TrustMode, focus = false) {
+    if (!reportData || mode === next) return;
+    mode = next; chat.modeChanged(); renderReport(reportData);
+    if (focus) report.querySelector<HTMLButtonElement>(`[data-mode="${mode}"]`)!.focus({preventScroll:true});
+  }
+  report.addEventListener('click', event => {
+    const target = event.target as Element;
+    const tab = target.closest<HTMLElement>('[data-mode]');
+    if (tab) {selectMode(tab.dataset.mode as TrustMode, true); return;}
+    const dimension = target.closest<SVGGElement>('[data-dimension]');
+    if (dimension) {activeDimension = dimension.dataset.dimension as TrustDimension; refreshDimension(dimension); return;}
+    const ask = target.closest<HTMLButtonElement>('[data-ask-mochi]');
+    if (ask) {activeDimension = null; chat.clearDimension(); chat.toggle(ask);}
   });
+  report.addEventListener('keydown', event => {
+    const target = event.target as Element;
+    if (target.closest('[role="tablist"]') && ['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) {
+      event.preventDefault(); selectMode(event.key === 'Home' ? 'static' : event.key === 'End' ? 'combined' : mode === 'static' ? 'combined' : 'static', true);
+    }
+    const dimension = target.closest<SVGGElement>('[data-dimension]');
+    if (dimension && ['Enter', ' '].includes(event.key)) {event.preventDefault(); activeDimension = dimension.dataset.dimension as TrustDimension; refreshDimension(dimension);}
+  });
+  let drag: {x: number; y: number; id: number} | null = null;
+  report.addEventListener('pointerdown', event => {
+    if (!(event.target as Element).closest('button, [role="button"]')) drag = {x:event.clientX, y:event.clientY, id:event.pointerId};
+  });
+  report.addEventListener('pointerup', event => {
+    if (drag?.id === event.pointerId) {
+      const dx = event.clientX - drag.x, dy = event.clientY - drag.y;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) selectMode(dx < 0 ? 'combined' : 'static');
+    }
+    drag = null;
+  });
+  report.addEventListener('pointercancel', () => {drag = null;});
+  let wheelAt = 0;
+  report.addEventListener('wheel', event => {
+    if (Math.abs(event.deltaX) > Math.abs(event.deltaY) && Math.abs(event.deltaX) > 12) {
+      event.preventDefault();
+      if (performance.now() - wheelAt > 500) {selectMode(event.deltaX > 0 ? 'combined' : 'static'); wheelAt = performance.now();}
+    }
+  }, {passive:false});
   return { showPortal };
 }

@@ -1,3 +1,4 @@
+import { parseV23Display } from './trust-v23.ts';
 import { isOpaqueReference } from './mochi-contract.ts';
 import {
   TRUST_API, TRUST_RESPONSE_SCHEMA, OUTCOME_GROUPS,
@@ -57,7 +58,9 @@ export function parseTrustResponse(payload: unknown): TrustReport {
   const totalGain = presentation.tips.reduce((sum, tip) => sum + (tip.estimated_gain ?? 0), 0);
   if (presentation.passed.length + presentation.failed.length > 5
       || !Number.isFinite(totalGain) || Math.abs(totalGain - presentation.tips_gain) > 0.05 * (presentation.tips.length + 1) + 1e-8) return invalid();
-  return { export_id: report.export_id, subject: { endpoint: report.subject.endpoint },
+  const v23 = report.v23 === undefined ? undefined : parseV23Display(report.v23);
+  if (report.status === 'unavailable' && v23 && Object.values(v23.modes).some(mode => mode.score_display.score !== null || Object.values(mode.dimensions).some(d => d.score_display.score !== null))) return invalid();
+  return { ...(report.v23 === undefined ? {} : {v23}), export_id: report.export_id, subject: { endpoint: report.subject.endpoint },
     status: report.status as TrustReport['status'], summary, presentation };
 }
 

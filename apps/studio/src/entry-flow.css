@@ -126,3 +126,50 @@
 .mochi-chat__composer button svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .mochi-chat button:focus-visible, .mochi-chat__messages:focus-visible { outline: 2px solid #61c7ff; outline-offset: 4px; }
 .mochi-chat__composer:focus-within { border-color: #61c7ff; }
+
+/* trust-score-desktop-v5.svg: original shell, gauge and form geometry. */
+.trust-report { margin-top: 0; padding-bottom: 0; touch-action: pan-y; }
+.trust-report__body { margin-top: 16px; }
+.trust-score-mode { position: absolute; top: 8px; right: 0; color: #61c7ff; font: 500 18px/24px ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
+.trust-score-mode span { color: #45ff8a; }
+.trust-score-pagination { display: flex; justify-content: center; height: 32px; margin-top: -6px; }
+.trust-score-pagination button { display: grid; place-items: center; width: 32px; height: 32px; border: 0; padding: 0; background: transparent; cursor: pointer; }
+.trust-score-pagination span { display: block; width: 9px; height: 9px; border-radius: 50%; background: #29445b; }
+.trust-score-pagination [aria-selected='true'] span { background: #61c7ff; box-shadow: 0 0 8px #28a9ff66; }
+.trust-score-pagination button:focus-visible { outline: 2px solid #c9efff; outline-offset: -3px; border-radius: 50%; }
+.trust-radar { display: block; width: 500px; height: 380px; margin-top: 8px; overflow: visible; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.trust-radar__area { fill: var(--score-color); fill-opacity: .13; stroke: var(--score-color); stroke-width: 2; }
+.trust-radar__label { fill: #a7cadf; font-size: 18px; text-anchor: middle; }
+.trust-radar__value { fill: var(--score-color); font-size: 16px; text-anchor: middle; }
+.trust-radar__point { fill: var(--score-color); pointer-events: none; }
+.trust-radar__hit { fill: transparent; stroke: transparent; stroke-width: 2; cursor: pointer; }
+.trust-radar [role='button']:hover .trust-radar__hit,
+.trust-radar [role='button']:focus-visible .trust-radar__hit,
+.trust-radar [aria-expanded='true'] .trust-radar__hit { stroke: var(--score-color); fill: var(--score-color); fill-opacity: .08; }
+.trust-radar [role='button']:focus-visible { outline: none; }
+.trust-mochi-launcher { position: fixed; right: 24px; bottom: 24px; display: grid; place-items: center; width: 80px; height: 80px; border: 0; padding: 4px; background: transparent; cursor: pointer; z-index: 4; }
+.trust-mochi-launcher .mochi-logo { width: 72px; height: 71px; animation: trustMochiFloat 2.4s ease-in-out infinite; }
+.trust-mochi-launcher:hover .mochi-logo { filter: drop-shadow(0 0 7px #ffffffaa); }
+.trust-mochi-launcher:focus-visible { outline: 2px solid #c9efff; outline-offset: 4px; border-radius: 12px; }
+.has-mochi .trust-mochi-launcher { display: none; }
+.mochi-chat__dimension { flex: 0 1 auto; min-height: 0; max-height: 55%; overflow-y: auto; scrollbar-width: thin; margin-top: 20px; padding: 16px; border: 1px solid #29445b; border-radius: 10px; background: #0b1a27; font: 500 14px/22px system-ui, sans-serif; }
+.mochi-chat__dimension h3 { color: #c9efff; margin: 0 0 12px; font-size: 16px; }
+.mochi-chat__dimension h4 { color: #61c7ff; margin: 12px 0 8px; font-size: 14px; }
+.mochi-chat__dimension ul { margin: 0; padding-left: 18px; }
+.mochi-chat__dimension li + li { margin-top: 8px; }
+@keyframes trustMochiFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@media (prefers-reduced-motion: reduce) { .trust-mochi-launcher .mochi-logo { animation: none; } }
+@media (max-width: 800px) {
+  .trust-layout.has-mochi { grid-template-columns: minmax(0, 1fr); }
+  .trust-layout > .trust-screen { display: block; }
+  .trust-screen .world-panel { position: relative; min-height: 680px; height: 100vh; }
+  .trust-world-frame { min-height: 550px; }
+  .trust-form { width: min(500px, calc(100% - 32px)); }
+  .trust-subject { padding-inline: 8px; gap: 8px; font-size: 16px; }
+  .trust-subject svg, .trust-subject img { width: 42px; height: 42px; flex-basis: 42px; }
+  .trust-report__body { width: min(500px, 100%); }
+  .trust-score-gauge, .trust-radar { width: 100%; height: auto; }
+  .trust-score-mode { top: 8px; }
+  .mochi-chat { position: fixed; inset: 0 0 0 auto; width: min(400px, 100vw); z-index: 40; height: 100dvh; }
+  .trust-layout.has-mochi .trust-world-frame { margin-inline: 0; }
+}
