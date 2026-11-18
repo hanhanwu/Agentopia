@@ -8,4 +8,4 @@
 
 ## Historical Trust Scores
 
-![Trust Score](demo/trust_score_v1.gif)
+![Trust Score](trust_score_v1.gif)
