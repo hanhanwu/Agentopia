@@ -2,7 +2,7 @@ import { TRUST_DIMENSIONS, DIMENSION_LABELS, type TrustDimension, type TrustMode
 import { mountMochiChat } from './mochi-chat.ts';
 import './entry-flow.css';
 import {
-  fetchTrustReport, resolveTrustInput,
+  fetchTrustReport, watchTrustExplanations, resolveTrustInput,
   type SubjectType, type TrustReport,
 } from './trust-score.ts';
 
@@ -85,6 +85,7 @@ export function mountEntryFlow(options: {
   let activeDimension: TrustDimension | null = null;
   let reportData: TrustReport | null = null;
   let pending: AbortController | null = null;
+  let detailsPending: AbortController | null = null;
 
   function updateForm() {
     form.querySelectorAll<HTMLButtonElement>('[data-subject]').forEach(button => {
@@ -99,7 +100,7 @@ export function mountEntryFlow(options: {
 
   function clearReport() {
     chat.reset();
-    pending?.abort(); pending = null;
+    pending?.abort(); pending = null; detailsPending?.abort(); detailsPending = null;
     cancelAnimationFrame(gaugeFrame); mode = 'static'; activeDimension = null;
     reportData = null; report.setAttribute('aria-busy', 'false');
     report.replaceChildren();
@@ -191,6 +192,22 @@ export function mountEntryFlow(options: {
     }
   }
 
+  function loadExplanations(data: TrustReport) {
+    if(data.explanations_status!=='pending')return;
+    const controller=new AbortController();detailsPending=controller;
+    const timeout=window.setTimeout(()=>controller.abort(),75000);
+    void watchTrustExplanations(data,controller.signal,updated=>{
+      if(detailsPending!==controller || reportData?.export_id!==data.export_id)return;
+      reportData=updated;if(activeDimension)refreshDimension();
+    }).catch(()=>{
+      if(detailsPending!==controller || reportData?.export_id!==data.export_id)return;
+      reportData.explanations_status='unavailable';
+      if(reportData.v23)for(const m of Object.values(reportData.v23.modes))for(const d of Object.values(m.dimensions))
+        if(d.guidance_status==='pending')d.guidance_status='unavailable';
+      if(activeDimension)refreshDimension();
+    }).finally(()=>{window.clearTimeout(timeout);if(detailsPending===controller)detailsPending=null;});
+  }
+
   function showStatus(message: string, state = 'error') {
     report.dataset.state = state;
     report.innerHTML = `<div class="trust-unavailable"><h3 id="trust-report-message">${escapeHTML(message)}</h3></div>`;
@@ -232,8 +249,8 @@ export function mountEntryFlow(options: {
     updateForm();
     showStatus('Calculating the Trust Score...', 'loading'); report.setAttribute('aria-busy', 'true');
     try {
-      const data = await fetchTrustReport(result.endpoint, controller.signal);
-      if (pending === controller) { renderReport(data); }
+      const data = await fetchTrustReport(result.endpoint, controller.signal, true);
+      if (pending === controller) { renderReport(data); loadExplanations(data); }
     } catch (error) {
       if (pending === controller) {
         const message = controller.signal.aborted ? 'The assessment timed out. Try again.'

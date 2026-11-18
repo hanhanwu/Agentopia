@@ -1,10 +1,11 @@
 /** Public wire/display contract. API versions are independent of scoring releases. */
 const API_PATH = '/api/trust-score/v1';
-export const TRUST_API = { assessment: API_PATH, pdf: `${API_PATH}/pdf`, chat: `${API_PATH}/chat` } as const;
+export const TRUST_API = { assessment: API_PATH, pdf: `${API_PATH}/pdf`, chat: `${API_PATH}/chat`, explanations: `${API_PATH}/explanations` } as const;
 export const TRUST_RESPONSE_SCHEMA = '2.0';
 export const OUTCOME_GROUPS = ['failed', 'passed', 'skipped', 'unknown'] as const;
 export type OutcomeGroup = typeof OUTCOME_GROUPS[number];
 export type TrustReport = {
+  explanations_status?: 'pending' | 'complete' | 'unavailable';
   v23?: import('./trust-v23.ts').V23Display;
   export_id: string;
   subject: { endpoint: string };

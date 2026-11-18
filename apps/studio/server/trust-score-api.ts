@@ -26,11 +26,12 @@ export function createTrustScoreHandler(config: TrustServiceConfig, fetcher: typ
         if (!Object.values(TRUST_API).some(route => route === path)) throw new LocalAPIError(404, 'Unknown assessment route.');
         const pdf = path === TRUST_API.pdf;
         const chat = path === TRUST_API.chat;
-        let request: Record<string, string>;
+        const explanations = path === TRUST_API.explanations;
+        let request: Record<string, string | boolean>;
         if (chat) {
           try { request = parseChatRequest(input); }
           catch { throw new LocalAPIError(400, 'Invalid message.'); }
-        } else if (pdf) {
+        } else if (pdf || explanations) {
           if (!isOpaqueReference(input.export_id)) throw new LocalAPIError(400, 'Invalid report reference.');
           request = { export_id: input.export_id };
         } else {
@@ -38,6 +39,7 @@ export function createTrustScoreHandler(config: TrustServiceConfig, fetcher: typ
           const result = resolveTrustInput(input.type, typeof input.identifier === 'string' ? input.identifier : '');
           if (result.status !== 'ready') throw new LocalAPIError(result.status === 'unavailable' ? 422 : 400, result.message);
           request = { type: 'mcp', identifier: result.endpoint };
+          if(input.defer_explanations===true)request.defer_explanations=true;
         }
         if (!config.url) throw new LocalAPIError(503, 'The assessment service is not configured.');
         const target = new URL(config.url);
@@ -45,7 +47,7 @@ export function createTrustScoreHandler(config: TrustServiceConfig, fetcher: typ
         target.pathname = `${target.pathname.replace(/\/$/u, '')}${path}`;
         if (jobs.size >= 2) throw new LocalAPIError(429, 'Two requests are running. Try again shortly.');
         controller = new AbortController(); jobs.add(controller); res.once('close', cancel);
-        deadline = setTimeout(cancel, pdf ? 40000 : chat ? 35000 : 125000);
+        deadline = setTimeout(cancel, pdf ? 80000 : chat ? 35000 : explanations ? 15000 : 125000);
         const upstream = await fetcher(target, { method: 'POST', redirect: 'error', signal: controller.signal,
           headers: { 'Content-Type': 'application/json', ...(config.token ? { Authorization: `Bearer ${config.token}` } : {}) },
           body: JSON.stringify(request) });
@@ -99,7 +101,7 @@ export function trustScorePlugin(): Plugin {
     server.httpServer?.once('close', () => handler.close());
     server.middlewares.use((req, res, next) => {
       const path = req.url?.split('?')[0];
-      if (path === TRUST_API.assessment || path === TRUST_API.pdf || path === TRUST_API.chat) void handler.handle(req, res);
+      if (Object.values(TRUST_API).some(route=>route===path)) void handler.handle(req, res);
       else next();
     });
   };

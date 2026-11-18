@@ -28,6 +28,15 @@ describe('assessment API boundary',()=>{
     expect(JSON.parse(init.body)).toEqual({type:'mcp',identifier:'https://example.com/mcp'});
     expect(init.headers.Authorization).toBe('Bearer server-only-token');
   });
+  it('allowlists progressive requests and polls by opaque reference without forwarding caller reports',async()=>{
+    const fetcher=vi.fn().mockImplementation(()=>Promise.resolve(new Response(JSON.stringify({...displayResponse(),report:{...displayResponse().report,explanations_status:'pending'}}))));
+    const handler=createTrustScoreHandler({url:'http://localhost:9000'},fetcher),res=new ResponseBuffer();
+    await handler.handle(request({type:'mcp',identifier:'https://example.com/mcp',defer_explanations:true,report:{forged:true}}),response(res));
+    expect(res.status).toBe(200);expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({type:'mcp',identifier:'https://example.com/mcp',defer_explanations:true});
+    const poll=new ResponseBuffer();await handler.handle(request({export_id:'synthetic-export-reference',report:{forged:true}},'/api/trust-score/v1/explanations'),response(poll));
+    expect(poll.status).toBe(200);expect(fetcher.mock.calls[1][0].pathname).toBe('/api/trust-score/v1/explanations');
+    expect(JSON.parse(fetcher.mock.calls[1][1].body)).toEqual({export_id:'synthetic-export-reference'});
+  });
   it('forwards the current V2 display and rejects stale or inconsistent projections', async () => {
     const payload = displayResponse();
     payload.report.summary = {failed_rules:8, passed_rules:40, skipped_rules:4, unknown_rules:50};

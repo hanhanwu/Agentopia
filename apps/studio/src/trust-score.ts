@@ -17,6 +17,7 @@ const invalid = (): never => { throw new Error('The assessment service returned 
 export function parseTrustResponse(payload: unknown): TrustReport {
   if (!record(payload) || payload.schema_version !== TRUST_RESPONSE_SCHEMA || !record(payload.report)) return invalid();
   const report = payload.report;
+  if (report.explanations_status !== undefined && !['pending','complete','unavailable'].includes(String(report.explanations_status))) return invalid();
   if (!record(report.subject) || typeof report.subject.endpoint !== 'string'
       || !isOpaqueReference(report.export_id)
       || !['complete', 'partial', 'unavailable'].includes(String(report.status))
@@ -60,17 +61,45 @@ export function parseTrustResponse(payload: unknown): TrustReport {
       || !Number.isFinite(totalGain) || Math.abs(totalGain - presentation.tips_gain) > 0.05 * (presentation.tips.length + 1) + 1e-8) return invalid();
   const v23 = report.v23 === undefined ? undefined : parseV23Display(report.v23);
   if (report.status === 'unavailable' && v23 && Object.values(v23.modes).some(mode => mode.score_display.score !== null || Object.values(mode.dimensions).some(d => d.score_display.score !== null))) return invalid();
-  return { ...(report.v23 === undefined ? {} : {v23}), export_id: report.export_id, subject: { endpoint: report.subject.endpoint },
+  return { ...(report.explanations_status === undefined ? {} : {explanations_status:report.explanations_status as TrustReport['explanations_status']}), ...(report.v23 === undefined ? {} : {v23}), export_id: report.export_id, subject: { endpoint: report.subject.endpoint },
     status: report.status as TrustReport['status'], summary, presentation };
 }
 
-export async function fetchTrustReport(endpoint: string, signal: AbortSignal): Promise<TrustReport> {
+export async function fetchTrustReport(endpoint: string, signal: AbortSignal, progressive = false): Promise<TrustReport> {
   const response = await fetch(TRUST_API.assessment, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type: 'mcp', identifier: endpoint }), signal,
+    body: JSON.stringify({ type: 'mcp', identifier: endpoint, ...(progressive ? {defer_explanations:true} : {}) }), signal,
   });
   let body: unknown;
   try { body = await response.json(); } catch { throw new Error('The assessment service did not return JSON.'); }
   if (!response.ok) throw new Error(record(body) && typeof body.error === 'string' ? body.error : 'The assessment could not be completed.');
   return parseTrustResponse(body);
+}
+
+function pause(signal:AbortSignal):Promise<void> {
+  signal.throwIfAborted();
+  return new Promise((resolve,reject)=>{
+    const abort=()=>{clearTimeout(timer);signal.removeEventListener('abort',abort);reject(signal.reason);};
+    const timer=setTimeout(()=>{signal.removeEventListener('abort',abort);resolve();},1000);
+    signal.addEventListener('abort',abort,{once:true});
+  });
+}
+
+/** Refresh prose on the same retained assessment; never repeat collection or replace its scores. */
+export async function watchTrustExplanations(initial:TrustReport, signal:AbortSignal, update:(report:TrustReport)=>void):Promise<void> {
+  let latest=initial;
+  const scores=(report:TrustReport)=>JSON.stringify({summary:report.summary,status:report.status,
+    display:report.presentation.score_display,
+    v23:report.v23 && Object.values(report.v23.modes).map(mode=>[mode.score_display,...Object.values(mode.dimensions).map(d=>d.score_display)])});
+  const expected=scores(initial);
+  while(latest.explanations_status==='pending') {
+    await pause(signal);
+    const response=await fetch(TRUST_API.explanations,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({export_id:initial.export_id}),signal});
+    if(!response.ok)throw new Error('Explanations could not be loaded.');
+    latest=parseTrustResponse(await response.json());
+    if(latest.export_id!==initial.export_id || latest.subject.endpoint!==initial.subject.endpoint || scores(latest)!==expected)
+      throw new Error('The retained assessment changed.');
+    if(latest.explanations_status!=='pending')update(latest);
+  }
 }

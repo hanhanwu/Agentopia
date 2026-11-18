@@ -35,7 +35,8 @@ The trust screen follows `UI_elements_design/draft/trust-score-desktop-v5.svg`.
 Paste a public HTTP(S) MCP endpoint and run an assessment. Static appears first;
 the second dot selects Static + Dynamic. Clicking a radar point opens its Reasons
 and Improvement tips in Mochi. Arrow keys, horizontal swipes and trackpad gestures
-also switch modes.
+also switch modes. Scores appear before explanation generation finishes;
+open a dimension to see its reasons and tips update automatically.
 
 Run the updated private Trust Service alongside Studio. The service owns all
 score calculation and evidence collection. Configure its retained V2.3 batch as

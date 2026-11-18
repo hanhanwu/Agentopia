@@ -13,7 +13,8 @@ export async function requestMochi(body: ChatRequest, signal: AbortSignal): Prom
 export function renderDimensionCard(title: string, mode: string, value: DimensionDisplay): string {
   const list = (items: string[], className: string, label: string) => items.length
     ? `<ul class="${className}" aria-label="${label}">${items.map(text => `<li>${escapeMarkup(text)}</li>`).join('')}</ul>` : '';
-  const reasons = list(value.positive_reasons, 'mochi-chat__reasons mochi-chat__reasons--positive', 'What helped the score')
+  const reasons = (value.guidance_status==='pending' ? '<p class="mochi-chat__preparing" role="status">Preparing reasons and tips…</p>' : '')
+    + list(value.positive_reasons, 'mochi-chat__reasons mochi-chat__reasons--positive', 'What helped the score')
     + list(value.negative_reasons, 'mochi-chat__reasons mochi-chat__reasons--negative', 'What lowered the score')
     + list(value.assessment_notes ?? [], 'mochi-chat__reasons mochi-chat__reasons--negative', 'Assessment availability')
     + (value.guidance_status === 'unavailable'

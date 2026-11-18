@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { parseTrustResponse, fetchTrustReport, resolveTrustInput } from './trust-score.ts';
+import { parseTrustResponse, fetchTrustReport, watchTrustExplanations, resolveTrustInput } from './trust-score.ts';
 
 import { displayResponse } from './trust-display.fixture.ts';
-afterEach(()=>vi.unstubAllGlobals());
+afterEach(()=>{vi.unstubAllGlobals();vi.useRealTimers();});
 
 describe('assessment display contract',()=>{
   it('copies only allowed display fields at every level',()=>{
@@ -74,5 +74,38 @@ describe('assessment display contract',()=>{
     expect((await fetchTrustReport('https://example.com/mcp',new AbortController().signal)).export_id).toBe('synthetic-export-reference');
     mock.mockResolvedValue(new Response(JSON.stringify({error:'Service unavailable.'}),{status:503}));
     await expect(fetchTrustReport('https://example.com/mcp',new AbortController().signal)).rejects.toThrow('Service unavailable.');
+  });
+});
+
+describe('progressive assessment updates',()=>{
+  it('requests scores first only when the caller opts in',async()=>{
+    const fetcher=vi.fn().mockResolvedValue(new Response(JSON.stringify(displayResponse())));vi.stubGlobal('fetch',fetcher);
+    await fetchTrustReport('https://example.com/mcp',new AbortController().signal,true);
+    expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({type:'mcp',identifier:'https://example.com/mcp',defer_explanations:true});
+  });
+  it('polls explanations by reference and updates only after they finish',async()=>{
+    vi.useFakeTimers();
+    const payload=(state:string)=>{const data=displayResponse();return {...data,report:{...data.report,explanations_status:state}};};
+    const initial=parseTrustResponse(payload('pending')), update=vi.fn();
+    const fetcher=vi.fn().mockResolvedValueOnce(new Response(JSON.stringify(payload('pending')))).mockResolvedValueOnce(new Response(JSON.stringify(payload('complete'))));vi.stubGlobal('fetch',fetcher);
+    const watching=watchTrustExplanations(initial,new AbortController().signal,update);
+    await vi.advanceTimersByTimeAsync(1000);expect(update).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1000);await watching;
+    expect(update).toHaveBeenCalledTimes(1);expect(update.mock.calls[0][0].explanations_status).toBe('complete');
+    expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({export_id:initial.export_id});
+  });
+  it('cancels polling before requesting another assessment or updating stale results',async()=>{
+    vi.useFakeTimers();const data=displayResponse();const initial=parseTrustResponse({...data,report:{...data.report,explanations_status:'pending'}});
+    const fetcher=vi.fn();vi.stubGlobal('fetch',fetcher);const controller=new AbortController(),update=vi.fn();
+    const watching=watchTrustExplanations(initial,controller.signal,update);controller.abort(new Error('Changed endpoint'));
+    await expect(watching).rejects.toThrow('Changed endpoint');await vi.advanceTimersByTimeAsync(2000);
+    expect(fetcher).not.toHaveBeenCalled();expect(update).not.toHaveBeenCalled();
+  });
+  it('rejects updates that change the assessed scores',async()=>{
+    vi.useFakeTimers();const data=displayResponse();const initial=parseTrustResponse({...data,report:{...data.report,explanations_status:'pending'}});
+    const changed=displayResponse();changed.report.presentation.score_display.score=61;changed.report.presentation.score_display.ratio=.61;
+    vi.stubGlobal('fetch',vi.fn().mockResolvedValue(new Response(JSON.stringify({...changed,report:{...changed.report,explanations_status:'complete'}}))));
+    const watching=watchTrustExplanations(initial,new AbortController().signal,()=>{});
+    const rejected=expect(watching).rejects.toThrow('retained assessment changed');await vi.advanceTimersByTimeAsync(1000);await rejected;
   });
 });

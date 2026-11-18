@@ -53,4 +53,10 @@ describe('dimension card sections', () => {
     expect(html).not.toContain('+40');expect(html).not.toContain('Reassess to confirm.');expect(html).not.toContain('Gains may overlap.');
   });
 
+  it('shows preparation rather than failure while explanations load',()=>{
+    const data=value();data.guidance_status='pending';
+    const html=renderDimensionCard('Capability','Static',data);
+    expect(html).toContain('Preparing reasons and tips…');expect(html).not.toContain('Explanations could not be generated');
+  });
+
 });
