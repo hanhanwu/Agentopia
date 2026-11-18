@@ -177,3 +177,6 @@
   .mochi-chat { position: fixed; inset: 0 0 0 auto; width: min(400px, 100vw); z-index: 40; height: 100dvh; }
   .trust-layout.has-mochi .trust-world-frame { margin-inline: 0; }
 }
+
+.mochi-chat__suggestions li { margin-bottom: 12px; }
+.mochi-chat__tips-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }

@@ -3,7 +3,7 @@
 ## Features
 ### Trust Score for MCP Servers and Agents 💎
 
-![Trust Score](demo/trust_scorev2.3.gif)
+![Trust Score](demo/trust-score-v2.3.gif)
 
 ### Peek Behind the Scenes of AI Agents 🐙
 

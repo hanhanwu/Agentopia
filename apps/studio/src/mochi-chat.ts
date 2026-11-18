@@ -18,9 +18,13 @@ export function renderDimensionCard(title: string, mode: string, value: Dimensio
     + list(value.assessment_notes ?? [], 'mochi-chat__reasons mochi-chat__reasons--negative', 'Assessment availability')
     + (value.guidance_status === 'unavailable'
       ? list(['Explanations could not be generated. Run a new assessment to retry.'], 'mochi-chat__reasons mochi-chat__reasons--negative', 'Explanation availability') : '');
+  const gainBadge = value.tips_gain != null
+    ? `<span class="trust-tips__gain" aria-label="Estimated overall score increase">+${Number(value.tips_gain.toFixed(1))} pts</span>` : '';
+  const tips = value.tips.length ? `<h4 class="mochi-chat__tips-heading">Improvement tips${gainBadge}</h4>`
+    + `<ul class="mochi-chat__suggestions" aria-label="Improvement tips">${value.tips.map(text => `<li>${escapeMarkup(text)}</li>`).join('')}</ul>` : '';
   return `<h3>${escapeMarkup(title)} · ${escapeMarkup(mode)}</h3>`
     + (reasons ? `<h4>Reasons</h4>${reasons}` : '')
-    + (value.tips.length ? `<h4>Improvement tips</h4>${list(value.tips, 'mochi-chat__suggestions', 'Improvement tips')}` : '');
+    + tips;
 }
 
 export function mountMochiChat(options: { layout: HTMLElement; panel: HTMLElement; artwork: () => string; getReport: () => TrustReport | null; getMode?: () => TrustMode }) {

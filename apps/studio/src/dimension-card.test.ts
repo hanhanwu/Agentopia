@@ -39,4 +39,18 @@ describe('dimension card sections', () => {
     expect(html).not.toContain('mochi-chat__guidance-unavailable');
   });
 
+  it('omits a numeric label when the combined gain is unknown', () => {
+    const data=value();data.tips=['Repair the observed behavior.','Provide access and reassess.'];data.tip_estimated_gains=[4.2,null];
+    const html=renderDimensionCard('Capability','Static + Dynamic',data);
+    expect(html).not.toContain('Estimated overall score increase');
+    expect(html).not.toContain('Reassess to confirm.');
+  });
+  it('places the deduplicated total beside Improvement tips without per-tip labels or reassessment text', () => {
+    const data=value();data.tips=['Repair one aspect.','Repair the related aspect.'];data.tip_estimated_gains=[20,20];data.tips_gain=20;
+    const html=renderDimensionCard('Capability','Static',data);
+    expect(html).toContain('<h4 class="mochi-chat__tips-heading">Improvement tips<span class="trust-tips__gain" aria-label="Estimated overall score increase">+20 pts</span></h4>');
+    expect(html.match(/trust-tips__gain/g)).toHaveLength(1);
+    expect(html).not.toContain('+40');expect(html).not.toContain('Reassess to confirm.');expect(html).not.toContain('Gains may overlap.');
+  });
+
 });

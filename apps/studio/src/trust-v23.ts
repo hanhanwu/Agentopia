@@ -4,7 +4,7 @@ export type TrustDimension = typeof TRUST_DIMENSIONS[number];
 export type TrustMode = 'static' | 'combined';
 export const DIMENSION_LABELS: Record<TrustDimension, string> = {connection: 'Connection', interaction: 'Capability', security: 'Security'};
 export type ScoreDisplay = {ratio: number; score: number | null; maximum: number; rating: string | null; color: string};
-export type DimensionDisplay = {assessment_notes?: string[]; guidance_status?: 'available' | 'unavailable'; score_display: ScoreDisplay; positive_reasons: string[]; negative_reasons: string[]; tips: string[]; dynamic_status: string; blocked: boolean};
+export type DimensionDisplay = {tip_estimated_gains?: (number | null)[]; tips_gain?: number | null; assessment_notes?: string[]; guidance_status?: 'available' | 'unavailable'; score_display: ScoreDisplay; positive_reasons: string[]; negative_reasons: string[]; tips: string[]; dynamic_status: string; blocked: boolean};
 export type V23Display = {version: '2.3'; modes: Record<TrustMode, {score_display: ScoreDisplay; dimensions: Record<TrustDimension, DimensionDisplay>}>};
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const invalid = (): never => {throw new Error('The assessment service returned an invalid V2.3 display.');};
@@ -25,18 +25,29 @@ export function parseV23Display(value: unknown): V23Display {
   for (const mode of ['static', 'combined'] as const) {
     const v = value.modes[mode];
     if (!record(v) || !record(v.dimensions)) return invalid();
+    const overall = display(v.score_display);
+    const headroom = overall.score === null ? 0 : 100 * (1 - overall.ratio);
     const dimensions = {} as V23Display['modes'][TrustMode]['dimensions'];
     for (const d of TRUST_DIMENSIONS) {
       const item = v.dimensions[d];
       if (record(item) && item.guidance_status !== undefined && !['available','unavailable'].includes(String(item.guidance_status))) return invalid();
       if (!record(item) || typeof item.blocked !== 'boolean'
         || !['not_selected', 'static_only', 'unavailable', 'partial', 'available'].includes(String(item.dynamic_status))) return invalid();
-      dimensions[d] = {score_display: display(item.score_display), positive_reasons: strings(item.positive_reasons ?? []), negative_reasons: strings(item.negative_reasons ?? []), tips: strings(item.tips),
+      const tips = strings(item.tips);
+      const gains = item.tip_estimated_gains ?? tips.map(() => null);
+      const validGain = (gain: unknown): gain is number | null => gain === null || (typeof gain === 'number'
+        && Number.isFinite(gain) && gain >= 0 && overall.score !== null && gain <= headroom + .05000001);
+      if (!Array.isArray(gains) || gains.length !== tips.length || !gains.every(validGain)
+        || !validGain(item.tips_gain ?? null)) return invalid();
+      const total = item.tips_gain ?? null;
+      if (total !== null && (gains.some(gain => gain === null)
+        || (total as number) > gains.reduce((sum: number, gain: number | null) => sum + (gain ?? 0), 0) + .05 * (gains.length + 1))) return invalid();
+      dimensions[d] = {tip_estimated_gains:[...gains], tips_gain:total as number | null, score_display: display(item.score_display), positive_reasons: strings(item.positive_reasons ?? []), negative_reasons: strings(item.negative_reasons ?? []), tips,
         blocked: item.blocked, dynamic_status: String(item.dynamic_status),
         assessment_notes: strings(item.assessment_notes ?? []),
         ...(item.guidance_status === undefined ? {} : {guidance_status: item.guidance_status as 'available' | 'unavailable'})};
     }
-    modes[mode] = {score_display: display(v.score_display), dimensions};
+    modes[mode] = {score_display: overall, dimensions};
   }
   return {version: '2.3', modes};
 }

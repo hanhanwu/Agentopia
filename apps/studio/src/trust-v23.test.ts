@@ -40,4 +40,20 @@ describe('V2.3 display boundary', () => {
     expect(parseChatRequest({export_id:'synthetic-export-reference', mode:'combined', score:99})).toEqual({export_id:'synthetic-export-reference', mode:'combined'});
     expect(() => parseChatRequest({export_id:'synthetic-export-reference', mode:'invented'})).toThrow();
   });
+  it('validates gain alignment, unknown gains, totals and remaining overall headroom', () => {
+    const value=fixture();
+    Object.assign(value.modes.static.dimensions.connection,{tip_estimated_gains:[5],tips_gain:5});
+    expect(parseV23Display(value).modes.static.dimensions.connection.tip_estimated_gains).toEqual([5]);
+    for(const changes of [
+      {tip_estimated_gains:[]}, {tip_estimated_gains:[-1]}, {tip_estimated_gains:[NaN]},
+      {tip_estimated_gains:[50]}, {tip_estimated_gains:[null],tips_gain:5}, {tip_estimated_gains:[5],tips_gain:10},
+    ]) {
+      const invalid=fixture();Object.assign(invalid.modes.static.dimensions.connection,changes);
+      expect(()=>parseV23Display(invalid)).toThrow();
+    }
+    const unavailable=fixture();unavailable.modes.static.score_display=display(null);
+    Object.assign(unavailable.modes.static.dimensions.connection,{tip_estimated_gains:[5]});
+    expect(()=>parseV23Display(unavailable)).toThrow();
+  });
+
 });
