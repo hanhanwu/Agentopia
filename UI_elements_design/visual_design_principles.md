@@ -183,6 +183,32 @@ unrequested resizing.
   centerlines, and opening elements retain their frames.
 - Inspect the first frame, motion path, and final frame for overlap or occlusion.
 
+## Entry-flow trust gauge: mandatory color behavior
+
+Preserve this requirement in every future UI update or refactor of
+`apps/studio/src/entry-flow.ts` unless the user explicitly requests a change.
+
+- The liquid's color MUST follow its current progress along the full gauge
+  arch, where `progress` is normalized from `0` to `1`. Do not normalize color
+  thresholds against the final score or use the final score's color throughout
+  the animation.
+- Use these exact discrete thresholds and colors:
+
+  | Current arch progress | Liquid color |
+  | --- | --- |
+  | `0 <= progress < 0.25` | `#f87171` (red) |
+  | `0.25 <= progress < 0.5` | `#ffad5c` (orange) |
+  | `0.5 <= progress < 0.75` | `#ffd166` (yellow) |
+  | `0.75 <= progress <= 1` | `#9be477` (green) |
+
+- Apply the color to `.trust-liquid__fill` on every draw. Keep the liquid
+  hidden at zero progress. The final frame and reduced-motion rendering MUST
+  use the same mapping.
+- For example, a gauge ending at `0.6` must pass through red and orange before
+  ending yellow; it must not start yellow or reach green.
+- When updating this gauge, verify colors immediately below and at each
+  threshold, plus the initial, final, replay, and reduced-motion states.
+
 ## Required visual QA
 
 Before showing a design or handing off an implementation, every applicable item

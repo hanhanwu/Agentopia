@@ -174,7 +174,12 @@ export function mountEntryFlow(options: {
     const sheen = report.querySelector<SVGUseElement>('.trust-liquid__sheen')!;
     const draw = (progress: number) => {
       liquid.setAttribute('visibility', progress > 0 ? 'visible' : 'hidden');
-      fill.setAttribute('stroke', view.color);
+      // Follow the liquid's position along the full arch, not the final score's color.
+      const color = progress < 0.25 ? '#f87171'
+        : progress < 0.5 ? '#ffad5c'
+        : progress < 0.75 ? '#ffd166'
+        : '#9be477';
+      fill.setAttribute('stroke', color);
       for (const path of [fill, sheen]) {
         path.setAttribute('stroke-dasharray', '100 100');
         path.setAttribute('stroke-dashoffset', String(100 - progress * 100));
