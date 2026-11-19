@@ -37,3 +37,4 @@ __pycache__/
 /apps/studio/server/score_worker.py
 /apps/studio/server/test_score_worker.py
 /apps/studio/src/data/*trust*.json
+demo/Q&A_preparation.md
